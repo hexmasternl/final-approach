@@ -20,7 +20,10 @@ const kColor = v => {
   if (!m) throw new Error('colour ' + v);
   return `Color(${m[1]}, ${m[2]}, ${m[3]}, ${Math.round(parseFloat(m[4]) * 255)})`;
 };
-const names = t.color.tokens.map(c => c.name);
+// The sunset palette belongs to the splash page only, so it is kept out of the themes.
+const isSunset = n => n.startsWith('sunset-');
+const names = t.color.tokens.map(c => c.name).filter(n => !isSunset(n));
+const sunsetNames = t.color.tokens.map(c => c.name).filter(isSunset);
 let colors = `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 
 import androidx.compose.runtime.Immutable
@@ -46,6 +49,24 @@ ${names.map(n => `    val ${camel(n)}: Color,`).join('\n')}
 for (const [th, k] of [['light', 'DayColors'], ['dark', 'NightColors']])
   colors += `val ${k} = FaColors(\n${names.map(n => `    ${camel(n)} = ${kColor(resolve(n, th))},`).join('\n')}\n)\n\n`;
 w('theme/FaColors.kt', colors.trimEnd() + '\n');
+w('theme/SunsetColors.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
+
+import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
+
+/**
+ * The palette of the splash page: four flat sky bands, the sun, the airport silhouette and
+ * the lit tower window. It is not a theme, and nothing but the splash page may use it.
+ */
+@Immutable
+data class SunsetColors(
+${sunsetNames.map(n => `    val ${camel(n)}: Color,`).join('\n')}
+)
+
+val Sunset = SunsetColors(
+${sunsetNames.map(n => `    ${camel(n)} = ${kColor(resolve(n, 'light'))},`).join('\n')}
+)
+`);
 
 // ---------- dimensions, motion, opacity
 const dp = v => { const m = /^([\d.]+)px$/.exec(v); if (!m) throw new Error('dp ' + v); return `${m[1]}.dp`; };
@@ -109,7 +130,7 @@ import nl.hexmaster.finalapproach.domain.AircraftType
 internal enum class SpritePaint { Body, Livery, Shade, Glass, Shine, Dark, Blur, Line }
 
 /** How a sprite part moves while the aircraft flies. */
-internal enum class SpriteMotion { None, Propeller, Rotor }
+internal enum class SpriteMotion { None, Propeller, PropellerSide, Rotor }
 
 /** One shape of a sprite, as SVG path data on the 96-unit sprite square (nose up). */
 internal class SpritePart(
@@ -125,24 +146,66 @@ internal const val SPRITE_UNITS = 96f
 
 internal val aircraftSprites: Map<AircraftType, List<SpritePart>> = mapOf(
 `;
-for (const [key, a] of Object.entries(FA.AIRCRAFT)) {
+const motionName = { prop: 'Propeller', 'prop-side': 'PropellerSide', rotor: 'Rotor' };
+const partsOf = (svg, indent) => {
   const parts = [];
   let motion = 'None';
-  const re = /<g class="fa-(prop|rotor)">|<\/g>|<(rect|path|circle|ellipse) \{\{([a-z]+)\}\}([^>]*)\/>/g;
+  const re = /<g class="fa-(prop-side|prop|rotor)">|<\/g>|<(rect|path|circle|ellipse) \{\{([a-z]+)\}\}([^>]*)\/>/g;
   let m;
-  while ((m = re.exec(a.svg))) {
-    if (m[0].startsWith('<g')) { motion = m[1] === 'prop' ? 'Propeller' : 'Rotor'; continue; }
+  while ((m = re.exec(svg))) {
+    if (m[0].startsWith('<g')) { motion = motionName[m[1]]; continue; }
     if (m[0] === '</g>') { motion = 'None'; continue; }
     const d = shapePath(m[2], m[4]);
     let pivot = '';
-    if (motion === 'Propeller') { const x = +attr(m[4], 'x'), y = +attr(m[4], 'y'), wd = +attr(m[4], 'width'), h = +attr(m[4], 'height'); pivot = `, SpriteMotion.Propeller, ${num(x + wd / 2)}f, ${num(y + h / 2)}f`; }
+    if (motion === 'Propeller' || motion === 'PropellerSide') { const x = +attr(m[4], 'x'), y = +attr(m[4], 'y'), wd = +attr(m[4], 'width'), h = +attr(m[4], 'height'); pivot = `, SpriteMotion.${motion}, ${num(x + wd / 2)}f, ${num(y + h / 2)}f`; }
     if (motion === 'Rotor') pivot = `, SpriteMotion.Rotor, 48f, 44f`;
-    parts.push(`        SpritePart(SpritePaint.${paintName[m[3]]}, "${d}"${pivot}),`);
+    parts.push(`${indent}SpritePart(SpritePaint.${paintName[m[3]]}, "${d}"${pivot}),`);
   }
-  sprites += `    AircraftType.${typeName[key]} to listOf(\n${parts.join('\n')}\n    ),\n`;
+  return parts.join('\n');
+};
+for (const [key, a] of Object.entries(FA.AIRCRAFT)) {
+  sprites += `    AircraftType.${typeName[key]} to listOf(\n${partsOf(a.svg, '        ')}\n    ),\n`;
 }
 sprites += ')\n';
+const side = FA.SIDE_AIRCRAFT['light-prop'];
+sprites += `
+/** Size of the grid the side-view sprite is drawn on. Its nose points right. */
+internal const val SIDE_SPRITE_WIDTH = ${side.width}f
+internal const val SIDE_SPRITE_HEIGHT = ${side.height}f
+
+/** The light prop seen from the side. It tows the banner on the splash page; gameplay never uses it. */
+internal val sideViewLightProp: List<SpritePart> = listOf(
+${partsOf(side.svg, '    ')}
+)
+`;
 w('sprites/AircraftSprites.kt', sprites);
+
+// ---------- airport silhouette
+const sil = FA.SILHOUETTE;
+w('sprites/AirportSilhouette.kt', `// Generated from the design system (components/bundle.js). Do not edit by hand.
+package nl.hexmaster.finalapproach.ui.sprites
+
+/**
+ * The airport silhouette of the splash page, as SVG path data on a
+ * ${sil.width} by ${sil.height} grid. The buildings stand on the line y = BASE_Y; the ground
+ * fills everything below it.
+ */
+internal object AirportSilhouette {
+    const val WIDTH = ${sil.width}f
+    const val HEIGHT = ${sil.height}f
+    const val BASE_Y = ${sil.baseY}f
+
+    /** Buildings, parked aircraft and trees. The control tower is the tallest shape. */
+    val shapes: List<String> = listOf(
+${sil.shapes.map(d => `        "${norm(d)}",`).join('\n')}
+    )
+
+    /** The lit window of the tower cab. */
+    val lights: List<String> = listOf(
+${sil.lights.map(d => `        "${norm(d)}",`).join('\n')}
+    )
+}
+`);
 
 // ---------- icons
 const iconNames = Object.keys(FA.ICONS);
@@ -170,7 +233,7 @@ icons += iconNames.map(n => {
 }).join('\n');
 icons += '\n}\n';
 w('sprites/FaIcons.kt', icons);
-console.log('generated: theme/FaColors.kt, theme/FaDimens.kt, theme/FaMotion.kt, sprites/AircraftSprites.kt, sprites/FaIcons.kt');
+console.log('generated: theme/SunsetColors.kt, sprites/AirportSilhouette.kt, theme/FaColors.kt, theme/FaDimens.kt, theme/FaMotion.kt, sprites/AircraftSprites.kt, sprites/FaIcons.kt');
 
 // ---------- typography
 const styles = t.type.groups.flatMap(g => g.styles.map(s => ({ ...s, family: s.family || g.family })));
