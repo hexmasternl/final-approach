@@ -7,10 +7,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.ui.menu.MainPage
+import nl.hexmaster.finalapproach.ui.splash.SplashPage
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
-/** The screens of the app. The main page is home: every other screen returns to it. */
-enum class Screen { Main, Game, Settings }
+/** The screens of the app. It opens on the splash page; after that the main page is home. */
+enum class Screen { Splash, Main, Game, Settings }
 
 private object AppText {
     const val GAME_TITLE = "Cleared for take off"
@@ -23,8 +24,10 @@ private object AppText {
 @Composable
 fun App(host: AppHost) {
     FaTheme(reduceMotion = host.reduceMotion) {
-        var screen by rememberSaveable { mutableStateOf(Screen.Main) }
+        var screen by rememberSaveable { mutableStateOf(Screen.Splash) }
         when (screen) {
+            Screen.Splash -> SplashPage(host = host, onFinished = { screen = Screen.Main })
+
             Screen.Main -> MainPage(
                 host = host,
                 onTakeOff = { screen = Screen.Game },

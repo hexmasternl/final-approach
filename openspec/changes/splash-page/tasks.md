@@ -22,9 +22,9 @@
 
 ## 4. Screen and app flow
 
-- [ ] 4.1 Build the splash screen composable that advances the timeline from the frame clock and draws the scene, and verify by running the app that the airplane tows the banner in, the banner settles at the centre and waves, and the airplane leaves on the right
-- [ ] 4.2 Make the splash page the first screen and call `onFinished` on the automatic hand-over and on a tap anywhere; verify by running the app that it advances by itself after the banner settles and immediately on a tap
-- [ ] 4.3 Add the reduced-motion interface in `commonMain` with its implementation in `androidApp`, and verify on a device or emulator with animations disabled that the banner is centred and still, no airplane appears, and the page still advances
+- [x] 4.1 Build the splash screen composable that advances the timeline from the frame clock and draws the scene, and verify by running the app that the airplane tows the banner in, the banner settles at the centre and waves, and the airplane leaves on the right
+- [x] 4.2 Make the splash page the first screen and call `onFinished` on the automatic hand-over and on a tap anywhere; verify by running the app that it advances by itself after the banner settles and immediately on a tap
+- [x] 4.3 Add the reduced-motion interface in `commonMain` with its implementation in `androidApp`, and verify on a device or emulator with animations disabled that the banner is centred and still, no airplane appears, and the page still advances
 - [ ] 4.4 Update `docs/architecture.md` with the screen flow and the reduced-motion interface, and verify the described names match the code
 
 ## 5. Integration check
