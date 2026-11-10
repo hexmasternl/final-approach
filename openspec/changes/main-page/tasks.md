@@ -3,7 +3,7 @@
 ## 1. Platform boundary
 
 - [x] 1.1 Declare `AppHost` in `commonMain` (version name, `quit()`, back-press delivery) with a fake for tests, and verify `commonMain` compiles with no `android.*` or `java.*` import
-- [ ] 1.2 Implement `AppHost` in `androidApp` (version from package info, quit by finishing the activity, back presses forwarded) and verify by running the app that the reported version equals the build's `versionName`
+- [x] 1.2 Implement `AppHost` in `androidApp` (version from package info, quit by finishing the activity, back presses forwarded) and verify by running the app that the reported version equals the build's `versionName`
 - [ ] 1.3 Document `AppHost` in `docs/architecture.md` and verify the described names match the code
 
 ## 2. Backdrop logic
