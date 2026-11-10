@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The window background matches bg-sky, so there is no white flash before the first frame. -->
+    <color name="window_background">#8FD3FB</color>
+
+    <style name="Theme.FinalApproach" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+    </style>
+</resources>
