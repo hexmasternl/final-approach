@@ -3,7 +3,7 @@
 ## 1. Theme and configuration
 
 - [x] 1.1 Add the `SunsetColors` set (`sunsetSkyTop`, `sunsetSkyUpper`, `sunsetSkyLower`, `sunsetSkyHorizon`, `sunsetSun`, `sunsetSilhouette`, `sunsetTowerLight`) to `ui/theme` and verify the module compiles with no colour literal outside the theme
-- [ ] 1.2 Add `SplashConfig` with airplane speed, banner and tow-line length, wave amplitude and period, and the 2-second hand-over delay, and verify the defaults are used by nothing but the splash code
+- [x] 1.2 Add `SplashConfig` with airplane speed, banner and tow-line length, wave amplitude and period, and the 2-second hand-over delay, and verify the defaults are used by nothing but the splash code
 - [x] 1.3 Add the sunset tokens to the design system (`tokens.json` and the brand book's colour section) and verify the showcase page lists them
 
 ## 2. Timeline logic
