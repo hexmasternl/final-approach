@@ -29,7 +29,7 @@
 
 ## 5. Design system
 
-- [ ] 5.1 Update the MainMenu reference composition and its guideline in the design system to match this page (two buttons, version label, no wordmark or best score), and verify the showcase page shows the updated composition
+- [x] 5.1 Update the MainMenu reference composition and its guideline in the design system to match this page (two buttons, version label, no wordmark or best score), and verify the showcase page shows the updated composition
 
 ## 6. Integration check
 
