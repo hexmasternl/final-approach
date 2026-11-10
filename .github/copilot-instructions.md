@@ -30,3 +30,10 @@ Final Approach is a cartoon-style air-traffic game. The player draws paths for i
 
 ## Style / art
 - Cartoon look: thick outlines, bright flat colours, rounded shapes, bouncy animations. Art constants live in the theme.
+
+## Git workflow
+Follow the `git-workflow` skill (`.github/skills/git-workflow/SKILL.md`) for every commit, push, branch, worktree and pull request, and whenever an OpenSpec change is proposed, applied or archived.
+- Never touch `main`: it represents production.
+- Propose and archive OpenSpec changes on `development`; committing and pushing there directly is allowed for that.
+- Implement a change only if it names an open GitHub issue and that issue names the change. Work in a new worktree on `change/<change-name>`, branched from `development`, commit per completed task, then push and open a pull request into `development`.
+- Archiving closes the issue, moves it to Done on its GitHub project, and removes the worktree and the change branch (local and remote).

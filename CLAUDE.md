@@ -107,4 +107,6 @@ Do not improvise a one-off. Add the token or component to the design system firs
 ## Working in this repo
 
 - Update `docs/` when game rules or architecture change.
-- Commit or push only when asked.
+- Work is planned and tracked as OpenSpec changes (`openspec/`), each tied to a GitHub issue.
+- Use the `triage` skill (`.claude/skills/triage/SKILL.md`) to turn an issue into a change: it fleshes out the issue, proposes the change, links the two, and labels the issue `triaged` or `unclear`.
+- Follow the `git-workflow` skill (`.claude/skills/git-workflow/SKILL.md`) for every commit, push, branch, worktree and pull request, and whenever an OpenSpec change is proposed, applied or archived. In short: never touch `main`; propose and archive on `development`; implement each change on its own `change/<change-name>` branch in a worktree and merge it by pull request.
