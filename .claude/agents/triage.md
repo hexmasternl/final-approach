@@ -11,7 +11,19 @@ You triage GitHub issues for Final Approach, a cartoon-style air traffic game bu
 
 Follow the `triage` skill step by step. It defines the decision between `triaged` and `unclear`, the shape of a fleshed-out issue, the two link lines, and how to keep an issue and its change in sync. If it is not already loaded, read `.claude/skills/triage/SKILL.md` first, then `.claude/skills/git-workflow/SKILL.md` and `.claude/skills/openspec-propose/SKILL.md`.
 
-You are explicitly allowed to commit and push directly to the `development` branch for OpenSpec files under `openspec/`. Never commit to `main`, and never create a worktree for `main` or `development`. If `development` does not exist, create it from `main` as `git-workflow` describes.
+You are explicitly allowed to commit directly to the `development` branch for OpenSpec files under `openspec/`. Never commit to `main`, and never create a worktree for `main` or `development`. If `development` does not exist, create it from `main` as `git-workflow` describes.
+
+## Commit each change, do not push
+
+- **Commit after each created change.** The moment a change is complete and passes `openspec validate "<change-name>" --strict`, commit it on its own, before you touch the next issue. One change, one commit, containing only that change's folder:
+
+  ```bash
+  git add "openspec/changes/<change-name>"
+  git commit -m "Propose OpenSpec change <change-name> (#<number>)" -- "openspec/changes/<change-name>"
+  ```
+
+- **Do not push.** Other triage agents may be working in the same checkout at the same time. The session that started you pushes `development` once, when all agents are done. Never run `git push` yourself.
+- Stage and commit only your own change folder; never `git add -A`. If git reports that the index is locked, another agent is committing: wait a moment and try again.
 
 ## The change reference block
 
@@ -25,7 +37,7 @@ Every issue you triage successfully must end with this block in its body, direct
 <!-- triage:end -->
 ```
 
-Keep both HTML comments. Exactly one block per issue: if one is already there, replace it in place. Push the change to `development` before writing the block, because its links point there. Never label an issue `triaged` without it. Before you finish, read the issue back (`gh issue view <number> --json body`) and confirm the block is present and names the right change.
+Keep both HTML comments. Exactly one block per issue: if one is already there, replace it in place. Its links point at `development` and resolve once the session that started you has pushed. Never label an issue `triaged` without it. Before you finish, read the issue back (`gh issue view <number> --json body`) and confirm the block is present and names the right change.
 
 ## Before you judge
 
@@ -49,4 +61,4 @@ Do not pad. A short, precise artifact beats a long one. Do not invent requiremen
 
 ## When you are done
 
-Report, per issue: number and title, the outcome (`triaged` with the change name, or `unclear` with the questions you posted), the assumptions you made, anything the user should decide, and the commit you pushed. Say plainly if a step failed or was skipped.
+Report, per issue: number and title, the outcome (`triaged` with the change name, or `unclear` with the questions you posted), the assumptions you made, anything the user should decide, and the hash of the commit you made for each change. State clearly that your commits are not pushed yet and that `development` must be pushed once all triage agents are done. Say plainly if a step failed or was skipped.

@@ -18,9 +18,15 @@ An issue never carries both labels.
 
 This skill works together with two others. Follow `openspec-propose` for creating the change, and `git-workflow` for everything git: proposals are committed and pushed on `development`, never on `main`.
 
-## Permission to commit and push
+## Committing and pushing
 
 Triage is explicitly allowed to commit and push directly to the `development` branch, without asking first. This covers the OpenSpec change files it creates and the updates it makes to keep a change in sync with its issue. It does not need a pull request for these.
+
+The rhythm is fixed:
+
+- **Commit after each created change.** As soon as one OpenSpec change is complete and validates, commit it on its own. One change, one commit. Never batch several changes into one commit, and never leave a finished change uncommitted while starting the next issue.
+- **Push once, when everything is done.** Do not push after each commit. Push `development` a single time at the end of the triage run, after the last change is committed.
+- **When triage runs as agents,** each triage agent commits its own change and does not push. The session that started the agents pushes `development` once, after all of them have finished. See Running triage with agents.
 
 The permission is limited to `development` and to OpenSpec files under `openspec/`. Triage never commits or pushes to `main`, and never commits implementation code.
 
@@ -112,17 +118,34 @@ Rules for the block:
 
 - Keep both HTML comments. They are invisible on GitHub and mark where the block starts and ends, and the first one names the change in a form tools can read.
 - There is exactly one block per issue. If the body already has one (anything from `<!-- openspec-change:` up to and including `<!-- triage:end -->`), replace it in place; never add a second.
-- The links point at the `development` branch, so push the change before you write the block, otherwise they lead nowhere.
+- The links point at the `development` branch. They resolve once the triage run is pushed, which is why a run is not finished until that push has happened.
 - Do not add other content between the two comments.
 - An issue that ends up `unclear` gets no block. If it had one from an earlier triage and the change still exists, leave it.
 
-**Commit and push** the change on `development`, as `git-workflow` describes. Do this without asking: triage has standing permission (see Permission to commit and push).
+**Commit** the change on `development`, straight after it validates, as its own commit containing only that change's folder:
 
-**Write the issue.** Only now update the issue body, including the change reference block, so its links resolve.
+```bash
+git add "openspec/changes/<change-name>"
+git commit -m "Propose OpenSpec change <change-name> (#<number>)" -- "openspec/changes/<change-name>"
+```
+
+Do this without asking (see Committing and pushing). Do not push yet.
+
+**Write the issue.** Update the issue body, including the change reference block.
 
 **Label.** `gh issue edit <number> --add-label triaged --remove-label unclear`.
 
-### 5. Report
+### 5. Push once
+
+When every issue in this run has been handled and every created change is committed, push `development` a single time:
+
+```bash
+git push origin development
+```
+
+If nothing was committed (every issue ended `unclear`), there is nothing to push. If the push fails, say so plainly: the reference blocks in the issues point at files that are not on GitHub yet. If you are a triage agent, skip this step and leave the push to the session that started you.
+
+### 6. Report
 
 For each issue: its number and title, the outcome (`triaged` with the change name, or `unclear` with the questions asked), the assumptions made, and anything the user should decide.
 
@@ -130,13 +153,21 @@ For each issue: its number and title, the outcome (`triaged` with the change nam
 
 The issue and the change describe the same work and must not drift apart. The issue holds what is wanted and how to tell it is done; the change holds the same requirements as specs, plus design and tasks.
 
-- **When the issue changes after triage** (edited body, new comment with a requirement or a decision): update the change's proposal, specs and tasks to match, then commit and push on `development`.
+- **When the issue changes after triage** (edited body, new comment with a requirement or a decision): update the change's proposal, specs and tasks to match, commit that change on `development`, and push once at the end of the run.
 - **When the change changes** (scope adjusted while proposing, designing or implementing): update the issue's behaviour, acceptance criteria and out-of-scope sections to match.
 - **When the change is renamed or replaced:** replace the change reference block in the issue (name and all three links) and update the `GitHub issue:` line in the proposal together.
 - **When asked to sync or re-triage:** read both, list the differences, reconcile them, and report what changed on each side.
 - **When the two contradict each other and it is not evident which is right,** do not pick one silently. Ask the user, or post the question on the issue and swap the label to `unclear` until it is answered.
 
 If a change is already being implemented on a `change/` branch, sync the issue with what that branch does, and raise scope changes with the user rather than rewriting specs under work in progress.
+
+## Running triage with agents
+
+Several issues can be triaged at the same time by starting one `triage` agent per issue. Then:
+
+- Each agent creates its change, commits it, updates its issue and reports back. It does not push.
+- All agents work in the same checkout on `development`; there is no worktree for `development`. Each agent stages and commits only its own change folder, using the path-limited commands above, so agents do not pick up each other's files. If git reports that the index is locked, another agent is committing: wait a moment and try again.
+- When every agent has finished, the session that started them checks that the working tree holds no uncommitted change folders, pushes `development` once, and then reports the combined result.
 
 ## Labels
 
