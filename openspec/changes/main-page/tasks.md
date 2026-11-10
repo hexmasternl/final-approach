@@ -20,7 +20,7 @@
 
 ## 4. Main page
 
-- [ ] 4.1 Build the main page with the Take off and Settings buttons and the version label from design-system components, and verify by running the app that both buttons and the version in the bottom-right corner are shown over the animated backdrop
+- [x] 4.1 Build the main page with the Take off and Settings buttons and the version label from design-system components, and verify by running the app that both buttons and the version in the bottom-right corner are shown over the animated backdrop
 - [ ] 4.2 Wire Take off to start a game and Settings to open a placeholder settings page with a way back, and verify by running the app that each navigates and that returning shows the main page
 - [ ] 4.3 Build the quit confirmation dialog and the back handling, and verify by running the app that back opens the dialog, Cancel and a second back close it, Quit closes the app, and the backdrop keeps moving dimmed behind the dialog
 - [ ] 4.4 Verify by running the app that an aircraft crossing a button is hidden behind it, that the button still responds, and that tapping an aircraft does nothing
