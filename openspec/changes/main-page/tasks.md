@@ -21,11 +21,11 @@
 ## 4. Main page
 
 - [x] 4.1 Build the main page with the Take off and Settings buttons and the version label from design-system components, and verify by running the app that both buttons and the version in the bottom-right corner are shown over the animated backdrop
-- [ ] 4.2 Wire Take off to start a game and Settings to open a placeholder settings page with a way back, and verify by running the app that each navigates and that returning shows the main page
-- [ ] 4.3 Build the quit confirmation dialog and the back handling, and verify by running the app that back opens the dialog, Cancel and a second back close it, Quit closes the app, and the backdrop keeps moving dimmed behind the dialog
-- [ ] 4.4 Verify by running the app that an aircraft crossing a button is hidden behind it, that the button still responds, and that tapping an aircraft does nothing
-- [ ] 4.5 Apply the reduced-motion setting and verify on a device or emulator with animations disabled that stripes and clouds stand still, no aircraft appear, and all actions work
-- [ ] 4.6 Make the main page the screen after the splash page and the return point from a game, and verify the flow by running the app
+- [x] 4.2 Wire Take off to start a game and Settings to open a placeholder settings page with a way back, and verify by running the app that each navigates and that returning shows the main page
+- [x] 4.3 Build the quit confirmation dialog and the back handling, and verify by running the app that back opens the dialog, Cancel and a second back close it, Quit closes the app, and the backdrop keeps moving dimmed behind the dialog
+- [x] 4.4 Verify by running the app that an aircraft crossing a button is hidden behind it, that the button still responds, and that tapping an aircraft does nothing
+- [x] 4.5 Apply the reduced-motion setting and verify on a device or emulator with animations disabled that stripes and clouds stand still, no aircraft appear, and all actions work
+- [x] 4.6 Make the main page the screen after the splash page and the return point from a game, and verify the flow by running the app
 
 ## 5. Design system
 
