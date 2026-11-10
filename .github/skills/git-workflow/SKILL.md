@@ -40,7 +40,7 @@ NEVER create a worktree for `main` or for `development`. Both are only ever chec
 1. Be on `development`, up to date: `git switch development && git pull --ff-only`.
 2. Create the OpenSpec change as the OpenSpec skill describes.
 3. Record the GitHub issue in the change's `proposal.md` as a line of its own: `GitHub issue: #<number>`.
-4. Make sure the issue names the change: its body or a comment contains the exact change name. If it does not, add a comment such as `OpenSpec change: <change-name>`.
+4. Make sure the issue names the change: its body carries the change reference block that the `triage` skill defines (it starts with `<!-- openspec-change: <change-name> -->`). If it does not, add that block to the issue body after pushing.
 5. Commit the change's files and push `development`.
 
 ## Implementing a change (`openspec apply`)
@@ -51,7 +51,7 @@ Do not implement anything until all of this is true. If any check fails, stop, s
 
 - The change's `proposal.md` contains `GitHub issue: #<number>`.
 - That issue exists in this repo and is open: `gh issue view <number> --json number,state,title,body,comments`.
-- The issue's title, body or a comment contains the exact change name.
+- The issue body carries the change reference block for this change: it contains `<!-- openspec-change: <change-name> -->` with the exact change name.
 
 ### 2. Worktree and branch from `development`
 

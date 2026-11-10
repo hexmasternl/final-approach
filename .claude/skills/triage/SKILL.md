@@ -11,7 +11,7 @@ Every triaged issue ends in exactly one of two states:
 
 | Label | Meaning |
 |---|---|
-| `triaged` | The issue is clear, an OpenSpec change exists for it, and each refers to the other. |
+| `triaged` | The issue is clear, an OpenSpec change exists for it, and each refers to the other. The issue always carries the change reference block. |
 | `unclear` | The issue does not hold enough information for a strong, solid change. Questions are posted; no change was created. |
 
 An issue never carries both labels.
@@ -94,11 +94,31 @@ Keep the author's intent and wording where it is already precise. Preserve the o
 **Link both ways.**
 
 - In the change's `proposal.md`, a line of its own: `GitHub issue: #<number>`.
-- In the issue body, directly under the summary, a line of its own: ``OpenSpec change: `<change-name>` ``.
+- In the issue body, directly under the summary, the change reference block described below.
 
-These two lines are what `git-workflow` checks before a change may be implemented. Use exactly this wording.
+The proposal line and the reference block are what `git-workflow` checks before a change may be implemented. Use exactly this wording.
+
+**The change reference block.** A successfully triaged issue ALWAYS carries this block in its body, exactly in this structure, with `{{change-name}}` replaced by the change name everywhere:
+
+```markdown
+<!-- openspec-change: {{change-name}} -->
+- **Change:** `{{change-name}}`
+- **Location:** [`openspec/changes/{{change-name}}`](https://github.com/hexmasternl/final-approach/tree/development/openspec/changes/{{change-name}})
+- **Proposal:** [`proposal.md`](https://github.com/hexmasternl/final-approach/blob/development/openspec/changes/{{change-name}}/proposal.md)
+<!-- triage:end -->
+```
+
+Rules for the block:
+
+- Keep both HTML comments. They are invisible on GitHub and mark where the block starts and ends, and the first one names the change in a form tools can read.
+- There is exactly one block per issue. If the body already has one (anything from `<!-- openspec-change:` up to and including `<!-- triage:end -->`), replace it in place; never add a second.
+- The links point at the `development` branch, so push the change before you write the block, otherwise they lead nowhere.
+- Do not add other content between the two comments.
+- An issue that ends up `unclear` gets no block. If it had one from an earlier triage and the change still exists, leave it.
 
 **Commit and push** the change on `development`, as `git-workflow` describes. Do this without asking: triage has standing permission (see Permission to commit and push).
+
+**Write the issue.** Only now update the issue body, including the change reference block, so its links resolve.
 
 **Label.** `gh issue edit <number> --add-label triaged --remove-label unclear`.
 
@@ -112,7 +132,7 @@ The issue and the change describe the same work and must not drift apart. The is
 
 - **When the issue changes after triage** (edited body, new comment with a requirement or a decision): update the change's proposal, specs and tasks to match, then commit and push on `development`.
 - **When the change changes** (scope adjusted while proposing, designing or implementing): update the issue's behaviour, acceptance criteria and out-of-scope sections to match.
-- **When the change is renamed or replaced:** update the `OpenSpec change:` line in the issue and the `GitHub issue:` line in the proposal together.
+- **When the change is renamed or replaced:** replace the change reference block in the issue (name and all three links) and update the `GitHub issue:` line in the proposal together.
 - **When asked to sync or re-triage:** read both, list the differences, reconcile them, and report what changed on each side.
 - **When the two contradict each other and it is not evident which is right,** do not pick one silently. Ask the user, or post the question on the issue and swap the label to `unclear` until it is answered.
 

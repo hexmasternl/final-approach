@@ -29,7 +29,8 @@ openspec show "<change-name>" --json --deltas-only
 
 - `proposal.md` contains a line `GitHub issue: #<number>`.
 - `gh issue view <number> --json number,state,title,body,labels,comments` shows the issue exists and is open.
-- The issue body contains ``OpenSpec change: `<change-name>` `` with the exact change name.
+- The issue body contains exactly one change reference block, as the `triage` skill defines it: it starts with `<!-- openspec-change: <change-name> -->`, ends with `<!-- triage:end -->`, and has the Change, Location and Proposal lines in between. The change name is the same in all of them and equals the real change name.
+- The Location and Proposal links point at `openspec/changes/<change-name>` on the `development` branch, and those paths exist there (`git ls-tree -r --name-only origin/development openspec/changes/<change-name>`).
 - The issue carries the `triaged` label and not `unclear`.
 
 ### 3. The issue and the change say the same thing
