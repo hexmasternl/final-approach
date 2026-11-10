@@ -1,6 +1,7 @@
 package nl.hexmaster.finalapproach.ui.menu
 
 import nl.hexmaster.finalapproach.domain.AircraftType
+import nl.hexmaster.finalapproach.ui.sprites.SKY_RAY_DEGREES
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 
 /**
@@ -25,7 +26,7 @@ data class MenuBackdropConfig(
     /** Time for one full turn of the stripe pattern. */
     val rotationPeriodSeconds: Float = 240f,
     /** Angle covered by one stripe. */
-    val rayDegrees: Float = 9f,
+    val rayDegrees: Float = SKY_RAY_DEGREES,
     /** The three clouds. */
     val clouds: List<CloudSpec> = listOf(
         CloudSpec(anchorX = 0.20f, anchorY = 0.16f, width = 150f, periodSeconds = 11f, phase = 0f),

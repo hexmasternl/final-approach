@@ -11,8 +11,8 @@ import nl.hexmaster.finalapproach.ui.theme.FaShadows
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /**
- * Draws the main page backdrop for [state], back to front: rotating stripes, clouds, then the
- * passing aircraft. It only draws; [MenuBackdropSimulation] decides what moves.
+ * Draws the main page backdrop for [state], back to front: rotating stripes, the passing aircraft,
+ * then the clouds, which fly higher. It only draws; [MenuBackdropSimulation] decides what moves.
  */
 @Composable
 internal fun MenuBackdrop(
@@ -26,14 +26,7 @@ internal fun MenuBackdrop(
         val width = size.width / density
         val height = size.height / density
 
-        drawSunburst(center, state.rotationDegrees, config.rayDegrees, colors)
-
-        // Clouds fly higher than aircraft, so their shadow falls further away.
-        val cloudShadow = Offset(FaShadows.floatOffsetX.toPx(), FaShadows.floatOffsetY.toPx()) * CLOUD_SHADOW_FACTOR
-        for (cloud in config.clouds) {
-            val at = simulation.cloudCenter(cloud, state.elapsedSeconds, width, height)
-            drawCloud(Offset(at.x * density, at.y * density), cloud.width * density, colors, cloudShadow)
-        }
+        drawSunburst(center, state.rotationDegrees, colors, config.rayDegrees)
 
         val slot = state.slot
         if (slot is AircraftSlot.Flying) {
@@ -48,6 +41,13 @@ internal fun MenuBackdrop(
                 colors = colors,
                 shadowOffset = Offset(FaShadows.floatOffsetX.toPx(), FaShadows.floatOffsetY.toPx()) * config.aircraftScale,
             )
+        }
+
+        // Clouds fly higher than aircraft, so their shadow falls further away.
+        val cloudShadow = Offset(FaShadows.floatOffsetX.toPx(), FaShadows.floatOffsetY.toPx()) * CLOUD_SHADOW_FACTOR
+        for (cloud in config.clouds) {
+            val at = simulation.cloudCenter(cloud, state.elapsedSeconds, width, height)
+            drawCloud(Offset(at.x * density, at.y * density), cloud.width * density, colors, cloudShadow)
         }
     }
 }

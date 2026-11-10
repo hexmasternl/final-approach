@@ -46,7 +46,6 @@ private object FaDialogDefaults {
  *
  * @param title one or two words
  * @param body one sentence
- * @param animate false shows the dialog in place at once, for reduced motion
  * @param actions the buttons, primary first
  */
 @Composable
@@ -54,11 +53,12 @@ fun FaDialog(
     title: String,
     body: String,
     modifier: Modifier = Modifier,
-    animate: Boolean = true,
     actions: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = FaTheme.colors
     val type = FaTheme.type
+    // With reduced motion the dialog is in place at once.
+    val animate = !FaTheme.reduceMotion
     val arrival = remember { Animatable(if (animate) 0f else 1f) }
     LaunchedEffect(Unit) {
         if (animate) arrival.animateTo(1f, tween(FaMotion.durDialogMs, easing = FaMotion.easeBounce))

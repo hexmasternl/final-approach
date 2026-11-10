@@ -32,7 +32,6 @@ enum class PlaceholderGround { Sky, Lawn }
 private object PlaceholderDefaults {
     val panelMaxWidth = 380.dp
     val lawnStripe = 64.dp
-    const val SKY_RAY_DEGREES = 9f
     const val BACK = "Back"
 }
 
@@ -56,7 +55,7 @@ fun PlaceholderPage(
     Box(modifier.fillMaxSize()) {
         Canvas(Modifier.fillMaxSize()) {
             when (ground) {
-                PlaceholderGround.Sky -> drawSunburst(center, 0f, PlaceholderDefaults.SKY_RAY_DEGREES, colors)
+                PlaceholderGround.Sky -> drawSunburst(center, 0f, colors)
                 PlaceholderGround.Lawn -> drawLawn(PlaceholderDefaults.lawnStripe.toPx(), colors)
             }
         }
@@ -76,7 +75,7 @@ fun PlaceholderPage(
                         bottom = FaDimens.space5 + FaShadows.lipLg,
                     ),
             ) {
-                BasicText(title, style = type.titleLg.copy(color = colors.ink))
+                BasicText(title, style = type.titleMd.copy(color = colors.ink))
                 BasicText(
                     body,
                     modifier = Modifier.padding(top = FaDimens.space3, bottom = FaDimens.space5),

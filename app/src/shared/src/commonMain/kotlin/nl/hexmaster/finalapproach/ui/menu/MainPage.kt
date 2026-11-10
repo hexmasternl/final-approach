@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import kotlin.random.Random
@@ -43,7 +44,8 @@ private object MainPageText {
     const val QUIT_BODY = "Leave the tower for now?"
     const val QUIT = "Quit"
     const val CANCEL = "Cancel"
-    fun version(name: String) = "V $name"
+    /** The label style is written in capitals. */
+    fun version(name: String) = "V ${name.uppercase()}"
 }
 
 private object MainPageDefaults {
@@ -92,7 +94,9 @@ fun MainPage(
     Box(modifier.fillMaxSize().onSizeChanged { screen = it }) {
         MenuBackdrop(backdrop, simulation, config, Modifier.fillMaxSize())
 
-        Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+        // While the dialog is open, the page behind it is hidden from screen readers.
+        val behindDialog = if (quitOpen) Modifier.clearAndSetSemantics { } else Modifier
+        Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).then(behindDialog)) {
             Column(
                 Modifier.align(Alignment.Center).width(MainPageDefaults.menuWidth),
                 verticalArrangement = Arrangement.spacedBy(FaDimens.space4),
@@ -124,7 +128,6 @@ fun MainPage(
             FaDialog(
                 title = MainPageText.QUIT_TITLE,
                 body = MainPageText.QUIT_BODY,
-                animate = !host.reduceMotion,
             ) {
                 FaButton(
                     text = MainPageText.QUIT,

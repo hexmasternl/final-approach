@@ -11,7 +11,7 @@ The chunky toy-block button for every text action in menus and dialogs.
 
 Sizes: `fa-btn--sm` (`button-sm`, 40px), default (`button-md`, 52px), `fa-btn--lg` (`button-lg`, 64px, main call to action only). `fa-btn--block` fills the dialog width.
 
-**Construction.** Fill, `line-3` `outline` border, `radius-md`, an inset 5px lip in the deep colour and `shadow-lip` below. Label in `button-label`, colour `on-accent` (ghost: `ink`).
+**Construction.** Fill, `line-3` `outline` border, `radius-md`, an inset 5px lip in the deep colour and `shadow-lip` below. Label in `button-label` (`button-label-sm` on small, `button-label-lg` on large), colour `on-accent` (ghost: `ink`). Large buttons use `radius-lg`.
 
 **States.** Pressed: move down 2px and swap `shadow-lip` for `shadow-lip-sm`, in `dur-press` with `ease-snap`. Focus: the two-tone ring, 3px `focus` then 3px `outline`. Disabled: `opacity-disabled`, no press movement.
 

@@ -129,7 +129,8 @@ private inline fun DrawScope.drawSprite(
             when (part.motion) {
                 SpriteMotion.None -> drawPart(part, parsed.path)
                 SpriteMotion.Propeller -> {
-                    val flick = abs(cos(2.0 * PI * turns)).toFloat()
+                    // Full width, narrow, full width: once per turn.
+                    val flick = abs(cos(PI * turns)).toFloat()
                     val width = PROPELLER_MIN_SCALE + (1f - PROPELLER_MIN_SCALE) * flick
                     withTransform({ scale(width, 1f, pivot) }) { drawPart(part, parsed.path) }
                 }

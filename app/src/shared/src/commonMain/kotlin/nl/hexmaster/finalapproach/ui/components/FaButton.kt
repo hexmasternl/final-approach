@@ -1,5 +1,8 @@
 package nl.hexmaster.finalapproach.ui.components
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,6 +28,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
@@ -32,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.sprites.drawIcon
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
+import nl.hexmaster.finalapproach.ui.theme.FaMotion
+import nl.hexmaster.finalapproach.ui.theme.FaOpacity
 import nl.hexmaster.finalapproach.ui.theme.FaShadows
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
@@ -46,8 +52,8 @@ private object FaButtonDefaults {
     val deepBand = 5.dp
     val deepBandSmall = 3.dp
 
-    /** How far the face travels down when pressed. */
-    val pressTravel = 2.dp
+    /** A pressed face moves down by the difference between the resting and the pressed lip. */
+    val pressTravel = FaShadows.lip - FaShadows.lipSm
 
     /** Width of each band of the two-tone focus ring. */
     val focusBand = 3.dp
@@ -57,6 +63,7 @@ private object FaButtonDefaults {
  * The chunky toy-block button. The label starts with a verb and is one to three words.
  *
  * @param icon optional leading icon
+ * @param enabled a disabled button is faded and does not react
  */
 @Composable
 fun FaButton(
@@ -66,6 +73,7 @@ fun FaButton(
     variant: FaButtonVariant = FaButtonVariant.Primary,
     size: FaButtonSize = FaButtonSize.Medium,
     icon: FaIcon? = null,
+    enabled: Boolean = true,
 ) {
     val colors = FaTheme.colors
     val type = FaTheme.type
@@ -88,22 +96,33 @@ fun FaButton(
 
         FaButtonSize.Large -> ButtonSpec(
             FaDimens.buttonLg, FaDimens.space6, FaDimens.line3, FaDimens.radiusLg,
-            FaShadows.lip, FaButtonDefaults.deepBand, FaDimens.iconMd, type.titleLg,
+            FaShadows.lip, FaButtonDefaults.deepBand, FaDimens.iconMd, type.buttonLabelLg,
         )
     }
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
     val focused by interaction.collectIsFocusedAsState()
-    val travel = if (pressed) FaButtonDefaults.pressTravel else 0.dp
-    val lip = if (pressed) FaShadows.lipSm else spec.lip
+    // Pressing drops the face onto its lip, in dur-press with ease-snap; at once with reduced motion.
+    val pressMotion = if (FaTheme.reduceMotion) snap() else tween<Dp>(FaMotion.durPressMs, easing = FaMotion.easeSnap)
+    val down = pressed && enabled
+    val travel by animateDpAsState(if (down) FaButtonDefaults.pressTravel else 0.dp, pressMotion)
+    val lip = spec.lip - travel
     val outline = colors.outline
     val focus = colors.focus
 
     Box(
         modifier
             .defaultMinSize(minWidth = FaDimens.touchMin)
-            .height(spec.height + spec.lip)
-            .clickable(interactionSource = interaction, indication = null, role = Role.Button, onClick = onClick)
+            // Small buttons are drawn 40dp high but stay a full touch target.
+            .height(maxOf(spec.height + spec.lip, FaDimens.touchMin))
+            .graphicsLayer { alpha = if (enabled) 1f else FaOpacity.disabled }
+            .clickable(
+                interactionSource = interaction,
+                indication = null,
+                enabled = enabled,
+                role = Role.Button,
+                onClick = onClick,
+            )
             .drawBehind {
                 val faceHeight = spec.height.toPx()
                 val top = travel.toPx()

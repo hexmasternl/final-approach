@@ -3,7 +3,6 @@ package nl.hexmaster.finalapproach.ui.sprites
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -59,7 +58,8 @@ internal fun DrawScope.drawCloud(center: Offset, widthPx: Float, colors: FaColor
             scale(scale, scale, Offset.Zero)
         }) {
             for ((x, y, r) in cloudLobes) {
-                drawCircle(Color.Black, r + CLOUD_EDGE_UNITS, Offset(x, y), blendMode = BlendMode.Clear)
+                // The colour does not matter: Clear erases whatever it covers.
+                drawCircle(colors.outline, r + CLOUD_EDGE_UNITS, Offset(x, y), blendMode = BlendMode.Clear)
             }
         }
     }
@@ -75,11 +75,19 @@ internal fun DrawScope.drawCloud(center: Offset, widthPx: Float, colors: FaColor
     }
 }
 
+/** Angle covered by one ray of the sky sunburst, and by each gap between rays. */
+internal const val SKY_RAY_DEGREES = 9f
+
 /**
  * Fills the draw area with the sky sunburst: rays of `sky-300` on `bg-sky`, fanning out from
  * [center] and turned by [rotationDegrees]. Each ray and each gap covers [rayDegrees].
  */
-internal fun DrawScope.drawSunburst(center: Offset, rotationDegrees: Float, rayDegrees: Float, colors: FaColors) {
+internal fun DrawScope.drawSunburst(
+    center: Offset,
+    rotationDegrees: Float,
+    colors: FaColors,
+    rayDegrees: Float = SKY_RAY_DEGREES,
+) {
     drawRect(colors.bgSky)
     // Far enough to cover every corner from any centre inside the draw area.
     val reach = hypot(size.width, size.height)

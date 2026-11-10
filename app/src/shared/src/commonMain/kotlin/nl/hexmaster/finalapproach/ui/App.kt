@@ -22,7 +22,7 @@ private object AppText {
 /** The whole app. The host supplies everything platform-specific through [host]. */
 @Composable
 fun App(host: AppHost) {
-    FaTheme {
+    FaTheme(reduceMotion = host.reduceMotion) {
         var screen by rememberSaveable { mutableStateOf(Screen.Main) }
         when (screen) {
             Screen.Main -> MainPage(
