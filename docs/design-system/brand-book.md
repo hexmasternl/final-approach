@@ -22,6 +22,10 @@ Final Approach is a top-down air traffic game that looks like a box of toys tipp
 
 There are two themes: **Day** (default) and **Night**, for the planned night levels. Night darkens the sky and moonlights the field. Panels, chips and aircraft stay paper-light and accent fills stay bright, so outlines and `on-accent` text hold in both. Do not invert the UI for Night.
 
+### Sunset
+
+The splash page has a palette of its own: `sunset-sky-top`, `sunset-sky-upper`, `sunset-sky-lower` and `sunset-sky-horizon` as four flat sky bands, `sunset-sun`, `sunset-silhouette` for the airport, and `sunset-tower-light` for the tower window. These seven colours are for that one scene. They are not a theme, and nothing else may use them.
+
 ## Type
 
 - Set headers, titles, button labels and the score in **DynaPuff** (`font-display`): styles `display-xl` to `button-label-sm`.
