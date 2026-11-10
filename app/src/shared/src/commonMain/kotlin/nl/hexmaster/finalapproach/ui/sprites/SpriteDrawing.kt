@@ -43,6 +43,10 @@ private val parsedSprites: Map<AircraftType, List<ParsedPart>> by lazy {
     aircraftSprites.mapValues { (_, parts) -> parts.map { ParsedPart(it, parsePath(it.pathData)) } }
 }
 
+private val parsedSideViewLightProp: List<ParsedPart> by lazy {
+    sideViewLightProp.map { ParsedPart(it, parsePath(it.pathData)) }
+}
+
 private fun roundStroke(width: Float) = Stroke(width = width, cap = StrokeCap.Round, join = StrokeJoin.Round)
 
 /**
@@ -88,17 +92,48 @@ internal fun DrawScope.drawAircraft(
         }
     }
     drawSprite(parts, center, sizePx, headingDegrees, timeSeconds) { part, path ->
-        val outline = colors.outline
-        when (part.paint) {
-            SpritePaint.Body -> fillAndOutline(path, colors.fuselage, outline, OUTLINE_UNITS)
-            SpritePaint.Livery -> fillAndOutline(path, livery, outline, OUTLINE_UNITS)
-            SpritePaint.Shade -> fillAndOutline(path, colors.fuselageShade, outline, OUTLINE_UNITS)
-            SpritePaint.Glass -> fillAndOutline(path, colors.glass, outline, GLASS_OUTLINE_UNITS)
-            SpritePaint.Shine -> drawPath(path, colors.glassShine, style = roundStroke(SHINE_UNITS))
-            SpritePaint.Dark -> drawPath(path, outline)
-            SpritePaint.Blur -> drawPath(path, colors.propBlur, alpha = ROTOR_DISC_ALPHA)
-            SpritePaint.Line -> drawPath(path, outline, style = roundStroke(LINE_UNITS))
-        }
+        paintPart(part, path, livery, colors)
+    }
+}
+
+/**
+ * Draws the side-view light prop, nose to the right, with no ground shadow: it is seen against
+ * the sky.
+ *
+ * @param center where the middle of the sprite goes, in pixels
+ * @param lengthPx nose-to-tail length in pixels
+ */
+internal fun DrawScope.drawSideViewLightProp(
+    livery: Color,
+    center: Offset,
+    lengthPx: Float,
+    timeSeconds: Float,
+    colors: FaColors,
+) {
+    drawSprite(
+        parts = parsedSideViewLightProp,
+        center = center,
+        sizePx = lengthPx,
+        headingDegrees = 0f,
+        timeSeconds = timeSeconds,
+        gridWidth = SIDE_SPRITE_WIDTH,
+        gridHeight = SIDE_SPRITE_HEIGHT,
+    ) { part, path ->
+        paintPart(part, path, livery, colors)
+    }
+}
+
+private fun DrawScope.paintPart(part: SpritePart, path: Path, livery: Color, colors: FaColors) {
+    val outline = colors.outline
+    when (part.paint) {
+        SpritePaint.Body -> fillAndOutline(path, colors.fuselage, outline, OUTLINE_UNITS)
+        SpritePaint.Livery -> fillAndOutline(path, livery, outline, OUTLINE_UNITS)
+        SpritePaint.Shade -> fillAndOutline(path, colors.fuselageShade, outline, OUTLINE_UNITS)
+        SpritePaint.Glass -> fillAndOutline(path, colors.glass, outline, GLASS_OUTLINE_UNITS)
+        SpritePaint.Shine -> drawPath(path, colors.glassShine, style = roundStroke(SHINE_UNITS))
+        SpritePaint.Dark -> drawPath(path, outline)
+        SpritePaint.Blur -> drawPath(path, colors.propBlur, alpha = ROTOR_DISC_ALPHA)
+        SpritePaint.Line -> drawPath(path, outline, style = roundStroke(LINE_UNITS))
     }
 }
 
@@ -113,27 +148,31 @@ private inline fun DrawScope.drawSprite(
     sizePx: Float,
     headingDegrees: Float,
     timeSeconds: Float,
+    gridWidth: Float = SPRITE_UNITS,
+    gridHeight: Float = SPRITE_UNITS,
     crossinline drawPart: DrawScope.(SpritePart, Path) -> Unit,
 ) {
-    val scale = sizePx / SPRITE_UNITS
+    val scale = sizePx / gridWidth
     val turns = timeSeconds * 1000f / FaMotion.durRotorMs
+    // Full width, narrow, full width: once per turn.
+    val flick = PROPELLER_MIN_SCALE + (1f - PROPELLER_MIN_SCALE) * abs(cos(PI * turns)).toFloat()
     withTransform({
         translate(center.x, center.y)
         rotate(headingDegrees, Offset.Zero)
         scale(scale, scale, Offset.Zero)
-        translate(-SPRITE_UNITS / 2f, -SPRITE_UNITS / 2f)
+        translate(-gridWidth / 2f, -gridHeight / 2f)
     }) {
         for (parsed in parts) {
             val part = parsed.part
             val pivot = Offset(part.pivotX, part.pivotY)
             when (part.motion) {
                 SpriteMotion.None -> drawPart(part, parsed.path)
-                SpriteMotion.Propeller -> {
-                    // Full width, narrow, full width: once per turn.
-                    val flick = abs(cos(PI * turns)).toFloat()
-                    val width = PROPELLER_MIN_SCALE + (1f - PROPELLER_MIN_SCALE) * flick
-                    withTransform({ scale(width, 1f, pivot) }) { drawPart(part, parsed.path) }
-                }
+                // Seen from above a propeller changes width; seen from the side, height.
+                SpriteMotion.Propeller ->
+                    withTransform({ scale(flick, 1f, pivot) }) { drawPart(part, parsed.path) }
+
+                SpriteMotion.PropellerSide ->
+                    withTransform({ scale(1f, flick, pivot) }) { drawPart(part, parsed.path) }
 
                 SpriteMotion.Rotor -> withTransform({ rotate((turns * 360f) % 360f, pivot) }) {
                     drawPart(part, parsed.path)

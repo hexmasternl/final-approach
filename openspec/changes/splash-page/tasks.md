@@ -14,10 +14,10 @@
 
 ## 3. Scene drawing
 
-- [ ] 3.1 Draw the sky bands and sun on a `Canvas` and verify in a preview that the sky fills the screen at phone portrait and landscape sizes
-- [ ] 3.2 Draw the airport silhouette with the control tower from a normalised path anchored to the bottom edge, and verify in previews at a narrow and a wide size that it keeps its proportions and the tower is the tallest shape
-- [ ] 3.3 Draw the side-view light prop and the tow line in the design-system style and verify in a preview that it reads as an airplane at splash size
-- [ ] 3.4 Draw the banner with the text "Final Approach" in the display font and the sliced wave, and verify in a preview that the text stays readable at the peak of the wave
+- [x] 3.1 Draw the sky bands and sun on a `Canvas` and verify in a preview that the sky fills the screen at phone portrait and landscape sizes
+- [x] 3.2 Draw the airport silhouette with the control tower from a normalised path anchored to the bottom edge, and verify in previews at a narrow and a wide size that it keeps its proportions and the tower is the tallest shape
+- [x] 3.3 Draw the side-view light prop and the tow line in the design-system style and verify in a preview that it reads as an airplane at splash size
+- [x] 3.4 Draw the banner with the text "Final Approach" in the display font and the sliced wave, and verify in a preview that the text stays readable at the peak of the wave
 - [x] 3.5 Add the side-view airplane and the banner to the design system's assets with a usage note, and verify they appear in the showcase page
 
 ## 4. Screen and app flow

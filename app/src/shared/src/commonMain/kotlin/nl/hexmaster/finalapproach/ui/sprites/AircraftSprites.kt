@@ -7,7 +7,7 @@ import nl.hexmaster.finalapproach.domain.AircraftType
 internal enum class SpritePaint { Body, Livery, Shade, Glass, Shine, Dark, Blur, Line }
 
 /** How a sprite part moves while the aircraft flies. */
-internal enum class SpriteMotion { None, Propeller, Rotor }
+internal enum class SpriteMotion { None, Propeller, PropellerSide, Rotor }
 
 /** One shape of a sprite, as SVG path data on the 96-unit sprite square (nose up). */
 internal class SpritePart(
@@ -76,4 +76,25 @@ internal val aircraftSprites: Map<AircraftType, List<SpritePart>> = mapOf(
         SpritePart(SpritePaint.Dark, "M 48 3 H 48 A 2.5 2.5 0 0 1 50.5 5.5 V 82.5 A 2.5 2.5 0 0 1 48 85 H 48 A 2.5 2.5 0 0 1 45.5 82.5 V 5.5 A 2.5 2.5 0 0 1 48 3 Z", SpriteMotion.Rotor, 48f, 44f),
         SpritePart(SpritePaint.Dark, "M 43 44 A 5 5 0 1 0 53 44 A 5 5 0 1 0 43 44 Z"),
     ),
+)
+
+/** Size of the grid the side-view sprite is drawn on. Its nose points right. */
+internal const val SIDE_SPRITE_WIDTH = 96f
+internal const val SIDE_SPRITE_HEIGHT = 64f
+
+/** The light prop seen from the side. It tows the banner on the splash page; gameplay never uses it. */
+internal val sideViewLightProp: List<SpritePart> = listOf(
+    SpritePart(SpritePaint.Livery, "M 8 27 H 18 A 3 3 0 0 1 21 30 V 30 A 3 3 0 0 1 18 33 H 8 A 3 3 0 0 1 5 30 V 30 A 3 3 0 0 1 8 27 Z"),
+    SpritePart(SpritePaint.Livery, "M 13 31 L 8 10 q 0 -4 5 -4 l 8 2 9 23 z"),
+    SpritePart(SpritePaint.Line, "M 40 46 v 6 M 60 46 v 6"),
+    SpritePart(SpritePaint.Dark, "M 35 54 A 5 5 0 1 0 45 54 A 5 5 0 1 0 35 54 Z"),
+    SpritePart(SpritePaint.Dark, "M 55 54 A 5 5 0 1 0 65 54 A 5 5 0 1 0 55 54 Z"),
+    SpritePart(SpritePaint.Body, "M 9 34 q 0 -8 12 -8 l 42 -4 q 22 0 26 12 0 10 -18 12 H 26 q -17 -2 -17 -12 z"),
+    SpritePart(SpritePaint.Livery, "M 22.5 36 H 61.5 A 2.5 2.5 0 0 1 64 38.5 V 38.5 A 2.5 2.5 0 0 1 61.5 41 H 22.5 A 2.5 2.5 0 0 1 20 38.5 V 38.5 A 2.5 2.5 0 0 1 22.5 36 Z"),
+    SpritePart(SpritePaint.Glass, "M 58 25.5 h 15 q 7 2 8.5 8.5 H 60 z"),
+    SpritePart(SpritePaint.Shine, "M 64 28.5 l -2 3"),
+    SpritePart(SpritePaint.Line, "M 52 22 v -5"),
+    SpritePart(SpritePaint.Livery, "M 40 10 H 68 A 4 4 0 0 1 72 14 V 14 A 4 4 0 0 1 68 18 H 40 A 4 4 0 0 1 36 14 V 14 A 4 4 0 0 1 40 10 Z"),
+    SpritePart(SpritePaint.Dark, "M 90.5 16 H 90.5 A 2.5 2.5 0 0 1 93 18.5 V 49.5 A 2.5 2.5 0 0 1 90.5 52 H 90.5 A 2.5 2.5 0 0 1 88 49.5 V 18.5 A 2.5 2.5 0 0 1 90.5 16 Z", SpriteMotion.PropellerSide, 90.5f, 34f),
+    SpritePart(SpritePaint.Dark, "M 85 34 A 4.5 4.5 0 1 0 94 34 A 4.5 4.5 0 1 0 85 34 Z"),
 )
