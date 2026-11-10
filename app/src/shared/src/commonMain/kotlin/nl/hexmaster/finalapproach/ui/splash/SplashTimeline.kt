@@ -1,8 +1,6 @@
 package nl.hexmaster.finalapproach.ui.splash
 
-import kotlin.math.PI
-import kotlin.math.exp
-import kotlin.math.sin
+import nl.hexmaster.finalapproach.ui.theme.FaMotion
 
 /** Where the splash animation is. */
 enum class SplashPhase {
@@ -116,13 +114,16 @@ class SplashTimeline(
         )
     }
 
-    /** One small bounce: down, back up a little past rest, and still. */
-    private fun dip(progress: Float): Float =
-        (exp(-DIP_DAMPING * progress) * sin(2.0 * PI * DIP_SWINGS * progress)).toFloat()
+    /**
+     * One dip, shaped by ease-bounce: the banner goes down, comes back a little past rest as the
+     * easing overshoots, and is still.
+     */
+    private fun dip(progress: Float): Float {
+        val eased = FaMotion.easeBounce.transform(progress)
+        return 4f * eased * (1f - eased)
+    }
 
     private companion object {
         const val CENTRE = 0.5f
-        const val DIP_DAMPING = 5f
-        const val DIP_SWINGS = 1.25
     }
 }

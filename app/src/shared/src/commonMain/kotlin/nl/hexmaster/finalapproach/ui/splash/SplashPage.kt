@@ -18,6 +18,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -30,14 +31,15 @@ import nl.hexmaster.finalapproach.ui.theme.Sunset
 
 private object SplashText {
     const val NAME = "Final Approach"
+    const val SKIP = "Skip"
 }
 
 private object SplashPageDefaults {
     /** Longest step the animation takes in one frame, so a stalled frame does not make it jump. */
     const val MAX_FRAME_SECONDS = 0.1f
 
-    /** Room kept free between the name and the banner's outline, on each side. */
-    val bannerPaddingX = FaDimens.space4
+    /** From the edge of the banner to the name: its outline, then space-5 of clear room. */
+    val bannerPaddingX = FaDimens.line3 + FaDimens.space5
 }
 
 /**
@@ -110,7 +112,14 @@ fun SplashPage(
         modifier
             .fillMaxSize()
             .onSizeChanged { screen = it }
-            .semantics { contentDescription = SplashText.NAME }
+            .semantics {
+                contentDescription = SplashText.NAME
+                // The same as a tap, for screen readers, keyboards and switch access.
+                onClick(label = SplashText.SKIP) {
+                    handOver()
+                    true
+                }
+            }
             .pointerInput(Unit) { detectTapGestures { handOver() } },
     ) {
         drawSunsetSky(Sunset)

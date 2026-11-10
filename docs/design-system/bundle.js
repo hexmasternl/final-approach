@@ -121,6 +121,16 @@
     lights: ['M630 92l-7-30h66l-7 30z']
   };
 
+  /* The rest of the sunset scene. bandEnds: where each of the four sky bands ends, as a share
+     of the screen height from the top. sun: centre and radius on the silhouette grid, low and
+     partly behind the terminal. tower: the control tower, antenna tip to ground, is at least
+     minShare and at most maxShare of the screen height; the silhouette scales as a whole. */
+  var SUNSET = {
+    bandEnds: [0.30, 0.52, 0.72, 1],
+    sun: { x: 400, y: 154, r: 88 },
+    tower: { topY: 10, minShare: 0.24, maxShare: 0.44 }
+  };
+
   /* 24px icons. s = stroked path data, f = filled markup. */
   var ICONS = {
     play: { f: '<path d="M8.500 5.500v13l10.500-6.500z" stroke-width="3" stroke-linejoin="round"/>' },
@@ -234,7 +244,7 @@
   }
 
   var api = {
-    AIRCRAFT: AIRCRAFT, SIDE_AIRCRAFT: SIDE_AIRCRAFT, SILHOUETTE: SILHOUETTE, ICONS: ICONS, paint: paint,
+    AIRCRAFT: AIRCRAFT, SIDE_AIRCRAFT: SIDE_AIRCRAFT, SILHOUETTE: SILHOUETTE, SUNSET: SUNSET, ICONS: ICONS, paint: paint,
     sideAircraftSvg: sideAircraftSvg, silhouetteSvg: silhouetteSvg,
     aircraftSvg: aircraftSvg, iconSvg: iconSvg, runwaySvg: runwaySvg, helipadSvg: helipadSvg,
     cloudSvg: cloudSvg, windsockSvg: windsockSvg, burstSvg: burstSvg

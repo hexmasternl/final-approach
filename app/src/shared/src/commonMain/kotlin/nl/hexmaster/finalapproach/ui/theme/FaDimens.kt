@@ -48,4 +48,6 @@ object FaDimens {
     val spriteTurboprop = 68.dp
     val spriteJet = 72.dp
     val spriteJumbo = 104.dp
+    val spriteLightPropSide = 116.dp
+    val towLine = 44.dp
 }

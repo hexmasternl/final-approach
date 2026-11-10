@@ -182,6 +182,8 @@ w('sprites/AircraftSprites.kt', sprites);
 
 // ---------- airport silhouette
 const sil = FA.SILHOUETTE;
+const sunset = FA.SUNSET;
+const fl = n => (Number.isInteger(n) ? n + 'f' : n + 'f');
 w('sprites/AirportSilhouette.kt', `// Generated from the design system (components/bundle.js). Do not edit by hand.
 package nl.hexmaster.finalapproach.ui.sprites
 
@@ -194,6 +196,21 @@ internal object AirportSilhouette {
     const val WIDTH = ${sil.width}f
     const val HEIGHT = ${sil.height}f
     const val BASE_Y = ${sil.baseY}f
+
+    /** Where each of the four sky bands ends, as a share of the screen height from the top. */
+    val skyBandEnds: FloatArray = floatArrayOf(${sunset.bandEnds.map(fl).join(', ')})
+
+    /** The sun on this grid: low, and partly behind the terminal. */
+    const val SUN_X = ${fl(sunset.sun.x)}
+    const val SUN_Y = ${fl(sunset.sun.y)}
+    const val SUN_RADIUS = ${fl(sunset.sun.r)}
+
+    /** The control tower, tip of the antenna to the ground. */
+    const val TOWER_HEIGHT = ${fl(sil.baseY - sunset.tower.topY)}
+
+    /** The tower is at least this tall and at most that tall, as a share of the screen height. */
+    const val MIN_TOWER_SHARE = ${fl(sunset.tower.minShare)}
+    const val MAX_TOWER_SHARE = ${fl(sunset.tower.maxShare)}
 
     /** Buildings, parked aircraft and trees. The control tower is the tallest shape. */
     val shapes: List<String> = listOf(

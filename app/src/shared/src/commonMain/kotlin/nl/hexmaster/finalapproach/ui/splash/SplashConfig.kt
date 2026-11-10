@@ -1,5 +1,6 @@
 package nl.hexmaster.finalapproach.ui.splash
 
+import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaMotion
 
 /** Every tunable value of the splash page. Lengths are in dp, times in seconds. */
@@ -7,9 +8,9 @@ data class SplashConfig(
     /** How fast the airplane crosses the screen, in screen widths per second. */
     val airplaneSpeed: Float = 0.34f,
     /** Length of the side-view airplane, nose to tail. */
-    val airplaneLength: Float = 116f,
+    val airplaneLength: Float = FaDimens.spriteLightPropSide.value,
     /** Length of the tow line between the airplane's tail and the banner. */
-    val towLineLength: Float = 44f,
+    val towLineLength: Float = FaDimens.towLine.value,
     /** The banner is this share of the screen width, but never wider than [bannerMaxWidth]. */
     val bannerWidthFraction: Float = 0.62f,
     val bannerMaxWidth: Float = 420f,
@@ -18,7 +19,7 @@ data class SplashConfig(
     /** Height at which the airplane and the banner fly, as a share of the screen height from the top. */
     val flightHeight: Float = 0.3f,
     /** Time the banner takes to settle after it lets go. */
-    val settleSeconds: Float = 0.6f,
+    val settleSeconds: Float = FaMotion.durBurstMs / 1000f,
     /** Time between the banner settling and the page handing over. */
     val handOverSeconds: Float = 2f,
     /** How far the banner dips when it lets go. */

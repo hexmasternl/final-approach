@@ -73,14 +73,14 @@ fa-burst[data-loop] { animation: fa-burst calc(var(--dur-burst) * 3) var(--ease-
 [state="ok"] > svg .fa-zone { stroke: var(--zone-ok); animation: fa-pulse 1s var(--ease-sway) infinite alternate; }
 [state="no"] > svg .fa-zone { stroke: var(--zone-no); stroke-dasharray: 4 16; stroke-linecap: round; }
 
-fa-side-aircraft { width: 144px; height: 96px; }
+fa-side-aircraft { width: var(--sprite-light-prop-side); aspect-ratio: 96 / 64; }
 .fa-prop-side { transform-box: fill-box; transform-origin: center; animation: fa-prop-side var(--dur-rotor) linear infinite; }
 fa-silhouette { display: block; width: 100%; }
 
 /* ---------- Splash: sunset sky and banner ---------- */
 .fa-sunset { background: linear-gradient(180deg, var(--sunset-sky-top) 0 30%, var(--sunset-sky-upper) 30% 52%, var(--sunset-sky-lower) 52% 72%, var(--sunset-sky-horizon) 72% 100%); }
 .fa-sunset__sun { position: absolute; border-radius: 50%; background: var(--sunset-sun); }
-.fa-banner { display: inline-block; padding: var(--space-3) var(--space-5); border: var(--line-3) solid var(--outline); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); font: 700 36px/40px var(--font-display); white-space: nowrap; }
+.fa-banner { display: inline-block; padding: var(--space-3) var(--space-5); /* space-5 of clear room beside the name */ border: var(--line-3) solid var(--outline); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); font: 700 36px/40px var(--font-display); white-space: nowrap; }
 .fa-banner[data-loop] { animation: fa-banner var(--dur-sway) var(--ease-sway) infinite alternate; }
 .fa-towline { fill: none; stroke: var(--outline); stroke-width: var(--line-2); stroke-linecap: round; }
 

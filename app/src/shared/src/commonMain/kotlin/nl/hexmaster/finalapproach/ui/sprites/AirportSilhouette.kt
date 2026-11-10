@@ -11,6 +11,21 @@ internal object AirportSilhouette {
     const val HEIGHT = 336f
     const val BASE_Y = 290f
 
+    /** Where each of the four sky bands ends, as a share of the screen height from the top. */
+    val skyBandEnds: FloatArray = floatArrayOf(0.3f, 0.52f, 0.72f, 1f)
+
+    /** The sun on this grid: low, and partly behind the terminal. */
+    const val SUN_X = 400f
+    const val SUN_Y = 154f
+    const val SUN_RADIUS = 88f
+
+    /** The control tower, tip of the antenna to the ground. */
+    const val TOWER_HEIGHT = 280f
+
+    /** The tower is at least this tall and at most that tall, as a share of the screen height. */
+    const val MIN_TOWER_SHARE = 0.24f
+    const val MAX_TOWER_SHARE = 0.44f
+
     /** Buildings, parked aircraft and trees. The control tower is the tallest shape. */
     val shapes: List<String> = listOf(
         "M 30 290 V 276 q 0 -8 10 -8 h 88 q 10 0 10 8 v 14 z",

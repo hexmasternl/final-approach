@@ -27,23 +27,8 @@ import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.SunsetColors
 
-/** Geometry of the splash scene that is not a token or a timing. */
+/** Geometry of the splash scene that the design system states in the Banner guideline, not as a token. */
 internal object SplashSceneDefaults {
-    /** Where each sky band ends, as a share of the screen height from the top. */
-    val skyBandEnds = floatArrayOf(0.30f, 0.52f, 0.72f, 1f)
-
-    /** The control tower, tip of the antenna to the ground, on the silhouette grid. */
-    const val TOWER_HEIGHT_UNITS = AirportSilhouette.BASE_Y - 10f
-
-    /** The tower is at least this tall and at most that tall, as a share of the screen height. */
-    const val MIN_TOWER_SHARE = 0.24f
-    const val MAX_TOWER_SHARE = 0.44f
-
-    /** The sun on the silhouette grid: low, and partly behind the terminal. */
-    const val SUN_X_UNITS = 400f
-    const val SUN_Y_UNITS = 154f
-    const val SUN_RADIUS_UNITS = 88f
-
     /** The tow line hangs this far below a straight line at its middle, as a share of its length. */
     const val TOW_LINE_SAG = 0.18f
 
@@ -62,7 +47,7 @@ internal fun DrawScope.drawSunsetSky(sunset: SunsetColors) {
     val bands = listOf(sunset.sunsetSkyTop, sunset.sunsetSkyUpper, sunset.sunsetSkyLower, sunset.sunsetSkyHorizon)
     var top = 0f
     bands.forEachIndexed { index, color ->
-        val bottom = size.height * SplashSceneDefaults.skyBandEnds[index]
+        val bottom = size.height * AirportSilhouette.skyBandEnds[index]
         // One pixel of overlap, so no seam shows between two bands.
         drawRect(color, Offset(0f, top), Size(size.width, bottom - top + 1f))
         top = bottom
@@ -75,10 +60,9 @@ internal fun DrawScope.drawSunsetSky(sunset: SunsetColors) {
  * edges.
  */
 internal fun DrawScope.drawAirport(sunset: SunsetColors) {
-    val towerUnits = SplashSceneDefaults.TOWER_HEIGHT_UNITS
     val scale = (size.width / AirportSilhouette.WIDTH).coerceIn(
-        SplashSceneDefaults.MIN_TOWER_SHARE * size.height / towerUnits,
-        SplashSceneDefaults.MAX_TOWER_SHARE * size.height / towerUnits,
+        AirportSilhouette.MIN_TOWER_SHARE * size.height / AirportSilhouette.TOWER_HEIGHT,
+        AirportSilhouette.MAX_TOWER_SHARE * size.height / AirportSilhouette.TOWER_HEIGHT,
     )
     val left = size.width / 2f - AirportSilhouette.WIDTH * scale / 2f
     val top = size.height - AirportSilhouette.HEIGHT * scale
@@ -86,8 +70,8 @@ internal fun DrawScope.drawAirport(sunset: SunsetColors) {
 
     drawCircle(
         sunset.sunsetSun,
-        radius = SplashSceneDefaults.SUN_RADIUS_UNITS * scale,
-        center = Offset(left + SplashSceneDefaults.SUN_X_UNITS * scale, top + SplashSceneDefaults.SUN_Y_UNITS * scale),
+        radius = AirportSilhouette.SUN_RADIUS * scale,
+        center = Offset(left + AirportSilhouette.SUN_X * scale, top + AirportSilhouette.SUN_Y * scale),
     )
     // The ground reaches both edges, whatever the silhouette's own width.
     drawRect(sunset.sunsetSilhouette, Offset(0f, groundTop - 1f), Size(size.width, size.height - groundTop + 1f))
