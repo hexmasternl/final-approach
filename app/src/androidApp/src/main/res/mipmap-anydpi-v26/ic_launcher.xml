@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The app icon from the design system (docs/design-system/assets/app-icon). The foreground
+  image already carries the lawn stripes, so it looks right under every launcher mask; the
+  background colour only shows if a launcher moves the layers apart.
+-->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>
