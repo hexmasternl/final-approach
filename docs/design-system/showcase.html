@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Final Approach Design System</title>
 <style>
-:root,[data-theme="light"]{--outline:#1d2545;--ink:#1d2545;--ink-muted:#4f5a7c;--on-sky:#1d2545;--on-sky-muted:#2f3b63;--on-accent:#1d2545;--on-outline:#fffaf0;--bg-sky:#8fd3fb;--bg-field:var(--grass-500);--surface:#fffaf0;--surface-raised:#ffffff;--surface-sunken:#e2eefa;--sky-100:#e6f6ff;--sky-300:#a9defc;--sky-500:#4db8f5;--sky-700:#1668ad;--grass-300:#b4e36a;--grass-500:#7fcf4b;--grass-700:#5cb337;--grass-900:#3b8a2a;--asphalt-300:#939cb0;--asphalt-500:#6a7389;--asphalt-700:#474f63;--marking:#ffffff;--marking-warn:#ffd23f;--sun:#ffcb3d;--sun-deep:#e39a12;--tangerine:#ff8f33;--tangerine-deep:#d9641a;--cherry:#ff5d52;--cherry-deep:#c9302c;--success:#35d6b0;--success-ink:#0b6b59;--danger:var(--cherry);--danger-ink:#b3221f;--warning:var(--sun);--info:var(--sky-500);--focus:#ffffff;--path-1:var(--sun);--path-2:var(--tangerine);--path-3:var(--cherry);--path-4:#ff7ac8;--path-5:#b48cff;--path-6:#4fe0e6;--fuselage:#fdfcf5;--fuselage-shade:#d5dbe8;--glass:#9fe0ff;--glass-shine:#ffffff;--prop-blur:rgba(29, 37, 69, 0.3);--cloud:#ffffff;--cloud-shade:#d6ebfa;--shadow-ground:rgba(24, 40, 30, 0.28);--select-ring:#ffffff;--zone-ok:var(--success);--zone-no:var(--cherry);--star:#ffe066;--poof:#f7f8fc;--poof-shade:#c8d1e6;--scrim:rgba(17, 24, 58, 0.55);--shadow-lip-sm:0 3px 0 #1d2545;--shadow-lip:0 5px 0 #1d2545;--shadow-lip-lg:0 8px 0 #1d2545;--shadow-soft:0 10px 0 rgba(29, 37, 69, 0.16);--shadow-float:6px 10px 6px rgba(24, 40, 30, 0.28);--shadow-well:inset 0 3px 0 rgba(29, 37, 69, 0.14);}
+:root,[data-theme="light"]{--outline:#1d2545;--ink:#1d2545;--ink-muted:#4f5a7c;--on-sky:#1d2545;--on-sky-muted:#2f3b63;--on-accent:#1d2545;--on-outline:#fffaf0;--bg-sky:#8fd3fb;--bg-field:var(--grass-500);--surface:#fffaf0;--surface-raised:#ffffff;--surface-sunken:#e2eefa;--sky-100:#e6f6ff;--sky-300:#a9defc;--sky-500:#4db8f5;--sky-700:#1668ad;--grass-300:#b4e36a;--grass-500:#7fcf4b;--grass-700:#5cb337;--grass-900:#3b8a2a;--asphalt-300:#939cb0;--asphalt-500:#6a7389;--asphalt-700:#474f63;--marking:#ffffff;--marking-warn:#ffd23f;--sun:#ffcb3d;--sun-deep:#e39a12;--tangerine:#ff8f33;--tangerine-deep:#d9641a;--cherry:#ff5d52;--cherry-deep:#c9302c;--success:#35d6b0;--success-ink:#0b6b59;--danger:var(--cherry);--danger-ink:#b3221f;--warning:var(--sun);--info:var(--sky-500);--focus:#ffffff;--path-1:var(--sun);--path-2:var(--tangerine);--path-3:var(--cherry);--path-4:#ff7ac8;--path-5:#b48cff;--path-6:#4fe0e6;--fuselage:#fdfcf5;--fuselage-shade:#d5dbe8;--glass:#9fe0ff;--glass-shine:#ffffff;--prop-blur:rgba(29, 37, 69, 0.3);--cloud:#ffffff;--cloud-shade:#d6ebfa;--shadow-ground:rgba(24, 40, 30, 0.28);--select-ring:#ffffff;--zone-ok:var(--success);--zone-no:var(--cherry);--star:#ffe066;--poof:#f7f8fc;--poof-shade:#c8d1e6;--scrim:rgba(17, 24, 58, 0.55);--sunset-sky-top:#a82a2a;--sunset-sky-upper:#d4481f;--sunset-sky-lower:#f0731f;--sunset-sky-horizon:#ffa23a;--sunset-sun:#ffe08a;--sunset-silhouette:#2a1630;--sunset-tower-light:#ffe9a8;--shadow-lip-sm:0 3px 0 #1d2545;--shadow-lip:0 5px 0 #1d2545;--shadow-lip-lg:0 8px 0 #1d2545;--shadow-soft:0 10px 0 rgba(29, 37, 69, 0.16);--shadow-float:6px 10px 6px rgba(24, 40, 30, 0.28);--shadow-well:inset 0 3px 0 rgba(29, 37, 69, 0.14);}
 [data-theme="dark"]{--outline:#0a0e24;--on-sky:#f6f2e4;--on-sky-muted:#b5bfdd;--bg-sky:#151c40;--surface:#efe9d8;--surface-raised:#fffaf0;--surface-sunken:#cfd6ea;--sky-100:#1c2654;--sky-300:#2b3a82;--sky-500:#5aa8f0;--grass-300:#5aa57c;--grass-500:#3f8a66;--grass-700:#327559;--grass-900:#1f5443;--asphalt-300:#7a84a6;--asphalt-500:#5e6788;--asphalt-700:#454d6b;--marking:#eef2fb;--fuselage:#f1f3fa;--fuselage-shade:#b4bcd2;--glass:#8fd0ff;--prop-blur:rgba(223, 230, 245, 0.3);--cloud:#a9b5d6;--cloud-shade:#7f8cb3;--shadow-ground:rgba(4, 7, 18, 0.5);--select-ring:#ffe98a;--poof:#dfe4f2;--poof-shade:#9aa5c4;--scrim:rgba(3, 5, 16, 0.7);--shadow-lip-sm:0 3px 0 #0a0e24;--shadow-lip:0 5px 0 #0a0e24;--shadow-lip-lg:0 8px 0 #0a0e24;--shadow-soft:0 10px 0 rgba(4, 7, 18, 0.4);--shadow-float:6px 10px 6px rgba(4, 7, 18, 0.5);--shadow-well:inset 0 3px 0 rgba(4, 7, 18, 0.45);}
 :root{--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--radius-sm:8px;--radius-md:14px;--radius-lg:22px;--radius-xl:32px;--radius-pill:999px;--line-1:2px;--line-2:3px;--line-3:4px;--line-4:6px;--path-stroke:8px;--path-casing:14px;--path-dash:18px;--path-gap:16px;--path-dot:22px;--touch-min:48px;--touch-aircraft:72px;--hud-chip:56px;--button-sm:40px;--button-md:52px;--button-lg:64px;--icon-sm:20px;--icon-md:28px;--icon-lg:40px;--sprite-light-prop:56px;--sprite-helicopter:64px;--sprite-turboprop:68px;--sprite-jet:72px;--sprite-jumbo:104px;--dur-press:90ms;--dur-quick:160ms;--dur-pop:280ms;--dur-land:420ms;--dur-burst:600ms;--dur-dialog:360ms;--dur-rotor:240ms;--dur-march:900ms;--dur-sway:2400ms;--dur-drift:48s;--ease-bounce:cubic-bezier(0.34, 1.56, 0.64, 1);--ease-snap:cubic-bezier(0.2, 0.9, 0.3, 1);--ease-out-soft:cubic-bezier(0.16, 1, 0.3, 1);--ease-sway:cubic-bezier(0.45, 0, 0.55, 1);--opacity-disabled:0.45;--opacity-cloud:0.85;--opacity-path-idle:0.7;--opacity-ghost:0.5;--z-field:0;--z-zone:10;--z-path:20;--z-ground-shadow:30;--z-aircraft:40;--z-fx:50;--z-clouds:60;--z-hud:70;--z-overlay:80;--font-display:"DynaPuff", "Baloo 2", "Arial Rounded MT Bold", system-ui, sans-serif;--font-text:"Inconsolata", "Cascadia Mono", Consolas, ui-monospace, monospace;}
 .display-xl{font-family:var(--font-display);font-size:72px;line-height:68px;font-weight:700;letter-spacing:-0.01em;}
@@ -70,9 +70,12 @@
 .fa-p-sock-w { fill: var(--fuselage); stroke: none; }
 .fa-p-sock-o { fill: none; }
 
+.fa-p-silhouette { fill: var(--sunset-silhouette); stroke: none; }
+.fa-p-tower-light { fill: var(--sunset-tower-light); stroke: none; }
+
 /* ---------- World elements ---------- */
-fa-aircraft, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst { display: inline-block; flex: none; line-height: 0; }
-fa-aircraft svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg { display: block; width: 100%; height: 100%; overflow: visible; }
+fa-aircraft, fa-side-aircraft, fa-silhouette, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst { display: inline-block; flex: none; line-height: 0; }
+fa-aircraft svg, fa-side-aircraft svg, fa-silhouette svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg { display: block; width: 100%; height: 100%; overflow: visible; }
 fa-aircraft { position: relative; width: var(--fa-size, 64px); height: var(--fa-size, 64px); filter: drop-shadow(5px 8px 3px var(--shadow-ground)); }
 fa-aircraft[flat] { filter: none; }
 .fa-aircraft__sprite { display: block; width: 100%; height: 100%; transition: transform var(--dur-quick) var(--ease-snap); }
@@ -99,6 +102,17 @@ fa-burst[data-loop] { animation: fa-burst calc(var(--dur-burst) * 3) var(--ease-
 .fa-zone { fill: none; stroke: none; stroke-width: 9; stroke-linejoin: round; }
 [state="ok"] > svg .fa-zone { stroke: var(--zone-ok); animation: fa-pulse 1s var(--ease-sway) infinite alternate; }
 [state="no"] > svg .fa-zone { stroke: var(--zone-no); stroke-dasharray: 4 16; stroke-linecap: round; }
+
+fa-side-aircraft { width: 144px; height: 96px; }
+.fa-prop-side { transform-box: fill-box; transform-origin: center; animation: fa-prop-side var(--dur-rotor) linear infinite; }
+fa-silhouette { display: block; width: 100%; }
+
+/* ---------- Splash: sunset sky and banner ---------- */
+.fa-sunset { background: linear-gradient(180deg, var(--sunset-sky-top) 0 30%, var(--sunset-sky-upper) 30% 52%, var(--sunset-sky-lower) 52% 72%, var(--sunset-sky-horizon) 72% 100%); }
+.fa-sunset__sun { position: absolute; border-radius: 50%; background: var(--sunset-sun); }
+.fa-banner { display: inline-block; padding: var(--space-3) var(--space-5); border: var(--line-3) solid var(--outline); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); font: 700 36px/40px var(--font-display); white-space: nowrap; }
+.fa-banner[data-loop] { animation: fa-banner var(--dur-sway) var(--ease-sway) infinite alternate; }
+.fa-towline { fill: none; stroke: var(--outline); stroke-width: var(--line-2); stroke-linecap: round; }
 
 /* ---------- Flight path (SVG) ---------- */
 .fa-path-casing, .fa-path-dash, .fa-path-ghost { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: var(--path-dash) var(--path-gap); }
@@ -221,6 +235,8 @@ fa-burst[data-loop] { animation: fa-burst calc(var(--dur-burst) * 3) var(--ease-
 /* ---------- Motion ---------- */
 @keyframes fa-spin { to { transform: rotate(360deg); } }
 @keyframes fa-prop { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(.18); } }
+@keyframes fa-prop-side { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(.18); } }
+@keyframes fa-banner { from { transform: skewY(-2deg) translateY(-3px); } to { transform: skewY(2deg) translateY(3px); } }
 @keyframes fa-march { to { stroke-dashoffset: calc(-1 * (var(--path-dash) + var(--path-gap))); } }
 @keyframes fa-pulse { from { opacity: .55; } to { opacity: 1; } }
 @keyframes fa-squash { 0% { transform: scale(1); } 45% { transform: scale(1.18, .8); } 100% { transform: scale(.92, 1.1); } }
@@ -233,7 +249,7 @@ fa-burst[data-loop] { animation: fa-burst calc(var(--dur-burst) * 3) var(--ease-
 @keyframes fa-drop { from { transform: translateY(-40px) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes fa-bob { from { transform: translateY(0); } to { transform: translateY(-5px); } }
 @media (prefers-reduced-motion: reduce) {
-  .fa-stage *, .fa-stage *::before, .fa-stage *::after, fa-aircraft *, fa-windsock *, fa-cloud, fa-burst { animation: none !important; transition: none !important; }
+  .fa-stage *, .fa-stage *::before, .fa-stage *::after, fa-aircraft *, fa-side-aircraft *, fa-windsock *, fa-cloud, fa-burst { animation: none !important; transition: none !important; }
 }
 
 
@@ -353,7 +369,7 @@ h1,h2,h3,h4,p{margin:0}
 
 <section class="sc-section" id="colour">
   <h2><small>Foundations</small>Colour</h2>
-  <p class="sc-lede">59 colour tokens in two themes. The world is lawn, asphalt and white aircraft; the UI lives in the sky; sun yellow is the signature. Swatches follow the theme switch; values list Day first.</p>
+  <p class="sc-lede">66 colour tokens in two themes. The world is lawn, asphalt and white aircraft; the UI lives in the sky; sun yellow is the signature. Swatches follow the theme switch; values list Day first.</p>
   <h3 class="sc-sub">Ink and edges</h3><div class="sc-card"><div class="sc-swatches"><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--outline)"></span><span class="sc-sw__name">outline</span><span class="sc-sw__val">#1d2545<br>night #0a0e24</span><span class="sc-sw__use">The thick cartoon outline on every drawn shape: aircraft, runways, buttons, panels, HUD chips. Never pure black. Also the colour of hard lip shadows.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--ink)"></span><span class="sc-sw__name">ink</span><span class="sc-sw__val">#1d2545</span><span class="sc-sw__use">Primary text and icons on surface, surface-raised and surface-sunken. The same in both themes: panels stay paper-light at night.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--ink-muted)"></span><span class="sc-sw__name">ink-muted</span><span class="sc-sw__val">#4f5a7c</span><span class="sc-sw__use">Secondary text, captions and hints on surface, surface-raised and surface-sunken.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--on-accent)"></span><span class="sc-sw__name">on-accent</span><span class="sc-sw__val">#1d2545</span><span class="sc-sw__use">Text and icons on any bright fill: sun, tangerine, cherry, success, sky-500, star and every path colour. Dark in both themes because the fills stay bright.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--on-outline)"></span><span class="sc-sw__name">on-outline</span><span class="sc-sw__val">#fffaf0</span><span class="sc-sw__use">Text and icons on an outline-coloured fill: coach marks, tooltips, the callsign tag.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--on-sky)"></span><span class="sc-sw__name">on-sky</span><span class="sc-sw__val">#1d2545<br>night #f6f2e4</span><span class="sc-sw__use">Text and icons placed straight on bg-sky, sky-100 or sky-300, outside any panel: menu titles, version line.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--on-sky-muted)"></span><span class="sc-sw__name">on-sky-muted</span><span class="sc-sw__val">#2f3b63<br>night #b5bfdd</span><span class="sc-sw__use">Secondary text straight on bg-sky, sky-100 or sky-300.</span></div></div></div>
 <h3 class="sc-sub">Sky and surfaces</h3><div class="sc-card"><div class="sc-swatches"><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--bg-sky)"></span><span class="sc-sw__name">bg-sky</span><span class="sc-sw__val">#8fd3fb<br>night #151c40</span><span class="sc-sw__use">Background of menus and every non-gameplay screen. The sky the UI lives in.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sky-100)"></span><span class="sc-sw__name">sky-100</span><span class="sc-sw__val">#e6f6ff<br>night #1c2654</span><span class="sc-sw__use">Quietest backdrop tint on bg-sky: far cloud bank, sunburst rays on menus. Text on it is on-sky.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sky-300)"></span><span class="sc-sw__name">sky-300</span><span class="sc-sw__val">#a9defc<br>night #2b3a82</span><span class="sc-sw__use">Backdrop stripes and near cloud bank on bg-sky. Text on it is on-sky.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sky-500)"></span><span class="sc-sw__name">sky-500</span><span class="sc-sw__val">#4db8f5<br>night #5aa8f0</span><span class="sc-sw__use">Secondary button fill, info status, active toggle track. Text on it is on-accent.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sky-700)"></span><span class="sc-sw__name">sky-700</span><span class="sc-sw__val">#1668ad</span><span class="sc-sw__use">Links and emphasised text on surface and surface-raised; lip under sky-500 fills.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--surface)"></span><span class="sc-sw__name">surface</span><span class="sc-sw__val">#fffaf0<br>night #efe9d8</span><span class="sc-sw__use">Panels, dialogs, level cards and HUD chips. Paper-light in both themes so the outline always reads.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--surface-raised)"></span><span class="sc-sw__name">surface-raised</span><span class="sc-sw__val">#ffffff<br>night #fffaf0</span><span class="sc-sw__use">A surface sitting on a surface: toggle knobs, the selected segment, score popups.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--surface-sunken)"></span><span class="sc-sw__name">surface-sunken</span><span class="sc-sw__val">#e2eefa<br>night #cfd6ea</span><span class="sc-sw__use">Wells and tracks: toggle track, segmented control trough, empty life slots, locked level art.</span></div></div></div>
 <h3 class="sc-sub">Airfield</h3><div class="sc-card"><div class="sc-swatches"><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--bg-field)"></span><span class="sc-sw__name">bg-field</span><span class="sc-sw__val">= grass-500</span><span class="sc-sw__use">Background of the gameplay viewport: the airfield lawn.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--grass-300)"></span><span class="sc-sw__name">grass-300</span><span class="sc-sw__val">#b4e36a<br>night #5aa57c</span><span class="sc-sw__use">Light mowing stripe and grass tufts on the field.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--grass-500)"></span><span class="sc-sw__name">grass-500</span><span class="sc-sw__val">#7fcf4b<br>night #3f8a66</span><span class="sc-sw__use">Base lawn colour of the airfield.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--grass-700)"></span><span class="sc-sw__name">grass-700</span><span class="sc-sw__val">#5cb337<br>night #327559</span><span class="sc-sw__use">Dark mowing stripe, taxiway verge, bushes.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--grass-900)"></span><span class="sc-sw__name">grass-900</span><span class="sc-sw__val">#3b8a2a<br>night #1f5443</span><span class="sc-sw__use">Hedge and tree shade; grass detail next to asphalt.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--asphalt-300)"></span><span class="sc-sw__name">asphalt-300</span><span class="sc-sw__val">#939cb0<br>night #7a84a6</span><span class="sc-sw__use">Runway shoulder and apron wear.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--asphalt-500)"></span><span class="sc-sw__name">asphalt-500</span><span class="sc-sw__val">#6a7389<br>night #5e6788</span><span class="sc-sw__use">Runway, taxiway and helipad surface.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--asphalt-700)"></span><span class="sc-sw__name">asphalt-700</span><span class="sc-sw__val">#474f63<br>night #454d6b</span><span class="sc-sw__use">Tyre marks and the touchdown zone on the runway.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--marking)"></span><span class="sc-sw__name">marking</span><span class="sc-sw__val">#ffffff<br>night #eef2fb</span><span class="sc-sw__use">Runway centre line, threshold bars, numbers and the helipad H, on asphalt-500 and asphalt-700.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--marking-warn)"></span><span class="sc-sw__name">marking-warn</span><span class="sc-sw__val">#ffd23f</span><span class="sc-sw__use">Helipad ring and hold-short lines, on asphalt-500 and asphalt-700.</span></div></div></div>
@@ -361,6 +377,7 @@ h1,h2,h3,h4,p{margin:0}
 <h3 class="sc-sub">Flight paths and liveries</h3><div class="sc-card"><div class="sc-swatches"><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--path-1)"></span><span class="sc-sw__name">path-1</span><span class="sc-sw__val">= sun</span><span class="sc-sw__use">Flight path and livery of the 1st aircraft on screen. Path colours are assigned in order and reused once an aircraft lands.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--path-2)"></span><span class="sc-sw__name">path-2</span><span class="sc-sw__val">= tangerine</span><span class="sc-sw__use">Flight path and livery, 2nd aircraft.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--path-3)"></span><span class="sc-sw__name">path-3</span><span class="sc-sw__val">= cherry</span><span class="sc-sw__use">Flight path and livery, 3rd aircraft.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--path-4)"></span><span class="sc-sw__name">path-4</span><span class="sc-sw__val">#ff7ac8</span><span class="sc-sw__use">Flight path and livery, 4th aircraft. Bubblegum.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--path-5)"></span><span class="sc-sw__name">path-5</span><span class="sc-sw__val">#b48cff</span><span class="sc-sw__use">Flight path and livery, 5th aircraft. Grape.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--path-6)"></span><span class="sc-sw__name">path-6</span><span class="sc-sw__val">#4fe0e6</span><span class="sc-sw__use">Flight path and livery, 6th aircraft. Lagoon.</span></div></div></div>
 <h3 class="sc-sub">Status</h3><div class="sc-card"><div class="sc-swatches"><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--success)"></span><span class="sc-sw__name">success</span><span class="sc-sw__val">#35d6b0</span><span class="sc-sw__use">Safe landing, valid landing zone glow, confirmations. A teal, not a green, so it reads on the lawn and stays apart from cherry for colour-blind players. Always paired with a check icon or a word. Text on it is on-accent.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--success-ink)"></span><span class="sc-sw__name">success-ink</span><span class="sc-sw__val">#0b6b59</span><span class="sc-sw__use">Success text on surface and surface-raised.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--danger)"></span><span class="sc-sw__name">danger</span><span class="sc-sw__val">= cherry</span><span class="sc-sw__use">Collision, miss, wrong landing zone. Always paired with a warning icon or a word.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--danger-ink)"></span><span class="sc-sw__name">danger-ink</span><span class="sc-sw__val">#b3221f</span><span class="sc-sw__use">Danger text on surface and surface-raised.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--warning)"></span><span class="sc-sw__name">warning</span><span class="sc-sw__val">= sun</span><span class="sc-sw__use">Near-miss warning ring between two aircraft.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--info)"></span><span class="sc-sw__name">info</span><span class="sc-sw__val">= sky-500</span><span class="sc-sw__use">Neutral hints: next-aircraft arrow, tutorial pulses.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--focus)"></span><span class="sc-sw__name">focus</span><span class="sc-sw__val">#ffffff</span><span class="sc-sw__use">Inner band of the two-tone focus ring: 3px focus, then 3px outline outside it. One of the two bands always holds 3:1 against whatever the ring lands on.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--zone-ok)"></span><span class="sc-sw__name">zone-ok</span><span class="sc-sw__val">= success</span><span class="sc-sw__use">Glow on a runway or helipad while the path end is a valid landing.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--zone-no)"></span><span class="sc-sw__name">zone-no</span><span class="sc-sw__val">= cherry</span><span class="sc-sw__use">Glow on a landing zone of the wrong type for the selected aircraft.</span></div></div></div>
 <h3 class="sc-sub">Aircraft and sky objects</h3><div class="sc-card"><div class="sc-swatches"><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--fuselage)"></span><span class="sc-sw__name">fuselage</span><span class="sc-sw__val">#fdfcf5<br>night #f1f3fa</span><span class="sc-sw__use">Aircraft body white.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--fuselage-shade)"></span><span class="sc-sw__name">fuselage-shade</span><span class="sc-sw__val">#d5dbe8<br>night #b4bcd2</span><span class="sc-sw__use">Engines, nacelles and the shaded side of the fuselage.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--glass)"></span><span class="sc-sw__name">glass</span><span class="sc-sw__val">#9fe0ff<br>night #8fd0ff</span><span class="sc-sw__use">Cockpit windows. Keep them big.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--glass-shine)"></span><span class="sc-sw__name">glass-shine</span><span class="sc-sw__val">#ffffff</span><span class="sc-sw__use">The single highlight streak on a cockpit window.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--prop-blur)"></span><span class="sc-sw__name">prop-blur</span><span class="sc-sw__val">rgba(29, 37, 69, 0.3)<br>night rgba(223, 230, 245, 0.3)</span><span class="sc-sw__use">Translucent disc of a spinning rotor.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--cloud)"></span><span class="sc-sw__name">cloud</span><span class="sc-sw__val">#ffffff<br>night #a9b5d6</span><span class="sc-sw__use">Ambient drifting clouds above the field, drawn at opacity-cloud.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--cloud-shade)"></span><span class="sc-sw__name">cloud-shade</span><span class="sc-sw__val">#d6ebfa<br>night #7f8cb3</span><span class="sc-sw__use">Underside of clouds.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--shadow-ground)"></span><span class="sc-sw__name">shadow-ground</span><span class="sc-sw__val">rgba(24, 40, 30, 0.28)<br>night rgba(4, 7, 18, 0.5)</span><span class="sc-sw__use">The soft shadow an aircraft or cloud casts on the ground.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--select-ring)"></span><span class="sc-sw__name">select-ring</span><span class="sc-sw__val">#ffffff<br>night #ffe98a</span><span class="sc-sw__use">Dashed ring around the selected aircraft. Always drawn over an outline-coloured casing, like the flight path.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--star)"></span><span class="sc-sw__name">star</span><span class="sc-sw__val">#ffe066</span><span class="sc-sw__use">Star burst on a safe landing; streak sparkles.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--poof)"></span><span class="sc-sw__name">poof</span><span class="sc-sw__val">#f7f8fc<br>night #dfe4f2</span><span class="sc-sw__use">Comic poof cloud on a collision.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--poof-shade)"></span><span class="sc-sw__name">poof-shade</span><span class="sc-sw__val">#c8d1e6<br>night #9aa5c4</span><span class="sc-sw__use">Shaded lobes of the poof.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--scrim)"></span><span class="sc-sw__name">scrim</span><span class="sc-sw__val">rgba(17, 24, 58, 0.55)<br>night rgba(3, 5, 16, 0.7)</span><span class="sc-sw__use">Dims the field behind the pause and game-over dialogs.</span></div></div></div>
+<h3 class="sc-sub">Sunset (splash page only)</h3><div class="sc-card"><div class="sc-swatches"><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sunset-sky-top)"></span><span class="sc-sw__name">sunset-sky-top</span><span class="sc-sw__val">#a82a2a</span><span class="sc-sw__use">Splash page only. Top band of the sunset sky: the deepest, reddest orange.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sunset-sky-upper)"></span><span class="sc-sw__name">sunset-sky-upper</span><span class="sc-sw__val">#d4481f</span><span class="sc-sw__use">Splash page only. Second band of the sunset sky.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sunset-sky-lower)"></span><span class="sc-sw__name">sunset-sky-lower</span><span class="sc-sw__val">#f0731f</span><span class="sc-sw__use">Splash page only. Third band of the sunset sky.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sunset-sky-horizon)"></span><span class="sc-sw__name">sunset-sky-horizon</span><span class="sc-sw__val">#ffa23a</span><span class="sc-sw__use">Splash page only. Glowing band at the horizon, behind the airport silhouette.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sunset-sun)"></span><span class="sc-sw__name">sunset-sun</span><span class="sc-sw__val">#ffe08a</span><span class="sc-sw__use">Splash page only. The low sun, partly behind the silhouette, on sunset-sky-lower and sunset-sky-horizon.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sunset-silhouette)"></span><span class="sc-sw__name">sunset-silhouette</span><span class="sc-sw__val">#2a1630</span><span class="sc-sw__use">Splash page only. The airport silhouette and the ground it stands on. A dark plum, not black.</span></div><div class="sc-sw"><span class="sc-sw__chip" style="background:var(--sunset-tower-light)"></span><span class="sc-sw__name">sunset-tower-light</span><span class="sc-sw__val">#ffe9a8</span><span class="sc-sw__use">Splash page only. The lit window of the control tower cab, on sunset-silhouette.</span></div></div></div>
 </section>
 
 <section class="sc-section" id="type">
@@ -417,7 +434,7 @@ h1,h2,h3,h4,p{margin:0}
 </section>
 
 <section class="sc-section" id="components">
-  <h2><small>23 components</small>Components</h2>
+  <h2><small>24 components</small>Components</h2>
   <h3 class="sc-sub">Actions</h3>
 <article class="sc-comp" id="c-Button">
   <header><h3>Button</h3><p>The chunky toy-block button for every text action in menus and dialogs.</p></header>
@@ -673,6 +690,15 @@ h1,h2,h3,h4,p{margin:0}
   <div class="sc-demo fa-stage fa-stage--sky"><h1 class="fa-wordmark">Final<span>Approach</span></h1>
 <p class="fa-wordmark fa-wordmark--sm">Final<span>Approach</span></p></div>
 </article>
+<h3 class="sc-sub">Brand</h3>
+<article class="sc-comp" id="c-Banner">
+  <header><h3>Banner</h3><p>The banner an airplane tows across the splash page, carrying the name of the game.</p></header>
+  <div class="sc-demo fa-stage fa-sunset"><div style="position:relative;width:820px;height:190px">
+  <svg viewBox="0 0 820 190" width="820" height="190" style="position:absolute;inset:0" aria-hidden="true"><path class="fa-towline" d="M452 96q70 22 150 2"/></svg>
+  <span class="fa-banner" data-loop style="position:absolute;left:96px;top:64px">Final Approach</span>
+  <fa-side-aircraft type="light-prop" livery="1" style="position:absolute;left:596px;top:46px"></fa-side-aircraft>
+</div></div>
+</article>
 </section>
 
 <section class="sc-section" id="screens">
@@ -727,6 +753,16 @@ h1,h2,h3,h4,p{margin:0}
     <button class="fa-btn fa-btn--ghost fa-btn--block"><fa-icon name="settings"></fa-icon>Settings</button>
   </div>
   <p style="position:absolute;right:16px;bottom:16px;margin:0;font:800 13px/16px var(--font-text);letter-spacing:.08em;color:var(--on-sky-muted)">V 0.1.0</p>
+</div></div>
+</article>
+<article class="sc-comp" id="c-SplashScreen">
+  <header><h3>Splash Screen</h3><p>A reference composition of the splash page: the first screen of the app.</p></header>
+  <div class="sc-demo sc-demo--screen"><div class="fa-stage fa-sunset" style="position:relative;display:block;width:960px;height:560px;min-height:0;padding:0;overflow:hidden">
+  <span class="fa-sunset__sun" style="left:300px;top:300px;width:170px;height:170px"></span>
+  <fa-silhouette style="position:absolute;left:0;right:0;bottom:0"></fa-silhouette>
+  <span class="fa-banner" data-loop style="position:absolute;left:306px;top:150px">Final Approach</span>
+  <svg viewBox="0 0 960 560" width="960" height="560" style="position:absolute;inset:0" aria-hidden="true"><path class="fa-towline" d="M786 188q40 14 96 -2"/></svg>
+  <fa-side-aircraft type="light-prop" livery="1" style="position:absolute;left:870px;top:136px"></fa-side-aircraft>
 </div></div>
 </article>
 </section>
@@ -840,7 +876,7 @@ h1,h2,h3,h4,p{margin:0}
 <script>
 /* Final Approach world kit. Vanilla custom elements, no dependencies.
    window.FinalApproach = { AIRCRAFT, ICONS, aircraftSvg, iconSvg, runwaySvg, helipadSvg, cloudSvg, windsockSvg, burstSvg }
-   Elements: <fa-aircraft> <fa-icon> <fa-runway> <fa-helipad> <fa-cloud> <fa-windsock> <fa-burst>
+   Elements: <fa-aircraft> <fa-side-aircraft> <fa-silhouette> <fa-icon> <fa-runway> <fa-helipad> <fa-cloud> <fa-windsock> <fa-burst>
    Paint comes from bundle.css (.fa-p-*), which reads the tokens. */
 (function () {
   'use strict';
@@ -917,6 +953,50 @@ h1,h2,h3,h4,p{margin:0}
     }
   };
 
+  /* Side-view sprites, nose to the right, on a 96 by 64 grid. Used where the scene is seen
+     from the side (the splash page), never in gameplay. */
+  var SIDE_AIRCRAFT = {
+    'light-prop': {
+      label: 'Light prop, side view', width: 96, height: 64,
+      svg:
+        '<rect {{liv}} x="5" y="27" width="16" height="6" rx="3"/>' +
+        '<path {{liv}} d="M13 31L8 10q0-4 5-4l8 2 9 23z"/>' +
+        '<path {{line}} d="M40 46v6M60 46v6"/>' +
+        '<circle {{dark}} cx="40" cy="54" r="5"/>' +
+        '<circle {{dark}} cx="60" cy="54" r="5"/>' +
+        '<path {{body}} d="M9 34q0-8 12-8l42-4q22 0 26 12 0 10-18 12H26q-17-2-17-12z"/>' +
+        '<rect {{liv}} x="20" y="36" width="44" height="5" rx="2.500"/>' +
+        '<path {{glass}} d="M58 25.500h15q7 2 8.500 8.500H60z"/>' +
+        '<path {{shine}} d="M64 28.500l-2 3"/>' +
+        '<path {{line}} d="M52 22v-5"/>' +
+        '<rect {{liv}} x="36" y="10" width="36" height="8" rx="4"/>' +
+        '<g class="fa-prop-side"><rect {{dark}} x="88" y="16" width="5" height="36" rx="2.500"/></g>' +
+        '<circle {{dark}} cx="89.500" cy="34" r="4.500"/>'
+    }
+  };
+
+  /* The airport silhouette of the splash page, on a 1000 by 336 grid. The buildings stand on
+     the line y = baseY; the ground fills everything below it across the whole screen. */
+  var SILHOUETTE = {
+    width: 1000, height: 336, baseY: 290,
+    shapes: [
+      'M30 290V276q0-8 10-8h88q10 0 10 8v14z',
+      'M60 290l24-58h16l12 58z',
+      'M150 290v-52q75-52 150 0v52z',
+      'M330 290v-70h290v70z',
+      'M360 220v-16h230v16z',
+      'M640 290V100h32v190z',
+      'M624 100L614 54h84l-10 46z',
+      'M620 54V44h72v10z',
+      'M653.500 44V10h5v34z',
+      'M740 290v-16q0-8 10-8h140q10 0 10 8v16z',
+      'M770 290l20-62h18l16 62z',
+      'M914 268a26 26 0 1 0 52 0a26 26 0 1 0-52 0z',
+      'M952 276a20 20 0 1 0 40 0a20 20 0 1 0-40 0z'
+    ],
+    lights: ['M630 92l-7-30h66l-7 30z']
+  };
+
   /* 24px icons. s = stroked path data, f = filled markup. */
   var ICONS = {
     play: { f: '<path d="M8.500 5.500v13l10.500-6.500z" stroke-width="3" stroke-linejoin="round"/>' },
@@ -945,6 +1025,18 @@ h1,h2,h3,h4,p{margin:0}
   function aircraftSvg(type, painter) {
     var a = AIRCRAFT[type] || AIRCRAFT['light-prop'];
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" aria-hidden="true">' + paint(a.svg, painter || cls) + '</svg>';
+  }
+
+  function sideAircraftSvg(type, painter) {
+    var a = SIDE_AIRCRAFT[type] || SIDE_AIRCRAFT['light-prop'];
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + a.width + ' ' + a.height + '" aria-hidden="true">' + paint(a.svg, painter || cls) + '</svg>';
+  }
+
+  function silhouetteSvg() {
+    var s = '<rect class="fa-p-silhouette" x="-2000" y="' + (SILHOUETTE.baseY - 1) + '" width="5000" height="' + (SILHOUETTE.height - SILHOUETTE.baseY + 1) + '"/>';
+    SILHOUETTE.shapes.forEach(function (d) { s += '<path class="fa-p-silhouette" d="' + d + '"/>'; });
+    SILHOUETTE.lights.forEach(function (d) { s += '<path class="fa-p-tower-light" d="' + d + '"/>'; });
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + SILHOUETTE.width + ' ' + SILHOUETTE.height + '" preserveAspectRatio="xMidYMax meet" aria-hidden="true">' + s + '</svg>';
   }
 
   function iconSvg(name, color) {
@@ -1018,7 +1110,8 @@ h1,h2,h3,h4,p{margin:0}
   }
 
   var api = {
-    AIRCRAFT: AIRCRAFT, ICONS: ICONS, paint: paint,
+    AIRCRAFT: AIRCRAFT, SIDE_AIRCRAFT: SIDE_AIRCRAFT, SILHOUETTE: SILHOUETTE, ICONS: ICONS, paint: paint,
+    sideAircraftSvg: sideAircraftSvg, silhouetteSvg: silhouetteSvg,
     aircraftSvg: aircraftSvg, iconSvg: iconSvg, runwaySvg: runwaySvg, helipadSvg: helipadSvg,
     cloudSvg: cloudSvg, windsockSvg: windsockSvg, burstSvg: burstSvg
   };
@@ -1053,6 +1146,12 @@ h1,h2,h3,h4,p{margin:0}
     el.innerHTML = ring + '<span class="fa-aircraft__sprite" style="transform:rotate(' + (parseFloat(el.getAttribute('heading')) || 0) + 'deg)">' + aircraftSvg(type) + '</span>' + tag;
   });
 
+  define('fa-side-aircraft', ['type', 'livery'], function (el) {
+    var livery = Math.min(6, Math.max(1, parseInt(el.getAttribute('livery'), 10) || 1));
+    el.style.setProperty('--fa-livery', 'var(--path-' + livery + ')');
+    el.innerHTML = sideAircraftSvg(el.getAttribute('type'));
+  });
+  define('fa-silhouette', [], function (el) { el.innerHTML = silhouetteSvg(); });
   define('fa-icon', ['name'], function (el) { el.innerHTML = iconSvg(el.getAttribute('name')); });
   define('fa-runway', ['length', 'numbers'], function (el) {
     var L = Math.max(200, parseFloat(el.getAttribute('length')) || 360);

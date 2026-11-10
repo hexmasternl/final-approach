@@ -46,7 +46,9 @@ final-approach/
 `AndroidAppHost` in `androidApp` is the Android implementation. Tests use `FakeAppHost` from `commonTest`.
 
 ## Screen flow
-`App` (`ui/App.kt`) holds the current `Screen` and shows one page at a time. The main page is home: the game and the settings page return to it. No navigation library is used.
+`App` (`ui/App.kt`) holds the current `Screen` and shows one page at a time. The app opens on the splash page, which hands over to the main page. The main page is home: the game and the settings page return to it. No navigation library is used.
+
+The splash page (`ui/splash`) is a pure function of time: `SplashTimeline.frameAt(elapsedSeconds)` returns where the airplane and the banner are, whether the tow line is attached, the state of the wave, and whether the page should hand over. `SplashPage` advances the time from the frame clock and draws the frame; it calls `onFinished` once, either when the timeline says so or on a tap. All its timings and sizes live in `SplashConfig`. With `AppHost.reduceMotion` the timeline starts settled: banner centred and still, no airplane.
 
 The main page backdrop (rotating stripes, drifting clouds, one passing aircraft at a time) is advanced by `MenuBackdropSimulation`, a pure class that is unit tested and separate from the game engine. `MenuBackdrop` only draws its state. All its timings live in `MenuBackdropConfig`.
 
