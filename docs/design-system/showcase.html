@@ -15,6 +15,7 @@
 .title-lg{font-family:var(--font-display);font-size:28px;line-height:32px;font-weight:600;}
 .title-md{font-family:var(--font-display);font-size:22px;line-height:28px;font-weight:600;}
 .title-sm{font-family:var(--font-display);font-size:18px;line-height:24px;font-weight:600;}
+.button-label-lg{font-family:var(--font-display);font-size:24px;line-height:28px;font-weight:700;}
 .button-label{font-family:var(--font-display);font-size:18px;line-height:20px;font-weight:600;}
 .button-label-sm{font-family:var(--font-display);font-size:15px;line-height:18px;font-weight:600;}
 .body-lg{font-family:var(--font-text);font-size:18px;line-height:28px;font-weight:500;}
@@ -366,7 +367,7 @@ h1,h2,h3,h4,p{margin:0}
   <h2><small>Foundations</small>Type</h2>
   <p class="sc-lede">DynaPuff for headers, titles, buttons and the score. Inconsolata for regular text, labels and readouts.</p>
   <h3 class="sc-sub">Display · DynaPuff</h3><div class="sc-card sc-type"><div class="sc-type__row"><span class="display-xl">Final Approach</span><span class="sc-type__meta">display-xl · 72px/68px · 700 · -0.01em — The game title on the splash and main menu only.</span></div><div class="sc-type__row"><span class="display-lg">Game over</span><span class="sc-type__meta">display-lg · 48px/48px · 700 — Dialog headlines: Paused, Game over, Cleared to land.</span></div><div class="sc-type__row"><span class="display-md">Nice landing!</span><span class="sc-type__meta">display-md · 36px/40px · 700 — Screen titles and the final score.</span></div><div class="sc-type__row"><span class="score">12 450</span><span class="sc-type__meta">score · 32px/32px · 700 — The live score in the HUD and score popups. Thin space as thousands separator.</span></div></div>
-<h3 class="sc-sub">Titles · DynaPuff</h3><div class="sc-card sc-type"><div class="sc-type__row"><span class="title-lg">Choose an airport</span><span class="sc-type__meta">title-lg · 28px/32px · 600 — Section headings in menus.</span></div><div class="sc-type__row"><span class="title-md">Meadow Field</span><span class="sc-type__meta">title-md · 22px/28px · 600 — Card titles, level names.</span></div><div class="sc-type__row"><span class="title-sm">Sound effects</span><span class="sc-type__meta">title-sm · 18px/24px · 600 — Settings rows, small headings.</span></div><div class="sc-type__row"><span class="button-label">Take off</span><span class="sc-type__meta">button-label · 18px/20px · 600 — Labels of medium and large buttons.</span></div><div class="sc-type__row"><span class="button-label-sm">Retry</span><span class="sc-type__meta">button-label-sm · 15px/18px · 600 — Labels of small buttons, segments and chips.</span></div></div>
+<h3 class="sc-sub">Titles · DynaPuff</h3><div class="sc-card sc-type"><div class="sc-type__row"><span class="title-lg">Choose an airport</span><span class="sc-type__meta">title-lg · 28px/32px · 600 — Section headings in menus.</span></div><div class="sc-type__row"><span class="title-md">Meadow Field</span><span class="sc-type__meta">title-md · 22px/28px · 600 — Card titles, level names.</span></div><div class="sc-type__row"><span class="title-sm">Sound effects</span><span class="sc-type__meta">title-sm · 18px/24px · 600 — Settings rows, small headings.</span></div><div class="sc-type__row"><span class="button-label-lg">Play</span><span class="sc-type__meta">button-label-lg · 24px/28px · 700 — Label of the large button: the main call to action on a menu.</span></div><div class="sc-type__row"><span class="button-label">Take off</span><span class="sc-type__meta">button-label · 18px/20px · 600 — Labels of medium buttons.</span></div><div class="sc-type__row"><span class="button-label-sm">Retry</span><span class="sc-type__meta">button-label-sm · 15px/18px · 600 — Labels of small buttons, segments and chips.</span></div></div>
 <h3 class="sc-sub">Text · Inconsolata</h3><div class="sc-card sc-type"><div class="sc-type__row"><span class="body-lg">Tap an aircraft, then drag to draw its path.</span><span class="sc-type__meta">body-lg · 18px/28px · 500 — Tutorial copy and dialog lead text.</span></div><div class="sc-type__row"><span class="body">Planes land on runways. Helicopters land on helipads.</span><span class="sc-type__meta">body · 16px/24px · 500 — All regular text. Never lighter than 500: thin strokes look weak beside the outlines.</span></div><div class="sc-type__row"><span class="body-sm">Two aircraft got too close.</span><span class="sc-type__meta">body-sm · 14px/20px · 500 — Supporting text in cards and toasts.</span></div><div class="sc-type__row"><span class="caption">Best 18 200</span><span class="sc-type__meta">caption · 12px/16px · 600 — Metadata under titles.</span></div></div>
 <h3 class="sc-sub">Readouts · Inconsolata</h3><div class="sc-card sc-type"><div class="sc-type__row"><span class="readout">x3 STREAK</span><span class="sc-type__meta">readout · 20px/24px · 800 — Numbers that change while you watch: streak multiplier, countdowns, stats.</span></div><div class="sc-type__row"><span class="label">NEXT UP</span><span class="sc-type__meta">label · 13px/16px · 800 · 0.08em — Uppercase eyebrow labels above HUD values and settings groups. Write them in capitals.</span></div><div class="sc-type__row"><span class="callsign">FA 204</span><span class="sc-type__meta">callsign · 12px/14px · 800 · 0.04em — The tag that follows a selected aircraft. Uppercase letters and digits.</span></div></div>
 </section>
@@ -715,22 +716,17 @@ h1,h2,h3,h4,p{margin:0}
 </div></div>
 </article>
 <article class="sc-comp" id="c-MainMenu">
-  <header><h3>Main Menu</h3><p>A reference composition of the main menu on the sky backdrop.</p></header>
-  <div class="sc-demo sc-demo--screen"><div class="fa-stage fa-stage--sky" style="position:relative;display:block;width:960px;height:560px;min-height:0;padding:0;overflow:hidden">
-  <fa-cloud data-loop style="position:absolute;left:330px;top:18px;width:170px"></fa-cloud>
-  <fa-cloud style="position:absolute;left:720px;top:330px;width:150px"></fa-cloud>
-  <fa-cloud data-loop style="position:absolute;left:520px;top:250px;width:110px"></fa-cloud>
-  <fa-aircraft type="jumbo" livery="3" heading="62" size="150" style="position:absolute;left:700px;top:120px"></fa-aircraft>
-  <fa-aircraft type="helicopter" livery="6" heading="330" size="84" style="position:absolute;left:560px;top:400px"></fa-aircraft>
-  <div style="position:absolute;left:88px;top:150px;display:grid;gap:40px;justify-items:start">
-    <h1 class="fa-wordmark">Final<span>Approach</span></h1>
-    <div style="display:grid;gap:18px;width:280px">
-      <button class="fa-btn fa-btn--lg fa-btn--block"><fa-icon name="play"></fa-icon>Take off</button>
-      <button class="fa-btn fa-btn--secondary fa-btn--block">Choose airport</button>
-      <button class="fa-btn fa-btn--ghost fa-btn--block"><fa-icon name="settings"></fa-icon>Settings</button>
-    </div>
+  <header><h3>Main Menu</h3><p>A reference composition of the main page: two buttons in front of the animated sky.</p></header>
+  <div class="sc-demo sc-demo--screen"><div class="fa-stage" style="position:relative;display:block;width:960px;height:560px;min-height:0;padding:0;overflow:hidden;background:repeating-conic-gradient(from 6deg at 50% 50%, var(--sky-300) 0 9deg, var(--bg-sky) 9deg 18deg)">
+  <fa-aircraft type="jet" livery="3" heading="118" size="108" style="position:absolute;left:150px;top:300px"></fa-aircraft>
+  <fa-cloud data-loop style="position:absolute;left:96px;top:44px;width:150px"></fa-cloud>
+  <fa-cloud data-loop style="position:absolute;left:740px;top:150px;width:110px"></fa-cloud>
+  <fa-cloud data-loop style="position:absolute;left:560px;top:420px;width:170px"></fa-cloud>
+  <div style="position:absolute;left:340px;top:186px;display:grid;gap:16px;width:280px">
+    <button class="fa-btn fa-btn--lg fa-btn--block"><fa-icon name="play"></fa-icon>Take off</button>
+    <button class="fa-btn fa-btn--ghost fa-btn--block"><fa-icon name="settings"></fa-icon>Settings</button>
   </div>
-  <p style="position:absolute;right:32px;bottom:20px;margin:0;font:800 13px/16px var(--font-text);letter-spacing:.08em;color:var(--on-sky-muted)">BEST 18 200 · MEADOW FIELD</p>
+  <p style="position:absolute;right:16px;bottom:16px;margin:0;font:800 13px/16px var(--font-text);letter-spacing:.08em;color:var(--on-sky-muted)">V 0.1.0</p>
 </div></div>
 </article>
 </section>

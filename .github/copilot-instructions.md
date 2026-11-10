@@ -4,7 +4,7 @@ Final Approach is a cartoon-style air-traffic game. The player draws paths for i
 
 ## Tech stack
 - Kotlin Multiplatform (KMP) + Compose Multiplatform. Android first; iOS later, so keep game logic platform-independent.
-- Game code lives in `shared/` (commonMain). Platform code (`androidApp/`, later `iosApp/`) is only a thin host.
+- The Gradle project lives in `app/src`. Game code lives in `app/src/shared/` (commonMain). Platform code (`app/src/androidApp/`, later `iosApp/`) is only a thin host; everything shared code needs from the platform goes through `AppHost`.
 - Do not use Android/JVM-only APIs in `commonMain` (no `android.*`, `java.*`); use `kotlin.*`/`kotlinx.*`.
 - Rendering: Compose `Canvas`; game loop driven by a frame clock (`withFrameNanos`) with delta-time updates.
 
