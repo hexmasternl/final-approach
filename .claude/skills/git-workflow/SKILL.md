@@ -55,6 +55,17 @@ Do not implement anything until all of this is true. If any check fails, stop, s
 
 ### 2. Worktree and branch from `development`
 
+Worktrees are ALWAYS created in a directory named `final-approach-worktrees`, one directory higher than the repository: next to the repository folder, never inside it. Each change gets its own folder there, named after the change.
+
+```
+<parent>/
+├─ final-approach/                  # the repository (main checkout)
+└─ final-approach-worktrees/
+   └─ <change-name>/                # one worktree per change
+```
+
+From the repository root that is `../final-approach-worktrees/<change-name>`. Run the commands below from the repository root so the relative path resolves there, and create the directory if it does not exist (git does this for you). Never put a worktree anywhere else: not inside the repository, not in `.claude/`, not in a temp folder.
+
 The change must already be committed and pushed on `development`, so the new branch contains it.
 
 ```bash
@@ -118,6 +129,7 @@ Finish by reporting what was done: archive commit, issue closed, project lane mo
 
 - Never touch `main`. Production is updated by people, outside this workflow. The only use of `main` here is as the starting point when `development` has to be created.
 - Never create a worktree for `main` or `development`. Only `change/` branches get a worktree.
+- Worktrees always live in `final-approach-worktrees`, one directory higher than the repository: `../final-approach-worktrees/<change-name>`.
 - Direct commits to `development` are only for OpenSpec proposals, archives and their documentation. Code reaches `development` through a pull request from a `change/` branch.
 - No implementation without an open issue that names the change, and a change that names the issue.
 - Never force-push `development`, and never rewrite history that has been pushed.
