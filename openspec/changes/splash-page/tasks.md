@@ -8,9 +8,9 @@
 
 ## 2. Timeline logic
 
-- [ ] 2.1 Implement `SplashTimeline` as a pure function of elapsed time and `SplashConfig` returning phase, airplane position, banner position, tow-line state and wave phase; verify with unit tests in `commonTest` that the airplane starts off-screen left and ends off-screen right
-- [ ] 2.2 Implement the release rule and verify with a unit test that the banner detaches exactly when its centre reaches the horizontal centre and never moves away from the centre afterwards
-- [ ] 2.3 Implement the settled state and hand-over time and verify with unit tests that hand-over is due 2 seconds after settling, and that the reduced-motion timeline starts settled with zero wave amplitude
+- [x] 2.1 Implement `SplashTimeline` as a pure function of elapsed time and `SplashConfig` returning phase, airplane position, banner position, tow-line state and wave phase; verify with unit tests in `commonTest` that the airplane starts off-screen left and ends off-screen right
+- [x] 2.2 Implement the release rule and verify with a unit test that the banner detaches exactly when its centre reaches the horizontal centre and never moves away from the centre afterwards
+- [x] 2.3 Implement the settled state and hand-over time and verify with unit tests that hand-over is due 2 seconds after settling, and that the reduced-motion timeline starts settled with zero wave amplitude
 
 ## 3. Scene drawing
 
