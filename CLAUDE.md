@@ -2,7 +2,7 @@
 
 A cartoon-style, top-down air traffic game. Aircraft enter the viewport from the edges; the player taps one, drags a path, and lands it. Airplanes land on runways, helicopters on helipads. Differing speeds are the core challenge: fast aircraft catch up with slow ones, so the player must sequence landings.
 
-The repo currently holds documentation and the design system only. No code is scaffolded yet; the architecture below is the proposed one.
+The app is scaffolded under `app/src` and has its main page. The game itself (engine, input, HUD) is not built yet; the architecture below is the one to follow.
 
 ## Where things are
 
@@ -28,20 +28,22 @@ Keep these consistent with `docs/game-design.md`; update the doc when a rule cha
 - Failures: two aircraft closer than the minimum separation (collision), or an aircraft leaving the viewport without landing (miss).
 - Five aircraft types: light prop, turboprop, jet, jumbo, helicopter. Each has its own speed and turn rate.
 
-## Proposed architecture
+## Architecture
 
 Kotlin Multiplatform with Compose Multiplatform. Android first; iOS later from the same shared module.
 
 ```
 final-approach/
-├─ shared/            # KMP module: all game code
-│  └─ src/commonMain/kotlin/nl/hexmaster/finalapproach/
-│     ├─ domain/      # Aircraft, AircraftType, Airport, Runway, Helipad, FlightPath
-│     ├─ engine/      # GameEngine, Spawner, PathFollower, LandingRules, Collisions
-│     ├─ input/       # Gesture handling (tap-select, drag-draw)
-│     └─ ui/          # Screens, Canvas renderer, theme, HUD
-├─ androidApp/        # Thin Android host (Activity, manifest)
-├─ iosApp/            # Added later
+├─ app/src/              # the Gradle project (run ./gradlew from here)
+│  ├─ shared/            # KMP module: all game code
+│  │  └─ src/commonMain/kotlin/nl/hexmaster/finalapproach/
+│  │     ├─ domain/      # Aircraft, AircraftType, Airport, Runway, Helipad, FlightPath
+│  │     ├─ engine/      # GameEngine, Spawner, PathFollower, LandingRules, Collisions
+│  │     ├─ input/       # Gesture handling (tap-select, drag-draw)
+│  │     ├─ platform/    # AppHost: what shared code needs from the platform
+│  │     └─ ui/          # Screens, Canvas renderer, theme, HUD
+│  ├─ androidApp/        # Thin Android host (Activity, manifest), appId nl.hexmaster.final_approach
+│  └─ iosApp/            # Added later
 └─ docs/
 ```
 
@@ -55,19 +57,21 @@ Layers:
 Rules that follow from this:
 
 - Never put game rules in composables. Simulation, rendering and input stay separate.
-- `commonMain` uses only `kotlin.*` and `kotlinx.*`. No `android.*` or `java.*`. Platform concerns (back handling, closing the app, version, ads) go behind a small interface implemented in the host app.
+- `commonMain` uses only `kotlin.*` and `kotlinx.*`. No `android.*` or `java.*`. Platform concerns (back handling, closing the app, version, reduced motion, ads) go behind `AppHost` (`platform/AppHost.kt`), implemented in the host app.
 - Units: positions in world units, speeds in world units per second, angles in radians. Convert to pixels only at the render boundary.
 - Tunable values (speeds, radii, spawn rates, timings) live in config or data classes, not as magic numbers.
 - Engine and domain logic get `kotlin.test` unit tests in `commonTest`: path following, landing detection, collisions. Keep the Compose UI thin.
 
 Conventions: Kotlin official code style, 4-space indent, `val` over `var`, no `!!`. Gradle Kotlin DSL with a version catalog (`gradle/libs.versions.toml`).
 
-Build, once scaffolded:
+Build and test, from `app/src`:
 
 ```
 ./gradlew :androidApp:assembleDebug
 ./gradlew :shared:allTests
 ```
+
+The Android SDK location goes in `app/src/local.properties`, which is not committed.
 
 ## Design system
 

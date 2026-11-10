@@ -4,17 +4,19 @@
 - **Kotlin Multiplatform** with **Compose Multiplatform** UI. Android first; iOS added later from the same shared module.
 - Gradle Kotlin DSL with a version catalog (`gradle/libs.versions.toml`).
 
-## Planned layout
+## Layout
 ```
 final-approach/
-├─ shared/            # KMP module: all game code
-│  └─ src/commonMain/kotlin/nl/hexmaster/finalapproach/
-│     ├─ domain/      # Aircraft, AircraftType, Airport, Runway, Helipad, FlightPath
-│     ├─ engine/      # GameEngine, Spawner, PathFollower, LandingRules, Collisions
-│     ├─ input/       # Gesture handling (tap-select, drag-draw)
-│     └─ ui/          # GameScreen, Canvas renderer, theme, HUD
-├─ androidApp/        # Android host (Activity, manifest)
-├─ iosApp/            # Added later
+├─ app/src/              # the Gradle project (run ./gradlew from here)
+│  ├─ shared/            # KMP module: all game code
+│  │  └─ src/commonMain/kotlin/nl/hexmaster/finalapproach/
+│  │     ├─ domain/      # Aircraft, AircraftType, Airport, Runway, Helipad, FlightPath
+│  │     ├─ engine/      # GameEngine, Spawner, PathFollower, LandingRules, Collisions
+│  │     ├─ input/       # Gesture handling (tap-select, drag-draw)
+│  │     ├─ platform/    # AppHost: what shared code needs from the platform
+│  │     └─ ui/          # Screens, Canvas renderer, theme, HUD
+│  ├─ androidApp/        # Thin Android host (Activity, manifest), appId nl.hexmaster.final_approach
+│  └─ iosApp/            # Added later
 └─ docs/
 ```
 
@@ -31,10 +33,30 @@ final-approach/
 - **Coordinates**: world units independent of screen size; the viewport scales to fit.
 
 ## Testing
-`kotlin.test` in `commonTest` for engine/domain; keep Compose UI thin.
+`kotlin.test` in `commonTest` for engine/domain and for UI logic such as the menu backdrop; keep Compose UI thin. Tests run on the JVM through the Android host test target.
 
-## Build (once scaffolded)
+## Platform boundary
+`commonMain` never calls a platform API. Everything it needs from the platform goes through `AppHost` (`platform/AppHost.kt`), which the host app implements:
+
+- `versionName`: the version of the installed build, shown on the main page.
+- `reduceMotion`: true when the device asks apps to reduce animation. On Android this is the animator duration scale set to 0.
+- `back`: a `BackDispatcher`. The host forwards every system back press to `back.dispatch()`; screens register with the `BackHandler` composable. The most recently composed handler wins. A back press nobody handles leaves the app.
+- `quit()`: closes the app.
+
+`AndroidAppHost` in `androidApp` is the Android implementation. Tests use `FakeAppHost` from `commonTest`.
+
+## Screen flow
+`App` (`ui/App.kt`) holds the current `Screen` and shows one page at a time. The main page is home: the game and the settings page return to it. No navigation library is used.
+
+The main page backdrop (rotating stripes, drifting clouds, one passing aircraft at a time) is advanced by `MenuBackdropSimulation`, a pure class that is unit tested and separate from the game engine. `MenuBackdrop` only draws its state. All its timings live in `MenuBackdropConfig`.
+
+## Theme
+`ui/theme` holds the design system as Kotlin: `FaColors` (Day and Night), `FaTypography`, `FaDimens`, `FaShadows`, `FaMotion` and `FaOpacity`, plus sprite and icon path data in `ui/sprites`. These files are generated from the design-system tokens and carry a header saying so; change the design system first, then regenerate.
+
+## Build
+Run from `app/src`:
 ```
 ./gradlew :androidApp:assembleDebug
 ./gradlew :shared:allTests
 ```
+The Android SDK location goes in `app/src/local.properties` (`sdk.dir=...`), which is not committed.
