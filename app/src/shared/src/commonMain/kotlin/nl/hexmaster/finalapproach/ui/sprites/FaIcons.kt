@@ -7,7 +7,8 @@ internal class IconFill(val pathData: String, val strokeWidth: Float = 0f)
 /** An icon on the 24-unit grid: filled shapes plus one 3-unit round stroke. */
 internal class IconDef(val fills: List<IconFill> = emptyList(), val stroke: String? = null)
 
-internal enum class FaIcon(val def: IconDef) {
+/** The icon set of the design system. */
+enum class FaIcon(internal val def: IconDef) {
     Play(IconDef(fills = listOf(IconFill("M 8.5 5.5 v 13 l 10.5 -6.5 z", 3f)))),
     Pause(IconDef(fills = listOf(IconFill("M 7.5 5 H 9 A 1.5 1.5 0 0 1 10.5 6.5 V 17.5 A 1.5 1.5 0 0 1 9 19 H 7.5 A 1.5 1.5 0 0 1 6 17.5 V 6.5 A 1.5 1.5 0 0 1 7.5 5 Z"), IconFill("M 15 5 H 16.5 A 1.5 1.5 0 0 1 18 6.5 V 17.5 A 1.5 1.5 0 0 1 16.5 19 H 15 A 1.5 1.5 0 0 1 13.5 17.5 V 6.5 A 1.5 1.5 0 0 1 15 5 Z")))),
     Restart(IconDef(stroke = "M 19 12 a 7 7 0 1 1 -2.6 -5.4 M 17.5 2.8 v 4.7 h -4.7")),

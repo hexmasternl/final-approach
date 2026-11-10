@@ -15,8 +15,8 @@
 
 ## 3. Backdrop drawing
 
-- [ ] 3.1 Draw the rotating sunburst stripes on a `Canvas` with `bg-sky` and `sky-300`, and verify in a preview that the corners stay covered at several rotation angles in portrait and landscape
-- [ ] 3.2 Draw the three clouds and the passing aircraft with spinning propellers or rotor and ground shadow, and verify in a preview that the draw order is stripes, clouds, aircraft
+- [x] 3.1 Draw the rotating sunburst stripes on a `Canvas` with `bg-sky` and `sky-300`, and verify in a preview that the corners stay covered at several rotation angles in portrait and landscape
+- [x] 3.2 Draw the three clouds and the passing aircraft with spinning propellers or rotor and ground shadow, and verify in a preview that the draw order is stripes, clouds, aircraft
 
 ## 4. Main page
 
