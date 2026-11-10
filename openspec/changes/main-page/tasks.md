@@ -9,9 +9,9 @@
 ## 2. Backdrop logic
 
 - [x] 2.1 Add `MenuBackdropConfig` (rotation period, cloud drift radius and periods, menu aircraft speeds and scale, 3-second gap) and verify no backdrop timing or size literal exists outside it
-- [ ] 2.2 Implement stripe rotation and cloud drift in `MenuBackdropState.update` and verify with unit tests that the angle advances with delta time and that each of the three clouds stays within its drift radius and on screen
-- [ ] 2.3 Implement the aircraft slot (`Flying` / `Waiting`) and verify with unit tests, using a seeded random source, that there is never more than one aircraft, that a new one appears exactly 3 seconds after the previous one is fully off screen, and that every route crosses the central region of the screen
-- [ ] 2.4 Verify with a unit test that over many spawns both airplanes and helicopters appear and entry points vary across edges
+- [x] 2.2 Implement stripe rotation and cloud drift in `MenuBackdropState.update` and verify with unit tests that the angle advances with delta time and that each of the three clouds stays within its drift radius and on screen
+- [x] 2.3 Implement the aircraft slot (`Flying` / `Waiting`) and verify with unit tests, using a seeded random source, that there is never more than one aircraft, that a new one appears exactly 3 seconds after the previous one is fully off screen, and that every route crosses the central region of the screen
+- [x] 2.4 Verify with a unit test that over many spawns both airplanes and helicopters appear and entry points vary across edges
 
 ## 3. Backdrop drawing
 
