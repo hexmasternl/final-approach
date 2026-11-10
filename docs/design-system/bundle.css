@@ -40,9 +40,12 @@
 .fa-p-sock-w { fill: var(--fuselage); stroke: none; }
 .fa-p-sock-o { fill: none; }
 
+.fa-p-silhouette { fill: var(--sunset-silhouette); stroke: none; }
+.fa-p-tower-light { fill: var(--sunset-tower-light); stroke: none; }
+
 /* ---------- World elements ---------- */
-fa-aircraft, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst { display: inline-block; flex: none; line-height: 0; }
-fa-aircraft svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg { display: block; width: 100%; height: 100%; overflow: visible; }
+fa-aircraft, fa-side-aircraft, fa-silhouette, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst { display: inline-block; flex: none; line-height: 0; }
+fa-aircraft svg, fa-side-aircraft svg, fa-silhouette svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg { display: block; width: 100%; height: 100%; overflow: visible; }
 fa-aircraft { position: relative; width: var(--fa-size, 64px); height: var(--fa-size, 64px); filter: drop-shadow(5px 8px 3px var(--shadow-ground)); }
 fa-aircraft[flat] { filter: none; }
 .fa-aircraft__sprite { display: block; width: 100%; height: 100%; transition: transform var(--dur-quick) var(--ease-snap); }
@@ -69,6 +72,17 @@ fa-burst[data-loop] { animation: fa-burst calc(var(--dur-burst) * 3) var(--ease-
 .fa-zone { fill: none; stroke: none; stroke-width: 9; stroke-linejoin: round; }
 [state="ok"] > svg .fa-zone { stroke: var(--zone-ok); animation: fa-pulse 1s var(--ease-sway) infinite alternate; }
 [state="no"] > svg .fa-zone { stroke: var(--zone-no); stroke-dasharray: 4 16; stroke-linecap: round; }
+
+fa-side-aircraft { width: 144px; height: 96px; }
+.fa-prop-side { transform-box: fill-box; transform-origin: center; animation: fa-prop-side var(--dur-rotor) linear infinite; }
+fa-silhouette { display: block; width: 100%; }
+
+/* ---------- Splash: sunset sky and banner ---------- */
+.fa-sunset { background: linear-gradient(180deg, var(--sunset-sky-top) 0 30%, var(--sunset-sky-upper) 30% 52%, var(--sunset-sky-lower) 52% 72%, var(--sunset-sky-horizon) 72% 100%); }
+.fa-sunset__sun { position: absolute; border-radius: 50%; background: var(--sunset-sun); }
+.fa-banner { display: inline-block; padding: var(--space-3) var(--space-5); border: var(--line-3) solid var(--outline); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); font: 700 36px/40px var(--font-display); white-space: nowrap; }
+.fa-banner[data-loop] { animation: fa-banner var(--dur-sway) var(--ease-sway) infinite alternate; }
+.fa-towline { fill: none; stroke: var(--outline); stroke-width: var(--line-2); stroke-linecap: round; }
 
 /* ---------- Flight path (SVG) ---------- */
 .fa-path-casing, .fa-path-dash, .fa-path-ghost { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: var(--path-dash) var(--path-gap); }
@@ -191,6 +205,8 @@ fa-burst[data-loop] { animation: fa-burst calc(var(--dur-burst) * 3) var(--ease-
 /* ---------- Motion ---------- */
 @keyframes fa-spin { to { transform: rotate(360deg); } }
 @keyframes fa-prop { 0%, 100% { transform: scaleX(1); } 50% { transform: scaleX(.18); } }
+@keyframes fa-prop-side { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(.18); } }
+@keyframes fa-banner { from { transform: skewY(-2deg) translateY(-3px); } to { transform: skewY(2deg) translateY(3px); } }
 @keyframes fa-march { to { stroke-dashoffset: calc(-1 * (var(--path-dash) + var(--path-gap))); } }
 @keyframes fa-pulse { from { opacity: .55; } to { opacity: 1; } }
 @keyframes fa-squash { 0% { transform: scale(1); } 45% { transform: scale(1.18, .8); } 100% { transform: scale(.92, 1.1); } }
@@ -203,5 +219,5 @@ fa-burst[data-loop] { animation: fa-burst calc(var(--dur-burst) * 3) var(--ease-
 @keyframes fa-drop { from { transform: translateY(-40px) scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
 @keyframes fa-bob { from { transform: translateY(0); } to { transform: translateY(-5px); } }
 @media (prefers-reduced-motion: reduce) {
-  .fa-stage *, .fa-stage *::before, .fa-stage *::after, fa-aircraft *, fa-windsock *, fa-cloud, fa-burst { animation: none !important; transition: none !important; }
+  .fa-stage *, .fa-stage *::before, .fa-stage *::after, fa-aircraft *, fa-side-aircraft *, fa-windsock *, fa-cloud, fa-burst { animation: none !important; transition: none !important; }
 }

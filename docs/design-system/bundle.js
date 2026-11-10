@@ -1,6 +1,6 @@
 /* Final Approach world kit. Vanilla custom elements, no dependencies.
    window.FinalApproach = { AIRCRAFT, ICONS, aircraftSvg, iconSvg, runwaySvg, helipadSvg, cloudSvg, windsockSvg, burstSvg }
-   Elements: <fa-aircraft> <fa-icon> <fa-runway> <fa-helipad> <fa-cloud> <fa-windsock> <fa-burst>
+   Elements: <fa-aircraft> <fa-side-aircraft> <fa-silhouette> <fa-icon> <fa-runway> <fa-helipad> <fa-cloud> <fa-windsock> <fa-burst>
    Paint comes from bundle.css (.fa-p-*), which reads the tokens. */
 (function () {
   'use strict';
@@ -77,6 +77,50 @@
     }
   };
 
+  /* Side-view sprites, nose to the right, on a 96 by 64 grid. Used where the scene is seen
+     from the side (the splash page), never in gameplay. */
+  var SIDE_AIRCRAFT = {
+    'light-prop': {
+      label: 'Light prop, side view', width: 96, height: 64,
+      svg:
+        '<rect {{liv}} x="5" y="27" width="16" height="6" rx="3"/>' +
+        '<path {{liv}} d="M13 31L8 10q0-4 5-4l8 2 9 23z"/>' +
+        '<path {{line}} d="M40 46v6M60 46v6"/>' +
+        '<circle {{dark}} cx="40" cy="54" r="5"/>' +
+        '<circle {{dark}} cx="60" cy="54" r="5"/>' +
+        '<path {{body}} d="M9 34q0-8 12-8l42-4q22 0 26 12 0 10-18 12H26q-17-2-17-12z"/>' +
+        '<rect {{liv}} x="20" y="36" width="44" height="5" rx="2.500"/>' +
+        '<path {{glass}} d="M58 25.500h15q7 2 8.500 8.500H60z"/>' +
+        '<path {{shine}} d="M64 28.500l-2 3"/>' +
+        '<path {{line}} d="M52 22v-5"/>' +
+        '<rect {{liv}} x="36" y="10" width="36" height="8" rx="4"/>' +
+        '<g class="fa-prop-side"><rect {{dark}} x="88" y="16" width="5" height="36" rx="2.500"/></g>' +
+        '<circle {{dark}} cx="89.500" cy="34" r="4.500"/>'
+    }
+  };
+
+  /* The airport silhouette of the splash page, on a 1000 by 336 grid. The buildings stand on
+     the line y = baseY; the ground fills everything below it across the whole screen. */
+  var SILHOUETTE = {
+    width: 1000, height: 336, baseY: 290,
+    shapes: [
+      'M30 290V276q0-8 10-8h88q10 0 10 8v14z',
+      'M60 290l24-58h16l12 58z',
+      'M150 290v-52q75-52 150 0v52z',
+      'M330 290v-70h290v70z',
+      'M360 220v-16h230v16z',
+      'M640 290V100h32v190z',
+      'M624 100L614 54h84l-10 46z',
+      'M620 54V44h72v10z',
+      'M653.500 44V10h5v34z',
+      'M740 290v-16q0-8 10-8h140q10 0 10 8v16z',
+      'M770 290l20-62h18l16 62z',
+      'M914 268a26 26 0 1 0 52 0a26 26 0 1 0-52 0z',
+      'M952 276a20 20 0 1 0 40 0a20 20 0 1 0-40 0z'
+    ],
+    lights: ['M630 92l-7-30h66l-7 30z']
+  };
+
   /* 24px icons. s = stroked path data, f = filled markup. */
   var ICONS = {
     play: { f: '<path d="M8.500 5.500v13l10.500-6.500z" stroke-width="3" stroke-linejoin="round"/>' },
@@ -105,6 +149,18 @@
   function aircraftSvg(type, painter) {
     var a = AIRCRAFT[type] || AIRCRAFT['light-prop'];
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" aria-hidden="true">' + paint(a.svg, painter || cls) + '</svg>';
+  }
+
+  function sideAircraftSvg(type, painter) {
+    var a = SIDE_AIRCRAFT[type] || SIDE_AIRCRAFT['light-prop'];
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + a.width + ' ' + a.height + '" aria-hidden="true">' + paint(a.svg, painter || cls) + '</svg>';
+  }
+
+  function silhouetteSvg() {
+    var s = '<rect class="fa-p-silhouette" x="-2000" y="' + (SILHOUETTE.baseY - 1) + '" width="5000" height="' + (SILHOUETTE.height - SILHOUETTE.baseY + 1) + '"/>';
+    SILHOUETTE.shapes.forEach(function (d) { s += '<path class="fa-p-silhouette" d="' + d + '"/>'; });
+    SILHOUETTE.lights.forEach(function (d) { s += '<path class="fa-p-tower-light" d="' + d + '"/>'; });
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + SILHOUETTE.width + ' ' + SILHOUETTE.height + '" preserveAspectRatio="xMidYMax meet" aria-hidden="true">' + s + '</svg>';
   }
 
   function iconSvg(name, color) {
@@ -178,7 +234,8 @@
   }
 
   var api = {
-    AIRCRAFT: AIRCRAFT, ICONS: ICONS, paint: paint,
+    AIRCRAFT: AIRCRAFT, SIDE_AIRCRAFT: SIDE_AIRCRAFT, SILHOUETTE: SILHOUETTE, ICONS: ICONS, paint: paint,
+    sideAircraftSvg: sideAircraftSvg, silhouetteSvg: silhouetteSvg,
     aircraftSvg: aircraftSvg, iconSvg: iconSvg, runwaySvg: runwaySvg, helipadSvg: helipadSvg,
     cloudSvg: cloudSvg, windsockSvg: windsockSvg, burstSvg: burstSvg
   };
@@ -213,6 +270,12 @@
     el.innerHTML = ring + '<span class="fa-aircraft__sprite" style="transform:rotate(' + (parseFloat(el.getAttribute('heading')) || 0) + 'deg)">' + aircraftSvg(type) + '</span>' + tag;
   });
 
+  define('fa-side-aircraft', ['type', 'livery'], function (el) {
+    var livery = Math.min(6, Math.max(1, parseInt(el.getAttribute('livery'), 10) || 1));
+    el.style.setProperty('--fa-livery', 'var(--path-' + livery + ')');
+    el.innerHTML = sideAircraftSvg(el.getAttribute('type'));
+  });
+  define('fa-silhouette', [], function (el) { el.innerHTML = silhouetteSvg(); });
   define('fa-icon', ['name'], function (el) { el.innerHTML = iconSvg(el.getAttribute('name')); });
   define('fa-runway', ['length', 'numbers'], function (el) {
     var L = Math.max(200, parseFloat(el.getAttribute('length')) || 360);
