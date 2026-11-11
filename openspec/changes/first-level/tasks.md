@@ -2,13 +2,13 @@
 
 ## 1. Engine
 
-- [ ] 1.1 Add `Aircraft`, `FlightPath` and `GameState` in `domain`/`engine`, and `GameEngine` with a `StateFlow`, spawner hookup and `update(deltaSeconds)`; verify with unit tests that spawns appear and the first level never has more than three aircraft in the air
+- [x] 1.1 Add `Aircraft`, `FlightPath` and `GameState` in `domain`/`engine`, and `GameEngine` with a `StateFlow`, spawner hookup and `update(deltaSeconds)`; verify with unit tests that spawns appear and the first level never has more than three aircraft in the air
 - [x] 1.2 Add turn-rate-limited path following that consumes reached points and flies straight on after the path; verify with unit tests
-- [ ] 1.3 Remove aircraft that leave the viewport after having entered it; verify with a unit test
+- [x] 1.3 Remove aircraft that leave the viewport after having entered it; verify with a unit test
 
 ## 2. Input
 
-- [ ] 2.1 Add `select`, `beginPath`, `extendPath` and `endPath` on the engine with the pick radius, nearest-aircraft rule, minimum spacing and landing cut-off; verify with unit tests
+- [x] 2.1 Add `select`, `beginPath`, `extendPath` and `endPath` on the engine with the pick radius, nearest-aircraft rule, minimum spacing and landing cut-off; verify with unit tests
 - [ ] 2.2 Add `WorldViewport` (fit, centre, pixels to world and back); verify with unit tests
 
 ## 3. Level data and platform

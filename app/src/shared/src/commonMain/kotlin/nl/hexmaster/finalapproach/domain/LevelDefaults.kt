@@ -11,6 +11,9 @@ object LevelDefaults {
     /** How far outside the viewport aircraft appear, in world units. */
     const val SPAWN_MARGIN = 60.0
 
+    /** How far beyond the viewport an aircraft that was inside it may fly before it has left. */
+    const val LEAVE_MARGIN = 60.0
+
     /** How far an approach heading may differ from a runway heading, in radians (30 degrees). */
     const val LANDING_TOLERANCE = 0.5235987755982988
 

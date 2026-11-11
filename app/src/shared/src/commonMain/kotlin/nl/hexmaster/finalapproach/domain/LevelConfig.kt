@@ -98,6 +98,7 @@ data class WorldConfig(
     val width: Double,
     val height: Double,
     val spawnMargin: Double = LevelDefaults.SPAWN_MARGIN,
+    val leaveMargin: Double = LevelDefaults.LEAVE_MARGIN,
     val minimumSeparation: Double = LevelDefaults.MINIMUM_SEPARATION,
 ) {
     val viewport: Bounds get() = Bounds(0.0, 0.0, width, height)
