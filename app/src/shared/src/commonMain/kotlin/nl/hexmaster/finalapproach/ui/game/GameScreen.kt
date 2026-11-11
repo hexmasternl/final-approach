@@ -52,6 +52,8 @@ internal object GameScreenDefaults {
     const val NANOS_PER_SECOND = 1_000_000_000.0
 }
 
+private const val MILLIS_PER_SECOND = 1000.0
+
 /**
  * The game: [level] fills the screen in landscape, aircraft arrive and the player steers them.
  * Back returns to the main page through [onBack].
@@ -61,6 +63,8 @@ fun GameScreen(host: AppHost, onBack: () -> Unit, level: LevelConfig = Levels.me
     val engine = remember(level) { GameEngine(level) }
     val state by engine.state.collectAsState()
     var screen by remember { mutableStateOf(IntSize.Zero) }
+    val rings = remember(engine) { ProximityRings() }
+    var clock by remember(engine) { mutableStateOf(0.0) }
     val colors = FaTheme.colors
     val reduceMotion = FaTheme.reduceMotion
     val measurer = rememberTextMeasurer()
@@ -80,6 +84,8 @@ fun GameScreen(host: AppHost, onBack: () -> Unit, level: LevelConfig = Levels.me
             val delta = ((now - last) / GameScreenDefaults.NANOS_PER_SECOND).coerceAtMost(GameScreenDefaults.MAX_FRAME_SECONDS)
             last = now
             engine.update(delta)
+            rings.update(engine.state.value, { engine.specs[it.type].shape.boundingRadius }, (delta * MILLIS_PER_SECOND).toFloat())
+            clock += delta
         }
     }
 
@@ -128,6 +134,21 @@ fun GameScreen(host: AppHost, onBack: () -> Unit, level: LevelConfig = Levels.me
         drawPaths(state, viewport, colors, reduceMotion)
         drawAircraft(state, engine, viewport, colors, reduceMotion)
         drawSelection(state, engine, viewport, colors)
+        drawProximityRings(rings, proximityRingAngle(clock, reduceMotion), reduceMotion, viewport, colors)
+    }
+}
+
+/** The effects layer: a warning ring around every aircraft that is too close to another. */
+private fun DrawScope.drawProximityRings(
+    rings: ProximityRings,
+    angle: Float,
+    reduceMotion: Boolean,
+    viewport: WorldViewport,
+    colors: FaColors,
+) {
+    val margin = FaDimens.warnRingMargin.toPx()
+    for (ring in rings.all) {
+        drawProximityRing(viewport.offsetOf(ring.position), viewport.px(ring.radius) + margin, angle, if (reduceMotion) 1f else ring.scale, ring.alpha, colors)
     }
 }
 
