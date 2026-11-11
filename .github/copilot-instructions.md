@@ -19,7 +19,7 @@ Final Approach is a cartoon-style air-traffic game. The player draws paths for i
 - When the path ends, the aircraft continues straight in its last heading.
 - Planes land only on runways, helicopters only on helipads. A path that enters a valid landing zone (runway thresholds need an aligned approach) is cut off there and clears the aircraft to land; landing removes the aircraft, airplanes after a rollout.
 - Each aircraft type has its own speed (and turn rate); helicopters are slower and can turn tighter.
-- Collisions (too-close aircraft) and leaving the viewport without landing are failures.
+- Collisions (aircraft collision shapes touching) and leaving the viewport without landing are failures that end the level; aircraft closer than the warning distance only get a warning ring.
 
 ## Conventions
 - Kotlin official code style; 4-space indent; `val` over `var`; no `!!`.

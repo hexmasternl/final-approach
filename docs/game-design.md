@@ -35,7 +35,7 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 - On path end the aircraft flies straight on in its last heading (no auto-landing, no auto-turn).
 - A path that enters a valid landing zone (runway threshold for airplanes, helipad for helicopters) clears the aircraft to land: the path is cut off at the point where it entered the zone, flashes white once, and takes no more drag points. Score is awarded at touchdown.
 - A path over the wrong zone type, or over the middle of a runway, does nothing; the path continues as drawn.
-- Aircraft leaving the viewport without landing counts as a miss. Only an aircraft that has been on screen can leave it; until misses end the level, it is simply removed once it is beyond the leave margin, freeing its slot.
+- Aircraft leaving the viewport without landing counts as a miss. Only an aircraft that has been on screen can leave it: once it is beyond the leave margin, the level ends. Aircraft still entering are never counted.
 
 ## Landing rules
 - Landing zones are invisible. A helipad's zone is a circle on the pad (radius configurable per helipad). A runway has a zone at each threshold it can be landed from: one for a one-way runway, two for a two-way runway, with opposite landing directions.
@@ -45,8 +45,10 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 - With reduced motion the path does not flash; it turns solid white until the aircraft lands.
 
 ## Failure and scoring
-- **Collision**: two aircraft closer than a minimum separation → lose a life / game over (per difficulty).
-- **Miss**: an aircraft leaves the screen → lose a life.
+- **Collision**: two aircraft collide when their shapes touch: each type has a collision shape traced from its sprite (a few circles along fuselage and wings), turned with the aircraft. Flying close is allowed; touching ends the level. The test is swept over each simulation step, so fast aircraft cannot pass through each other. Landed and removed aircraft never collide; rolling-out airplanes do.
+- **Left the area**: an aircraft that has been on screen and leaves it, beyond the leave margin, without landing ends the level.
+- **Game over**: the first collision or departure ends the level at once. The game freezes on that frame and remembers why and which aircraft; input and spawning stop. (Lives and the game-ended dialog come later.)
+- **Proximity warning**: while two aircraft are closer than the warning distance (centre to centre), both get a spinning dashed ring in the warning colour. It is only a warning; nothing fails until the shapes touch.
 - Score: each safe landing adds the landed type's effective points (helicopter least, jumbo most). Collisions and misses add nothing. Bonuses for streaks and tight sequencing may come later.
 - Difficulty rises over time: spawn rate and aircraft variety increase.
 

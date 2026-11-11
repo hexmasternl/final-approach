@@ -53,14 +53,14 @@ A one-way runway SHALL accept a landing only when the approach heading is within
 - **THEN** the landing direction is not valid for either mode
 
 ### Requirement: World settings
-A level config SHALL define the world size (the viewport in world units), the spawn margin (the distance outside the viewport where aircraft appear) and the minimum separation used for collisions. The minimum separation SHALL default to the global config value and MAY be overridden per level.
+A level config SHALL define the world size (the viewport in world units), the spawn margin (the distance outside the viewport where aircraft appear) and the spawn separation (the least distance between a new aircraft and any other aircraft). The spawn separation SHALL default to the global config value and MAY be overridden per level.
 
 #### Scenario: Default separation
-- **WHEN** a level config does not set a minimum separation
-- **THEN** the global default minimum separation applies
+- **WHEN** a level config does not set a spawn separation
+- **THEN** the global default spawn separation applies
 
 #### Scenario: Overridden separation
-- **WHEN** a level config sets a minimum separation
+- **WHEN** a level config sets a spawn separation
 - **THEN** that value applies in that level
 
 ### Requirement: Run rules
@@ -105,7 +105,7 @@ A level config SHALL carry these optional fields, each with a default that chang
 - **THEN** the multiplier is available to the engine without any change to the aircraft roster
 
 ### Requirement: Validation
-A level config SHALL be validated, and an invalid config SHALL be rejected with a message that names the problem. A config is valid only when all of these hold: it has at least one landing zone; every landing zone lies inside the viewport; no two landing zones overlap; it has at least one phase and the first phase starts at time 0; phase start times strictly increase; each spawn interval range is positive and its minimum is not above its maximum; each phase has at least one aircraft type and every weight is positive; each phase's maximum aircraft is at least 1; every aircraft type allowed in a phase has a matching landing zone (an airplane type needs a runway, a helicopter needs a helipad); the minimum separation is positive.
+A level config SHALL be validated, and an invalid config SHALL be rejected with a message that names the problem. A config is valid only when all of these hold: it has at least one landing zone; every landing zone lies inside the viewport; no two landing zones overlap; it has at least one phase and the first phase starts at time 0; phase start times strictly increase; each spawn interval range is positive and its minimum is not above its maximum; each phase has at least one aircraft type and every weight is positive; each phase's maximum aircraft is at least 1; every aircraft type allowed in a phase has a matching landing zone (an airplane type needs a runway, a helicopter needs a helipad); the spawn separation is positive.
 
 #### Scenario: No landing zone
 - **WHEN** a config has no runway and no helipad
