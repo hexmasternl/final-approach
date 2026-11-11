@@ -14,5 +14,5 @@
 
 ## 4. Docs
 
-- [ ] 4.1 Update `docs/game-design.md`: aircraft roster with the speed order and the points per type, the level overrides, and the scoring rule that only landings score. Verify: the doc matches the specs and the default values in code.
+- [x] 4.1 Update `docs/game-design.md`: aircraft roster with the speed order and the points per type, the level overrides, and the scoring rule that only landings score. Verify: the doc matches the specs and the default values in code.
 - [ ] 4.2 Run `./gradlew :shared:allTests` from `app/src`. Verify: all tests pass.

@@ -9,15 +9,20 @@ A top-down, cartoon-style view of an airport. Aircraft enter the viewport from t
 - Layouts are defined per level as data (positions, orientation, size).
 
 ## Aircraft
-| Type | Kind | Speed | Turn rate | Lands on |
-|------|------|-------|-----------|----------|
-| Light prop | Airplane | Slow | High | Runway |
-| Turboprop | Airplane | Medium | Medium | Runway |
-| Jet | Airplane | Fast | Low | Runway |
-| Jumbo | Airplane | Medium-fast | Very low | Runway |
-| Helicopter | Helicopter | Slow | Very high | Helipad |
+| Type | Kind | Speed (units/s) | Turn rate | Landing points | Lands on |
+|------|------|-----------------|-----------|----------------|----------|
+| Helicopter | Helicopter | 40 (slowest) | Very high | 10 | Helipad |
+| Light prop | Airplane | 55 | High | 20 | Runway |
+| Turboprop | Airplane | 75 | Medium | 30 | Runway |
+| Jet | Airplane | 100 | Low | 50 | Runway |
+| Jumbo | Airplane | 130 (fastest) | Very low | 80 | Runway |
 
-Values are tunable and live in configuration. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings.
+Values are defaults in `DefaultAircraftSpecs` and are tunable. Speed rises from helicopter to jumbo, each type at least 15% faster than the one before, so the gaps show in play. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings. The jumbo is the fastest, balanced by its very low turn rate.
+
+Every aircraft of a type flies at exactly the same speed, with no random variation, and its speed never changes during a run.
+
+### Level overrides
+A level can set a speed multiplier and per-type speeds, and a points multiplier and per-type points. A per-type value replaces the default; the multiplier then applies to the result (points are rounded, minimum 1). The effective values are resolved once when the level starts and stay fixed for the run. Multipliers and per-type values must be greater than zero; a level with a zero or negative value is rejected with the field named. Overrides need not keep the speed order.
 
 ## Controls
 1. **Tap** an aircraft to select it.
@@ -38,7 +43,7 @@ Values are tunable and live in configuration. Differing speeds are the core chal
 ## Failure and scoring
 - **Collision**: two aircraft closer than a minimum separation → lose a life / game over (per difficulty).
 - **Miss**: an aircraft leaves the screen → lose a life.
-- Score: points per safe landing, bonus for streaks and tight sequencing.
+- Score: each safe landing adds the landed type's effective points (helicopter least, jumbo most). Collisions and misses add nothing. Bonuses for streaks and tight sequencing may come later.
 - Difficulty rises over time: spawn rate and aircraft variety increase.
 
 ## Levels
