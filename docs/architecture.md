@@ -28,8 +28,9 @@ final-approach/
 
 ## Key mechanics
 - **Path following**: aircraft advances `speed * dt` along the polyline; heading is the segment direction; turn rate limits sharp corners.
-- **Path end**: path cleared; aircraft keeps its last heading.
-- **Landing check**: when the path ends, test the endpoint against runways (planes) or helipads (helicopters).
+- **Path end**: path consumed; aircraft keeps its last heading.
+- **Landing check**: while a path is drawn, each new segment is tested against the landing zones (`LandingRules`). Zones are derived from the level (`LandingZones`): a circle per helipad and a threshold rectangle per landing direction of each runway. The first valid entry cuts and locks the path (`PathDrawing`) and sets the aircraft `ClearedToLand`. `AircraftMotion` then flies it to the path end: helicopters are removed there, airplanes become `RollingOut` along the zone's direction for a fraction of the runway length, fade, and are removed. Rolling airplanes still count for collisions. Tunables live in `LandingConfig`; the rollout speed fraction is part of `AircraftTypeSpec`.
+- **Path flash**: the engine only records when a path was locked (`FlightPath.lockedAt`); the renderer draws the white flash from that.
 - **Coordinates**: world units independent of screen size; the viewport scales to fit.
 
 ## Level config and spawner

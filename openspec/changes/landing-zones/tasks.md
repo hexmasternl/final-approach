@@ -24,7 +24,7 @@
 
 ## 5. Docs
 
-- [ ] 5.1 Update the landing rules in `docs/game-design.md`, `docs/architecture.md` and the core rules in `CLAUDE.md` (and `.github/copilot-instructions.md`) so a landing is triggered by a path entering a zone, with direction and rollout; add the flash to the FlightPath guideline; verify the docs no longer say a landing needs the path to end on the zone
+- [x] 5.1 Update the landing rules in `docs/game-design.md`, `docs/architecture.md` and the core rules in `CLAUDE.md` (and `.github/copilot-instructions.md`) so a landing is triggered by a path entering a zone, with direction and rollout; add the flash to the FlightPath guideline; verify the docs no longer say a landing needs the path to end on the zone
 
 ## 6. Integration check
 

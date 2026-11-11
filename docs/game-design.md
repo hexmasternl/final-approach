@@ -32,13 +32,16 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 
 ## Flight behaviour
 - On path end the aircraft flies straight on in its last heading (no auto-landing, no auto-turn).
-- Path ends on a valid landing zone (runway for airplanes, helipad for helicopters) → aircraft lands and disappears; score awarded.
-- Path ends on the wrong zone type → no landing; aircraft keeps flying straight.
+- A path that enters a valid landing zone (runway threshold for airplanes, helipad for helicopters) clears the aircraft to land: the path is cut off at the point where it entered the zone, flashes white once, and takes no more drag points. Score is awarded at touchdown.
+- A path over the wrong zone type, or over the middle of a runway, does nothing; the path continues as drawn.
 - Aircraft leaving the viewport without landing counts as a miss.
 
 ## Landing rules
-- Airplane: path must end on the runway, roughly aligned with its axis (angle tolerance configurable).
-- Helicopter: path end within the helipad radius.
+- Landing zones are invisible. A helipad's zone is a circle on the pad (radius configurable per helipad). A runway has a zone at each threshold it can be landed from: one for a one-way runway, two for a two-way runway, with opposite landing directions.
+- Airplane: the path must enter a runway threshold zone with its direction within the alignment tolerance (default 30 degrees) of that zone's landing direction. A steep crossing or the wrong direction on a one-way runway does nothing.
+- Helicopter: the path enters the helipad zone; no alignment is needed. It lands at the end of its path and is removed.
+- Airplane rollout: after touchdown the airplane rolls on in the zone's landing direction for two thirds of the runway length, at a fraction of its flight speed, then fades out and is removed. On a two-way runway, the zone that was entered decides the direction. Rolling airplanes can still collide.
+- With reduced motion the path does not flash; it turns solid white until the aircraft lands.
 
 ## Failure and scoring
 - **Collision**: two aircraft closer than a minimum separation → lose a life / game over (per difficulty).

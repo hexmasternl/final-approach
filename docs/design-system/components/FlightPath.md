@@ -12,7 +12,7 @@ Both use dash `path-dash` (18px) and gap `path-gap` (16px). The path ends in a d
 - Selected: full opacity, dashes march towards the end dot, one dash length per `dur-march`.
 - Idle: `opacity-path-idle`, no marching.
 - Straight-on projection: when a path ends away from a valid zone, draw a thin dotted `outline` line at `opacity-ghost` from the end dot along the last heading, so players see where the aircraft will go.
-- Valid end: the landing zone under the dot glows `zone-ok`. Wrong zone type: `zone-no`.
+- Cleared to land: when the path enters a valid landing zone it is cut off at the zone and stops taking points. It flashes white once: the dash colour blends to `fuselage` and back over `dur-pop`. The path stopping is the second cue, so the signal does not rely on colour. With reduced motion there is no flash: the path is drawn solid (no dashes) in `fuselage`, with its end dot, until the aircraft lands. Landing zones themselves are invisible.
 
 Consume the path from the aircraft's end as it flies: the line gets shorter, it does not fade.
 

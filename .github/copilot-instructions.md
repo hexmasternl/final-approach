@@ -17,7 +17,7 @@ Final Approach is a cartoon-style air-traffic game. The player draws paths for i
 ## Core rules (keep consistent with docs/game-design.md)
 - Tap an aircraft, then drag to draw its path; the aircraft follows the path.
 - When the path ends, the aircraft continues straight in its last heading.
-- Planes land only on runways, helicopters only on helipads; landing removes the aircraft.
+- Planes land only on runways, helicopters only on helipads. A path that enters a valid landing zone (runway thresholds need an aligned approach) is cut off there and clears the aircraft to land; landing removes the aircraft, airplanes after a rollout.
 - Each aircraft type has its own speed (and turn rate); helicopters are slower and can turn tighter.
 - Collisions (too-close aircraft) and leaving the viewport without landing are failures.
 
