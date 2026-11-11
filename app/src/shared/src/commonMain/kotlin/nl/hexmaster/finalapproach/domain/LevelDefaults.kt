@@ -5,8 +5,17 @@ package nl.hexmaster.finalapproach.domain
  * so no such number appears as a literal in domain or engine logic.
  */
 object LevelDefaults {
-    /** Closest two aircraft may be when one of them spawns, in world units. */
-    const val MINIMUM_SEPARATION = 80.0
+    /**
+     * Closest a new aircraft may spawn to any other aircraft, centre to centre, in world units.
+     * Larger than the warning distance, so no aircraft arrives already warned.
+     */
+    const val SPAWN_SEPARATION = 160.0
+
+    /** Aircraft whose centres are closer than this get the proximity warning, in world units. */
+    const val WARNING_DISTANCE = 150.0
+
+    /** Longest simulation step; a longer frame is split into steps this long, in seconds. */
+    const val MAX_STEP_SECONDS = 0.02
 
     /** How far outside the viewport aircraft appear, in world units. */
     const val SPAWN_MARGIN = 60.0

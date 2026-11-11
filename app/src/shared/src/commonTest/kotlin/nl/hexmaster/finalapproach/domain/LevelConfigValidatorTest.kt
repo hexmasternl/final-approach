@@ -120,7 +120,13 @@ class LevelConfigValidatorTest {
 
     @Test
     fun separationMustBePositive() {
-        assertProblem(valid().copy(world = WorldConfig(1000.0, 600.0, minimumSeparation = 0.0)), "separation")
+        assertProblem(valid().copy(world = WorldConfig(1000.0, 600.0, spawnSeparation = 0.0)), "separation")
+    }
+
+    @Test
+    fun warningDistanceAndSimulationStepMustBePositive() {
+        assertProblem(valid().copy(world = WorldConfig(1000.0, 600.0, warningDistance = 0.0)), "warning distance")
+        assertProblem(valid().copy(world = WorldConfig(1000.0, 600.0, maxStepSeconds = 0.0)), "simulation step")
     }
 
     @Test

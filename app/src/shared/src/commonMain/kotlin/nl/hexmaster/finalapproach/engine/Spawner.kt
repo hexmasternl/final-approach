@@ -120,5 +120,5 @@ class Spawner(
     }
 
     private fun isSeparated(position: Vec2, aircraftPositions: List<Vec2>): Boolean =
-        aircraftPositions.all { it.distanceTo(position) >= config.world.minimumSeparation }
+        aircraftPositions.all { it.distanceTo(position) >= config.world.spawnSeparation }
 }

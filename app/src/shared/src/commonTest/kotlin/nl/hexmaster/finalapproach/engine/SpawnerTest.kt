@@ -158,8 +158,8 @@ class SpawnerTest {
     }
 
     @Test
-    fun spawnKeepsTheMinimumSeparationFromAllAircraft() {
-        val separation = level.world.minimumSeparation
+    fun spawnKeepsTheSpawnSeparationFromAllAircraft() {
+        val separation = level.world.spawnSeparation
         for (seed in 0L until 50L) {
             val spawner = Spawner(level, seed, speed)
             // An aircraft waiting just outside the left edge, still off screen.
@@ -177,7 +177,7 @@ class SpawnerTest {
     @Test
     fun separationBlocksASpawnWhenEveryEntryIsTooClose() {
         val oneEdge = level.copy(
-            world = WorldConfig(1000.0, 600.0, minimumSeparation = 5000.0),
+            world = WorldConfig(1000.0, 600.0, spawnSeparation = 5000.0),
             spawn = SpawnRules(edges = setOf(SpawnEdge.Left)),
         )
         val spawner = Spawner(oneEdge, 5, speed)

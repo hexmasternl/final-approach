@@ -93,13 +93,21 @@ data class LandingConfig(
     val fadeSeconds: Double = LevelDefaults.LANDED_FADE_SECONDS,
 )
 
-/** The world a level is played in. The viewport is the rectangle from 0,0 to [width],[height]. */
+/**
+ * The world a level is played in. The viewport is the rectangle from 0,0 to [width],[height].
+ * An aircraft that has been in the viewport leaves it when it is more than [leaveMargin] beyond
+ * an edge. [spawnSeparation] only applies to spawning; aircraft collide when their shapes touch.
+ * Aircraft closer than [warningDistance] (centre to centre) are warned. [maxStepSeconds] is the
+ * longest simulation step.
+ */
 data class WorldConfig(
     val width: Double,
     val height: Double,
     val spawnMargin: Double = LevelDefaults.SPAWN_MARGIN,
     val leaveMargin: Double = LevelDefaults.LEAVE_MARGIN,
-    val minimumSeparation: Double = LevelDefaults.MINIMUM_SEPARATION,
+    val spawnSeparation: Double = LevelDefaults.SPAWN_SEPARATION,
+    val warningDistance: Double = LevelDefaults.WARNING_DISTANCE,
+    val maxStepSeconds: Double = LevelDefaults.MAX_STEP_SECONDS,
 ) {
     val viewport: Bounds get() = Bounds(0.0, 0.0, width, height)
 }

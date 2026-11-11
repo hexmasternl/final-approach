@@ -84,7 +84,7 @@ class AircraftMotionTest {
             if (collision.isNotEmpty()) return@repeat
             west = west?.let { AircraftMotion.step(it, specs, level.landing, dt).aircraft }
             east = east?.let { AircraftMotion.step(it, specs, level.landing, dt).aircraft }
-            collision = Collisions.find(listOfNotNull(west, east), level.world.minimumSeparation)
+            collision = Collisions.find(listOfNotNull(west, east), level.world.spawnSeparation)
         }
         assertEquals(listOf(1 to 2), collision)
         assertIs<AircraftStatus.RollingOut>(assertNotNull(west).status)

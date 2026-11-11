@@ -27,15 +27,15 @@ class LevelConfigTest {
         assertTrue(config.hints.isEmpty())
         assertEquals(LevelTheme.Day, config.theme)
         assertEquals(Ambience(), config.ambience)
-        assertEquals(LevelDefaults.MINIMUM_SEPARATION, config.world.minimumSeparation)
+        assertEquals(LevelDefaults.SPAWN_SEPARATION, config.world.spawnSeparation)
         assertTrue(config.run.endless)
         assertNull(config.run.seed)
     }
 
     @Test
     fun overriddenSeparationApplies() {
-        val config = minimal().copy(world = WorldConfig(1000.0, 600.0, minimumSeparation = 120.0))
-        assertEquals(120.0, config.world.minimumSeparation)
+        val config = minimal().copy(world = WorldConfig(1000.0, 600.0, spawnSeparation = 120.0))
+        assertEquals(120.0, config.world.spawnSeparation)
     }
 
     @Test

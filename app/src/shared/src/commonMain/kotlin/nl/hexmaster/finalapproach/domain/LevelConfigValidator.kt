@@ -114,7 +114,10 @@ object LevelConfigValidator {
     private fun worldProblems(config: LevelConfig): List<String> = buildList {
         val world = config.world
         if (world.width <= 0.0 || world.height <= 0.0) add("The world needs a positive width and height")
-        if (world.minimumSeparation <= 0.0) add("The minimum separation must be positive")
+        if (world.spawnSeparation <= 0.0) add("The spawn separation must be positive")
+        if (world.warningDistance <= 0.0) add("The warning distance must be positive")
+        if (world.maxStepSeconds <= 0.0) add("The maximum simulation step must be positive")
+        if (world.leaveMargin < 0.0) add("The leave margin must not be negative")
         if (world.spawnMargin < 0.0) add("The spawn margin must not be negative")
         addAll(config.aircraftTuning.problems())
         if (config.spawn.edges.isEmpty()) add("At least one spawn edge must be permitted")
