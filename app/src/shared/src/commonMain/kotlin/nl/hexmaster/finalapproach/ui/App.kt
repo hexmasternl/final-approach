@@ -33,7 +33,7 @@ fun App(host: AppHost) {
                 onSettings = { screen = Screen.Settings },
             )
 
-            Screen.Game -> GameScreen(host = host, onBack = { screen = Screen.Main })
+            Screen.Game -> GameScreen(host = host, onQuit = { screen = Screen.Main })
 
             // The settings page has its own issue. Until it is built, a placeholder keeps the
             // flow from and back to the main page working.

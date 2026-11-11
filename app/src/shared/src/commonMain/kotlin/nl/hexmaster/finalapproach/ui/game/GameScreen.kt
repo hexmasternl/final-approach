@@ -3,6 +3,7 @@ package nl.hexmaster.finalapproach.ui.game
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -27,6 +28,7 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.LevelConfig
 import nl.hexmaster.finalapproach.domain.Levels
+import nl.hexmaster.finalapproach.engine.BestScore
 import nl.hexmaster.finalapproach.engine.GameEngine
 import nl.hexmaster.finalapproach.engine.GameState
 import nl.hexmaster.finalapproach.input.WorldViewport
@@ -56,12 +58,15 @@ private const val MILLIS_PER_SECOND = 1000.0
 
 /**
  * The game: [level] fills the screen in landscape, aircraft arrive and the player steers them.
- * Back returns to the main page through [onBack].
+ * The HUD shows scores and spawn counts; the cog wheel (or back) pauses the level and opens the
+ * options panel. Quit leaves through [onQuit].
  */
 @Composable
-fun GameScreen(host: AppHost, onBack: () -> Unit, level: LevelConfig = Levels.meadowField) {
+fun GameScreen(host: AppHost, onQuit: () -> Unit, level: LevelConfig = Levels.meadowField) {
     val engine = remember(level) { GameEngine(level) }
     val state by engine.state.collectAsState()
+    val bestScore = remember(level, host) { BestScore(host.highScores, level.id) }
+    var optionsOpen by remember { mutableStateOf(false) }
     var screen by remember { mutableStateOf(IntSize.Zero) }
     val rings = remember(engine) { ProximityRings() }
     var clock by remember(engine) { mutableStateOf(0.0) }
@@ -75,7 +80,18 @@ fun GameScreen(host: AppHost, onBack: () -> Unit, level: LevelConfig = Levels.me
         host.lockLandscape(true)
         onDispose { host.lockLandscape(false) }
     }
-    BackHandler(host, onBack)
+    fun openOptions() {
+        engine.pause()
+        optionsOpen = true
+    }
+
+    fun closeOptions() {
+        optionsOpen = false
+        engine.resume()
+    }
+    BackHandler(host) { if (optionsOpen) closeOptions() else openOptions() }
+
+    LaunchedEffect(state.score) { bestScore.update(state.score) }
 
     LaunchedEffect(engine) {
         var last = withFrameNanos { it }
@@ -84,8 +100,8 @@ fun GameScreen(host: AppHost, onBack: () -> Unit, level: LevelConfig = Levels.me
             val delta = ((now - last) / GameScreenDefaults.NANOS_PER_SECOND).coerceAtMost(GameScreenDefaults.MAX_FRAME_SECONDS)
             last = now
             engine.update(delta)
-            rings.update(engine.state.value, { engine.specs[it.type].shape.boundingRadius }, (delta * MILLIS_PER_SECOND).toFloat())
-            clock += delta
+            if (!engine.state.value.paused) rings.update(engine.state.value, { engine.specs[it.type].shape.boundingRadius }, (delta * MILLIS_PER_SECOND).toFloat())
+            if (!engine.state.value.paused) clock += delta
         }
     }
 
@@ -97,6 +113,7 @@ fun GameScreen(host: AppHost, onBack: () -> Unit, level: LevelConfig = Levels.me
     )
     val currentViewport by rememberUpdatedState(viewport)
 
+    Box(Modifier.fillMaxSize()) {
     Canvas(
         Modifier
             .fillMaxSize()
@@ -135,6 +152,24 @@ fun GameScreen(host: AppHost, onBack: () -> Unit, level: LevelConfig = Levels.me
         drawAircraft(state, engine, viewport, colors, reduceMotion)
         drawSelection(state, engine, viewport, colors)
         drawProximityRings(rings, proximityRingAngle(clock, reduceMotion), reduceMotion, viewport, colors)
+    }
+    Hud(
+        best = bestScore.shown(state.score),
+        score = state.score,
+        types = level.spawnedTypes,
+        spawned = state.spawnedByType,
+        onOptions = ::openOptions,
+    )
+    if (optionsOpen) {
+        OptionsPanel(
+            onContinue = ::closeOptions,
+            onRestart = {
+                engine.restart()
+                optionsOpen = false
+            },
+            onQuit = onQuit,
+        )
+    }
     }
 }
 
