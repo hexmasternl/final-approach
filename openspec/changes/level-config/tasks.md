@@ -13,7 +13,7 @@
 
 ## 3. First level
 
-- [ ] 3.1 Define `Levels.meadowField` (one two-way runway, one helipad on the right, phased curve with a maximum of three aircraft) and verify with unit tests that it validates, that its first phase allows only light props and helicopters, and that no phase exceeds three aircraft
+- [x] 3.1 Define `Levels.meadowField` (one two-way runway, one helipad on the right, phased curve with a maximum of three aircraft) and verify with unit tests that it validates, that its first phase allows only light props and helicopters, and that no phase exceeds three aircraft
 
 ## 4. Spawner
 
