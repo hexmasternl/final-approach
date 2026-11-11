@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import nl.hexmaster.finalapproach.platform.Ads
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.platform.BackDispatcher
 import nl.hexmaster.finalapproach.platform.HighScoreStore
@@ -22,6 +23,8 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
         Settings.Global.getFloat(activity.contentResolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
 
     override val back = BackDispatcher()
+
+    override val ads: Ads = AdMobAds(activity)
 
     /** Best scores live in a private preferences file, one integer per level. */
     override val highScores = object : HighScoreStore {

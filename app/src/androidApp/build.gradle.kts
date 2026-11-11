@@ -28,8 +28,20 @@ android {
             }
         }
     }
+    buildFeatures {
+        buildConfig = true
+    }
+    // Debug builds only ever use Google's public test ads; the real units are for release.
     buildTypes {
+        getByName("debug") {
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-3940256099942544~3347511713"
+            buildConfigField("String", "INTERSTITIAL_UNIT_ID", "\"ca-app-pub-3940256099942544/1033173712\"")
+            buildConfigField("String", "BANNER_UNIT_ID", "\"ca-app-pub-3940256099942544/9214589741\"")
+        }
         getByName("release") {
+            manifestPlaceholders["admobAppId"] = "ca-app-pub-1310013076234295~7766080345"
+            buildConfigField("String", "INTERSTITIAL_UNIT_ID", "\"ca-app-pub-1310013076234295/6684168624\"")
+            buildConfigField("String", "BANNER_UNIT_ID", "\"ca-app-pub-1310013076234295/3427449894\"")
             isMinifyEnabled = false
             if (uploadKeystorePath != null) {
                 signingConfig = signingConfigs.getByName("release")
@@ -54,4 +66,8 @@ dependencies {
     implementation(libs.compose.runtime)
     implementation(libs.compose.foundation)
     implementation(libs.compose.ui)
+    implementation(libs.play.services.ads)
+    implementation(libs.user.messaging.platform)
+    implementation(libs.play.services.ads)
+    implementation(libs.user.messaging.platform)
 }
