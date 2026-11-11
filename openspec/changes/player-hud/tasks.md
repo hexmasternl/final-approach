@@ -2,14 +2,14 @@
 
 ## 1. Engine state
 
-- [ ] 1.1 Add `spawnedByType` and `score` to `GameState`, incremented on spawn and on landing (type's effective points), and verify with `commonTest` that a spawn raises only its type's count, a landing raises only the score by the type's points, and a landing leaves counts unchanged
-- [ ] 1.2 Add `pause()`, `resume()` and `restart()` to `GameEngine` and verify with `commonTest` that `update` changes nothing while paused, that resume continues from the same state, and that restart gives score 0, counts 0, no aircraft and an unchanged stored best
-- [ ] 1.3 Expose the aircraft types a level spawns from `LevelConfig` in roster order and verify with a test that a level with only light props and helicopters yields exactly those two
+- [x] 1.1 Add `spawnedByType` and `score` to `GameState`, incremented on spawn and on landing (type's effective points), and verify with `commonTest` that a spawn raises only its type's count, a landing raises only the score by the type's points, and a landing leaves counts unchanged
+- [x] 1.2 Add `pause()`, `resume()` and `restart()` to `GameEngine` and verify with `commonTest` that `update` changes nothing while paused, that resume continues from the same state, and that restart gives score 0, counts 0, no aircraft and an unchanged stored best
+- [x] 1.3 Expose the aircraft types a level spawns from `LevelConfig` in roster order and verify with a test that a level with only light props and helicopters yields exactly those two
 
 ## 2. Best score storage
 
-- [ ] 2.1 Declare `HighScoreStore` (`best(levelId)`, `save(levelId, score)`) in `platform` with an in-memory fake, and verify `commonMain` has no `android.*` or `java.*` import
-- [ ] 2.2 Add the best-score logic (shown best is `max(stored, current)`, saved when current exceeds stored) and verify with `commonTest` that it starts at 0, follows a higher score, is saved once per gain, and is separate per level
+- [x] 2.1 Declare `HighScoreStore` (`best(levelId)`, `save(levelId, score)`) in `platform` with an in-memory fake, and verify `commonMain` has no `android.*` or `java.*` import
+- [x] 2.2 Add the best-score logic (shown best is `max(stored, current)`, saved when current exceeds stored) and verify with `commonTest` that it starts at 0, follows a higher score, is saved once per gain, and is separate per level
 - [ ] 2.3 Implement `HighScoreStore` in `androidApp` and verify on a device or emulator that a best score survives closing and reopening the app
 
 ## 3. Design system

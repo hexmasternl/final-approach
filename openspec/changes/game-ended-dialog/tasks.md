@@ -2,8 +2,8 @@
 
 ## 1. Engine state
 
-- [ ] 1.1 Add `landedByType` to `GameState`, updated on each landing, and verify with `commonTest` unit tests that counts per type, the derived total and the score agree after several landings of mixed types
-- [ ] 1.2 Verify with a unit test that a landing and a failure in the same update are both counted, and that `update` changes nothing once the game is over
+- [x] 1.1 Add `landedByType` to `GameState`, updated on each landing, and verify with `commonTest` unit tests that counts per type, the derived total and the score agree after several landings of mixed types
+- [x] 1.2 Verify with a unit test that a landing and a failure in the same update are both counted, and that `update` changes nothing once the game is over
 
 ## 2. Dialog
 
@@ -17,5 +17,5 @@
 
 - [ ] 3.1 Show the dialog from the game screen exactly when the state is game over (collision or left area) and stop calling `engine.update`; verify by running the app that both failure types open it and the aircraft stand still
 - [ ] 3.2 Wire "Try again" to the level restart and "Main page" to navigation to the main page, and verify by running the app that restart starts the same level with score and counts at 0 and that the other action shows the main page
-- [ ] 3.3 Update `docs/game-design.md` (failure and scoring: the game ended dialog) and verify the text matches the behaviour
+- [x] 3.3 Update `docs/game-design.md` (failure and scoring: the game ended dialog) and verify the text matches the behaviour
 - [ ] 3.4 Human check: play a level to a collision and to a missed aircraft on a device and confirm the numbers shown match what was landed

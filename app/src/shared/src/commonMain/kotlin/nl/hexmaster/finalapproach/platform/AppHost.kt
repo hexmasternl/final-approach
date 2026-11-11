@@ -17,6 +17,9 @@ interface AppHost {
     /** Closes the app. */
     fun quit()
 
+    /** Where the personal best score of each level is kept. */
+    val highScores: HighScoreStore
+
     /** Locks the app in landscape while [locked] is true; false releases the lock. */
     fun lockLandscape(locked: Boolean)
 }

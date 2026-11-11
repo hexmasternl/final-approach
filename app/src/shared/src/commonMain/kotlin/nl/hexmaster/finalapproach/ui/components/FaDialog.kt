@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -46,6 +48,7 @@ private object FaDialogDefaults {
  *
  * @param title one or two words
  * @param body one sentence
+ * @param content optional extra content between the body and the buttons, such as a stats grid
  * @param actions the buttons, primary first
  */
 @Composable
@@ -53,6 +56,7 @@ fun FaDialog(
     title: String,
     body: String,
     modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit = {},
     actions: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = FaTheme.colors
@@ -96,6 +100,8 @@ fun FaDialog(
                     softLip = FaShadows.softLip,
                     softLipColor = FaTheme.softLip,
                 )
+                // A tall dialog on a short landscape screen scrolls instead of being cut off.
+                .verticalScroll(rememberScrollState())
                 .padding(
                     start = FaDimens.space6,
                     top = FaDimens.space6,
@@ -109,6 +115,11 @@ fun FaDialog(
                 body,
                 modifier = Modifier.padding(top = FaDimens.space3),
                 style = type.bodyLg.copy(color = colors.inkMuted, textAlign = TextAlign.Center),
+            )
+            Column(
+                Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(FaDimens.space2),
+                content = content,
             )
             Column(
                 Modifier.fillMaxWidth().padding(top = FaDimens.space5),

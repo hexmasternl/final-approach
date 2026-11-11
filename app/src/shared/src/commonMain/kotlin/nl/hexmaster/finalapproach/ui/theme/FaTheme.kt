@@ -19,9 +19,18 @@ private val LocalFaTypography = staticCompositionLocalOf<FaTypography> {
  * animating.
  */
 @Composable
-fun FaTheme(night: Boolean = false, reduceMotion: Boolean = false, content: @Composable () -> Unit) {
+fun FaTheme(
+    night: Boolean = false,
+    reduceMotion: Boolean = false,
+    dawn: Boolean = false,
+    content: @Composable () -> Unit,
+) {
     CompositionLocalProvider(
-        LocalFaColors provides if (night) NightColors else DayColors,
+        LocalFaColors provides when {
+            night -> NightColors
+            dawn -> DawnColors
+            else -> DayColors
+        },
         LocalFaNight provides night,
         LocalFaReduceMotion provides reduceMotion,
         LocalFaTypography provides rememberFaTypography(),
