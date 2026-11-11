@@ -45,9 +45,10 @@ fun App(host: AppHost) {
                 onBack = { screen = Screen.Main },
             )
 
+            // Quit, the game-ended "Main page" action and back on that dialog all lead to the main page.
             Screen.Game -> GameScreen(
                 host = host,
-                onQuit = { screen = Screen.LevelSelect },
+                onQuit = { screen = Screen.Main },
                 level = Levels.byId(levelId) ?: Levels.meadowField,
             )
 

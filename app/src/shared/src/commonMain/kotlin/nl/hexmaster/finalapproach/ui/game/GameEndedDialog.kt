@@ -2,7 +2,9 @@ package nl.hexmaster.finalapproach.ui.game
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -56,9 +58,21 @@ fun GameEndedDialog(
         GameEndedText.TITLE,
         GameEndedText.body(reason),
         content = {
-            types.forEach { type -> StatsWell(type.displayName, landed[type] ?: 0, type) }
-            StatsWell(GameEndedText.TOTAL, total, null)
-            StatsWell(GameEndedText.POINTS, points, null)
+            val wells = types.map { Triple(it.displayName, landed[it] ?: 0, it) } +
+                Triple(GameEndedText.TOTAL, total, null) +
+                Triple(GameEndedText.POINTS, points, null)
+            Column(
+                Modifier.fillMaxWidth().padding(top = FaDimens.space3),
+                verticalArrangement = Arrangement.spacedBy(FaDimens.space2),
+            ) {
+                // A two-column grid, so the dialog stays short enough for a landscape phone.
+                wells.chunked(GRID_COLUMNS).forEach { row ->
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(FaDimens.space2)) {
+                        row.forEach { (label, value, type) -> StatsWell(label, value, type, Modifier.weight(1f)) }
+                        repeat(GRID_COLUMNS - row.size) { Spacer(Modifier.weight(1f)) }
+                    }
+                }
+            }
         },
     ) {
         FaButton(GameEndedText.TRY_AGAIN, onTryAgain, Modifier.fillMaxWidth(), FaButtonVariant.Primary, icon = FaIcon.Restart)
@@ -66,14 +80,14 @@ fun GameEndedDialog(
     }
 }
 
+private const val GRID_COLUMNS = 2
+
 @Composable
-private fun StatsWell(label: String, value: Int, type: AircraftType?) {
+private fun StatsWell(label: String, value: Int, type: AircraftType?, modifier: Modifier = Modifier) {
     val colors = FaTheme.colors
     val style = FaTheme.type
     Row(
-        Modifier
-            .padding(top = FaDimens.space2)
-            .fillMaxWidth()
+        modifier
             .semantics(mergeDescendants = true) { contentDescription = "$label $value" }
             .faBlock(
                 fill = colors.surfaceSunken,

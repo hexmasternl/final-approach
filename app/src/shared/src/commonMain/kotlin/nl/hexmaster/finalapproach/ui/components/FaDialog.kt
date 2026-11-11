@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -98,6 +100,8 @@ fun FaDialog(
                     softLip = FaShadows.softLip,
                     softLipColor = FaTheme.softLip,
                 )
+                // A tall dialog on a short landscape screen scrolls instead of being cut off.
+                .verticalScroll(rememberScrollState())
                 .padding(
                     start = FaDimens.space6,
                     top = FaDimens.space6,
