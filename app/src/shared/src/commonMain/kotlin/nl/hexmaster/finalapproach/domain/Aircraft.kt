@@ -48,4 +48,5 @@ data class Aircraft(
     val livery: Int = 0,
     /** True once the aircraft has been inside the viewport; only then can it leave it. */
     val hasEnteredViewport: Boolean = false,
+    val altitude: AltitudeState = AltitudeState.InFlight,
 )
