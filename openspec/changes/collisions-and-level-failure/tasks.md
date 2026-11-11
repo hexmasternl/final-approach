@@ -2,7 +2,7 @@
 
 ## 1. Domain and config
 
-- [ ] 1.1 Add a collision shape (circles in local frame, plus bounding radius) to each aircraft type spec and verify with a unit test that a rotated shape's world-space circles match hand-computed positions
+- [x] 1.1 Add a collision shape (circles in local frame, plus bounding radius) to each aircraft type spec and verify with a unit test that a rotated shape's world-space circles match hand-computed positions
 - [ ] 1.2 Add `warningDistance`, `leaveMargin` and the maximum simulation step to the level config, remove any collision/separation distance, and verify nothing else references the removed value
 
 ## 2. Collision detection

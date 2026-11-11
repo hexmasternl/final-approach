@@ -49,9 +49,6 @@ internal object GameScreenDefaults {
     /** A long frame (the app was paused) is cut to this, so aircraft do not jump. */
     const val MAX_FRAME_SECONDS = 0.1
 
-    /** Side of an aircraft sprite, in world units, per world unit of the aircraft's radius. */
-    const val SPRITE_PER_RADIUS = 2.4
-
     const val NANOS_PER_SECOND = 1_000_000_000.0
 }
 
@@ -149,7 +146,7 @@ private fun DrawScope.drawPaths(state: GameState, viewport: WorldViewport, color
 }
 
 private fun spriteSizePx(aircraft: Aircraft, engine: GameEngine, viewport: WorldViewport): Float =
-    viewport.px(engine.specs[aircraft.type].radius * GameScreenDefaults.SPRITE_PER_RADIUS)
+    viewport.px(engine.specs[aircraft.type].spriteSize)
 
 /** Ground shadows of everything airborne first, then every aircraft on top. */
 private fun DrawScope.drawAircraft(
