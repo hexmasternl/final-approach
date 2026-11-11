@@ -62,7 +62,7 @@ object LevelConfigValidator {
         val runways = config.runways
         val pads = config.helipads
         for (i in runways.indices) for (j in i + 1 until runways.size) {
-            if (Overlap.rects(runways[i].shape, runways[j].shape)) {
+            if (!config.allowCrossingRunways && Overlap.rects(runways[i].shape, runways[j].shape)) {
                 add("Runway '${runways[i].id}' and runway '${runways[j].id}' overlap")
             }
         }
