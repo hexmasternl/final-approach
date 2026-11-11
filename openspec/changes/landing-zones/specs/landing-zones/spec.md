@@ -115,5 +115,5 @@ After touchdown an airplane SHALL keep moving along the runway in its landing di
 An airplane that is rolling out SHALL count as an aircraft for collisions, and a collision then SHALL be a failure like any other.
 
 #### Scenario: Opposite landings meet mid-runway
-- **WHEN** two airplanes land at the same time from opposite ends of a two-way runway and come closer than the minimum separation
+- **WHEN** two airplanes land at the same time from opposite ends of a two-way runway and their collision shapes touch
 - **THEN** a collision failure occurs

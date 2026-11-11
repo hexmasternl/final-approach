@@ -13,4 +13,11 @@ class FakeAppHost(
     override fun quit() {
         quitCalls++
     }
+
+    var landscapeLocked = false
+        private set
+
+    override fun lockLandscape(locked: Boolean) {
+        landscapeLocked = locked
+    }
 }

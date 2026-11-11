@@ -84,12 +84,12 @@ The heading of a spawned aircraft SHALL be aimed at a random target point inside
 - **THEN** no aircraft spawns now and the spawner tries again later
 
 ### Requirement: Separation at spawn
-The spawner SHALL NOT spawn an aircraft within the level's minimum separation of another aircraft, including one that is still entering the viewport.
+The spawner SHALL NOT spawn an aircraft within the level's spawn separation of another aircraft, including one that is still entering the viewport.
 
 #### Scenario: Entry point is occupied
-- **WHEN** an entry point lies within the minimum separation of another aircraft
+- **WHEN** an entry point lies within the spawn separation of another aircraft
 - **THEN** another entry is rolled, or the spawn is delayed
 
 #### Scenario: Entering aircraft counts
-- **WHEN** another aircraft is outside the viewport but within the minimum separation of the entry point
+- **WHEN** another aircraft is outside the viewport but within the spawn separation of the entry point
 - **THEN** it blocks that entry point

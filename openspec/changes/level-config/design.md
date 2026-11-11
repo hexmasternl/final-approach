@@ -38,7 +38,7 @@ Related changes: `aircraft-types` (#8) resolves per-type speed and points, readi
 
 **Entry is generated, then judged.** Pick a permitted edge (uniform), a point on it, and place it outside the viewport by the spawn margin. Aim at a random target in the central safe region (default the middle 50% of each axis) and add jitter within a bounded angle (default 15 degrees). Judge the straight line: the chord inside the viewport must be at least `minimumChordFraction` of the smaller viewport side (default 0.5), and the time on screen (chord / speed) at least `minimumTimeOnScreen` (default 4 s). Otherwise re-roll, up to `maxEntryRerolls` (default 8); then delay. Time on screen uses the aircraft's effective speed, so the rule holds for jets as well. Rejected: only aiming at the centre (too predictable) and rejection without aiming (many rerolls, clipped corners).
 
-**Separation at spawn** compares the candidate entry point with the positions of all aircraft, including those still outside the viewport, against the level's `minimumSeparation`. It checks the entry point only, not later flight; later closeness is the collision rule.
+**Separation at spawn** compares the candidate entry point with the positions of all aircraft, including those still outside the viewport, against the level's `spawnSeparation`. It checks the entry point only, not later flight; later closeness is the collision rule.
 
 **First level in `domain/levels`.** `Levels.meadowField` is a `LevelConfig` matching issue #5: world size 1600 x 900 world units, one two-way runway in the middle lying left to right, one helipad on the right, a few phases, maximum three aircraft in the air. The exact numbers are in the config only and may be tuned.
 

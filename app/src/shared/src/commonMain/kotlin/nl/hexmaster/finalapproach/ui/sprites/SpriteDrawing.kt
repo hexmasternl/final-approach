@@ -80,6 +80,20 @@ internal fun DrawScope.drawAircraft(
     colors: FaColors,
     shadowOffset: Offset,
 ) {
+    drawAircraftShadow(type, center, sizePx, headingDegrees, timeSeconds, colors, shadowOffset)
+    drawAircraftBody(type, livery, center, sizePx, headingDegrees, timeSeconds, colors)
+}
+
+/** Draws only an aircraft's ground shadow, at [center] moved by [shadowOffset]. */
+internal fun DrawScope.drawAircraftShadow(
+    type: AircraftType,
+    center: Offset,
+    sizePx: Float,
+    headingDegrees: Float,
+    timeSeconds: Float,
+    colors: FaColors,
+    shadowOffset: Offset,
+) {
     val parts = parsedSprites.getValue(type)
     val shadow = colors.shadowGround
     alphaLayer(shadow.alpha) {
@@ -91,6 +105,19 @@ internal fun DrawScope.drawAircraft(
             }
         }
     }
+}
+
+/** Draws only an aircraft's sprite, without its shadow. */
+internal fun DrawScope.drawAircraftBody(
+    type: AircraftType,
+    livery: Color,
+    center: Offset,
+    sizePx: Float,
+    headingDegrees: Float,
+    timeSeconds: Float,
+    colors: FaColors,
+) {
+    val parts = parsedSprites.getValue(type)
     drawSprite(parts, center, sizePx, headingDegrees, timeSeconds) { part, path ->
         paintPart(part, path, livery, colors)
     }

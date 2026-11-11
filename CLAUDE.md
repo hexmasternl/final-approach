@@ -24,8 +24,8 @@ Keep these consistent with `docs/game-design.md`; update the doc when a rule cha
 
 - Tap an aircraft to select it, then drag to draw its path. A new path replaces the old one.
 - The aircraft follows the path at its own speed. When the path ends, it flies straight on in its last heading.
-- A path ending on a valid zone lands the aircraft: runway for airplanes (roughly aligned with the runway axis), helipad for helicopters (within the pad radius). The wrong zone type does nothing.
-- Failures: two aircraft closer than the minimum separation (collision), or an aircraft leaving the viewport without landing (miss).
+- A path that enters a valid landing zone clears the aircraft to land: the path is cut off at the zone and takes no more points. Airplanes need a runway threshold zone, entered within the alignment tolerance of that end's landing direction; helicopters need a helipad zone. The wrong zone type does nothing. Airplanes roll out along the runway after touchdown, then fade out.
+- Failures: two aircraft whose collision shapes touch (collision), or an aircraft leaving the viewport without landing. Either ends the level. Aircraft closer than the warning distance only get a warning ring.
 - Five aircraft types: light prop, turboprop, jet, jumbo, helicopter. Each has its own speed and turn rate.
 
 ## Architecture

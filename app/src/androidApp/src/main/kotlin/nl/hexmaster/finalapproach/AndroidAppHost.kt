@@ -1,5 +1,6 @@
 package nl.hexmaster.finalapproach
 
+import android.content.pm.ActivityInfo
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import nl.hexmaster.finalapproach.platform.AppHost
@@ -20,5 +21,13 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
 
     override fun quit() {
         activity.finish()
+    }
+
+    override fun lockLandscape(locked: Boolean) {
+        activity.requestedOrientation = if (locked) {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
     }
 }

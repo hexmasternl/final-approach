@@ -8,11 +8,11 @@ Levels must differ in layout, pacing and aircraft mix without code changes. Toda
 
 ## What Changes
 
-- Add `LevelConfig` in `domain`: identity and presentation (id, name, order, Day or Night theme, ambience), airfield (runways with a one-way or two-way mode, helipads), world (world size, spawn margin, minimum separation), run rules (seed, duration or endless, goal) and a difficulty curve.
+- Add `LevelConfig` in `domain`: identity and presentation (id, name, order, Day or Night theme, ambience), airfield (runways with a one-way or two-way mode, helipads), world (world size, spawn margin, spawn separation), run rules (seed, duration or endless, goal) and a difficulty curve.
 - Validate a `LevelConfig` and reject an invalid one with a clear message.
 - Define a runway's landing-direction rule: a one-way runway accepts one heading, a two-way runway accepts either end.
 - Add the spawner in `engine`, driven only by the config: seeded, build-up over time (spawn interval shortens, aircraft types and their weights per phase, maximum aircraft in the air), jittered spawn time and type.
-- Add the fair entry rule: aircraft appear just outside a permitted edge, aimed at a random point in a central safe region; entries that only clip a corner, leave soon or have a short chord are re-rolled. No spawn within the minimum separation of another aircraft.
+- Add the fair entry rule: aircraft appear just outside a permitted edge, aimed at a random point in a central safe region; entries that only clip a corner, leave soon or have a short chord are re-rolled. No spawn within the spawn separation of another aircraft.
 - Carry optional, defaulted fields that later features will use: speed multiplier, scoring (lives and a points multiplier), wind, emergency aircraft flag, tutorial hints.
 - Express the first level (issue #5, Meadow Field) as a `LevelConfig`.
 - Update `docs/game-design.md` and `docs/architecture.md` with the level config and the spawn rules.

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import nl.hexmaster.finalapproach.platform.AppHost
+import nl.hexmaster.finalapproach.ui.game.GameScreen
 import nl.hexmaster.finalapproach.ui.menu.MainPage
 import nl.hexmaster.finalapproach.ui.splash.SplashPage
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
@@ -14,8 +15,6 @@ import nl.hexmaster.finalapproach.ui.theme.FaTheme
 enum class Screen { Splash, Main, Game, Settings }
 
 private object AppText {
-    const val GAME_TITLE = "Cleared for take off"
-    const val GAME_BODY = "The airfield is still being built. Check back soon."
     const val SETTINGS_TITLE = "Settings"
     const val SETTINGS_BODY = "Sound and music switches will live here."
 }
@@ -34,16 +33,10 @@ fun App(host: AppHost) {
                 onSettings = { screen = Screen.Settings },
             )
 
-            // The game and the settings page have their own issues. Until they are built,
-            // placeholders keep the flow from and back to the main page working.
-            Screen.Game -> PlaceholderPage(
-                host = host,
-                title = AppText.GAME_TITLE,
-                body = AppText.GAME_BODY,
-                ground = PlaceholderGround.Lawn,
-                onBack = { screen = Screen.Main },
-            )
+            Screen.Game -> GameScreen(host = host, onBack = { screen = Screen.Main })
 
+            // The settings page has its own issue. Until it is built, a placeholder keeps the
+            // flow from and back to the main page working.
             Screen.Settings -> PlaceholderPage(
                 host = host,
                 title = AppText.SETTINGS_TITLE,

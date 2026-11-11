@@ -32,6 +32,8 @@ object FaDimens {
     val pathDash = 18.dp
     val pathGap = 16.dp
     val pathDot = 22.dp
+    val warnRingDash = 10.dp
+    val warnRingGap = 8.dp
 
     // Sizes
     val touchMin = 48.dp
@@ -50,4 +52,5 @@ object FaDimens {
     val spriteJumbo = 104.dp
     val spriteLightPropSide = 116.dp
     val towLine = 44.dp
+    val warnRingMargin = 10.dp
 }
