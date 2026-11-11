@@ -19,8 +19,8 @@
 
 ## 4. Feedback
 
-- [ ] 4.1 Draw the white path flash from the locked-path state using the `fuselage` colour and `dur-pop` tokens; verify in a preview or on a device that the path flashes and stops
-- [ ] 4.2 Draw the steady variant when reduced motion is on; verify with animations disabled that nothing flashes and the state change is visible
+- [x] 4.1 Draw the white path flash from the locked-path state using the `fuselage` colour and `dur-pop` tokens; verify in a preview or on a device that the path flashes and stops
+- [x] 4.2 Draw the steady variant when reduced motion is on; verify with animations disabled that nothing flashes and the state change is visible
 
 ## 5. Docs
 
