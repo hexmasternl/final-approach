@@ -7,8 +7,8 @@
 
 ## 2. Landing rules
 
-- [ ] 2.1 Implement `LandingRules` for a path segment, zone and aircraft kind (helicopter vs helipad, airplane vs runway); verify with unit tests: path through the pad zone lands, a path that misses does not, wrong aircraft type does nothing, a fast segment that skips over a zone still lands
-- [ ] 2.2 Add direction alignment for runway zones; verify with unit tests: aligned lands, opposite direction on a one-way runway does not, steep angle does not, both directions land at their own end on a two-way runway, mid-runway crossing does nothing
+- [x] 2.1 Implement `LandingRules` for a path segment, zone and aircraft kind (helicopter vs helipad, airplane vs runway); verify with unit tests: path through the pad zone lands, a path that misses does not, wrong aircraft type does nothing, a fast segment that skips over a zone still lands
+- [x] 2.2 Add direction alignment for runway zones; verify with unit tests: aligned lands, opposite direction on a one-way runway does not, steep angle does not, both directions land at their own end on a two-way runway, mid-runway crossing does nothing
 
 ## 3. Engine behaviour
 
