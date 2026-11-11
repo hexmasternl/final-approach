@@ -10,6 +10,7 @@ import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
 import nl.hexmaster.finalapproach.domain.LevelConfig
 import nl.hexmaster.finalapproach.domain.Vec2
+import kotlin.math.ceil
 import kotlin.random.Random
 
 /**
@@ -21,6 +22,8 @@ import kotlin.random.Random
  * @param landings number of aircraft that touched down
  * @param selectedId the aircraft the player last picked, if it is still in play
  * @param events what happened during the last update
+ * @param status playing, or game over with its reason; once over, nothing moves any more
+ * @param warnedAircraft aircraft within the warning distance of another aircraft
  */
 data class GameState(
     val levelTime: Double = 0.0,
@@ -29,6 +32,8 @@ data class GameState(
     val landings: Int = 0,
     val selectedId: Int? = null,
     val events: List<GameEvent> = emptyList(),
+    val status: GameStatus = GameStatus.Playing,
+    val warnedAircraft: Set<Int> = emptySet(),
 )
 
 /**
@@ -51,20 +56,34 @@ class GameEngine(
     private val mutableState = MutableStateFlow(GameState())
     val state: StateFlow<GameState> = mutableState.asStateFlow()
 
-    /** Advances the level by [deltaSeconds]: moves aircraft, lands them, removes leavers and spawns. */
+    /**
+     * Advances the level by [deltaSeconds]: moves aircraft, lands them, checks for collisions and
+     * aircraft that left, and spawns. A long frame is split into steps no longer than the level's
+     * maximum step. After a game over it does nothing.
+     */
     fun update(deltaSeconds: Double) {
-        if (deltaSeconds <= 0.0) return
         val current = mutableState.value
-        val time = current.levelTime + deltaSeconds
+        if (deltaSeconds <= 0.0 || current.status is GameStatus.GameOver) return
+        val steps = ceil(deltaSeconds / level.world.maxStepSeconds).toInt().coerceAtLeast(1)
+        val stepSeconds = deltaSeconds / steps
         val events = mutableListOf<GameEvent>()
-        val moved = current.aircraft.mapNotNull { aircraft ->
-            val result = AircraftMotion.step(aircraft, specs, level.landing, deltaSeconds)
-            events += result.events
-            result.aircraft?.let(::trackViewport)
+        var aircraft = current.aircraft
+        var status: GameStatus = GameStatus.Playing
+        for (step in 0 until steps) {
+            val previous = aircraft.associate { it.id to it.position }
+            aircraft = aircraft.mapNotNull { plane ->
+                val result = AircraftMotion.step(plane, specs, level.landing, stepSeconds)
+                events += result.events
+                result.aircraft?.let(::trackViewport)
+            }
+            status = failureOf(aircraft, previous)
+            if (status is GameStatus.GameOver) break
         }
-        val inPlay = moved.filterNot(::hasLeft)
-        val spawn = spawner.update(deltaSeconds, time, inPlay.filter(::isAirborne).map { it.position })
-        val aircraft = if (spawn == null) inPlay else inPlay + arrive(spawn, inPlay)
+        val time = current.levelTime + deltaSeconds
+        if (status == GameStatus.Playing) {
+            val spawn = spawner.update(deltaSeconds, time, aircraft.filter(::isAirborne).map { it.position })
+            if (spawn != null) aircraft = aircraft + arrive(spawn, aircraft)
+        }
         mutableState.value = GameState(
             levelTime = time,
             aircraft = aircraft,
@@ -72,6 +91,8 @@ class GameEngine(
             landings = current.landings + events.count { it is GameEvent.Landed },
             selectedId = current.selectedId?.takeIf { id -> aircraft.any { it.id == id } },
             events = events,
+            status = status,
+            warnedAircraft = warned(aircraft),
         )
     }
 
@@ -80,6 +101,7 @@ class GameEngine(
      * none is that close. Aircraft rolling out on the runway cannot be picked. Returns its id.
      */
     fun select(point: Vec2, pickRadius: Double): Int? {
+        if (isOver) return null
         val picked = mutableState.value.aircraft
             .filter { it.status !is AircraftStatus.RollingOut }
             .map { it to it.position.distanceTo(point) }
@@ -92,6 +114,7 @@ class GameEngine(
 
     /** Starts a new path for aircraft [id], replacing its old one. */
     fun beginPath(id: Int) {
+        if (isOver) return
         updateAircraft(id) { PathDrawing.begin(it) }
         mutableState.value = mutableState.value.copy(selectedId = id.takeIf { has(it) })
     }
@@ -101,6 +124,7 @@ class GameEngine(
      * path's last point. A path that enters a landing zone ends there and ignores further points.
      */
     fun extendPath(id: Int, point: Vec2) {
+        if (isOver) return
         val time = mutableState.value.levelTime
         updateAircraft(id) { aircraft ->
             val last = aircraft.path.points.lastOrNull() ?: aircraft.position
@@ -117,10 +141,12 @@ class GameEngine(
 
     private fun has(id: Int) = mutableState.value.aircraft.any { it.id == id }
 
+    private val isOver: Boolean get() = mutableState.value.status is GameStatus.GameOver
+
     /** Replaces the aircraft in play; for tests that need a known situation. */
     internal fun place(aircraft: List<Aircraft>) {
         nextId = (aircraft.maxOfOrNull { it.id } ?: 0) + 1
-        mutableState.value = mutableState.value.copy(aircraft = aircraft)
+        mutableState.value = mutableState.value.copy(aircraft = aircraft, warnedAircraft = warned(aircraft))
     }
 
     private fun updateAircraft(id: Int, change: (Aircraft) -> Aircraft) {
@@ -143,6 +169,26 @@ class GameEngine(
         }
 
     private fun hasLeft(aircraft: Aircraft) = aircraft.hasEnteredViewport && !playArea.contains(aircraft.position)
+
+    /** Game over when two aircraft touched during the step from [previous], or one has left. */
+    private fun failureOf(aircraft: List<Aircraft>, previous: Map<Int, Vec2>): GameStatus {
+        Collisions.find(aircraft, specs, previous).firstOrNull()?.let { (a, b) ->
+            return GameStatus.GameOver(GameOverReason.Collision, listOf(a, b))
+        }
+        val left = aircraft.filter(::hasLeft)
+        if (left.isNotEmpty()) return GameStatus.GameOver(GameOverReason.LeftArea, left.map { it.id })
+        return GameStatus.Playing
+    }
+
+    /** Ids of aircraft whose centre is closer than the warning distance to another one. */
+    private fun warned(aircraft: List<Aircraft>): Set<Int> = buildSet {
+        for (i in aircraft.indices) for (j in i + 1 until aircraft.size) {
+            if (aircraft[i].position.distanceTo(aircraft[j].position) < level.world.warningDistance) {
+                add(aircraft[i].id)
+                add(aircraft[j].id)
+            }
+        }
+    }
 
     private fun isAirborne(aircraft: Aircraft) = aircraft.status !is AircraftStatus.RollingOut
 

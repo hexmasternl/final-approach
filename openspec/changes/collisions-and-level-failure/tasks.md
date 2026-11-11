@@ -8,17 +8,17 @@
 ## 2. Collision detection
 
 - [x] 2.1 Implement the shape overlap test in `engine/Collisions` with a bounding-circle broad phase, and verify with unit tests: close but not touching is no collision, touching is, rotation changes the result
-- [ ] 2.2 Add the swept test along the frame movement and sub-stepping in `GameEngine.update`, and verify with a unit test that a head-on fast pass in one large-delta frame is detected
+- [x] 2.2 Add the swept test along the frame movement and sub-stepping in `GameEngine.update`, and verify with a unit test that a head-on fast pass in one large-delta frame is detected
 - [x] 2.3 Skip removed aircraft and include rolling-out aircraft, and verify with unit tests for both
-- [ ] 2.4 Add `GameOver(reason, aircraftIds)` to `GameState`, set it on collision and stop the simulation, and verify with a unit test that the state is `Collision` with both aircraft and that further updates move nothing
+- [x] 2.4 Add `GameOver(reason, aircraftIds)` to `GameState`, set it on collision and stop the simulation, and verify with a unit test that the state is `Collision` with both aircraft and that further updates move nothing
 
 ## 3. Leaving the viewport
 
-- [ ] 3.1 Add the `hasEnteredViewport` flag and the leave check with margin, and verify with unit tests: leaving after entering is game over (`LeftArea`), an entering aircraft is not flagged, an edge touch within the margin is not flagged, a landed aircraft never triggers it
+- [x] 3.1 Add the `hasEnteredViewport` flag and the leave check with margin, and verify with unit tests: leaving after entering is game over (`LeftArea`), an entering aircraft is not flagged, an edge touch within the margin is not flagged, a landed aircraft never triggers it
 
 ## 4. Proximity warning state
 
-- [ ] 4.1 Derive `warnedAircraft` in the engine update and verify with unit tests: on below the distance, off when separated, both aircraft of a pair, all three of a trio
+- [x] 4.1 Derive `warnedAircraft` in the engine update and verify with unit tests: on below the distance, off when separated, both aircraft of a pair, all three of a trio
 
 ## 5. Design system and ring
 

@@ -8,6 +8,7 @@ import nl.hexmaster.finalapproach.domain.Vec2
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -16,6 +17,9 @@ class GameEngineTest {
 
     private val level = Levels.meadowField
     private val dt = 0.05
+
+    /** Meadow Field without spawns, for tests that place their own aircraft. */
+    private val quiet = level.copy(spawn = level.spawn.copy(firstSpawnDelay = 10_000.0))
 
     private fun GameEngine.run(seconds: Double, each: (GameState) -> Unit = {}) {
         repeat((seconds / dt).toInt()) {
@@ -70,24 +74,118 @@ class GameEngineTest {
     }
 
     @Test
-    fun anAircraftThatLeavesTheViewportIsRemoved() {
+    fun anUnsteeredLevelEndsWhenAnAircraftLeaves() {
         val engine = GameEngine(level, seed = 5)
-        engine.run(120.0)
-        val ids = mutableSetOf<Int>()
-        val removed = mutableSetOf<Int>()
-        engine.run(300.0) { state ->
-            val now = state.aircraft.map { it.id }.toSet()
-            removed += ids - now
-            ids += now
-            state.aircraft.forEach { aircraft ->
-                if (aircraft.hasEnteredViewport) {
-                    assertTrue(level.world.viewport.expandedBy(level.world.leaveMargin).contains(aircraft.position))
-                }
-            }
+        engine.run(600.0)
+        val status = assertIs<GameStatus.GameOver>(engine.state.value.status)
+        if (status.reason == GameOverReason.LeftArea) {
+            val gone = engine.state.value.aircraft.filter { it.id in status.aircraftIds }
+            assertTrue(gone.isNotEmpty())
+            gone.forEach { assertFalse(level.world.viewport.expandedBy(level.world.leaveMargin).contains(it.position)) }
         }
-        assertTrue(removed.isNotEmpty(), "no aircraft ever left")
     }
 
+    @Test
+    fun anAircraftThatLeavesAfterEnteringEndsTheLevel() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(jet(1, Vec2(50.0, 300.0), -PI / 2).copy(hasEnteredViewport = true)))
+        engine.run(3.0)
+        val status = assertIs<GameStatus.GameOver>(engine.state.value.status)
+        assertEquals(GameOverReason.LeftArea, status.reason)
+        assertEquals(listOf(1), status.aircraftIds)
+        assertTrue(engine.aircraft(1).position.x < -level.world.leaveMargin)
+    }
+
+    @Test
+    fun anAircraftStillEnteringDoesNotEndTheLevel() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(jet(1, Vec2(-200.0, 300.0), -PI / 2)))
+        engine.run(1.0)
+        assertEquals(GameStatus.Playing, engine.state.value.status)
+        assertFalse(engine.aircraft(1).hasEnteredViewport)
+    }
+
+    @Test
+    fun anEdgeTouchWithinTheMarginIsTolerated() {
+        val engine = GameEngine(quiet, seed = 1)
+        val helicopter = Aircraft(1, AircraftType.Helicopter, Vec2(30.0, 300.0), -PI / 2, hasEnteredViewport = true)
+        engine.place(listOf(helicopter))
+        engine.beginPath(1)
+        listOf(Vec2(-30.0, 300.0), Vec2(-30.0, 340.0), Vec2(100.0, 340.0)).forEach { engine.extendPath(1, it) }
+        var leftmost = 0.0
+        engine.run(6.0) { state -> state.aircraft.firstOrNull { it.id == 1 }?.let { leftmost = minOf(leftmost, it.position.x) } }
+        assertEquals(GameStatus.Playing, engine.state.value.status)
+        assertTrue(leftmost < 0.0, "the helicopter never crossed the edge")
+        assertTrue(engine.aircraft(1).position.x > 0.0)
+    }
+
+    @Test
+    fun aCollisionEndsTheLevelAndFreezesIt() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(jet(1, Vec2(500.0, 300.0), PI / 2), jet(2, Vec2(700.0, 300.0), -PI / 2)))
+        engine.run(2.0)
+        val over = engine.state.value
+        assertEquals(GameStatus.GameOver(GameOverReason.Collision, listOf(1, 2)), over.status)
+        engine.update(1.0)
+        assertEquals(over, engine.state.value)
+        assertEquals(null, engine.select(Vec2(600.0, 300.0), 100.0))
+    }
+
+    @Test
+    fun aHeadOnPassInOneLargeFrameIsDetected() {
+        val oneStep = quiet.copy(world = quiet.world.copy(maxStepSeconds = 10.0))
+        val engine = GameEngine(oneStep, seed = 1)
+        engine.place(listOf(jet(1, Vec2(500.0, 300.0), PI / 2), jet(2, Vec2(700.0, 300.0), -PI / 2)))
+        engine.update(3.0)
+        val status = assertIs<GameStatus.GameOver>(engine.state.value.status)
+        assertEquals(GameOverReason.Collision, status.reason)
+        assertTrue(engine.aircraft(1).position.x > engine.aircraft(2).position.x, "the jets passed each other")
+    }
+
+    @Test
+    fun aLandedAircraftIsGoneForCollisionsAndLeaving() {
+        val engine = GameEngine(quiet, seed = 1)
+        val pad = level.helipads.single().position
+        engine.place(
+            listOf(
+                Aircraft(1, AircraftType.Helicopter, pad + Vec2(0.0, -100.0), PI, hasEnteredViewport = true),
+                jet(2, pad + Vec2(0.0, 300.0), 0.0),
+            ),
+        )
+        engine.beginPath(1)
+        engine.extendPath(1, pad)
+        engine.run(5.0)
+        assertEquals(GameStatus.Playing, engine.state.value.status)
+        assertEquals(1, engine.state.value.landings)
+        assertTrue(engine.state.value.aircraft.none { it.id == 1 })
+        assertTrue(engine.aircraft(2).position.y < pad.y - 50.0, "the jet flew over the pad")
+    }
+
+    @Test
+    fun closeAircraftAreWarnedUntilTheySeparate() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(jet(1, Vec2(560.0, 200.0), -PI / 2), jet(2, Vec2(660.0, 200.0), PI / 2)))
+        assertEquals(setOf(1, 2), engine.state.value.warnedAircraft)
+        engine.update(0.02)
+        assertEquals(setOf(1, 2), engine.state.value.warnedAircraft)
+        engine.run(1.0)
+        assertEquals(emptySet(), engine.state.value.warnedAircraft)
+        assertEquals(GameStatus.Playing, engine.state.value.status)
+    }
+
+    @Test
+    fun everyAircraftOfACloseGroupIsWarned() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(
+            listOf(
+                jet(1, Vec2(500.0, 200.0), 0.0),
+                jet(2, Vec2(600.0, 200.0), 0.0),
+                jet(3, Vec2(550.0, 280.0), 0.0),
+                jet(4, Vec2(900.0, 200.0), 0.0),
+            ),
+        )
+        assertEquals(setOf(1, 2, 3), engine.state.value.warnedAircraft)
+    }
     @Test
     fun liveriesTakeTheNextFreeColour() {
         val engine = GameEngine(level, seed = 9)
@@ -143,7 +241,7 @@ class GameEngineTest {
         assertTrue(aircraft.path.points.last().y < helipad.y)
     }
 
-    private fun jet(id: Int, position: Vec2) = Aircraft(id, AircraftType.Jet, position, 0.0)
+    private fun jet(id: Int, position: Vec2, heading: Double = 0.0) = Aircraft(id, AircraftType.Jet, position, heading)
 
     private fun GameEngine.aircraft(id: Int) = assertNotNull(state.value.aircraft.firstOrNull { it.id == id })
 }
