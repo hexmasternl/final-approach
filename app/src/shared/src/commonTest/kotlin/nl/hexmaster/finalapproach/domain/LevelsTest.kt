@@ -31,4 +31,10 @@ class LevelsTest {
         assertEquals(RunwayMode.TwoWay, level.runways.single().mode)
         assertEquals(1, level.helipads.size)
     }
+
+    @Test
+    fun meadowFieldReadsAsASmallAirfield() {
+        val kinds = Levels.meadowField.scenery.map { it.kind }.toSet()
+        assertEquals(SceneryKind.entries.toSet(), kinds)
+    }
 }

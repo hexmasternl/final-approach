@@ -165,6 +165,7 @@ data class LevelConfig(
     val ambience: Ambience = Ambience(),
     val runways: List<RunwayConfig> = emptyList(),
     val helipads: List<HelipadConfig> = emptyList(),
+    val scenery: List<SceneryItem> = emptyList(),
     val run: RunRules = RunRules(),
     val spawn: SpawnRules = SpawnRules(),
     val speedMultiplier: Double = LevelDefaults.SPEED_MULTIPLIER,

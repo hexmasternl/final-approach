@@ -9,6 +9,26 @@ object LevelConfigValidator {
         addAll(zoneProblems(config))
         addAll(curveProblems(config))
         addAll(worldProblems(config))
+        addAll(sceneryProblems(config))
+    }
+
+    private fun sceneryProblems(config: LevelConfig): List<String> = buildList {
+        val zones = LandingZones.of(config)
+        config.scenery.forEachIndexed { index, item ->
+            val name = "Scenery ${index + 1} (${item.kind})"
+            if (item.width <= 0.0 || item.height <= 0.0) add("$name needs a positive width and height")
+            val shape = item.shape
+            config.runways.filter { Overlap.rects(shape, it.shape) }
+                .forEach { add("$name covers runway '${it.id}'") }
+            config.helipads.filter { Overlap.rectCircle(shape, it.shape) }
+                .forEach { add("$name covers helipad '${it.id}'") }
+            zones.filter { zone ->
+                when (zone) {
+                    is LandingZone.Runway -> Overlap.rects(shape, zone.area)
+                    is LandingZone.Helipad -> Overlap.rectCircle(shape, zone.area)
+                }
+            }.forEach { add("$name covers landing zone '${it.id}'") }
+        }
     }
 
     private fun zoneProblems(config: LevelConfig): List<String> = buildList {

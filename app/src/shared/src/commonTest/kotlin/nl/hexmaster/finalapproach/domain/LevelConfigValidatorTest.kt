@@ -130,4 +130,24 @@ class LevelConfigValidatorTest {
         }
         assertTrue(error.message.orEmpty().contains("landing zone is required"))
     }
+
+    @Test
+    fun sceneryOnARunwayOrHelipadIsRejected() {
+        val onRunway = SceneryItem(SceneryKind.Hangar, Vec2(450.0, 300.0), 60.0, 60.0)
+        assertProblem(valid().copy(scenery = listOf(onRunway)), "scenery", "runway 'main'")
+        val onPad = SceneryItem(SceneryKind.Tree, Vec2(850.0, 300.0), 30.0, 30.0)
+        assertProblem(valid().copy(scenery = listOf(onPad)), "scenery", "helipad 'pad'")
+    }
+
+    @Test
+    fun sceneryInALandingZoneBesideTheRunwayIsRejected() {
+        val besideThreshold = SceneryItem(SceneryKind.Windsock, Vec2(300.0, 300.0 + 32.0 + 10.0), 10.0, 10.0)
+        assertProblem(valid().copy(scenery = listOf(besideThreshold)), "scenery", "landing zone")
+    }
+
+    @Test
+    fun sceneryClearOfEverythingPasses() {
+        val tree = SceneryItem(SceneryKind.Tree, Vec2(100.0, 80.0), 40.0, 40.0)
+        assertEquals(emptyList(), problems(valid().copy(scenery = listOf(tree))))
+    }
 }

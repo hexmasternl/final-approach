@@ -21,6 +21,20 @@ object Levels {
             ),
         ),
         helipads = listOf(HelipadConfig(id = "h1", position = Vec2(1110.0, 400.0))),
+        scenery = listOf(
+            SceneryItem(SceneryKind.Apron, Vec2(560.0, 230.0), width = 220.0, height = 90.0),
+            SceneryItem(SceneryKind.Taxiway, Vec2(600.0, 310.0), width = 40.0, height = 70.0),
+            SceneryItem(SceneryKind.Terminal, Vec2(470.0, 150.0), width = 120.0, height = 60.0),
+            SceneryItem(SceneryKind.Tower, Vec2(370.0, 160.0), width = 40.0, height = 40.0),
+            SceneryItem(SceneryKind.Hangar, Vec2(800.0, 210.0), width = 120.0, height = 80.0),
+            SceneryItem(SceneryKind.Windsock, Vec2(700.0, 485.0), width = 24.0, height = 24.0),
+            SceneryItem(SceneryKind.Tree, Vec2(80.0, 80.0), width = 48.0, height = 48.0),
+            SceneryItem(SceneryKind.Tree, Vec2(140.0, 640.0), width = 48.0, height = 48.0),
+            SceneryItem(SceneryKind.Tree, Vec2(250.0, 570.0), width = 40.0, height = 40.0),
+            SceneryItem(SceneryKind.Tree, Vec2(1200.0, 90.0), width = 48.0, height = 48.0),
+            SceneryItem(SceneryKind.Tree, Vec2(1180.0, 650.0), width = 48.0, height = 48.0),
+            SceneryItem(SceneryKind.Tree, Vec2(980.0, 610.0), width = 40.0, height = 40.0),
+        ),
         phases = listOf(
             DifficultyPhase(
                 startSeconds = 0.0,
