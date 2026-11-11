@@ -1,6 +1,6 @@
 ## 1. Type config
 
-- [ ] 1.1 Add `AircraftType` (five types) and `AircraftTypeSpec` (speed, turn rate, landing points, radius) in `domain`, with `DefaultAircraftSpecs` holding the defaults from design. Verify: `commonTest` checks every type has speed and points above zero, speed and points ordering helicopter < light prop < turboprop < jet < jumbo, and every neighbour speed ratio at least 1.15.
+- [x] 1.1 Add `AircraftType` (five types) and `AircraftTypeSpec` (speed, turn rate, landing points, radius) in `domain`, with `DefaultAircraftSpecs` holding the defaults from design. Verify: `commonTest` checks every type has speed and points above zero, speed and points ordering helicopter < light prop < turboprop < jet < jumbo, and every neighbour speed ratio at least 1.15.
 
 ## 2. Level overrides
 
