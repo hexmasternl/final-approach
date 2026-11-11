@@ -43,4 +43,6 @@ data class Aircraft(
     val path: FlightPath = FlightPath(),
     val status: AircraftStatus = AircraftStatus.Flying,
     val livery: Int = 0,
+    /** True once the aircraft has been inside the viewport; only then can it leave it. */
+    val hasEnteredViewport: Boolean = false,
 )

@@ -3,7 +3,7 @@
 ## 1. Engine
 
 - [ ] 1.1 Add `Aircraft`, `FlightPath` and `GameState` in `domain`/`engine`, and `GameEngine` with a `StateFlow`, spawner hookup and `update(deltaSeconds)`; verify with unit tests that spawns appear and the first level never has more than three aircraft in the air
-- [ ] 1.2 Add turn-rate-limited path following that consumes reached points and flies straight on after the path; verify with unit tests
+- [x] 1.2 Add turn-rate-limited path following that consumes reached points and flies straight on after the path; verify with unit tests
 - [ ] 1.3 Remove aircraft that leave the viewport after having entered it; verify with a unit test
 
 ## 2. Input

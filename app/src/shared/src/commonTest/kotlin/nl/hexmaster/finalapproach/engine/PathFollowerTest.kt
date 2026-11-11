@@ -2,6 +2,7 @@ package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftType
+import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.AircraftTuning
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.FlightPath
@@ -45,11 +46,30 @@ class PathFollowerTest {
 
     @Test
     fun pathIsConsumedAndTheLastHeadingIsKept() {
-        val start = Aircraft(1, AircraftType.LightProp, Vec2.Zero, 0.0, FlightPath(listOf(Vec2(0.0, -20.0), Vec2(20.0, -20.0))))
-        val end = fly(start, 30).last()
+        val start = Aircraft(1, AircraftType.LightProp, Vec2.Zero, 0.0, FlightPath(listOf(Vec2(0.0, -60.0), Vec2(300.0, -60.0))))
+        val states = fly(start, 120)
+        val emptied = states.indexOfFirst { it.path.isEmpty }
+        assertTrue(emptied > 0, "path never consumed")
+        val after = states.drop(emptied)
+        assertTrue(abs(after.first().heading - PI / 2) < 0.2, "heading ${after.first().heading}")
+        after.forEach { assertEquals(after.first().heading, it.heading) }
+    }
+
+    @Test
+    fun headingNeverTurnsFasterThanTheTurnRate() {
+        val start = Aircraft(1, AircraftType.Jumbo, Vec2.Zero, 0.0, FlightPath(listOf(Vec2(0.0, 400.0))))
+        val maxTurn = specs[AircraftType.Jumbo].turnRate * dt
+        fly(start, 60).zipWithNext().forEach { (a, b) ->
+            val turned = abs(Angles.difference(a.heading, b.heading))
+            assertTrue(turned <= maxTurn + 1e-9, "turned $turned")
+        }
+    }
+
+    @Test
+    fun aPointInsideTheTurningCircleIsDroppedInsteadOfCircled() {
+        val start = Aircraft(1, AircraftType.Jumbo, Vec2.Zero, 0.0, FlightPath(listOf(Vec2(40.0, 0.0))))
+        val end = fly(start, 5).last()
         assertTrue(end.path.isEmpty)
-        assertTrue(abs(end.heading - PI / 2) < 1e-9)
-        assertTrue(end.position.x > 20.0)
     }
 
     @Test
