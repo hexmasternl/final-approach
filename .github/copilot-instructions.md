@@ -4,7 +4,7 @@ Final Approach is a cartoon-style air-traffic game. The player draws paths for i
 
 ## Tech stack
 - Kotlin Multiplatform (KMP) + Compose Multiplatform. Android first; iOS later, so keep game logic platform-independent.
-- Game code lives in `shared/` (commonMain). Platform code (`androidApp/`, later `iosApp/`) is only a thin host.
+- The Gradle project lives in `app/src`. Game code lives in `app/src/shared/` (commonMain). Platform code (`app/src/androidApp/`, later `iosApp/`) is only a thin host; everything shared code needs from the platform goes through `AppHost`.
 - Do not use Android/JVM-only APIs in `commonMain` (no `android.*`, `java.*`); use `kotlin.*`/`kotlinx.*`.
 - Rendering: Compose `Canvas`; game loop driven by a frame clock (`withFrameNanos`) with delta-time updates.
 
@@ -17,9 +17,9 @@ Final Approach is a cartoon-style air-traffic game. The player draws paths for i
 ## Core rules (keep consistent with docs/game-design.md)
 - Tap an aircraft, then drag to draw its path; the aircraft follows the path.
 - When the path ends, the aircraft continues straight in its last heading.
-- Planes land only on runways, helicopters only on helipads; landing removes the aircraft.
+- Planes land only on runways, helicopters only on helipads. A path that enters a valid landing zone (runway thresholds need an aligned approach) is cut off there and clears the aircraft to land; landing removes the aircraft, airplanes after a rollout.
 - Each aircraft type has its own speed (and turn rate); helicopters are slower and can turn tighter.
-- Collisions (too-close aircraft) and leaving the viewport without landing are failures.
+- Collisions (aircraft collision shapes touching) and leaving the viewport without landing are failures that end the level; aircraft closer than the warning distance only get a warning ring.
 
 ## Conventions
 - Kotlin official code style; 4-space indent; `val` over `var`; no `!!`.
@@ -30,3 +30,10 @@ Final Approach is a cartoon-style air-traffic game. The player draws paths for i
 
 ## Style / art
 - Cartoon look: thick outlines, bright flat colours, rounded shapes, bouncy animations. Art constants live in the theme.
+
+## Git workflow
+Follow the `git-workflow` skill (`.github/skills/git-workflow/SKILL.md`) for every commit, push, branch, worktree and pull request, and whenever an OpenSpec change is proposed, applied or archived.
+- Never touch `main`: it represents production.
+- Propose and archive OpenSpec changes on `development`; committing and pushing there directly is allowed for that.
+- Implement a change only if it names an open GitHub issue and that issue names the change. Work in a new worktree on `change/<change-name>`, branched from `development`, commit per completed task, then push and open a pull request into `development`.
+- Archiving closes the issue, moves it to Done on its GitHub project, and removes the worktree and the change branch (local and remote).
