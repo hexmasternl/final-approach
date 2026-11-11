@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.semantics.Role
@@ -50,10 +49,7 @@ private object LevelSelectDefaults {
 
     /** Side of the miniature inside a tile. */
     val miniature = 120.dp
-    const val SEA_ALPHA = 0.55f
     const val DAWN_ALPHA = 0.35f
-    const val RUNWAY_SCALE = 1f
-    const val PAD_ALPHA = 1f
     const val RUNWAY_STROKE_FRACTION = 0.7f
 }
 

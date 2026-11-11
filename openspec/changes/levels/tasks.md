@@ -8,18 +8,18 @@
 
 ## 2. Level data
 
-- [ ] 2.1 Add per-runway accepted aircraft types and `accepts(type)` to the runway and helipad data (aligned with `LevelConfig`), and verify with unit tests that runways default to all airplanes, refuse the helicopter, and that helipads accept only the helicopter
-- [ ] 2.2 Define level one (one runway, one helipad) and verify with unit tests for its zone counts and acceptance
-- [ ] 2.3 Define level two (main runway, shorter diagonal runway refusing the jumbo, one helipad, island centred) and verify with unit tests for crossing, angle not 0 or 90, main longer, and acceptance
-- [ ] 2.4 Define level three (two parallel mains, crossing runway refusing the jumbo, two helipads) and verify with unit tests for parallel headings, crossing both, and acceptance
-- [ ] 2.5 Add the `Levels` catalogue and a validation test that every zone is inside the world, clear of the HUD band, and that helipads do not overlap runways
+- [x] 2.1 Add per-runway accepted aircraft types and `accepts(type)` to the runway and helipad data (aligned with `LevelConfig`), and verify with unit tests that runways default to all airplanes, refuse the helicopter, and that helipads accept only the helicopter
+- [x] 2.2 Define level one (one runway, one helipad) and verify with unit tests for its zone counts and acceptance
+- [x] 2.3 Define level two (main runway, shorter diagonal runway refusing the jumbo, one helipad, island centred) and verify with unit tests for crossing, angle not 0 or 90, main longer, and acceptance
+- [x] 2.4 Define level three (two parallel mains, crossing runway refusing the jumbo, two helipads) and verify with unit tests for parallel headings, crossing both, and acceptance
+- [x] 2.5 Add the `Levels` catalogue and a validation test that every zone is inside the world, clear of the HUD band, and that helipads do not overlap runways
 
 ## 3. Ambient life
 
-- [ ] 3.1 Add `LevelAmbienceConfig` (cow count and speed, bird and boat gaps and speeds, light cycles) and verify by a test that no beacon or running-light cycle is under 0.5 s and no light opacity exceeds the token
-- [ ] 3.2 Implement the pure ambient simulation for cows and verify with seeded unit tests that cows never leave the fence and move slowly
-- [ ] 3.3 Implement birds and boats and verify with seeded unit tests that there is at most one of each on screen, boats never overlap the island, all three boat kinds appear over many spawns, and nothing spawns under reduced motion
-- [ ] 3.4 Implement the light phases (running light along the runway, beacon) and verify with unit tests that the sequence advances along the runway and repeats, and is static under reduced motion
+- [x] 3.1 Add `LevelAmbienceConfig` (cow count and speed, bird and boat gaps and speeds, light cycles) and verify by a test that no beacon or running-light cycle is under 0.5 s and no light opacity exceeds the token
+- [x] 3.2 Implement the pure ambient simulation for cows and verify with seeded unit tests that cows never leave the fence and move slowly
+- [x] 3.3 Implement birds and boats and verify with seeded unit tests that there is at most one of each on screen, boats never overlap the island, all three boat kinds appear over many spawns, and nothing spawns under reduced motion
+- [x] 3.4 Implement the light phases (running light along the runway, beacon) and verify with unit tests that the sequence advances along the runway and repeats, and is static under reduced motion
 
 ## 4. Drawing
 
@@ -37,7 +37,7 @@
 
 ## 6. Docs
 
-- [ ] 6.1 Update `docs/game-design.md` (levels, runway aircraft restrictions) and `docs/architecture.md` (screen flow, level scenery and ambient life), and verify they match the code names
+- [x] 6.1 Update `docs/game-design.md` (levels, runway aircraft restrictions) and `docs/architecture.md` (screen flow, level scenery and ambient life), and verify they match the code names
 
 ## 7. Human checks
 

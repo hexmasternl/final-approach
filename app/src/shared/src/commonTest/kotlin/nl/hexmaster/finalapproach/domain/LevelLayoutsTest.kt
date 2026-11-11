@@ -39,6 +39,16 @@ class LevelLayoutsTest {
     }
 
     @Test
+    fun helicoptersNeverUseRunwaysOnAnyLevel() {
+        Levels.all.forEach { level ->
+            level.runways.forEach { assertFalse(it.accepts(AircraftType.Helicopter), "${level.id}/${it.id}") }
+            level.helipads.forEach { pad ->
+                AircraftType.entries.filter { it.kind == AircraftKind.Airplane }.forEach { assertFalse(pad.accepts(it)) }
+            }
+        }
+    }
+
+    @Test
     fun levelOneHasOneRunwayAndOneHelipad() {
         assertEquals(1, one.runways.size)
         assertEquals(1, one.helipads.size)
@@ -61,6 +71,7 @@ class LevelLayoutsTest {
     @Test
     fun levelTwoStandsEntirelyOnTheIsland() {
         val island = requireNotNull(two.island)
+        assertEquals(Vec2(two.world.width / 2, two.world.height / 2), island.center)
         two.runways.flatMap { it.shape.corners }.forEach { assertTrue(island.contains(it), "runway corner $it") }
         two.helipads.forEach { pad ->
             val c = pad.position

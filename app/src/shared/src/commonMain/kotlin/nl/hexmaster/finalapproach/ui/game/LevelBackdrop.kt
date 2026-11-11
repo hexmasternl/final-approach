@@ -221,7 +221,7 @@ private fun lightAlpha(index: Int, head: Int?, count: Int, max: Float): Float {
     return (max * (1f - behind * Backdrop.TRAIL_FADE)).coerceAtLeast(max * Backdrop.UNLIT_FRACTION)
 }
 
-/** Navigation lights and a headlight on an aircraft at [at], heading [heading], for Dawn levels. */
+/** Navigation lights (green right, red left, white tail) and a headlight at the nose, for Dawn levels. */
 internal fun DrawScope.drawAircraftLights(at: Offset, heading: Double, spritePx: Float, opacity: Float) {
     val forward = Angles.direction(heading)
     val ahead = Offset(forward.x.toFloat(), forward.y.toFloat())
@@ -229,7 +229,11 @@ internal fun DrawScope.drawAircraftLights(at: Offset, heading: Double, spritePx:
     val radius = spritePx / LIGHT_DIVISOR
     drawCircle(FaLights.navGreen.copy(alpha = opacity), radius, at + right * (spritePx / 2f))
     drawCircle(FaLights.navRed.copy(alpha = opacity), radius, at - right * (spritePx / 2f))
-    drawCircle(FaLights.white.copy(alpha = opacity), radius, at + ahead * (spritePx / 2f))
+    drawCircle(FaLights.white.copy(alpha = opacity), radius, at - ahead * (spritePx / 2f))
+    drawCircle(FaLights.beacon.copy(alpha = opacity), radius * HEADLIGHT_SCALE, at + ahead * (spritePx / 2f))
 }
 
 private const val LIGHT_DIVISOR = 14f
+
+/** The headlight at the nose is this much larger than a navigation light. */
+private const val HEADLIGHT_SCALE = 1.5f
