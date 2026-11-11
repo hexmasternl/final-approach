@@ -32,6 +32,13 @@ final-approach/
 - **Landing check**: when the path ends, test the endpoint against runways (planes) or helipads (helicopters).
 - **Coordinates**: world units independent of screen size; the viewport scales to fit.
 
+## Level config and spawner
+- `domain/Geometry.kt`: `Vec2`, `Angles` (headings in radians clockwise from up, world y down), `Circle`, `OrientedRect`, `Bounds` and the `Overlap` tests.
+- `domain/LevelConfig.kt`: immutable data classes (`LevelConfig`, `WorldConfig`, `RunwayConfig` with `RunwayMode`, `HelipadConfig`, `DifficultyPhase`, `SpawnRules`, `RunRules`, `ScoringConfig`, `Wind`, `TutorialHint`). Global defaults live in `LevelDefaults`; no tunable appears as a literal in logic.
+- `domain/LevelConfigValidator.kt`: returns every problem as a sentence; `LevelConfig.requireValid()` throws with all of them.
+- `domain/Levels.kt`: the levels in play order.
+- `engine/Spawner.kt`: `Spawner(config, seed, speedOf)` is stepped with `update(deltaSeconds, levelTime, aircraftPositions)` and returns at most one `Spawn` (type, position, heading, edge). It never reads a clock; whoever starts a run draws the seed when the level has none.
+
 ## Testing
 `kotlin.test` in `commonTest` for engine/domain and for UI logic such as the menu backdrop; keep Compose UI thin. Tests run on the JVM through the Android host test target.
 

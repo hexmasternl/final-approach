@@ -41,6 +41,23 @@ Values are tunable and live in configuration. Differing speeds are the core chal
 - Score: points per safe landing, bonus for streaks and tight sequencing.
 - Difficulty rises over time: spawn rate and aircraft variety increase.
 
+## Levels
+A level is a `LevelConfig` in code (`domain/Levels.kt`), validated before it is played. It holds:
+- **World:** the viewport size in world units, the spawn margin and the minimum separation.
+- **Zones:** runways (position, axis orientation, length, width, mode) and helipads (position, radius). Zones lie inside the viewport and never overlap.
+- **Runway mode:** *one-way* accepts landings on one heading only; *two-way* accepts both ends, and the approach picks the end. Approaches within the landing tolerance (default 30 degrees) of a landing heading count as aligned. The runway number is the landing heading in tens of degrees (`09`, `27`).
+- **Difficulty curve:** a list of phases. Each phase starts at a level time and sets the spawn interval range, the weight of each allowed aircraft type and the maximum number of aircraft in the air. The active phase is the last one that has started; phases step, they do not blend.
+- **Run rules:** an optional seed (none means a fresh one per run), an optional duration (none means endless) and an optional landing goal.
+- **Scoring, wind, emergencies, hints:** lives, a points multiplier, and slots for later features that default to off.
+
+### Build-up
+The spawner draws every random number from one seeded generator, so a seed replays a run exactly. The first spawn comes after a short delay; after each spawn the next interval is drawn from the active phase's range, and the type is picked by weight. At the phase's aircraft cap the spawn waits until an aircraft lands or leaves.
+
+Level 1, **Meadow Field**, opens with only light props and helicopters (two at a time), adds turboprops after 45 seconds and all five types after two minutes, with at most three aircraft in the air.
+
+### Fair entry
+Aircraft enter just outside a permitted edge (by the spawn margin) and head for a random point in the central safe region (the middle half of each axis), plus a small random jitter (up to 15 degrees). An entry is only used when its straight line crosses at least half of the viewport's shorter side and stays on screen for at least four seconds at the aircraft's speed, and when it lies at least the minimum separation from every aircraft, including those not yet on screen. Otherwise the spawner tries again, up to eight times, and then delays the spawn briefly.
+
 ## Look and feel
 Cartoon style; see `art-style.md`.
 
