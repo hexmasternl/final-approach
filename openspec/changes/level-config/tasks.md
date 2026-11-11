@@ -17,12 +17,12 @@
 
 ## 4. Spawner
 
-- [ ] 4.1 Implement phase selection, jittered spawn timing and weighted type choice, driven by a seeded `Random`, and verify with unit tests: same seed gives the same sequence, different seeds differ, the first phase only spawns allowed types, intervals stay within the phase range, heavier weights spawn more often
-- [ ] 4.2 Implement the maximum-aircraft cap and verify with unit tests that nothing spawns at the cap and spawning resumes after a landing
-- [ ] 4.3 Implement edge choice and spawn position with the spawn margin, plus edge restriction, and verify with unit tests that spawns lie outside the viewport by the margin and only on permitted edges
-- [ ] 4.4 Implement the fair entry rule (safe region target, jitter, minimum time on screen, minimum chord, bounded re-rolls, delay) and verify with a property-style test over many seeds and with a case where no entry is fair that the spawn is delayed
-- [ ] 4.5 Implement the separation check at spawn, including aircraft outside the viewport, and verify with unit tests
-- [ ] 4.6 Verify with a simulation test that spawn rate and variety grow across the phases of a test level over many seeds
+- [x] 4.1 Implement phase selection, jittered spawn timing and weighted type choice, driven by a seeded `Random`, and verify with unit tests: same seed gives the same sequence, different seeds differ, the first phase only spawns allowed types, intervals stay within the phase range, heavier weights spawn more often
+- [x] 4.2 Implement the maximum-aircraft cap and verify with unit tests that nothing spawns at the cap and spawning resumes after a landing
+- [x] 4.3 Implement edge choice and spawn position with the spawn margin, plus edge restriction, and verify with unit tests that spawns lie outside the viewport by the margin and only on permitted edges
+- [x] 4.4 Implement the fair entry rule (safe region target, jitter, minimum time on screen, minimum chord, bounded re-rolls, delay) and verify with a property-style test over many seeds and with a case where no entry is fair that the spawn is delayed
+- [x] 4.5 Implement the separation check at spawn, including aircraft outside the viewport, and verify with unit tests
+- [x] 4.6 Verify with a simulation test that spawn rate and variety grow across the phases of a test level over many seeds
 
 ## 5. Docs
 
