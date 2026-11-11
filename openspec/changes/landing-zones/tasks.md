@@ -3,7 +3,7 @@
 ## 1. Zones and configuration
 
 - [x] 1.1 Add `LandingConfig` (helipad zone radius with per-helipad override, runway zone depth and width, alignment tolerance in radians, rollout fraction, fade duration) and a rollout speed fraction on the aircraft type config; verify no such number appears as a literal in engine code
-- [ ] 1.2 Derive landing zones from the level config (helipad circle; one runway zone for one-way, two with opposite directions for two-way); verify with unit tests for zone count, positions and directions
+- [x] 1.2 Derive landing zones from the level config (helipad circle; one runway zone for one-way, two with opposite directions for two-way); verify with unit tests for zone count, positions and directions
 
 ## 2. Landing rules
 
