@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
+import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
@@ -24,6 +25,9 @@ import kotlin.random.Random
  * @param events what happened during the last update
  * @param status playing, or game over with its reason; once over, nothing moves any more
  * @param warnedAircraft aircraft within the warning distance of another aircraft
+ * @param spawnedByType how many aircraft of each type have spawned in this run
+ * @param landedByType how many aircraft of each type have landed in this run
+ * @param paused true while the player has paused the level; nothing moves or spawns
  */
 data class GameState(
     val levelTime: Double = 0.0,
@@ -34,7 +38,13 @@ data class GameState(
     val events: List<GameEvent> = emptyList(),
     val status: GameStatus = GameStatus.Playing,
     val warnedAircraft: Set<Int> = emptySet(),
-)
+    val spawnedByType: Map<AircraftType, Int> = emptyMap(),
+    val landedByType: Map<AircraftType, Int> = emptyMap(),
+    val paused: Boolean = false,
+) {
+    /** Total number of aircraft that landed. */
+    val totalLanded: Int get() = landedByType.values.sum()
+}
 
 /**
  * Owns and advances the state of one level. The state changes only through [update] and the
@@ -48,7 +58,7 @@ class GameEngine(
 ) {
     val zones: List<LandingZone> = LandingZones.of(level)
 
-    private val spawner = Spawner(level, seed, specs::speedOf)
+    private var spawner = Spawner(level, seed, specs::speedOf)
     private val viewport = level.world.viewport
     private val playArea = viewport.expandedBy(level.world.leaveMargin)
     private var nextId = 1
@@ -59,11 +69,11 @@ class GameEngine(
     /**
      * Advances the level by [deltaSeconds]: moves aircraft, lands them, checks for collisions and
      * aircraft that left, and spawns. A long frame is split into steps no longer than the level's
-     * maximum step. After a game over it does nothing.
+     * maximum step. After a game over, or while paused, it does nothing.
      */
     fun update(deltaSeconds: Double) {
         val current = mutableState.value
-        if (deltaSeconds <= 0.0 || current.status is GameStatus.GameOver) return
+        if (deltaSeconds <= 0.0 || current.paused || current.status is GameStatus.GameOver) return
         val steps = ceil(deltaSeconds / level.world.maxStepSeconds).toInt().coerceAtLeast(1)
         val stepSeconds = deltaSeconds / steps
         val events = mutableListOf<GameEvent>()
@@ -80,10 +90,16 @@ class GameEngine(
             if (status is GameStatus.GameOver) break
         }
         val time = current.levelTime + deltaSeconds
+        var spawned = current.spawnedByType
         if (status == GameStatus.Playing) {
             val spawn = spawner.update(deltaSeconds, time, aircraft.filter(::isAirborne).map { it.position })
-            if (spawn != null) aircraft = aircraft + arrive(spawn, aircraft)
+            if (spawn != null) {
+                aircraft = aircraft + arrive(spawn, aircraft)
+                spawned = spawned + (spawn.type to (spawned[spawn.type] ?: 0) + 1)
+            }
         }
+        val landed = events.filterIsInstance<GameEvent.Landed>()
+            .fold(current.landedByType) { counts, event -> counts + (event.type to (counts[event.type] ?: 0) + 1) }
         mutableState.value = GameState(
             levelTime = time,
             aircraft = aircraft,
@@ -93,7 +109,26 @@ class GameEngine(
             events = events,
             status = status,
             warnedAircraft = warned(aircraft),
+            spawnedByType = spawned,
+            landedByType = landed,
         )
+    }
+
+    /** Freezes the level: nothing moves, spawns or scores, and input is ignored, until [resume]. */
+    fun pause() {
+        mutableState.value = mutableState.value.copy(paused = true)
+    }
+
+    /** Carries on from exactly where [pause] stopped. */
+    fun resume() {
+        mutableState.value = mutableState.value.copy(paused = false)
+    }
+
+    /** Starts the level again from scratch, with a fresh seed unless the level fixes one. */
+    fun restart(seed: Long = level.run.seed ?: Random.nextLong()) {
+        spawner = Spawner(level, seed, specs::speedOf)
+        nextId = 1
+        mutableState.value = GameState()
     }
 
     /**
@@ -101,7 +136,7 @@ class GameEngine(
      * none is that close. Aircraft rolling out on the runway cannot be picked. Returns its id.
      */
     fun select(point: Vec2, pickRadius: Double): Int? {
-        if (isOver) return null
+        if (inputBlocked) return null
         val picked = mutableState.value.aircraft
             .filter { it.status !is AircraftStatus.RollingOut }
             .map { it to it.position.distanceTo(point) }
@@ -114,7 +149,7 @@ class GameEngine(
 
     /** Starts a new path for aircraft [id], replacing its old one. */
     fun beginPath(id: Int) {
-        if (isOver) return
+        if (inputBlocked) return
         updateAircraft(id) { PathDrawing.begin(it) }
         mutableState.value = mutableState.value.copy(selectedId = id.takeIf { has(it) })
     }
@@ -124,7 +159,7 @@ class GameEngine(
      * path's last point. A path that enters a landing zone ends there and ignores further points.
      */
     fun extendPath(id: Int, point: Vec2) {
-        if (isOver) return
+        if (inputBlocked) return
         val time = mutableState.value.levelTime
         updateAircraft(id) { aircraft ->
             val last = aircraft.path.points.lastOrNull() ?: aircraft.position
@@ -141,7 +176,8 @@ class GameEngine(
 
     private fun has(id: Int) = mutableState.value.aircraft.any { it.id == id }
 
-    private val isOver: Boolean get() = mutableState.value.status is GameStatus.GameOver
+    /** Input does nothing once the level is over or while it is paused. */
+    private val inputBlocked: Boolean get() = mutableState.value.let { it.paused || it.status is GameStatus.GameOver }
 
     /** Replaces the aircraft in play; for tests that need a known situation. */
     internal fun place(aircraft: List<Aircraft>) {

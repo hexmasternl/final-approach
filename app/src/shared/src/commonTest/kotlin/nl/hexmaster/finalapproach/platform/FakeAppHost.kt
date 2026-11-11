@@ -7,6 +7,8 @@ class FakeAppHost(
 ) : AppHost {
     override val back = BackDispatcher()
 
+    override val highScores = InMemoryHighScoreStore()
+
     var quitCalls = 0
         private set
 

@@ -189,6 +189,10 @@ data class LevelConfig(
     fun phaseAt(levelTime: Double): DifficultyPhase =
         phases.lastOrNull { it.startSeconds <= levelTime } ?: phases.first()
 
+    /** The aircraft types this level spawns in any phase, in roster order. */
+    val spawnedTypes: List<AircraftType>
+        get() = AircraftType.entries.filter { type -> phases.any { type in it.allowedTypes } }
+
     /** The level's aircraft speed and points overrides; resolve once at level start. */
     val aircraftTuning: AircraftTuning
         get() = AircraftTuning(
