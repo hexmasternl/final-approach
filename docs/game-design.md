@@ -25,16 +25,17 @@ Every aircraft of a type flies at exactly the same speed, with no random variati
 A level can set a speed multiplier and per-type speeds, and a points multiplier and per-type points. A per-type value replaces the default; the multiplier then applies to the result (points are rounded, minimum 1). The effective values are resolved once when the level starts and stay fixed for the run. Multipliers and per-type values must be greater than zero; a level with a zero or negative value is rejected with the field named. Overrides need not keep the speed order.
 
 ## Controls
-1. **Tap** an aircraft to select it.
+1. **Tap** an aircraft to select it. The pick area is at least 72dp, and the nearest aircraft wins.
 2. **Drag** to draw a path; the path is shown as a dashed cartoon line.
 3. The aircraft follows the path at its own speed.
 4. Drawing a new path replaces the old one.
 
 ## Flight behaviour
+- The aircraft turns towards its path no faster than its turn rate, so fast types fly wide curves and helicopters turn on the spot. Points it cannot turn onto are skipped rather than circled.
 - On path end the aircraft flies straight on in its last heading (no auto-landing, no auto-turn).
 - A path that enters a valid landing zone (runway threshold for airplanes, helipad for helicopters) clears the aircraft to land: the path is cut off at the point where it entered the zone, flashes white once, and takes no more drag points. Score is awarded at touchdown.
 - A path over the wrong zone type, or over the middle of a runway, does nothing; the path continues as drawn.
-- Aircraft leaving the viewport without landing counts as a miss.
+- Aircraft leaving the viewport without landing counts as a miss. Only an aircraft that has been on screen can leave it; until misses end the level, it is simply removed once it is beyond the leave margin, freeing its slot.
 
 ## Landing rules
 - Landing zones are invisible. A helipad's zone is a circle on the pad (radius configurable per helipad). A runway has a zone at each threshold it can be landed from: one for a one-way runway, two for a two-way runway, with opposite landing directions.
@@ -51,7 +52,7 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 
 ## Levels
 A level is a `LevelConfig` in code (`domain/Levels.kt`), validated before it is played. It holds:
-- **World:** the viewport size in world units, the spawn margin and the minimum separation.
+- **World:** the viewport size in world units, the spawn margin, the leave margin and the minimum separation.
 - **Zones:** runways (position, axis orientation, length, width, mode) and helipads (position, radius). Zones lie inside the viewport and never overlap.
 - **Runway mode:** *one-way* accepts landings on one heading only; *two-way* accepts both ends, and the approach picks the end. Approaches within the landing tolerance (default 30 degrees) of a landing heading count as aligned. The runway number is the landing heading in tens of degrees (`09`, `27`).
 - **Difficulty curve:** a list of phases. Each phase starts at a level time and sets the spawn interval range, the weight of each allowed aircraft type and the maximum number of aircraft in the air. The active phase is the last one that has started; phases step, they do not blend.
@@ -61,7 +62,7 @@ A level is a `LevelConfig` in code (`domain/Levels.kt`), validated before it is 
 ### Build-up
 The spawner draws every random number from one seeded generator, so a seed replays a run exactly. The first spawn comes after a short delay; after each spawn the next interval is drawn from the active phase's range, and the type is picked by weight. At the phase's aircraft cap the spawn waits until an aircraft lands or leaves.
 
-Level 1, **Meadow Field**, opens with only light props and helicopters (two at a time), adds turboprops after 45 seconds and all five types after two minutes, with at most three aircraft in the air.
+Level 1, **Meadow Field**, is played in landscape. One two-way runway (09 on the left end, 27 on the right) lies left to right in the middle, with a helipad on the right, on a striped lawn. A taxiway, an apron, a terminal with a control tower, a hangar, a windsock and trees make it read as a small airfield; this decoration is level data and never covers a landing zone. It opens with only light props and helicopters (two at a time), adds turboprops after 45 seconds and all five types after two minutes, with at most three aircraft in the air.
 
 ### Fair entry
 Aircraft enter just outside a permitted edge (by the spawn margin) and head for a random point in the central safe region (the middle half of each axis), plus a small random jitter (up to 15 degrees). An entry is only used when its straight line crosses at least half of the viewport's shorter side and stays on screen for at least four seconds at the aircraft's speed, and when it lies at least the minimum separation from every aircraft, including those not yet on screen. Otherwise the spawner tries again, up to eight times, and then delays the spawn briefly.
