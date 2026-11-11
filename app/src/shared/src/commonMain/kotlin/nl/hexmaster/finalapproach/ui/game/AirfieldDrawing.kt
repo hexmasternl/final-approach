@@ -77,20 +77,30 @@ internal fun DrawScope.drawRunway(
     inFrame(center, runway.orientation, widthPx, lengthPx) { rect ->
         outlinedRect(rect, colors.asphalt500, colors, FaDimens.radiusSm.toPx())
         val inset = FaDimens.space4.toPx()
-        val bar = FaDimens.line3.toPx()
-        listOf(rect.top + inset, rect.bottom - inset - bar).forEach { y ->
-            drawRect(colors.marking, Offset(rect.left + inset, y), Size(rect.width - inset * 2f, bar))
+        val barLength = FaDimens.space5.toPx()
+        val barWidth = FaDimens.line4.toPx()
+        val patchLength = FaDimens.space8.toPx()
+        val patchWidth = rect.width / 2f
+        val numberRoom = FaDimens.space7.toPx()
+        // Touchdown patches past the numbers, then four threshold bars at each end.
+        listOf(rect.top + inset + barLength + numberRoom, rect.bottom - inset - barLength - numberRoom - patchLength)
+            .forEach { y -> drawRect(colors.asphalt700, Offset(rect.center.x - patchWidth / 2f, y), Size(patchWidth, patchLength)) }
+        val barSpacing = (rect.width - inset * 2f) / THRESHOLD_BARS
+        repeat(THRESHOLD_BARS) { i ->
+            val x = rect.left + inset + barSpacing * (i + 0.5f) - barWidth / 2f
+            drawRect(colors.marking, Offset(x, rect.top + inset), Size(barWidth, barLength))
+            drawRect(colors.marking, Offset(x, rect.bottom - inset - barLength), Size(barWidth, barLength))
         }
         val dash = FaDimens.space5.toPx()
         val gap = FaDimens.space4.toPx()
-        val clear = inset + FaDimens.space8.toPx()
+        val clear = inset + barLength + numberRoom
         var y = rect.top + clear
         while (y + dash < rect.bottom - clear) {
-            drawRect(colors.marking, Offset(center.x - bar / 2f, y), Size(bar, dash))
+            drawRect(colors.marking, Offset(rect.center.x - barWidth / 2f, y), Size(barWidth, dash))
             y += dash + gap
         }
     }
-    val numberInset = FaDimens.space4.toPx() + FaDimens.space6.toPx()
+    val numberInset = FaDimens.space4.toPx() + FaDimens.space5.toPx() + FaDimens.space7.toPx() / 2f
     for (heading in runway.landingHeadings) {
         val direction = Angles.direction(heading)
         val threshold = center - Offset(direction.x.toFloat(), direction.y.toFloat()) * (lengthPx / 2f)
@@ -119,16 +129,17 @@ internal fun DrawScope.drawHelipad(
     drawCircle(colors.asphalt500, radius, center)
     drawCircle(colors.outline, radius, center, style = outlineStroke())
     drawCircle(
-        colors.marking,
+        colors.markingWarn,
         radius - FaDimens.space3.toPx(),
         center,
-        style = Stroke(width = FaDimens.line2.toPx()),
+        style = Stroke(width = FaDimens.line4.toPx()),
     )
     val layout = measurer.measure(HELIPAD_LETTER, letterStyle)
     drawText(layout, color = colors.marking, topLeft = center - Offset(layout.size.width / 2f, layout.size.height / 2f))
 }
 
 private const val HELIPAD_LETTER = "H"
+private const val THRESHOLD_BARS = 4
 
 /** True for scenery that lies flat on the ground and is drawn under the runway. */
 internal val SceneryItem.isGround: Boolean

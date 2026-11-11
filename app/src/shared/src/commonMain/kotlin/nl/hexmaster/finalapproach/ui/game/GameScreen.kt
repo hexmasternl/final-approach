@@ -67,8 +67,8 @@ fun GameScreen(host: AppHost, onBack: () -> Unit, level: LevelConfig = Levels.me
     val colors = FaTheme.colors
     val reduceMotion = FaTheme.reduceMotion
     val measurer = rememberTextMeasurer()
-    val numberStyle = FaTheme.type.label
-    val letterStyle = FaTheme.type.titleMd
+    val numberStyle = FaTheme.type.titleMd
+    val letterStyle = FaTheme.type.titleLg
 
     DisposableEffect(host) {
         host.lockLandscape(true)
