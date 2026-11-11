@@ -13,9 +13,9 @@
 ## 3. Engine behaviour
 
 - [x] 3.1 Truncate and lock the path at the zone entry and set `ClearedToLand`; verify with unit tests that the path ends at the zone and later points are ignored
-- [ ] 3.2 Land helicopters at the end of the path and remove them; verify with a unit test
-- [ ] 3.3 Implement airplane rollout (two thirds of the runway length in the zone's direction), fade and removal; verify with unit tests for rollout length, direction per zone, and removal after the fade
-- [ ] 3.4 Include rolling airplanes in collision detection; verify with a unit test that two airplanes landing from opposite ends of a two-way runway collide mid-runway
+- [x] 3.2 Land helicopters at the end of the path and remove them; verify with a unit test
+- [x] 3.3 Implement airplane rollout (two thirds of the runway length in the zone's direction), fade and removal; verify with unit tests for rollout length, direction per zone, and removal after the fade
+- [x] 3.4 Include rolling airplanes in collision detection; verify with a unit test that two airplanes landing from opposite ends of a two-way runway collide mid-runway
 
 ## 4. Feedback
 
