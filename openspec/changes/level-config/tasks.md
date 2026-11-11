@@ -8,8 +8,8 @@
 
 ## 2. Validation
 
-- [ ] 2.1 Implement `LevelConfigValidator` with zone geometry (inside viewport, overlap) and verify with unit tests for no zone, outside the viewport, overlapping zones, rotated runways, and a valid config
-- [ ] 2.2 Add the difficulty curve and separation rules and verify with unit tests for bad intervals, non-positive weights, non-increasing starts, a first phase not at 0, maximum below 1, and helicopters without a helipad or airplanes without a runway; each failure message names the problem
+- [x] 2.1 Implement `LevelConfigValidator` with zone geometry (inside viewport, overlap) and verify with unit tests for no zone, outside the viewport, overlapping zones, rotated runways, and a valid config
+- [x] 2.2 Add the difficulty curve and separation rules and verify with unit tests for bad intervals, non-positive weights, non-increasing starts, a first phase not at 0, maximum below 1, and helicopters without a helipad or airplanes without a runway; each failure message names the problem
 
 ## 3. First level
 
