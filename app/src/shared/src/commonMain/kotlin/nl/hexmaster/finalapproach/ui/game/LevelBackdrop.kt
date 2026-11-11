@@ -72,7 +72,7 @@ internal fun DrawScope.drawLevelGround(level: LevelConfig, viewport: WorldViewpo
         }
 
         LevelScenery.Savanna -> {
-            drawLawn(FaDimens.space8.toPx(), colors)
+            drawLawn(GameScreenDefaults.lawnStripe.toPx(), colors)
             Backdrop.rocks.forEach { drawRock(viewport.offsetOf(it), viewport.px(Backdrop.ROCK_RADIUS), colors) }
             Backdrop.bushes.forEach { drawBush(viewport.offsetOf(it), viewport.px(Backdrop.BUSH_RADIUS), colors) }
             Backdrop.acacias.forEach { drawAcacia(viewport.offsetOf(it), viewport.px(Backdrop.ACACIA_RADIUS), colors) }

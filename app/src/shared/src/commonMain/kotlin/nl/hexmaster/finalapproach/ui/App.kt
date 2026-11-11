@@ -5,14 +5,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.ui.game.GameScreen
+import nl.hexmaster.finalapproach.ui.game.LevelSelectPage
 import nl.hexmaster.finalapproach.ui.menu.MainPage
 import nl.hexmaster.finalapproach.ui.splash.SplashPage
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** The screens of the app. It opens on the splash page; after that the main page is home. */
-enum class Screen { Splash, Main, Game, Settings }
+enum class Screen { Splash, Main, LevelSelect, Game, Settings }
 
 private object AppText {
     const val SETTINGS_TITLE = "Settings"
@@ -24,16 +26,30 @@ private object AppText {
 fun App(host: AppHost) {
     FaTheme(reduceMotion = host.reduceMotion) {
         var screen by rememberSaveable { mutableStateOf(Screen.Splash) }
+        var levelId by rememberSaveable { mutableStateOf(Levels.meadowField.id) }
         when (screen) {
             Screen.Splash -> SplashPage(host = host, onFinished = { screen = Screen.Main })
 
             Screen.Main -> MainPage(
                 host = host,
-                onTakeOff = { screen = Screen.Game },
+                onTakeOff = { screen = Screen.LevelSelect },
                 onSettings = { screen = Screen.Settings },
             )
 
-            Screen.Game -> GameScreen(host = host, onQuit = { screen = Screen.Main })
+            Screen.LevelSelect -> LevelSelectPage(
+                host = host,
+                onStart = { id ->
+                    levelId = id
+                    screen = Screen.Game
+                },
+                onBack = { screen = Screen.Main },
+            )
+
+            Screen.Game -> GameScreen(
+                host = host,
+                onQuit = { screen = Screen.LevelSelect },
+                level = Levels.byId(levelId) ?: Levels.meadowField,
+            )
 
             // The settings page has its own issue. Until it is built, a placeholder keeps the
             // flow from and back to the main page working.

@@ -67,6 +67,8 @@ The spawner draws every random number from one seeded generator, so a seed repla
 
 Level 1, **Meadow Field**, is played in landscape. One two-way runway (09 on the left end, 27 on the right) lies left to right in the middle, with a helipad on the right, on a striped lawn. A taxiway, an apron, a terminal with a control tower, a hangar, a windsock and trees make it read as a small airfield; this decoration is level data and never covers a landing zone. It opens with only light props and helicopters (two at a time), adds turboprops after 45 seconds and all five types after two minutes, with at most three aircraft in the air.
 
+Levels 2 and 3 are set on an island (water all round) and a savanna at dawn. Runways can carry an accepted-types list, and a level may allow crossing runways. Ambient life (cows, a boat, a bird) and, at dawn, the tower beacon and aircraft lights are decoration only and never affect play.
+
 ### Fair entry
 Aircraft enter just outside a permitted edge (by the spawn margin) and head for a random point in the central safe region (the middle half of each axis), plus a small random jitter (up to 15 degrees). An entry is only used when its straight line crosses at least half of the viewport's shorter side and stays on screen for at least four seconds at the aircraft's speed, and when it lies at least the spawn separation from every aircraft, including those not yet on screen. Otherwise the spawner tries again, up to eight times, and then delays the spawn briefly.
 
