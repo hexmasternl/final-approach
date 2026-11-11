@@ -1,0 +1,89 @@
+name: Deploy to internal track
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'development'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: app/src
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - uses: gittools/actions/gitversion/setup@v3
+        with:
+          versionSpec: '6.x'
+
+      - id: gitversion
+        name: Calculate version
+        uses: gittools/actions/gitversion/execute@v3
+        with:
+          configFilePath: GitVersion.yml
+
+      - id: code
+        name: Calculate version code
+        working-directory: .
+        run: echo "value=$(( ${{ steps.gitversion.outputs.major }} * 1000000 + ${{ steps.gitversion.outputs.minor }} * 1000 + ${{ steps.gitversion.outputs.patch }} ))" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Unit tests
+        run: ./gradlew :shared:allTests
+
+      - name: Decode upload keystore
+        run: echo "${{ secrets.UPLOAD_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/upload-keystore.jks"
+
+      - name: Build bundle
+        run: ./gradlew :androidApp:bundleRelease
+        env:
+          UPLOAD_KEYSTORE_PATH: ${{ runner.temp }}/upload-keystore.jks
+          UPLOAD_KEYSTORE_PASSWORD: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASSWORD: ${{ secrets.UPLOAD_KEY_PASSWORD }}
+          VERSION_NAME: ${{ steps.gitversion.outputs.majorMinorPatch }}
+          VERSION_CODE: ${{ steps.code.outputs.value }}
+
+      - name: Build release notes
+        working-directory: .
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          mkdir -p whatsnew
+          git log --no-merges --pretty='- %s' "$BASE..$HEAD" > release-notes.md
+          { echo; echo '### Changed files'; git diff --name-status "$BASE" "$HEAD"; } >> release-notes.md
+          git log --no-merges --pretty='- %s' "$BASE..$HEAD" | head -c 500 > whatsnew/whatsnew-en-US
+
+      - name: Upload to Play internal track
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: nl.hexmaster.final_approach
+          releaseFiles: app/src/androidApp/build/outputs/bundle/release/*.aab
+          track: internal
+          status: completed
+          whatsNewDirectory: whatsnew
+
+      - name: Create GitHub release
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: v${{ steps.gitversion.outputs.majorMinorPatch }}
+        run: |
+          gh release create "$VERSION" app/src/androidApp/build/outputs/bundle/release/*.aab \
+            --title "$VERSION" --notes-file release-notes.md --target main

@@ -13,12 +13,27 @@ android {
         applicationId = "nl.hexmaster.final_approach"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = System.getenv("VERSION_CODE")?.toInt() ?: 1
+        versionName = System.getenv("VERSION_NAME") ?: "0.1.0"
+    }
+    // Release signing comes from the environment (CI); see docs/deployment.md.
+    val uploadKeystorePath = System.getenv("UPLOAD_KEYSTORE_PATH")
+    signingConfigs {
+        if (uploadKeystorePath != null) {
+            create("release") {
+                storeFile = file(uploadKeystorePath)
+                storePassword = System.getenv("UPLOAD_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("UPLOAD_KEY_ALIAS")
+                keyPassword = System.getenv("UPLOAD_KEY_PASSWORD")
+            }
+        }
     }
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            if (uploadKeystorePath != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     compileOptions {
