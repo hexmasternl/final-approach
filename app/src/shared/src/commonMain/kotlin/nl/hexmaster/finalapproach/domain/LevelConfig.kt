@@ -3,8 +3,21 @@ package nl.hexmaster.finalapproach.domain
 import kotlin.math.PI
 import kotlin.math.abs
 
-/** Day is the default; Night is for night levels. */
-enum class LevelTheme { Day, Night }
+/** Day is the default; Night is for night levels; Dawn is the dim light before sunrise. */
+enum class LevelTheme { Day, Night, Dawn }
+
+/** The landscape a level is set in; the renderer picks the ground and decoration from it. */
+enum class LevelScenery { Meadow, Island, Savanna }
+
+/** An elliptical island the airport stands on; everything around it is water. */
+data class Island(val center: Vec2, val radiusX: Double, val radiusY: Double) {
+    /** True when [point] lies on the island, at least [margin] units from its shore. */
+    fun contains(point: Vec2, margin: Double = 0.0): Boolean {
+        val dx = (point.x - center.x) / (radiusX - margin)
+        val dy = (point.y - center.y) / (radiusY - margin)
+        return dx * dx + dy * dy <= 1.0
+    }
+}
 
 /** Optional atmosphere of a level. */
 data class Ambience(val clouds: Boolean = true)
@@ -32,8 +45,12 @@ data class RunwayConfig(
     val length: Double,
     val width: Double = LevelDefaults.RUNWAY_WIDTH,
     val mode: RunwayMode = RunwayMode.TwoWay,
+    val accepted: Set<AircraftType> = LevelDefaults.ALL_AIRPLANES,
 ) {
     val shape: OrientedRect get() = OrientedRect(position, orientation, length, width)
+
+    /** True when this runway is for aircraft of [type]; never true for the helicopter. */
+    fun accepts(type: AircraftType): Boolean = type.kind == AircraftKind.Airplane && type in accepted
 
     /** The headings an airplane may land on. */
     val landingHeadings: List<Double>
@@ -77,6 +94,9 @@ data class HelipadConfig(
     val zoneRadius: Double? = null,
 ) {
     val shape: Circle get() = Circle(position, radius)
+
+    /** A helipad is for the helicopter only. */
+    fun accepts(type: AircraftType): Boolean = type.kind == AircraftKind.Helicopter
 }
 
 /**
@@ -170,6 +190,10 @@ data class LevelConfig(
     val world: WorldConfig,
     val phases: List<DifficultyPhase>,
     val theme: LevelTheme = LevelTheme.Day,
+    val landscape: LevelScenery = LevelScenery.Meadow,
+    val island: Island? = null,
+    val paddock: Bounds? = null,
+    val allowCrossingRunways: Boolean = false,
     val ambience: Ambience = Ambience(),
     val runways: List<RunwayConfig> = emptyList(),
     val helipads: List<HelipadConfig> = emptyList(),
@@ -188,6 +212,10 @@ data class LevelConfig(
     /** The phase active at [levelTime] seconds: the last one that has started. */
     fun phaseAt(levelTime: Double): DifficultyPhase =
         phases.lastOrNull { it.startSeconds <= levelTime } ?: phases.first()
+
+    /** The aircraft types this level spawns in any phase, in roster order. */
+    val spawnedTypes: List<AircraftType>
+        get() = AircraftType.entries.filter { type -> phases.any { type in it.allowedTypes } }
 
     /** The level's aircraft speed and points overrides; resolve once at level start. */
     val aircraftTuning: AircraftTuning

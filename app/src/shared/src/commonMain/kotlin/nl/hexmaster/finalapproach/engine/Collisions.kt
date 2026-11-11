@@ -5,7 +5,8 @@ import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.Vec2
 
 /**
- * Finds aircraft whose collision shapes touched. Every aircraft in the list counts, rolling ones
+ * Finds aircraft whose collision shapes touched. Only aircraft with the same altitude state can
+ * collide: a flying aircraft passes over one that has landed. Every aircraft in the list counts, rolling ones
  * included; aircraft removed after landing are simply not in it. Distance alone is never a
  * collision.
  *
@@ -28,6 +29,7 @@ object Collisions {
         for (i in aircraft.indices) for (j in i + 1 until aircraft.size) {
             val a = aircraft[i]
             val b = aircraft[j]
+            if (a.altitude != b.altitude) continue
             if (touched(a, previous[a.id] ?: a.position, b, previous[b.id] ?: b.position, specs)) {
                 add(minOf(a.id, b.id) to maxOf(a.id, b.id))
             }
