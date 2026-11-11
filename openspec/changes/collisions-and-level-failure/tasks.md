@@ -7,9 +7,9 @@
 
 ## 2. Collision detection
 
-- [ ] 2.1 Implement the shape overlap test in `engine/Collisions` with a bounding-circle broad phase, and verify with unit tests: close but not touching is no collision, touching is, rotation changes the result
+- [x] 2.1 Implement the shape overlap test in `engine/Collisions` with a bounding-circle broad phase, and verify with unit tests: close but not touching is no collision, touching is, rotation changes the result
 - [ ] 2.2 Add the swept test along the frame movement and sub-stepping in `GameEngine.update`, and verify with a unit test that a head-on fast pass in one large-delta frame is detected
-- [ ] 2.3 Skip removed aircraft and include rolling-out aircraft, and verify with unit tests for both
+- [x] 2.3 Skip removed aircraft and include rolling-out aircraft, and verify with unit tests for both
 - [ ] 2.4 Add `GameOver(reason, aircraftIds)` to `GameState`, set it on collision and stop the simulation, and verify with a unit test that the state is `Collision` with both aircraft and that further updates move nothing
 
 ## 3. Leaving the viewport

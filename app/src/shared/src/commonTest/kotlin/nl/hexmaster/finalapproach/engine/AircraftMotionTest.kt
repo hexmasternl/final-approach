@@ -82,9 +82,10 @@ class AircraftMotionTest {
         var collision: List<Pair<Int, Int>> = emptyList()
         repeat(2000) {
             if (collision.isNotEmpty()) return@repeat
+            val previous = listOfNotNull(west, east).associate { it.id to it.position }
             west = west?.let { AircraftMotion.step(it, specs, level.landing, dt).aircraft }
             east = east?.let { AircraftMotion.step(it, specs, level.landing, dt).aircraft }
-            collision = Collisions.find(listOfNotNull(west, east), level.world.spawnSeparation)
+            collision = Collisions.find(listOfNotNull(west, east), specs, previous)
         }
         assertEquals(listOf(1 to 2), collision)
         assertIs<AircraftStatus.RollingOut>(assertNotNull(west).status)
@@ -94,6 +95,6 @@ class AircraftMotionTest {
     @Test
     fun removedAircraftAreNotInTheCollisionCheck() {
         val a = Aircraft(1, AircraftType.Jet, Vec2(100.0, 100.0), 0.0)
-        assertNull(Collisions.find(listOf(a), 80.0).firstOrNull())
+        assertNull(Collisions.find(listOf(a), specs).firstOrNull())
     }
 }
