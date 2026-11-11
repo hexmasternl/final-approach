@@ -2,13 +2,15 @@ package nl.hexmaster.finalapproach.domain
 
 /**
  * What every aircraft of one type shares. [speed] is in world units per second, [turnRate] in
- * radians per second, [radius] in world units (roughly half the sprite).
+ * radians per second, [radius] in world units (roughly half the sprite). [rolloutSpeedFraction]
+ * is the speed on the runway after touchdown, as a fraction of [speed].
  */
 data class AircraftTypeSpec(
     val speed: Double,
     val turnRate: Double,
     val landingPoints: Int,
     val radius: Double,
+    val rolloutSpeedFraction: Double = LevelDefaults.ROLLOUT_SPEED_FRACTION,
 )
 
 /** The default spec of every aircraft type. */

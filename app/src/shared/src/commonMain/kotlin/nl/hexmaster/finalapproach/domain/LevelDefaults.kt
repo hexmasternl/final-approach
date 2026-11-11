@@ -44,4 +44,22 @@ object LevelDefaults {
     const val LIVES = 3
     const val POINTS_MULTIPLIER = 1.0
     const val SPEED_MULTIPLIER = 1.0
+
+    /** Radius of the invisible landing zone on a helipad, in world units. */
+    const val HELIPAD_ZONE_RADIUS = 44.0
+
+    /** Depth of a runway landing zone along the runway, from the threshold, in world units. */
+    const val RUNWAY_ZONE_DEPTH = 140.0
+
+    /** Width of a runway landing zone across the runway, in world units. */
+    const val RUNWAY_ZONE_WIDTH = 96.0
+
+    /** Rollout distance after touchdown, as a fraction of the runway length. */
+    const val ROLLOUT_FRACTION = 2.0 / 3.0
+
+    /** How long a rolled-out airplane takes to fade away, in seconds. */
+    const val LANDED_FADE_SECONDS = 0.5
+
+    /** Rollout speed of an airplane, as a fraction of its flight speed. */
+    const val ROLLOUT_SPEED_FRACTION = 0.6
 }

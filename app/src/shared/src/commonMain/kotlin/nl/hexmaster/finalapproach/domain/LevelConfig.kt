@@ -69,14 +69,29 @@ internal object Math360 {
     }
 }
 
-/** A round landing spot for helicopters. */
+/** A round landing spot for helicopters. [zoneRadius] overrides the level's landing zone radius. */
 data class HelipadConfig(
     val id: String,
     val position: Vec2,
     val radius: Double = LevelDefaults.HELIPAD_RADIUS,
+    val zoneRadius: Double? = null,
 ) {
     val shape: Circle get() = Circle(position, radius)
 }
+
+/**
+ * How landings work in a level. Zones are invisible; [alignmentTolerance] is in radians,
+ * [rolloutFraction] is a fraction of the runway length, [fadeSeconds] is how long a landed
+ * airplane takes to fade out.
+ */
+data class LandingConfig(
+    val helipadZoneRadius: Double = LevelDefaults.HELIPAD_ZONE_RADIUS,
+    val runwayZoneDepth: Double = LevelDefaults.RUNWAY_ZONE_DEPTH,
+    val runwayZoneWidth: Double = LevelDefaults.RUNWAY_ZONE_WIDTH,
+    val alignmentTolerance: Double = LevelDefaults.LANDING_TOLERANCE,
+    val rolloutFraction: Double = LevelDefaults.ROLLOUT_FRACTION,
+    val fadeSeconds: Double = LevelDefaults.LANDED_FADE_SECONDS,
+)
 
 /** The world a level is played in. The viewport is the rectangle from 0,0 to [width],[height]. */
 data class WorldConfig(
@@ -155,6 +170,7 @@ data class LevelConfig(
     val speedOverrides: Map<AircraftType, Double> = emptyMap(),
     val pointsOverrides: Map<AircraftType, Int> = emptyMap(),
     val scoring: ScoringConfig = ScoringConfig(),
+    val landing: LandingConfig = LandingConfig(),
     val wind: Wind? = null,
     val emergencyAircraft: Boolean = false,
     val hints: List<TutorialHint> = emptyList(),
