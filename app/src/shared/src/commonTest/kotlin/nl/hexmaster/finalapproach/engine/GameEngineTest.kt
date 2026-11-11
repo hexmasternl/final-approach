@@ -3,6 +3,7 @@ package nl.hexmaster.finalapproach.engine
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
+import nl.hexmaster.finalapproach.domain.AltitudeState
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
 import kotlin.math.PI
@@ -239,6 +240,18 @@ class GameEngineTest {
         assertIs<AircraftStatus.ClearedToLand>(aircraft.status)
         assertTrue(aircraft.path.locked)
         assertTrue(aircraft.path.points.last().y < helipad.y)
+    }
+
+    @Test
+    fun aFlyingAircraftCrossesARollingOutAirplaneWithoutACollision() {
+        val engine = GameEngine(quiet, seed = 1)
+        val rolling = jet(1, Vec2(300.0, 300.0)).copy(
+            altitude = AltitudeState.Landed,
+            status = AircraftStatus.RollingOut(0.0, 500.0),
+        )
+        engine.place(listOf(rolling, jet(2, Vec2(300.0, 300.0))))
+        engine.update(dt)
+        assertEquals(GameStatus.Playing, engine.state.value.status)
     }
 
     private fun jet(id: Int, position: Vec2, heading: Double = 0.0) = Aircraft(id, AircraftType.Jet, position, heading)

@@ -4,6 +4,7 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.AircraftTypeSpec
+import nl.hexmaster.finalapproach.domain.AltitudeState
 import nl.hexmaster.finalapproach.domain.Circle
 import nl.hexmaster.finalapproach.domain.CollisionShape
 import nl.hexmaster.finalapproach.domain.DefaultAircraftSpecs
@@ -45,6 +46,14 @@ class CollisionsTest {
     @Test
     fun overlappingShapesCollide() {
         assertEquals(listOf(1 to 2), Collisions.find(listOf(jet(2, 100.0), jet(1, 150.0)), specs))
+    }
+
+    @Test
+    fun onlyEqualAltitudeStatesCollide() {
+        val landed = { id: Int, x: Double -> jet(id, x).copy(altitude = AltitudeState.Landed) }
+        assertEquals(listOf(1 to 2), Collisions.find(listOf(landed(1, 100.0), landed(2, 150.0)), specs))
+        assertTrue(Collisions.find(listOf(landed(1, 100.0), jet(2, 150.0)), specs).isEmpty())
+        assertTrue(Collisions.find(listOf(jet(1, 100.0), landed(2, 150.0)), specs).isEmpty())
     }
 
     @Test

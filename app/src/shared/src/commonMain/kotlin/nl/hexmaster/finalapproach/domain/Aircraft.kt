@@ -12,6 +12,9 @@ data class FlightPath(
     val locked: Boolean get() = lockedAt != null
 }
 
+/** Whether an aircraft is in the air or on the ground; only aircraft in the same state can collide. */
+enum class AltitudeState { InFlight, Landed }
+
 /** Where an aircraft is in its life. */
 sealed interface AircraftStatus {
     /** In the air, following its path or flying straight on. */

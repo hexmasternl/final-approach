@@ -3,6 +3,7 @@ package nl.hexmaster.finalapproach.engine
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftKind
 import nl.hexmaster.finalapproach.domain.AircraftStatus
+import nl.hexmaster.finalapproach.domain.AltitudeState
 import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.LandingConfig
@@ -42,6 +43,7 @@ object AircraftMotion {
         val rolling = moved.copy(
             position = touchdown,
             heading = zone.direction,
+            altitude = AltitudeState.Landed,
             status = AircraftStatus.RollingOut(zone.direction, zone.rolloutDistance),
         )
         return MotionResult(rolling, listOf(landed))
