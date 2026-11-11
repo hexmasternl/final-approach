@@ -4,8 +4,8 @@
 
 ## 2. Level overrides
 
-- [ ] 2.1 Add `AircraftTuning` and `EffectiveAircraftSpecs` with `resolve(base)` in `domain`, plus validation of positive multipliers and values that names the field. Verify: tests for no overrides equals defaults, speed multiplier, per-type override leaving other types alone, points multiplier combined with a per-type override, and rejection of zero and negative values.
-- [ ] 2.2 Make `EffectiveAircraftSpecs` immutable and resolved once at level start; carry `AircraftTuning` on `LevelConfig` (or hand it to #6 if that lands first, see design). Verify: test that the effective values are unchanged after simulated time passes.
+- [x] 2.1 Add `AircraftTuning` and `EffectiveAircraftSpecs` with `resolve(base)` in `domain`, plus validation of positive multipliers and values that names the field. Verify: tests for no overrides equals defaults, speed multiplier, per-type override leaving other types alone, points multiplier combined with a per-type override, and rejection of zero and negative values.
+- [x] 2.2 Make `EffectiveAircraftSpecs` immutable and resolved once at level start; carry `AircraftTuning` on `LevelConfig` (or hand it to #6 if that lands first, see design). Verify: test that the effective values are unchanged after simulated time passes.
 
 ## 3. Engine
 

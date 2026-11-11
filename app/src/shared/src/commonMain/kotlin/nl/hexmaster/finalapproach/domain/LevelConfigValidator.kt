@@ -96,8 +96,7 @@ object LevelConfigValidator {
         if (world.width <= 0.0 || world.height <= 0.0) add("The world needs a positive width and height")
         if (world.minimumSeparation <= 0.0) add("The minimum separation must be positive")
         if (world.spawnMargin < 0.0) add("The spawn margin must not be negative")
-        if (config.speedMultiplier <= 0.0) add("speedMultiplier must be greater than zero")
-        if (config.scoring.pointsMultiplier <= 0.0) add("pointsMultiplier must be greater than zero")
+        addAll(config.aircraftTuning.problems())
         if (config.spawn.edges.isEmpty()) add("At least one spawn edge must be permitted")
     }
 

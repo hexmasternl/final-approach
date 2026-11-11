@@ -152,6 +152,8 @@ data class LevelConfig(
     val run: RunRules = RunRules(),
     val spawn: SpawnRules = SpawnRules(),
     val speedMultiplier: Double = LevelDefaults.SPEED_MULTIPLIER,
+    val speedOverrides: Map<AircraftType, Double> = emptyMap(),
+    val pointsOverrides: Map<AircraftType, Int> = emptyMap(),
     val scoring: ScoringConfig = ScoringConfig(),
     val wind: Wind? = null,
     val emergencyAircraft: Boolean = false,
@@ -160,6 +162,15 @@ data class LevelConfig(
     /** The phase active at [levelTime] seconds: the last one that has started. */
     fun phaseAt(levelTime: Double): DifficultyPhase =
         phases.lastOrNull { it.startSeconds <= levelTime } ?: phases.first()
+
+    /** The level's aircraft speed and points overrides; resolve once at level start. */
+    val aircraftTuning: AircraftTuning
+        get() = AircraftTuning(
+            speedMultiplier = speedMultiplier,
+            speedOverrides = speedOverrides,
+            pointsMultiplier = scoring.pointsMultiplier,
+            pointsOverrides = pointsOverrides,
+        )
 
     /** Problems with this config; empty when it is valid. */
     fun validate(): List<String> = LevelConfigValidator.validate(this)
