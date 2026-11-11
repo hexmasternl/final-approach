@@ -2,9 +2,9 @@
 
 ## 1. Level config model
 
-- [ ] 1.1 Add `LevelDefaults` with the global tunables (separation, spawn margin, landing tolerance, safe region, angle jitter, minimum time on screen, minimum chord fraction, maximum re-rolls) and verify by a search that no such value appears as a literal in domain or engine logic
-- [ ] 1.2 Add the data classes in `domain` (`LevelConfig`, identity and ambience, runway with `RunwayMode`, helipad, world, run rules, `DifficultyPhase`, scoring, wind, hints) with defaults, and verify with a test that a minimal config compiles and the optional fields default to inert values
-- [ ] 1.3 Implement `Runway.acceptsHeading` and verify with unit tests: one-way correct, one-way opposite, two-way both ends, across the runway, tolerance edge, angles beyond pi
+- [x] 1.1 Add `LevelDefaults` with the global tunables (separation, spawn margin, landing tolerance, safe region, angle jitter, minimum time on screen, minimum chord fraction, maximum re-rolls) and verify by a search that no such value appears as a literal in domain or engine logic
+- [x] 1.2 Add the data classes in `domain` (`LevelConfig`, identity and ambience, runway with `RunwayMode`, helipad, world, run rules, `DifficultyPhase`, scoring, wind, hints) with defaults, and verify with a test that a minimal config compiles and the optional fields default to inert values
+- [x] 1.3 Implement `Runway.acceptsHeading` and verify with unit tests: one-way correct, one-way opposite, two-way both ends, across the runway, tolerance edge, angles beyond pi
 
 ## 2. Validation
 
