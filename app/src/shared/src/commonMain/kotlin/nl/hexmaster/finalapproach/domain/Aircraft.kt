@@ -16,6 +16,19 @@ data class FlightPath(
 sealed interface AircraftStatus {
     /** In the air, following its path or flying straight on. */
     data object Flying : AircraftStatus
+
+    /** Its path entered [zone]; it follows the locked path and touches down at its end. */
+    data class ClearedToLand(val zone: LandingZone) : AircraftStatus
+
+    /**
+     * An airplane on the runway after touchdown, rolling along [direction] for [remaining] more
+     * world units, then fading out for [fadeElapsed] seconds so far.
+     */
+    data class RollingOut(
+        val direction: Double,
+        val remaining: Double,
+        val fadeElapsed: Double = 0.0,
+    ) : AircraftStatus
 }
 
 /**
