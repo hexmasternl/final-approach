@@ -2,17 +2,17 @@
 
 ## 1. Shared abstraction
 
-- [ ] 1.1 Add the `Ads` interface (`preload()`, `showInterstitial(onDismissed)`, composable `Banner`) and `NoOpAds` to `commonMain`, expose it as `AppHost.ads`, and verify with a unit test that `NoOpAds` calls `onDismissed` exactly once
-- [ ] 1.2 Verify that `commonMain` contains no `android.*`, `com.google.android.*` or ads SDK reference (search the source set; the shared tests must pass on the JVM without the Android SDK)
-- [ ] 1.3 Document the ads interface in `docs/architecture.md` and verify the described names match the code
+- [x] 1.1 Add the `Ads` interface (`preload()`, `showInterstitial(onDismissed)`, composable `Banner`) and `NoOpAds` to `commonMain`, expose it as `AppHost.ads`, and verify with a unit test that `NoOpAds` calls `onDismissed` exactly once
+- [x] 1.2 Verify that `commonMain` contains no `android.*`, `com.google.android.*` or ads SDK reference (search the source set; the shared tests must pass on the JVM without the Android SDK)
+- [x] 1.3 Document the ads interface in `docs/architecture.md` and verify the described names match the code
 
 ## 2. Android implementation
 
-- [ ] 2.1 Add `play-services-ads` and `user-messaging-platform` to the Android source set through `gradle/libs.versions.toml` and verify `./gradlew :androidApp:assembleDebug` succeeds
-- [ ] 2.2 Add the AdMob App ID meta-data to the Android manifest (release App ID `ca-app-pub-1310013076234295~7766080345`, Google's test App ID in debug) and declare `<uses-permission android:name="com.google.android.gms.permission.AD_ID" />`; verify that the merged manifest contains the permission
+- [x] 2.1 Add `play-services-ads` and `user-messaging-platform` to the Android source set through `gradle/libs.versions.toml` and verify `./gradlew :androidApp:assembleDebug` succeeds
+- [x] 2.2 Add the AdMob App ID meta-data to the Android manifest (release App ID `ca-app-pub-1310013076234295~7766080345`, Google's test App ID in debug) and declare `<uses-permission android:name="com.google.android.gms.permission.AD_ID" />`; verify that the merged manifest contains the permission
 - [ ] 2.3 Implement the consent flow with UMP on app start and initialise the Mobile Ads SDK only after it resolves and allows ad requests; verify with logging on a device that no ad request is made before consent resolves, and none at all when consent does not allow it or the flow fails
 - [ ] 2.4 Implement `Ads.showInterstitial` for Android (load, show, full-screen callback) so that `onDismissed` is called exactly once whether the ad was shown, failed to show, or was not ready; verify each of the three outcomes on a device
-- [ ] 2.5 Select the ad units by build type (Google's test units in debug; in release the interstitial "before-level-starts" `ca-app-pub-1310013076234295/6684168624` and the banner "after-level-finished" `ca-app-pub-1310013076234295/3427449894`) and verify that a debug build's ad requests use the test units
+- [x] 2.5 Select the ad units by build type (Google's test units in debug; in release the interstitial "before-level-starts" `ca-app-pub-1310013076234295/6684168624` and the banner "after-level-finished" `ca-app-pub-1310013076234295/3427449894`) and verify that a debug build's ad requests use the test units
 
 ## 3. Game flow
 
