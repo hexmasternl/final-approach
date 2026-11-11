@@ -254,6 +254,65 @@ class GameEngineTest {
         assertEquals(GameStatus.Playing, engine.state.value.status)
     }
 
+    @Test
+    fun anAirplaneIsInFlightUntilTouchdownAndLandedThroughRollout() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(jet(1, Vec2(150.0, 400.0), PI / 2).copy(hasEnteredViewport = true)))
+        engine.beginPath(1)
+        engine.extendPath(1, Vec2(250.0, 400.0))
+        engine.extendPath(1, Vec2(400.0, 400.0))
+        assertIs<AircraftStatus.ClearedToLand>(engine.aircraft(1).status)
+        var sawRollout = false
+        engine.run(10.0) { state ->
+            val plane = state.aircraft.firstOrNull { it.id == 1 } ?: return@run
+            when (plane.status) {
+                is AircraftStatus.ClearedToLand -> assertEquals(AltitudeState.InFlight, plane.altitude)
+                is AircraftStatus.RollingOut -> {
+                    sawRollout = true
+                    assertEquals(AltitudeState.Landed, plane.altitude)
+                }
+                else -> Unit
+            }
+        }
+        assertTrue(sawRollout, "the jet touched down and rolled out")
+        assertEquals(GameStatus.Playing, engine.state.value.status)
+    }
+
+    @Test
+    fun twoLandedAirplanesThatMeetOnTheRunwayCollide() {
+        val engine = GameEngine(quiet, seed = 1)
+        val east = jet(1, Vec2(600.0, 400.0), PI / 2).copy(
+            altitude = AltitudeState.Landed,
+            status = AircraftStatus.RollingOut(PI / 2, 500.0),
+        )
+        val west = jet(2, Vec2(680.0, 400.0), -PI / 2).copy(
+            altitude = AltitudeState.Landed,
+            status = AircraftStatus.RollingOut(-PI / 2, 500.0),
+        )
+        engine.place(listOf(east, west))
+        engine.run(2.0)
+        val status = assertIs<GameStatus.GameOver>(engine.state.value.status)
+        assertEquals(GameOverReason.Collision, status.reason)
+    }
+
+    @Test
+    fun aLandingAndACollisionInTheSameUpdateAreBothCounted() {
+        val engine = GameEngine(quiet, seed = 1)
+        val pad = level.helipads.single().position
+        engine.place(listOf(Aircraft(1, AircraftType.Helicopter, pad + Vec2(0.0, -100.0), PI, hasEnteredViewport = true)))
+        engine.beginPath(1)
+        engine.extendPath(1, pad)
+        val cleared = engine.aircraft(1)
+        assertIs<AircraftStatus.ClearedToLand>(cleared.status)
+        val touchingDown = cleared.copy(position = pad, path = cleared.path.copy(points = emptyList()))
+        engine.place(listOf(touchingDown, jet(2, Vec2(300.0, 300.0)), jet(3, Vec2(300.0, 300.0))))
+        engine.update(dt)
+        val state = engine.state.value
+        assertEquals(GameOverReason.Collision, assertIs<GameStatus.GameOver>(state.status).reason)
+        assertEquals(1, state.landings)
+        assertEquals(1, state.landedByType[AircraftType.Helicopter])
+    }
+
     private fun jet(id: Int, position: Vec2, heading: Double = 0.0) = Aircraft(id, AircraftType.Jet, position, heading)
 
     private fun GameEngine.aircraft(id: Int) = assertNotNull(state.value.aircraft.firstOrNull { it.id == id })
