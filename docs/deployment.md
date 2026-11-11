@@ -41,11 +41,10 @@ Nothing is published if the build or a unit test fails.
 Play App Signing is used: Google holds the app signing key, and you hold an **upload key**.
 
 ```powershell
-keytool -genkeypair -v `
-  -keystore upload-keystore.jks `
-  -alias upload `
-  -keyalg RSA -keysize 2048 -validity 10000
+& "C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe" -genkeypair -v -keystore "$HOME\upload-keystore.jks" -alias upload -keyalg RSA -keysize 2048 -validity 10000
 ```
+
+(`keytool` is not on your `PATH`, so the full path to the one bundled with Android Studio is used. Alternatives: `C:\Program Files\Java\jdk-21.0.12\bin\keytool.exe`.) The keystore is created in your home folder, outside the repository.
 
 Answer the prompts and remember the keystore password, the key password and the alias (`upload`). Store the file and passwords in a password manager. **Never commit the keystore.** If you lose it, you can request an upload key reset from Play Console, but it takes time.
 
@@ -54,7 +53,7 @@ When you first upload a bundle, accept *Play App Signing* so Google manages the 
 Encode the keystore for use as a secret:
 
 ```powershell
-[Convert]::ToBase64String([IO.File]::ReadAllBytes("upload-keystore.jks")) | Set-Clipboard
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("$HOME\upload-keystore.jks")) | Set-Clipboard
 ```
 
 ### 3. Create a Google Play service account
