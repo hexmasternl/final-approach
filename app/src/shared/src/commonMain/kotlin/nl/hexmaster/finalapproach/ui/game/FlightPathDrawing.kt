@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import kotlin.math.PI
 import kotlin.math.sin
+import nl.hexmaster.finalapproach.engine.GameEngine
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaMotion
@@ -35,7 +36,7 @@ internal fun FaColors.livery(index: Int): Color = when (index.mod(LIVERY_COUNT))
     else -> path6
 }
 
-internal const val LIVERY_COUNT = 6
+internal const val LIVERY_COUNT = GameEngine.LIVERY_COUNT
 
 private const val MS_PER_SECOND = 1000.0
 

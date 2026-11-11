@@ -18,7 +18,7 @@
 
 ## 4. Game screen
 
-- [ ] 4.1 Add the game screen with the frame loop, gestures and the world drawn in layer order (field, scenery, runway, helipad, paths, shadows, aircraft, selection ring); replace the placeholder on Take off; verify by building the Android app
+- [x] 4.1 Add the game screen with the frame loop, gestures and the world drawn in layer order (field, scenery, runway, helipad, paths, shadows, aircraft, selection ring); replace the placeholder on Take off; verify by building the Android app
 - [ ] 4.2 Add the Scenery component to the design system (`docs/design-system/components/Scenery.md`)
 
 ## 5. Docs and checks
