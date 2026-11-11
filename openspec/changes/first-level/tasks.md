@@ -14,7 +14,7 @@
 ## 3. Level data and platform
 
 - [x] 3.1 Add `SceneryItem` to `LevelConfig`, the Meadow Field scenery, and validation that scenery stays clear of zones; verify with a unit test
-- [ ] 3.2 Add `AppHost.lockLandscape` and implement it in `AndroidAppHost`; verify by building the Android app
+- [x] 3.2 Add `AppHost.lockLandscape` and implement it in `AndroidAppHost`; verify by building the Android app
 
 ## 4. Game screen
 

@@ -16,6 +16,9 @@ interface AppHost {
 
     /** Closes the app. */
     fun quit()
+
+    /** Locks the app in landscape while [locked] is true; false releases the lock. */
+    fun lockLandscape(locked: Boolean)
 }
 
 /**
