@@ -9,7 +9,7 @@
 
 ## 3. Engine
 
-- [ ] 3.1 Make `PathFollower` read speed from `EffectiveAircraftSpecs`, with no speed on `Aircraft` itself. Verify: tests that two aircraft of one type have exactly equal speed and cover equal distance in equal time steps, on a path and straight on after it ends.
+- [x] 3.1 Make `PathFollower` read speed from `EffectiveAircraftSpecs`, with no speed on `Aircraft` itself. Verify: tests that two aircraft of one type have exactly equal speed and cover equal distance in equal time steps, on a path and straight on after it ends.
 - [ ] 3.2 Add the landing score step: a landing adds the type's effective points, collision and miss add nothing. Verify: tests that a helicopter awards the least and a jumbo the most, that overridden points are used, and that collision and miss leave the score unchanged. Needs the landing and failure events from #7 and the engine; use fakes if they are not built yet.
 
 ## 4. Docs
