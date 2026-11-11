@@ -61,6 +61,8 @@ final-approach/
 
 `AndroidAppHost` in `androidApp` is the Android implementation. Tests use `FakeAppHost` from `commonTest`.
 
+Ads go through `AppHost.ads` (`platform/Ads.kt`): `preload()`, `showInterstitial(onDismissed)` and a composable `Banner(modifier)`. `onDismissed` is called exactly once whether the ad was shown, failed or was not ready, so a level never waits on an ad. `NoOpAds` is the default (tests, iOS). `GameScreen` pauses the engine until the interstitial before a level is dismissed, and a restart waits for it too. The Android implementation (AdMob and the UMP consent flow) lives only in `androidApp`; no ads SDK type reaches `commonMain`. Ad IDs come from the build type: test units in debug, the real units in release.
+
 ## Screen flow
 `App` (`ui/App.kt`) holds the current `Screen` and shows one page at a time. The app opens on the splash page, which hands over to the main page. The main page is home: the game and the settings page return to it. Take off opens the level select page (`ui/game/LevelSelectPage.kt`): one square tile per level in `Levels.all`, in a row that scrolls only when needed. A tile starts that level; back returns to the main page, and so do Quit and the game-ended dialog's Main page action. No navigation library is used.
 

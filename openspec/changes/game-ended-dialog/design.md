@@ -32,6 +32,8 @@ The game engine, failure states (#9) and HUD (#10) are not built yet; this chang
 
 **Modal behaviour.** The scrim consumes pointer input so the field behind gets none, and the frame clock does not call `engine.update` once the game is over. Back press is delivered through `AppHost` (as on the main page) and maps to the return action. Reduced motion, read through the shared reduced-motion interface from the splash page change, replaces the drop-in with an instant appearance.
 
+**A banner ad sits directly under the dialog.** The scrim is a transparent black backdrop. An AdMob banner (unit "after-level-finished" `ca-app-pub-1310013076234295/3427449894` in release, Google's test banner unit in debug) is anchored under the dialog card at the full screen width, as an anchored adaptive banner. It comes from the `Ads.Banner` composable that the `level-start-ads` change adds to `AppHost`, so shared code stays free of the SDK. It never covers a landing zone or a button, requests nothing before consent allows ads (`level-start-ads`), and when no ad loads the dialog looks as it does without a banner.
+
 ## Assumptions
 
 Each can be overruled by the issue author.
@@ -47,4 +49,4 @@ Each can be overruled by the issue author.
 
 - [The failure states (#9) and score (#10) do not exist yet and their names may differ] → the tasks use the state names from those issues; adjust when they land.
 - [A game ending the same frame as a landing] → the engine applies the landing before the failure check in one update, so the counts include it; covered by a unit test.
-- [Interstitial ads (#1) hook into the step from game over to the next game] → restart goes through the same call, so the ads change can intercept it; this change does not show ads.
+- [The interstitial ad (#13, `level-start-ads`) hooks into restart] → "Try again" goes through the same restart call, so the ads change can intercept it; this change only shows the banner.
