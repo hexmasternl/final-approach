@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -206,6 +207,7 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
             points = state.score,
             onTryAgain = { restartWithAd() },
             onMainPage = onQuit,
+            below = { host.ads.Banner(Modifier.fillMaxWidth()) },
         )
     } else if (optionsOpen) {
         OptionsPanel(

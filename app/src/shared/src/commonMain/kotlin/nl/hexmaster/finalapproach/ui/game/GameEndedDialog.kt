@@ -53,6 +53,7 @@ fun GameEndedDialog(
     points: Int,
     onTryAgain: () -> Unit,
     onMainPage: () -> Unit,
+    below: @Composable () -> Unit = {},
 ) {
     FaDialog(
         GameEndedText.TITLE,
@@ -74,6 +75,7 @@ fun GameEndedDialog(
                 }
             }
         },
+        below = below,
     ) {
         FaButton(GameEndedText.TRY_AGAIN, onTryAgain, Modifier.fillMaxWidth(), FaButtonVariant.Primary, icon = FaIcon.Restart)
         FaButton(GameEndedText.MAIN_PAGE, onMainPage, Modifier.fillMaxWidth(), FaButtonVariant.Ghost, icon = FaIcon.Home)

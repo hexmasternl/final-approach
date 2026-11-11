@@ -49,6 +49,7 @@ private object FaDialogDefaults {
  * @param title one or two words
  * @param body one sentence
  * @param content optional extra content between the body and the buttons, such as a stats grid
+ * @param below optional full-width content under the dialog, such as an ad banner; sits on the scrim
  * @param actions the buttons, primary first
  */
 @Composable
@@ -57,6 +58,7 @@ fun FaDialog(
     body: String,
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit = {},
+    below: @Composable () -> Unit = {},
     actions: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = FaTheme.colors
@@ -74,10 +76,10 @@ fun FaDialog(
             .background(colors.scrim)
             // Swallow every touch, so nothing behind the scrim can be operated.
             .pointerInput(Unit) { detectTapGestures { } }
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .padding(FaDimens.space5),
-        contentAlignment = Alignment.Center,
+            .windowInsetsPadding(WindowInsets.safeDrawing),
     ) {
+        Column(Modifier.fillMaxSize()) {
+        Box(Modifier.weight(1f).fillMaxWidth().padding(FaDimens.space5), contentAlignment = Alignment.Center) {
         Column(
             Modifier
                 .widthIn(max = FaDialogDefaults.maxWidth)
@@ -126,6 +128,9 @@ fun FaDialog(
                 verticalArrangement = Arrangement.spacedBy(FaDimens.space4),
                 content = actions,
             )
+        }
+        }
+        below()
         }
     }
 }

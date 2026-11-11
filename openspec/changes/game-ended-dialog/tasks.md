@@ -13,8 +13,8 @@
 - [x] 2.4 Make the scrim block input, ignore taps outside, and map back press to the main-page action; verify by running the app that nothing behind the dialog responds and that back opens the main page
 - [x] 2.5 Apply reduced motion (no drop-in) and verify on a device or emulator with animations disabled
 
-- [ ] 2.6 Show `Ads.Banner` (from `level-start-ads`; unit `ca-app-pub-1310013076234295/3427449894` in release, test unit in debug) at full screen width directly under the dialog card on the transparent black scrim, and verify the dialog still lays out correctly when no ad loads and when consent is declined
-- [ ] 2.7 Depends on `level-start-ads` (SDK, consent, App ID, `com.google.android.gms.permission.AD_ID` permission in the manifest): verify the merged manifest contains the permission before adding the banner
+- [x] 2.6 Show `Ads.Banner` (from `level-start-ads`; unit `ca-app-pub-1310013076234295/3427449894` in release, test unit in debug) at full screen width directly under the dialog card on the transparent black scrim, and verify the dialog still lays out correctly when no ad loads and when consent is declined
+- [x] 2.7 Depends on `level-start-ads` (SDK, consent, App ID, `com.google.android.gms.permission.AD_ID` permission in the manifest): verify the merged manifest contains the permission before adding the banner
 
 ## 3. Wiring
 
