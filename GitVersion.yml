@@ -1,0 +1,11 @@
+workflow: GitFlow/v1
+next-version: 0.1.0
+tag-prefix: 'v'
+branches:
+  main:
+    label: ''
+    increment: Patch
+    regex: ^main$
+  develop:
+    label: beta
+    regex: ^development$
