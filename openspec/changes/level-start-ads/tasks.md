@@ -2,9 +2,9 @@
 
 ## 1. Shared abstraction
 
-- [ ] 1.1 Add the `Ads` interface (`preload()`, `showInterstitial(onDismissed)`, composable `Banner`) and `NoOpAds` to `commonMain`, expose it as `AppHost.ads`, and verify with a unit test that `NoOpAds` calls `onDismissed` exactly once
-- [ ] 1.2 Verify that `commonMain` contains no `android.*`, `com.google.android.*` or ads SDK reference (search the source set; the shared tests must pass on the JVM without the Android SDK)
-- [ ] 1.3 Document the ads interface in `docs/architecture.md` and verify the described names match the code
+- [x] 1.1 Add the `Ads` interface (`preload()`, `showInterstitial(onDismissed)`, composable `Banner`) and `NoOpAds` to `commonMain`, expose it as `AppHost.ads`, and verify with a unit test that `NoOpAds` calls `onDismissed` exactly once
+- [x] 1.2 Verify that `commonMain` contains no `android.*`, `com.google.android.*` or ads SDK reference (search the source set; the shared tests must pass on the JVM without the Android SDK)
+- [x] 1.3 Document the ads interface in `docs/architecture.md` and verify the described names match the code
 
 ## 2. Android implementation
 

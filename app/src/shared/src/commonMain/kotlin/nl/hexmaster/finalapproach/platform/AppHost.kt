@@ -20,6 +20,9 @@ interface AppHost {
     /** Where the personal best score of each level is kept. */
     val highScores: HighScoreStore
 
+    /** Ads; [NoOpAds] on a platform that has none. */
+    val ads: Ads get() = NoOpAds
+
     /** Locks the app in landscape while [locked] is true; false releases the lock. */
     fun lockLandscape(locked: Boolean)
 }

@@ -99,6 +99,24 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
         optionsOpen = false
         engine.resume()
     }
+
+    // The level waits for the ad that comes before it; with no ad ready the callback is immediate.
+    LaunchedEffect(engine) {
+        engine.pause()
+        host.ads.showInterstitial {
+            engine.resume()
+            host.ads.preload()
+        }
+    }
+
+    // A restart is a level start too: the new run begins when the ad is dismissed.
+    fun restartWithAd(afterRestart: () -> Unit = {}) {
+        host.ads.showInterstitial {
+            engine.restart()
+            afterRestart()
+            host.ads.preload()
+        }
+    }
     BackHandler(host) {
         when {
             state.status is GameStatus.GameOver -> onQuit()
@@ -186,16 +204,13 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
             landed = state.landedByType,
             total = state.totalLanded,
             points = state.score,
-            onTryAgain = { engine.restart() },
+            onTryAgain = { restartWithAd() },
             onMainPage = onQuit,
         )
     } else if (optionsOpen) {
         OptionsPanel(
             onContinue = ::closeOptions,
-            onRestart = {
-                engine.restart()
-                optionsOpen = false
-            },
+            onRestart = { restartWithAd { optionsOpen = false } },
             onQuit = onQuit,
         )
     }

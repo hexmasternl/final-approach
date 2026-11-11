@@ -1,6 +1,7 @@
 package nl.hexmaster.finalapproach.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,6 +28,8 @@ fun App(host: AppHost) {
     FaTheme(reduceMotion = host.reduceMotion) {
         var screen by rememberSaveable { mutableStateOf(Screen.Splash) }
         var levelId by rememberSaveable { mutableStateOf(Levels.meadowField.id) }
+        // Have an ad ready by the time the player starts a level.
+        LaunchedEffect(Unit) { host.ads.preload() }
         when (screen) {
             Screen.Splash -> SplashPage(host = host, onFinished = { screen = Screen.Main })
 
