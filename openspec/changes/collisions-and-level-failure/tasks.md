@@ -30,4 +30,4 @@
 ## 6. Docs
 
 - [x] 6.1 Update the failure rules in `docs/game-design.md` and the failures line in `CLAUDE.md` (and `.github/copilot-instructions.md` if it repeats it), and verify that no remaining text calls a distance a collision
-- [ ] 6.2 Run `./gradlew :shared:allTests` from `app/src` and verify all tests pass
+- [x] 6.2 Run `./gradlew :shared:allTests` from `app/src` and verify all tests pass

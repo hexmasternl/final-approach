@@ -27,4 +27,4 @@
 ## 5. Docs
 
 - [x] 5.1 Update `docs/game-design.md` (levels, build-up, fair entry rule, runway modes) and `docs/architecture.md` (domain config and spawner), and verify the names and defaults match the code
-- [ ] 5.2 Run `./gradlew :shared:allTests` from `app/src` and verify all tests pass
+- [x] 5.2 Run `./gradlew :shared:allTests` from `app/src` and verify all tests pass

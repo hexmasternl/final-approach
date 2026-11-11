@@ -24,5 +24,5 @@
 ## 5. Docs and checks
 
 - [x] 5.1 Update `docs/architecture.md` and `docs/game-design.md` for the engine, input and the first level
-- [ ] 5.2 Run `./gradlew :shared:allTests` from `app/src` and verify all tests pass
+- [x] 5.2 Run `./gradlew :shared:allTests` from `app/src` and verify all tests pass
 - [ ] 5.3 Human check on a device: Take off opens Meadow Field in landscape, aircraft arrive, can be steered and land on the runway (both ends) and the helipad

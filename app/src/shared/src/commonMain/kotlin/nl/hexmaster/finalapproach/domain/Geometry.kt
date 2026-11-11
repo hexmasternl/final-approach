@@ -171,7 +171,7 @@ object Overlap {
         val d = to - from
         val lengthSquared = d dot d
         if (lengthSquared == 0.0) return from
-        val t = ((point - from) dot d / lengthSquared).coerceIn(0.0, 1.0)
+        val t = (((point - from) dot d) / lengthSquared).coerceIn(0.0, 1.0)
         return from + d * t
     }
 }
