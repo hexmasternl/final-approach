@@ -31,6 +31,7 @@ import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.engine.BestScore
 import nl.hexmaster.finalapproach.engine.GameEngine
 import nl.hexmaster.finalapproach.engine.GameState
+import nl.hexmaster.finalapproach.engine.GameStatus
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.ui.BackHandler
@@ -89,7 +90,13 @@ fun GameScreen(host: AppHost, onQuit: () -> Unit, level: LevelConfig = Levels.me
         optionsOpen = false
         engine.resume()
     }
-    BackHandler(host) { if (optionsOpen) closeOptions() else openOptions() }
+    BackHandler(host) {
+        when {
+            state.status is GameStatus.GameOver -> onQuit()
+            optionsOpen -> closeOptions()
+            else -> openOptions()
+        }
+    }
 
     LaunchedEffect(state.score) { bestScore.update(state.score) }
 
@@ -160,7 +167,18 @@ fun GameScreen(host: AppHost, onQuit: () -> Unit, level: LevelConfig = Levels.me
         spawned = state.spawnedByType,
         onOptions = ::openOptions,
     )
-    if (optionsOpen) {
+    val over = state.status as? GameStatus.GameOver
+    if (over != null) {
+        GameEndedDialog(
+            reason = over.reason,
+            types = level.spawnedTypes,
+            landed = state.landedByType,
+            total = state.totalLanded,
+            points = state.score,
+            onTryAgain = { engine.restart() },
+            onMainPage = onQuit,
+        )
+    } else if (optionsOpen) {
         OptionsPanel(
             onContinue = ::closeOptions,
             onRestart = {

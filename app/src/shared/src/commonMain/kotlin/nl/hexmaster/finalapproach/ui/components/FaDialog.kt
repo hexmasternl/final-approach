@@ -46,6 +46,7 @@ private object FaDialogDefaults {
  *
  * @param title one or two words
  * @param body one sentence
+ * @param content optional extra content between the body and the buttons, such as a stats grid
  * @param actions the buttons, primary first
  */
 @Composable
@@ -53,6 +54,7 @@ fun FaDialog(
     title: String,
     body: String,
     modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit = {},
     actions: @Composable ColumnScope.() -> Unit,
 ) {
     val colors = FaTheme.colors
@@ -109,6 +111,11 @@ fun FaDialog(
                 body,
                 modifier = Modifier.padding(top = FaDimens.space3),
                 style = type.bodyLg.copy(color = colors.inkMuted, textAlign = TextAlign.Center),
+            )
+            Column(
+                Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(FaDimens.space2),
+                content = content,
             )
             Column(
                 Modifier.fillMaxWidth().padding(top = FaDimens.space5),
