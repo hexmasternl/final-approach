@@ -9,7 +9,7 @@
 ## 2. Input
 
 - [x] 2.1 Add `select`, `beginPath`, `extendPath` and `endPath` on the engine with the pick radius, nearest-aircraft rule, minimum spacing and landing cut-off; verify with unit tests
-- [ ] 2.2 Add `WorldViewport` (fit, centre, pixels to world and back); verify with unit tests
+- [x] 2.2 Add `WorldViewport` (fit, centre, pixels to world and back); verify with unit tests
 
 ## 3. Level data and platform
 
