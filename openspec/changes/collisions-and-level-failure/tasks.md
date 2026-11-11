@@ -23,7 +23,7 @@
 ## 5. Design system and ring
 
 - [x] 5.1 Add the proximity ring (dash pattern, margin, `dur-ring-spin`) to the design system, `docs/design-system/` showcase and `tokens.json`, and verify by opening the showcase
-- [ ] 5.2 Add the matching values to the Compose theme (`FaDimens`, durations) and verify no literal remains in the ring composable
+- [x] 5.2 Add the matching values to the Compose theme (`FaDimens`, durations) and verify no literal remains in the ring composable
 - [ ] 5.3 Draw the ring in the effects layer for every warned aircraft with the spin and the transitions, and verify in a preview or by running that two close aircraft both show a spinning dashed red ring that goes away on separation
 - [ ] 5.4 Add the reduced-motion variant and verify by running with reduced motion on that the ring is dashed and static (human device check)
 
