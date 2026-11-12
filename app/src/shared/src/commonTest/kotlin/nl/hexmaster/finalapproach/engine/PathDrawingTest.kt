@@ -34,9 +34,11 @@ class PathDrawingTest {
     @Test
     fun laterPointsAreIgnored() {
         val heli = Aircraft(1, AircraftType.Helicopter, Vec2(900.0, 400.0), PI / 2)
-        val drawn = draw(heli, Vec2(1000.0, 400.0), Vec2(1200.0, 400.0), Vec2(1200.0, 100.0), Vec2(50.0, 50.0))
-        assertEquals(2, drawn.path.points.size)
-        assertTrue(drawn.path.locked)
+        val locked = draw(heli, Vec2(1000.0, 400.0), Vec2(1200.0, 400.0))
+        assertTrue(locked.path.locked)
+        val drawn = listOf(Vec2(1200.0, 100.0), Vec2(50.0, 50.0))
+            .fold(locked) { a, p -> PathDrawing.extend(a, p, zones, level.landing, 6.0) }
+        assertEquals(locked, drawn)
         assertEquals(drawn, PathDrawing.begin(drawn))
     }
 

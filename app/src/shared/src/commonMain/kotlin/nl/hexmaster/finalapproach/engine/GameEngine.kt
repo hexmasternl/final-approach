@@ -175,13 +175,16 @@ class GameEngine(
             if (last.distanceTo(point) < config.minPointSpacing) {
                 aircraft
             } else {
-                PathDrawing.extend(aircraft, point, zones, level.landing, time)
+                PathDrawing.extend(aircraft, point, zones, level.landing, time, specs, config)
             }
         }
     }
 
-    /** Ends drawing for aircraft [id]; the path stays as drawn. */
-    fun endPath(id: Int) = Unit
+    /** Ends drawing for aircraft [id]: its path is smoothed into one it can fly. */
+    fun endPath(id: Int) {
+        if (inputBlocked) return
+        updateAircraft(id) { PathDrawing.finish(it, specs, config) }
+    }
 
     private fun has(id: Int) = mutableState.value.aircraft.any { it.id == id }
 

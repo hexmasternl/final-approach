@@ -2,6 +2,7 @@ package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
+import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.FlightPath
 import nl.hexmaster.finalapproach.domain.LandingConfig
 import nl.hexmaster.finalapproach.domain.LandingZone
@@ -16,8 +17,9 @@ object PathDrawing {
 
     /**
      * Adds [point] to the path. When the new segment validly enters a zone, the path ends at the
-     * entry point, is locked at [time] and the aircraft is cleared to land. A locked path, or an
-     * aircraft no longer flying freely, ignores further points.
+     * entry point, is smoothed for the aircraft's type ([specs], [config]), is locked at [time]
+     * and the aircraft is cleared to land. A locked path, or an aircraft no longer flying freely,
+     * ignores further points.
      */
     fun extend(
         aircraft: Aircraft,
@@ -25,6 +27,8 @@ object PathDrawing {
         zones: List<LandingZone>,
         landing: LandingConfig,
         time: Double,
+        specs: EffectiveAircraftSpecs = EffectiveAircraftSpecs.Defaults,
+        config: EngineConfig = EngineConfig(),
     ): Aircraft {
         if (aircraft.path.locked || aircraft.status != AircraftStatus.Flying) return aircraft
         val points = aircraft.path.points
@@ -32,8 +36,19 @@ object PathDrawing {
         val hit = LandingRules.check(from, point, aircraft.type.kind, zones, landing.alignmentTolerance)
             ?: return aircraft.copy(path = aircraft.path.copy(points = points + point))
         return aircraft.copy(
-            path = FlightPath(points + hit.entryPoint, lockedAt = time),
+            path = FlightPath(smooth(aircraft, points + hit.entryPoint, specs, config), lockedAt = time),
             status = AircraftStatus.ClearedToLand(hit.zone),
         )
+    }
+
+    /** Replaces the path of a freely flying aircraft by its smoothed version; a locked path stays. */
+    fun finish(aircraft: Aircraft, specs: EffectiveAircraftSpecs, config: EngineConfig): Aircraft {
+        if (aircraft.path.locked || aircraft.status != AircraftStatus.Flying) return aircraft
+        return aircraft.copy(path = aircraft.path.copy(points = smooth(aircraft, aircraft.path.points, specs, config)))
+    }
+
+    private fun smooth(aircraft: Aircraft, points: List<Vec2>, specs: EffectiveAircraftSpecs, config: EngineConfig): List<Vec2> {
+        val spec = specs[aircraft.type]
+        return PathSmoother.smooth(aircraft.position, aircraft.heading, points, spec.speed, spec.turnRate, config)
     }
 }
