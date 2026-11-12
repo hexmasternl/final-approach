@@ -3,7 +3,7 @@
 ## 1. Design system first
 
 - [x] 1.1 Add the Dawn palette, light tokens (`light-max-opacity`, nav red and green, white, beacon, AGL) and beacon and running-light durations to the design system, and verify the showcase shows them and the generator emits them into `ui/theme`
-- [ ] 1.2 Add sprites for cow, farmer, bird, yacht, sailboat, container vessel, acacia, bush, rock, fence, control tower with beacon, plus aircraft lights, and verify each appears in the showcase on the 4-unit outline style
+- [ ] 1.2 Add sprites for cow, farmer, bird, yacht, sailboat, container vessel, acacia, bush, rock, fence, control tower with beacon, plus aircraft lights, and verify each appears in the showcase on the 4-unit outline style (moved: the scenery sprites are drawn as SVGs in the `detailed-scenery` change, #33)
 - [x] 1.3 Add the square LevelCard variant to the design system and verify it shows a miniature and a name
 
 ## 2. Level data
