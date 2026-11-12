@@ -187,8 +187,6 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
     Hud(
         best = bestScore.shown(state.score),
         score = state.score,
-        types = level.spawnedTypes,
-        spawned = state.spawnedByType,
         onOptions = ::openOptions,
     )
     val over = state.status as? GameStatus.GameOver

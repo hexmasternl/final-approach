@@ -13,7 +13,7 @@ The app is scaffolded under `app/src` and has its main page. The game itself (en
 | `docs/art-style.md` | Visual and audio style brief. |
 | `docs/roadmap.md` | Milestones 1 to 9. |
 | `docs/design-system/showcase.html` | The design system on one page (tokens, type, components, screens). Also as `showcase.pdf`. |
-| `docs/design-system/assets/` | SVG sources: `aircraft/`, `icons/`, `app-icon/`. |
+| `docs/design-system/assets/` | SVG sources: `aircraft/`, `scenery/`, `icons/`, `app-icon/`. |
 | `.github/copilot-instructions.md` | The same conventions for Copilot. Keep it consistent with this file. |
 
 Open work is tracked as GitHub issues (`gh issue list`).

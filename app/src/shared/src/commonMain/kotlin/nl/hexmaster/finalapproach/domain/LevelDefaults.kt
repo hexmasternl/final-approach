@@ -8,26 +8,47 @@ object LevelDefaults {
     /** The default set of aircraft a runway accepts: every airplane. */
     val ALL_AIRPLANES: Set<AircraftType> = AircraftType.entries.filter { it.kind == AircraftKind.Airplane }.toSet()
 
-    /** The height at the top of the world kept clear of zones for the HUD, in world units. */
-    const val HUD_BAND = 140.0
+    /**
+     * How far every level is zoomed out: a level's world is [BASE_WORLD_WIDTH] by
+     * [BASE_WORLD_HEIGHT] times this. Runways, helipads, landing zones and scenery keep their
+     * world sizes, so the airfield takes a smaller share of the screen. Every world-unit value
+     * that belongs to an aircraft or to the player's finger is multiplied by it, so aircraft
+     * look, move, warn and spawn on screen as they did before the zoom-out.
+     */
+    const val WORLD_ZOOM = 1.25
+
+    /** Size of the world before the zoom-out, in world units. */
+    const val BASE_WORLD_WIDTH = 1280.0
+    const val BASE_WORLD_HEIGHT = 720.0
+
+    /** Size of every level's world, in world units. */
+    const val WORLD_WIDTH = BASE_WORLD_WIDTH * WORLD_ZOOM
+    const val WORLD_HEIGHT = BASE_WORLD_HEIGHT * WORLD_ZOOM
+
+    /**
+     * The height at the top of the world kept clear of zones for the HUD, in world units. Covers
+     * the HUD on the smallest supported phone, which `HudFitTest` checks. Follows the zoom, so it
+     * is as tall on screen as before.
+     */
+    const val HUD_BAND = 160.0 * WORLD_ZOOM
 
     /**
      * Closest a new aircraft may spawn to any other aircraft, centre to centre, in world units.
      * Larger than the warning distance, so no aircraft arrives already warned.
      */
-    const val SPAWN_SEPARATION = 160.0
+    const val SPAWN_SEPARATION = 160.0 * WORLD_ZOOM
 
     /** Aircraft whose centres are closer than this get the proximity warning, in world units. */
-    const val WARNING_DISTANCE = 150.0
+    const val WARNING_DISTANCE = 150.0 * WORLD_ZOOM
 
     /** Longest simulation step; a longer frame is split into steps this long, in seconds. */
     const val MAX_STEP_SECONDS = 0.02
 
     /** How far outside the viewport aircraft appear, in world units. */
-    const val SPAWN_MARGIN = 60.0
+    const val SPAWN_MARGIN = 60.0 * WORLD_ZOOM
 
     /** How far beyond the viewport an aircraft that was inside it may fly before it has left. */
-    const val LEAVE_MARGIN = 60.0
+    const val LEAVE_MARGIN = 60.0 * WORLD_ZOOM
 
     /** How far an approach heading may differ from a runway heading, in radians (30 degrees). */
     const val LANDING_TOLERANCE = 0.5235987755982988

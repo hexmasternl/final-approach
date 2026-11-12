@@ -2,7 +2,6 @@ package nl.hexmaster.finalapproach.ui.game
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,15 +12,16 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import nl.hexmaster.finalapproach.domain.AircraftType
+import androidx.compose.ui.unit.Dp
 import nl.hexmaster.finalapproach.ui.components.FaButton
 import nl.hexmaster.finalapproach.ui.components.FaButtonVariant
 import nl.hexmaster.finalapproach.ui.components.FaDialog
 import nl.hexmaster.finalapproach.ui.components.FaIconButton
-import nl.hexmaster.finalapproach.ui.components.FaSpawnCounter
-import nl.hexmaster.finalapproach.ui.components.FaStatChip
+import nl.hexmaster.finalapproach.ui.components.FaScoreCounter
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
+import nl.hexmaster.finalapproach.ui.theme.FaShadows
+import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 internal object HudText {
     const val BEST = "Best"
@@ -35,15 +35,14 @@ internal object HudText {
 }
 
 /**
- * The overlay of a running level: best and current score and a spawn counter per type at the
- * top left, the cog wheel at the top right. It only reads what it is given.
+ * The overlay of a running level, laid out as the design system's Hud Bar: one row with the best
+ * score (compact, with a star) and the current score at the top left, the cog wheel at the top
+ * right. It only reads what it is given.
  */
 @Composable
 fun Hud(
     best: Int,
     score: Int,
-    types: List<AircraftType>,
-    spawned: Map<AircraftType, Int>,
     onOptions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -53,18 +52,23 @@ fun Hud(
             .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(FaDimens.space4),
     ) {
-        Column(Modifier.align(Alignment.TopStart), verticalArrangement = Arrangement.spacedBy(FaDimens.space2)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(FaDimens.space2)) {
-                FaStatChip(HudText.BEST, best)
-                FaStatChip(HudText.SCORE, score, popOnRise = true)
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(FaDimens.space2)) {
-                types.forEach { type -> FaSpawnCounter(type, spawned[type] ?: 0) }
-            }
+        Row(
+            Modifier.align(Alignment.TopStart),
+            horizontalArrangement = Arrangement.spacedBy(FaDimens.space3),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            FaScoreCounter(HudText.BEST, best, compact = true, icon = FaIcon.Star, iconColor = FaTheme.colors.sunDeep)
+            FaScoreCounter(HudText.SCORE, score, popOnRise = true)
         }
         FaIconButton(FaIcon.Settings, HudText.OPTIONS, onOptions, Modifier.align(Alignment.TopEnd))
     }
 }
+
+/**
+ * Distance from the top of the screen to the bottom of the HUD, lip included, when the system
+ * keeps [topInset] clear at the top: `space-4` inset, then one `hud-chip` tall row and its lip.
+ */
+fun hudBottom(topInset: Dp): Dp = topInset + FaDimens.space4 + FaDimens.hudChip + FaShadows.lip
 
 /** The options panel: Continue, Restart and Quit over a frozen game. */
 @Composable

@@ -16,11 +16,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.HelipadConfig
+import nl.hexmaster.finalapproach.domain.LevelScenery
 import nl.hexmaster.finalapproach.domain.RunwayConfig
+import nl.hexmaster.finalapproach.domain.SceneryDefaults
 import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.input.WorldViewport
+import nl.hexmaster.finalapproach.ui.sprites.SceneryLines
+import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
+import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRow
+import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import kotlin.math.PI
@@ -37,6 +43,7 @@ internal fun degreesOf(radians: Double): Float = (radians * DEGREES_PER_RADIAN).
 
 private const val DEGREES_PER_RADIAN = 180.0 / PI
 
+/** The outline of runways and helipads: `line-3`, the stroke of everything that is part of play. */
 private fun DrawScope.outlineStroke() =
     Stroke(width = FaDimens.line3.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
 
@@ -141,52 +148,176 @@ internal fun DrawScope.drawHelipad(
 private const val HELIPAD_LETTER = "H"
 private const val THRESHOLD_BARS = 4
 
-/** True for scenery that lies flat on the ground and is drawn under the runway. */
-internal val SceneryItem.isGround: Boolean
-    get() = kind == SceneryKind.Taxiway || kind == SceneryKind.Apron
+/** The sprite of every kind of scenery that is drawn as one sprite, fitted into the item. */
+private val SPRITES: Map<SceneryKind, ScenerySprite> = mapOf(
+    SceneryKind.Jetty to ScenerySprite.Jetty,
+    SceneryKind.Terminal to ScenerySprite.Terminal,
+    SceneryKind.Tower to ScenerySprite.Tower,
+    SceneryKind.Hangar to ScenerySprite.Hangar,
+    SceneryKind.Windsock to ScenerySprite.Windsock,
+    SceneryKind.Car to ScenerySprite.Car,
+    SceneryKind.FuelTruck to ScenerySprite.FuelTruck,
+    SceneryKind.BaggageCart to ScenerySprite.BaggageCart,
+    SceneryKind.ParkedAircraft to ScenerySprite.ParkedAircraft,
+    SceneryKind.Tree to ScenerySprite.Tree,
+    SceneryKind.Farmhouse to ScenerySprite.Farmhouse,
+    SceneryKind.Barn to ScenerySprite.Barn,
+    SceneryKind.Palm to ScenerySprite.Palm,
+    SceneryKind.Acacia to ScenerySprite.Acacia,
+    SceneryKind.Bush to ScenerySprite.Bush,
+    SceneryKind.Rock to ScenerySprite.Rock,
+    SceneryKind.Zebra to ScenerySprite.Zebra,
+    SceneryKind.Elephant to ScenerySprite.Elephant,
+)
 
-/** Draws one piece of decoration in the cartoon style: flat fill, thick outline. */
-internal fun DrawScope.drawScenery(item: SceneryItem, viewport: WorldViewport, colors: FaColors) {
+private fun sceneryStroke(width: Float) = Stroke(width = width, cap = StrokeCap.Round, join = StrokeJoin.Round)
+
+/**
+ * Draws one piece of decoration in the cartoon style: flat fills, the scenery outline, fine
+ * details. Sprites come from the design system; fields, roads, water and slabs are drawn here
+ * from tokens and the sizes in [SceneryDefaults]. [landscape] decides what a road is made of.
+ */
+internal fun DrawScope.drawScenery(
+    item: SceneryItem,
+    landscape: LevelScenery,
+    viewport: WorldViewport,
+    colors: FaColors,
+    lines: SceneryLines,
+) {
     val center = viewport.offsetOf(item.position)
     val widthPx = viewport.px(item.width)
     val lengthPx = viewport.px(item.height)
-    val corner = FaDimens.radiusSm.toPx()
-    inFrame(center, item.rotation, widthPx, lengthPx) { rect ->
-        when (item.kind) {
-            SceneryKind.Taxiway -> outlinedRect(rect, colors.asphalt500, colors, corner)
-            SceneryKind.Apron -> outlinedRect(rect, colors.asphalt300, colors, corner)
-            SceneryKind.Terminal -> {
-                outlinedRect(rect, colors.surfaceRaised, colors, corner)
-                val roof = rect.deflate(FaDimens.space2.toPx())
-                drawRoundRect(colors.sky300, roof.topLeft, Size(roof.width, roof.height / 2f), CornerRadius(corner, corner))
-            }
-            SceneryKind.Tower -> {
-                outlinedRect(rect, colors.surfaceRaised, colors, corner)
-                val cab = rect.width / 2f - FaDimens.space1.toPx()
-                drawCircle(colors.cherry, cab, rect.center)
-                drawCircle(colors.outline, cab, rect.center, style = outlineStroke())
-            }
-            SceneryKind.Hangar -> {
-                outlinedRect(rect, colors.sky500, colors, corner)
-                val ridge = FaDimens.line2.toPx()
-                drawLine(colors.outline, Offset(rect.left, rect.center.y), Offset(rect.right, rect.center.y), ridge)
-            }
-            SceneryKind.Windsock -> {
-                drawCircle(colors.outline, FaDimens.line3.toPx(), rect.center)
-                val sock = Path().apply {
-                    moveTo(rect.center.x, rect.top)
-                    lineTo(rect.right, rect.center.y)
-                    lineTo(rect.center.x, rect.bottom)
-                    close()
+    val degrees = degreesOf(item.rotation)
+    val sprite = SPRITES[item.kind]
+    if (sprite != null) {
+        drawScenerySprite(sprite, center, widthPx, lengthPx, degrees, colors, lines)
+        return
+    }
+    when (item.kind) {
+        SceneryKind.Hedge -> drawSceneryRow(ScenerySprite.Hedge, center, widthPx, lengthPx, degrees, colors, lines)
+        SceneryKind.Fence -> drawSceneryRow(ScenerySprite.Fence, center, widthPx, lengthPx, degrees, colors, lines)
+        SceneryKind.ForestEdge -> drawSceneryRow(
+            ScenerySprite.Tree,
+            center,
+            widthPx,
+            lengthPx,
+            degrees,
+            colors,
+            lines,
+            overlap = SceneryDefaults.FOREST_OVERLAP.toFloat(),
+            stagger = SceneryDefaults.FOREST_STAGGER.toFloat(),
+        )
+
+        else -> inFrame(center, item.rotation, widthPx, lengthPx) { rect ->
+            when (item.kind) {
+                SceneryKind.Taxiway -> slab(rect, colors.asphalt500, colors, lines)
+                SceneryKind.Apron -> {
+                    slab(rect, colors.asphalt300, colors, lines)
+                    val line = rect.deflate(viewport.px(SceneryDefaults.APRON_LINE_INSET))
+                    if (line.width > 0f && line.height > 0f) {
+                        drawRoundRect(colors.marking, line.topLeft, line.size, CornerRadius(lines.corner), style = sceneryStroke(lines.fine))
+                    }
                 }
-                drawPath(sock, colors.tangerine)
-                drawPath(sock, colors.outline, style = outlineStroke())
-            }
-            SceneryKind.Tree -> {
-                val radius = rect.minDimension / 2f
-                drawCircle(colors.grass300, radius, rect.center)
-                drawCircle(colors.outline, radius, rect.center, style = outlineStroke())
+
+                SceneryKind.Field -> drawCropField(rect, viewport, colors, lines)
+                SceneryKind.Road -> drawRoadSurface(rect, landscape, viewport, colors, lines)
+                SceneryKind.Pond -> drawWater(rect, bank = 0f, viewport, colors, lines)
+                SceneryKind.Waterhole -> drawWater(rect, viewport.px(SceneryDefaults.WATERHOLE_BANK), viewport, colors, lines)
+                else -> Unit
             }
         }
     }
 }
+
+/**
+ * The edge of a road: its surface with an outline around it. Every road's edge is drawn before
+ * any road's surface, so where two roads meet no outline crosses the junction. A road's ends are
+ * left open by its surface: end a road under an apron, inside another road or at the world's edge.
+ */
+internal fun DrawScope.drawRoadEdge(item: SceneryItem, landscape: LevelScenery, viewport: WorldViewport, colors: FaColors, lines: SceneryLines) {
+    inFrame(viewport.offsetOf(item.position), item.rotation, viewport.px(item.width), viewport.px(item.height)) { rect ->
+        drawRect(roadColor(landscape, colors), rect.topLeft, rect.size)
+        drawRect(colors.outline, rect.topLeft, rect.size, style = sceneryStroke(lines.outline))
+    }
+}
+
+/** A dirt road on the savanna, asphalt everywhere else. */
+private fun roadColor(landscape: LevelScenery, colors: FaColors): Color =
+    if (landscape == LevelScenery.Savanna) colors.sand300 else colors.asphalt300
+
+/** The surface of a road inside its edge: a dashed centre line, or the two ruts of a dirt road. */
+private fun DrawScope.drawRoadSurface(rect: Rect, landscape: LevelScenery, viewport: WorldViewport, colors: FaColors, lines: SceneryLines) {
+    val inside = rect.deflate(lines.outline / 2f)
+    drawRect(roadColor(landscape, colors), Offset(inside.left, rect.top), Size(inside.width, rect.height))
+    if (landscape == LevelScenery.Savanna) {
+        val rut = rect.width * SceneryDefaults.ROAD_RUT_FRACTION.toFloat()
+        for (x in listOf(rect.center.x - rut, rect.center.x + rut)) {
+            drawLine(colors.soil700, Offset(x, rect.top), Offset(x, rect.bottom), lines.fine, StrokeCap.Round)
+        }
+    } else {
+        val dash = viewport.px(SceneryDefaults.ROAD_DASH)
+        val gap = viewport.px(SceneryDefaults.ROAD_GAP)
+        var y = rect.top + gap
+        while (y + dash < rect.bottom) {
+            drawLine(colors.marking, Offset(rect.center.x, y), Offset(rect.center.x, y + dash), lines.fine, StrokeCap.Round)
+            y += dash + gap
+        }
+    }
+}
+
+/** A flat slab of asphalt with the scenery outline. */
+private fun DrawScope.slab(rect: Rect, fill: Color, colors: FaColors, lines: SceneryLines) {
+    val radius = CornerRadius(lines.corner)
+    drawRoundRect(fill, rect.topLeft, rect.size, radius)
+    drawRoundRect(colors.outline, rect.topLeft, rect.size, radius, style = sceneryStroke(lines.outline))
+}
+
+/** A crop field: soil with furrows and crop rows along its length, like the crop-field tile. */
+private fun DrawScope.drawCropField(rect: Rect, viewport: WorldViewport, colors: FaColors, lines: SceneryLines) {
+    val radius = CornerRadius(lines.corner)
+    drawRoundRect(colors.soil500, rect.topLeft, rect.size, radius)
+    val spacing = viewport.px(SceneryDefaults.FIELD_ROW_SPACING)
+    val furrows = Path()
+    val crops = Path()
+    // A furrow on every spacing, a crop row half way between two furrows; rows stop short of the edge.
+    val rows = (rect.width / spacing).toInt()
+    val first = rect.center.x - rows * spacing / 2f
+    for (i in 0..rows) {
+        val x = first + i * spacing
+        if (i in 1 until rows) {
+            furrows.moveTo(x, rect.top)
+            furrows.lineTo(x, rect.bottom)
+        }
+        if (i < rows) {
+            crops.moveTo(x + spacing / 2f, rect.top + spacing / 2f)
+            crops.lineTo(x + spacing / 2f, rect.bottom - spacing / 2f)
+        }
+    }
+    drawPath(furrows, colors.soil700, style = sceneryStroke(lines.fine))
+    drawPath(crops, colors.grass300, style = sceneryStroke(lines.outline))
+    drawRoundRect(colors.outline, rect.topLeft, rect.size, radius, style = sceneryStroke(lines.outline))
+}
+
+/**
+ * A pond or waterhole filling [rect] as an oval: water with two ripples, inside a sand [bank]
+ * that many pixels wide when it has one.
+ */
+private fun DrawScope.drawWater(rect: Rect, bank: Float, viewport: WorldViewport, colors: FaColors, lines: SceneryLines) {
+    val water = rect.deflate(bank)
+    if (bank > 0f) {
+        drawOval(colors.sand300, rect.topLeft, rect.size)
+        drawOval(colors.outline, rect.topLeft, rect.size, style = sceneryStroke(lines.outline))
+    }
+    drawOval(colors.sky500, water.topLeft, water.size)
+    drawOval(colors.outline, water.topLeft, water.size, style = sceneryStroke(if (bank > 0f) lines.fine else lines.outline))
+    val wave = viewport.px(SceneryDefaults.WAVE_WIDTH)
+    val waveLength = wave * ScenerySprite.Wave.height / ScenerySprite.Wave.width
+    // One ripple in the upper left of the water, one in the lower right.
+    for (side in listOf(-1f, 1f)) {
+        val at = water.center + Offset(side * water.width / RIPPLE_SPREAD, side * water.height / RIPPLE_SPREAD)
+        drawScenerySprite(ScenerySprite.Wave, at, wave, waveLength, 0f, colors, lines)
+    }
+}
+
+/** Ripples lie this fraction of the water's size from its middle: one over this number. */
+private const val RIPPLE_SPREAD = 6f

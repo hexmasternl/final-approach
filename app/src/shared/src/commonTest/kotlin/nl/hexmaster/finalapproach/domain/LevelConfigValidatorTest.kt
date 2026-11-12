@@ -153,7 +153,53 @@ class LevelConfigValidatorTest {
 
     @Test
     fun sceneryClearOfEverythingPasses() {
-        val tree = SceneryItem(SceneryKind.Tree, Vec2(100.0, 80.0), 40.0, 40.0)
+        val tree = SceneryItem(SceneryKind.Tree, Vec2(100.0, 500.0), 40.0, 40.0)
         assertEquals(emptyList(), problems(valid().copy(scenery = listOf(tree))))
+    }
+
+    @Test
+    fun standingSceneryInTheHudBandIsRejected() {
+        val band = LevelDefaults.HUD_BAND
+        val inBand = SceneryItem(SceneryKind.Tree, Vec2(100.0, band - 30.0), 40.0, 40.0)
+        assertProblem(valid().copy(scenery = listOf(inBand)), "scenery 1 (tree)", "HUD band")
+        // Reaching into the band with one edge is enough.
+        val touching = SceneryItem(SceneryKind.Farmhouse, Vec2(100.0, band + 10.0), 40.0, 40.0)
+        assertProblem(valid().copy(scenery = listOf(touching)), "farmhouse", "HUD band")
+        val justBelow = SceneryItem(SceneryKind.Farmhouse, Vec2(100.0, band + 20.0), 40.0, 40.0)
+        assertEquals(emptyList(), problems(valid().copy(scenery = listOf(justBelow))))
+    }
+
+    @Test
+    fun flatGroundMayLieUnderTheHudBand() {
+        val flat = SceneryKind.entries.filter { it.ground }
+        assertEquals(
+            setOf(
+                SceneryKind.Taxiway, SceneryKind.Apron, SceneryKind.Field, SceneryKind.Road,
+                SceneryKind.Pond, SceneryKind.Waterhole, SceneryKind.Jetty,
+            ),
+            flat.toSet(),
+        )
+        flat.forEach { kind ->
+            val item = SceneryItem(kind, Vec2(100.0, 60.0), 120.0, 80.0)
+            assertEquals(emptyList(), problems(valid().copy(scenery = listOf(item))), "$kind")
+        }
+        SceneryKind.entries.filterNot { it.ground || it == SceneryKind.ParkedAircraft }.forEach { kind ->
+            val item = SceneryItem(kind, Vec2(100.0, 60.0), 40.0, 40.0)
+            assertProblem(valid().copy(scenery = listOf(item)), "HUD band")
+        }
+    }
+
+    @Test
+    fun aParkedAircraftMustStandOnAnApron() {
+        val apron = SceneryItem(SceneryKind.Apron, Vec2(200.0, 500.0), 200.0, 100.0)
+        val size = SceneryDefaults.PARKED_AIRCRAFT_SIZE
+        val parked = { x: Double, y: Double -> SceneryItem(SceneryKind.ParkedAircraft, Vec2(x, y), size, size) }
+        assertEquals(emptyList(), problems(valid().copy(scenery = listOf(apron, parked(200.0, 500.0)))))
+        assertProblem(valid().copy(scenery = listOf(parked(200.0, 500.0))), "parkedaircraft", "apron")
+        // Half on the apron is not on the apron.
+        assertProblem(valid().copy(scenery = listOf(apron, parked(300.0, 500.0))), "scenery 2", "apron")
+        // Another flat kind is not an apron.
+        val taxiway = apron.copy(kind = SceneryKind.Taxiway)
+        assertProblem(valid().copy(scenery = listOf(taxiway, parked(200.0, 500.0))), "apron")
     }
 }
