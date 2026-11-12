@@ -17,5 +17,5 @@
 
 ## 4. Integration
 
-- [ ] 4.1 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug` from `app/src`; verify both succeed
+- [x] 4.1 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug` from `app/src`; verify both succeed
 - [ ] 4.2 Human check on a device: in level 1, land each airplane type entering near a side edge of the zone; verify the shown path bends onto the centre line, the airplane follows it without looping or jumping, and it rolls out along the centre line
