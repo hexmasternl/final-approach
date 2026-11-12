@@ -8,9 +8,11 @@ import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.FlightPath
 import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
+import nl.hexmaster.finalapproach.domain.LevelDefaults
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Overlap
 import nl.hexmaster.finalapproach.domain.Vec2
+import nl.hexmaster.finalapproach.domain.meadow
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.cos
@@ -32,11 +34,15 @@ class PathSmootherTest {
     private fun smooth(type: AircraftType, start: Vec2, heading: Double, points: List<Vec2>) =
         PathSmoother.smooth(start, heading, points, specs[type].speed, specs[type].turnRate, config)
 
-    /** A drawn path east from the origin, then a 150 degree turn back, as dense drag points. */
+    /**
+     * A drawn path east from the origin, then a 150 degree turn back, as dense drag points. Its
+     * legs follow the world zoom, like the aircraft that fly it, so it is the same drag on screen.
+     */
     private fun hairpin(): List<Vec2> {
-        val corner = Vec2(400.0, 300.0)
+        val step = 10.0 * LevelDefaults.WORLD_ZOOM
+        val corner = Vec2(40 * step, 300.0)
         val back = Angles.direction(east + Angles.degrees(150.0))
-        return (1..40).map { Vec2(it * 10.0, 300.0) } + (1..40).map { corner + back * (it * 10.0) }
+        return (1..40).map { Vec2(it * step, 300.0) } + (1..40).map { corner + back * (it * step) }
     }
 
     /** Tightest corner along [line], ignoring the final point that is pinned where it was drawn. */
@@ -99,8 +105,8 @@ class PathSmootherTest {
         val level = Levels.meadowField.let { it.copy(spawn = it.spawn.copy(firstSpawnDelay = 10_000.0)) }
         val pad = LandingZones.of(level).filterIsInstance<LandingZone.Helipad>().first().area.center
         val cases = listOf(
-            Aircraft(1, AircraftType.LightProp, Vec2(100.0, 220.0), east) to
-                listOf(Vec2(160.0, 240.0), Vec2(220.0, 290.0), Vec2(250.0, 360.0), Vec2(280.0, 400.0), Vec2(420.0, 400.0)),
+            Aircraft(1, AircraftType.LightProp, meadow(100.0, 220.0), east) to
+                listOf(meadow(160.0, 240.0), meadow(220.0, 290.0), meadow(250.0, 360.0), meadow(280.0, 400.0), meadow(420.0, 400.0)),
             Aircraft(1, AircraftType.Helicopter, pad + Vec2(-200.0, -150.0), east) to
                 listOf(pad + Vec2(-120.0, -160.0), pad + Vec2(-40.0, -100.0), pad + Vec2(-10.0, -30.0), pad),
         )

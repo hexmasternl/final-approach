@@ -1,7 +1,11 @@
 package nl.hexmaster.finalapproach.engine
 
+import nl.hexmaster.finalapproach.domain.LevelDefaults
+
 /**
- * Engine tunables that are not level data. Distances are in world units.
+ * Engine tunables that are not level data. Distances are in world units; the ones that follow
+ * the player's finger are multiplied by the world zoom, so they are the same on screen as before
+ * the zoom-out.
  *
  * @param minReachRadius a path point closer than this is reached
  * @param minPointSpacing a drag point closer than this to the last path point is dropped
@@ -13,8 +17,8 @@ data class EngineConfig(
     val smoothing: PathSmoothingConfig = PathSmoothingConfig(),
 ) {
     private companion object {
-        const val MIN_REACH_RADIUS = 6.0
-        const val MIN_POINT_SPACING = 12.0
+        const val MIN_REACH_RADIUS = 6.0 * LevelDefaults.WORLD_ZOOM
+        const val MIN_POINT_SPACING = 12.0 * LevelDefaults.WORLD_ZOOM
     }
 }
 
@@ -45,7 +49,7 @@ data class PathSmoothingConfig(
     val lookaheadTurnFraction: Double = LOOKAHEAD_TURN_FRACTION,
 ) {
     private companion object {
-        const val TOLERANCE = 4.0
+        const val TOLERANCE = 4.0 * LevelDefaults.WORLD_ZOOM
         const val SPACING_TURN_FRACTION = 0.1
         const val CHAIKIN_ITERATIONS = 2
         const val MIN_RADIUS_FACTOR = 1.1

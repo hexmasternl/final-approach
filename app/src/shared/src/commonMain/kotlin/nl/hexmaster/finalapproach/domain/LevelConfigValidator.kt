@@ -14,6 +14,7 @@ object LevelConfigValidator {
 
     private fun sceneryProblems(config: LevelConfig): List<String> = buildList {
         val zones = LandingZones.of(config)
+        val aprons = config.scenery.filter { it.kind == SceneryKind.Apron }.map { it.shape }
         config.scenery.forEachIndexed { index, item ->
             val name = "Scenery ${index + 1} (${item.kind})"
             if (item.width <= 0.0 || item.height <= 0.0) add("$name needs a positive width and height")
@@ -28,6 +29,12 @@ object LevelConfigValidator {
                     is LandingZone.Helipad -> Overlap.rectCircle(shape, zone.area)
                 }
             }.forEach { add("$name covers landing zone '${it.id}'") }
+            if (!item.isGround && shape.corners.any { it.y < LevelDefaults.HUD_BAND }) {
+                add("$name stands in the HUD band; only flat ground may lie there")
+            }
+            if (item.kind == SceneryKind.ParkedAircraft && aprons.none { apron -> shape.corners.all(apron::contains) }) {
+                add("$name must stand on an apron")
+            }
         }
     }
 

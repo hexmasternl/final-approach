@@ -4,7 +4,7 @@ How the airfield is drawn, bottom to top. Each layer names its `z-` token.
 
 | Layer | Token | What is on it |
 |---|---|---|
-| Field | `z-field` | Lawn in `grass-500` with `grass-700` mowing stripes 64px wide, tilted 12 degrees. Runways, helipads, windsock, bushes. |
+| Field | `z-field` | Lawn in `grass-500` with `grass-700` mowing stripes 64px wide, tilted 12 degrees. Ground scenery, runways, helipads, then standing scenery and ambient life (see Scenery). |
 | Zone glows | `z-zone` | `zone-ok` and `zone-no` halos around landing zones. |
 | Paths | `z-path` | Flight paths, end dots, straight-on projections. |
 | Ground shadows | `z-ground-shadow` | Every aircraft's shadow, so no shadow ever falls on another aircraft. |
@@ -44,6 +44,66 @@ Assign `path-1` to `path-6` in spawn order and free a colour when its aircraft l
 - A runway is 64px wide at 1x. Its numbers follow real convention: heading divided by ten, the two ends 18 apart (`09/27`).
 - A helipad is 112px across, with a `marking-warn` ring and a `marking` H.
 - Zone feedback appears only while an aircraft is selected and its path ends on the zone.
+
+## World zoom
+
+A level's world is 1600 by 900 world units: the 1280 by 720 playfield times one zoom factor of 1.25, the same for every level. Runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a smaller share of the screen and its surroundings show on every side. Everything that belongs to an aircraft or to the player's finger is multiplied by the same factor, so it is unchanged on screen: aircraft size and speed, the proximity warning, spawn spacing and margins, the path reach and point spacing, and the HUD band. Path strokes, the pick area and all UI are in dp and do not change.
+
+On the reference phone (800 by 360dp, landscape) one world unit is 0.4dp: a runway is 25.6dp wide and a helipad 44.8dp across.
+
+## Scenery
+
+Scenery is everything on the ground that is not a landing zone: buildings, vehicles, plants, animals, people, boats, fields, roads and water. It makes the airfield a place and has no effect on play. It must be recognisable at a glance and must never compete with aircraft, paths or landing zones.
+
+### How detailed scenery may be
+
+- **Lighter than aircraft.** Scenery is outlined in `line-2`; an aircraft keeps `line-3`. Inner details (patches, windows, roof ribs, crop rows, leaf clusters) are strokes in `line-fine`, the thinnest stroke in the system, used nowhere else.
+- **Strokes shrink with the airfield.** Scenery strokes are measured in world units at the scale before the world zoom, so they scale with the field like the sprite itself and are never wider on screen than their token. On the reference phone the outline is about 1dp, against 1.2dp for an aircraft.
+- **No busier than an aircraft.** A scenery sprite uses at most four fill colours, counting `outline` used as a fill. That is what the light prop uses.
+- **Water is `sky-500`** everywhere: the sea, a pond and a waterhole, so it reads as water in Day, Night and Dawn.
+- **Its own colours.** Scenery never uses `path-1` to `path-6`, `sun` or the `fuselage` white, so nothing on the ground looks like an aircraft or its path. Two older parts keep an accent: the tower cab is `cherry` and the windsock is `tangerine`. Sand, soil, roofs, foam and stone have their own tokens: `sand-300`, `soil-500`, `soil-700`, `roof-500`, `foam`, `stone-300`.
+- **On the ground.** Scenery never casts the airborne shadow (`shadow-ground`, `shadow-float`). A tree may lie on a flat `grass-900` shade, drawn as part of the sprite, touching its canopy and without an outline of its own.
+- **Flat and outlined.** Single flat fills, round joins, no gradients or textures. Crop rows and wave lines are flat stripes, like the mowing stripes of the lawn.
+
+### Minimum sizes
+
+Measured on the reference phone (800 by 360dp), where one world unit is 0.4dp:
+
+| What | At least | In world units |
+|---|---|---|
+| Animals, people and vehicles, longest side | 20dp | 50 |
+| A bird, wing tip to wing tip | 16dp | 40 |
+| Any inner detail (ear, leg, window, crop row) | 3dp | 7.5 |
+
+Sizes are level data or ambient configuration in world units, never numbers in drawing code.
+
+### Sprite construction
+
+- Draw top-down with the front pointing up, on a grid whose unit is one world unit at the size the sprite is placed at. The outline is 3 units, a detail stroke 1.5.
+- Sources are `assets/scenery/*.svg`; the same shapes live in `bundle.js` (`SCENERY`) with a paint key on every shape. The generator checks the fill budget and the colour rule, and refuses a sprite that breaks them.
+- Repeating scenery is one piece of a row: a hedge and a fence are drawn piece after piece along their length, a forest edge is the tree in a staggered row, and a crop field repeats its tile.
+
+### Parked aircraft
+
+One generic sprite, on aprons only. It is three quarters of the light prop's size, painted `fuselage-shade` with a `glass` window, has no livery colour and no shadow, squared wing tips and a propeller that stands still. It is scenery: it cannot be picked and no rule reads it.
+
+### Where scenery may go
+
+- Never over a runway, a helipad or a landing zone. The level validator rejects a level where it does.
+- Under the HUD band only flat ground: lawn, fields, roads, water and sand. No building, tree, vehicle, animal or person stands there, and no bird or boat passes there.
+- Layering inside the field layer: ground (lawn or sea and island), flat scenery (fields, roads, ponds, aprons, taxiways, jetties), runways and helipads, standing scenery, ambient life.
+
+### Surroundings per landscape
+
+| Landscape | Around the airfield |
+|---|---|
+| Meadow | Crop fields with rows, hedges, fences, a farmhouse and a barn, a road, a pond, a forest edge, and a paddock with cows and a farmer. A flock of three birds crosses now and then. |
+| Island | A wide sea, a `sand-300` beach around the island with `foam` waves along the shore, palms, a jetty, and boats with a deck and a wake. |
+| Savanna | Acacias, bushes, rocks, a dirt road in `sand-300`, a waterhole, a small herd of zebras and an elephant. |
+
+### Motion
+
+Birds flap between two wing frames and boats trail a wake; cows wander inside their fence. Waves and the savanna animals stand still. With reduced motion nothing moves: no bird or boat appears and cows stand where they are.
 
 ## Screen edges
 

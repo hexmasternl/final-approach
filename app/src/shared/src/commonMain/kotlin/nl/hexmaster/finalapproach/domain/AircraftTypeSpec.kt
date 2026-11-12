@@ -23,31 +23,35 @@ data class AircraftTypeSpec(
     }
 }
 
-/** The default spec of every aircraft type. */
+/**
+ * The default spec of every aircraft type. Speeds and radii are written as their value before
+ * the world zoom-out and multiplied by [LevelDefaults.WORLD_ZOOM], so every type is as large and
+ * as fast on screen as before. Turn rates stay, so turning circles grow with the zoom too.
+ */
 object DefaultAircraftSpecs {
-    val helicopter = spec(speed = 40.0, turnRate = 3.0, landingPoints = 10, radius = 26.0) {
+    val helicopter = spec(baseSpeed = 40.0, turnRate = 3.0, landingPoints = 10, baseRadius = 26.0) {
         // Rotor disc and tail rotor.
         mirrored(0.0, -4.0, 42.0) + mirrored(0.0, 38.0, 6.0)
     }
-    val lightProp = spec(speed = 55.0, turnRate = 1.6, landingPoints = 20, radius = 24.0) {
+    val lightProp = spec(baseSpeed = 55.0, turnRate = 1.6, landingPoints = 20, baseRadius = 24.0) {
         // Propeller, fuselage, straight wing, tailplane.
         mirrored(0.0, -38.0, 5.0) + mirrored(0.0, -22.0, 11.0) + mirrored(0.0, 0.0, 11.0) +
             mirrored(0.0, 22.0, 9.0) + mirrored(18.0, -6.5, 8.5) + mirrored(33.5, -6.5, 8.5) +
             mirrored(12.0, 29.5, 5.5)
     }
-    val turboprop = spec(speed = 75.0, turnRate = 1.2, landingPoints = 30, radius = 28.0) {
+    val turboprop = spec(baseSpeed = 75.0, turnRate = 1.2, landingPoints = 30, baseRadius = 28.0) {
         // Fuselage, long straight wing with engines, tailplane.
         mirrored(0.0, -30.0, 9.5) + mirrored(0.0, -10.0, 9.5) + mirrored(0.0, 10.0, 9.0) +
             mirrored(0.0, 30.0, 8.0) + mirrored(18.0, -2.5, 7.5) + mirrored(32.0, -2.5, 7.5) +
             mirrored(41.0, -2.5, 5.0) + mirrored(11.0, 33.0, 5.0)
     }
-    val jet = spec(speed = 100.0, turnRate = 0.9, landingPoints = 50, radius = 30.0) {
+    val jet = spec(baseSpeed = 100.0, turnRate = 0.9, landingPoints = 50, baseRadius = 30.0) {
         // Fuselage, swept wing, tailplane.
         mirrored(0.0, -32.0, 9.0) + mirrored(0.0, -14.0, 9.0) + mirrored(0.0, 4.0, 9.0) +
             mirrored(0.0, 22.0, 8.0) + mirrored(0.0, 38.0, 7.0) + mirrored(18.0, 6.0, 8.0) +
             mirrored(32.0, 13.0, 6.0) + mirrored(12.0, 38.0, 5.0)
     }
-    val jumbo = spec(speed = 130.0, turnRate = 0.6, landingPoints = 80, radius = 44.0) {
+    val jumbo = spec(baseSpeed = 130.0, turnRate = 0.6, landingPoints = 80, baseRadius = 44.0) {
         // Wide fuselage, swept wing with four engines, tailplane.
         mirrored(0.0, -32.0, 12.0) + mirrored(0.0, -10.0, 12.0) + mirrored(0.0, 12.0, 12.0) +
             mirrored(0.0, 32.0, 10.0) + mirrored(20.0, 4.0, 10.0) + mirrored(36.0, 12.0, 7.0) +
@@ -71,14 +75,19 @@ object DefaultAircraftSpecs {
         AircraftType.Jumbo,
     )
 
-    /** A spec whose collision shape is traced on the sprite, in sprite units around its centre. */
+    /**
+     * A spec whose collision shape is traced on the sprite, in sprite units around its centre.
+     * [baseSpeed] and [baseRadius] are the values before the world zoom-out.
+     */
     private fun spec(
-        speed: Double,
+        baseSpeed: Double,
         turnRate: Double,
         landingPoints: Int,
-        radius: Double,
+        baseRadius: Double,
         spriteCircles: () -> List<Circle>,
     ): AircraftTypeSpec {
+        val speed = baseSpeed * LevelDefaults.WORLD_ZOOM
+        val radius = baseRadius * LevelDefaults.WORLD_ZOOM
         val spriteSize = radius * AircraftTypeSpec.SPRITE_SIZE_PER_RADIUS
         return AircraftTypeSpec(
             speed = speed,
