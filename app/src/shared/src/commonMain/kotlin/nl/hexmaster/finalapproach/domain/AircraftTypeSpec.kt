@@ -5,7 +5,6 @@ import nl.hexmaster.finalapproach.domain.CollisionShape.Companion.mirrored
 /**
  * What every aircraft of one type shares. [speed] is in world units per second, [turnRate] in
  * radians per second, [radius] in world units (the sprite is drawn [spriteSize] wide).
- * [rolloutSpeedFraction] is the speed on the runway after touchdown, as a fraction of [speed].
  * [shape] is what the aircraft collides with.
  */
 data class AircraftTypeSpec(
@@ -13,7 +12,6 @@ data class AircraftTypeSpec(
     val turnRate: Double,
     val landingPoints: Int,
     val radius: Double,
-    val rolloutSpeedFraction: Double = LevelDefaults.ROLLOUT_SPEED_FRACTION,
     val shape: CollisionShape = CollisionShape.disc(radius),
 ) {
     /** Width and height of the drawn sprite, in world units. */

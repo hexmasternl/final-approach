@@ -9,6 +9,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
 import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.Bounds
 import nl.hexmaster.finalapproach.domain.LevelConfig
@@ -50,6 +52,28 @@ private object Backdrop {
 }
 
 private fun DrawScope.outline() = Stroke(FaDimens.line3.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
+
+/**
+ * The field layer of a level, everything below the zone glows and aircraft: ground, ground
+ * scenery, runways, helipads, buildings and the ambient life.
+ */
+internal fun DrawScope.drawField(
+    level: LevelConfig,
+    ambient: AmbientLife,
+    viewport: WorldViewport,
+    colors: FaColors,
+    measurer: TextMeasurer,
+    numberStyle: TextStyle,
+    letterStyle: TextStyle,
+) {
+    drawLevelGround(level, viewport, colors)
+    val (ground, buildings) = level.scenery.partition { it.isGround }
+    ground.forEach { drawScenery(it, viewport, colors) }
+    level.runways.forEach { drawRunway(it, viewport, colors, measurer, numberStyle) }
+    level.helipads.forEach { drawHelipad(it, viewport, colors, measurer, letterStyle) }
+    buildings.forEach { drawScenery(it, viewport, colors) }
+    drawAmbient(level, ambient, viewport, colors)
+}
 
 /** The ground of a level: lawn, sea and island, or dry dawn grass, plus the fixed decorations. */
 internal fun DrawScope.drawLevelGround(level: LevelConfig, viewport: WorldViewport, colors: FaColors) {

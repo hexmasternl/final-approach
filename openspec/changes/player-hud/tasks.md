@@ -14,8 +14,8 @@
 
 ## 3. Design system
 
-- [ ] 3.1 Add the SpawnCounter chip to the design system and amend HudBar to allow a counter row of up to five chips; verify the showcase page shows both
-- [ ] 3.2 Add `HudConfig` (score pop scale) and the SpawnCounter dimensions to the theme and verify no HUD literal for size, duration or scale appears in a composable
+- [x] 3.1 Add the SpawnCounter chip to the design system and amend HudBar to allow a counter row of up to five chips; verify the showcase page shows both
+- [x] 3.2 Add `HudConfig` (score pop scale) and the SpawnCounter dimensions to the theme and verify no HUD literal for size, duration or scale appears in a composable
 
 ## 4. HUD
 

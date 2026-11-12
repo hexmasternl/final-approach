@@ -164,6 +164,11 @@ fa-silhouette { display: block; width: 100%; }
 .fa-next { gap: var(--space-2); }
 .fa-next fa-aircraft { --fa-size: 40px !important; filter: none; }
 .fa-next__edge { display: inline-grid; place-items: center; width: 28px; height: 28px; border: var(--line-2) solid var(--outline); border-radius: 50%; background: var(--sky-500); color: var(--on-accent); --fa-icon: 18px; }
+.fa-spawncounter { gap: var(--space-2); padding: 0 var(--space-3) 3px; }
+.fa-spawncounter fa-aircraft { --fa-size: var(--icon-lg) !important; --fa-livery: var(--fuselage) !important; filter: none; }
+.fa-spawncounter__count { font: 600 22px/28px var(--font-display); font-variant-numeric: tabular-nums; }
+.fa-hud__stack { display: grid; justify-items: start; gap: var(--space-2); }
+.fa-hud__counters { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .fa-streak { display: inline-flex; align-items: center; gap: var(--space-1); min-height: 40px; padding: 0 var(--space-3) 0 var(--space-2); border: var(--line-2) solid var(--outline); border-radius: var(--radius-pill); background: var(--tangerine); color: var(--on-accent); font: 800 20px/24px var(--font-text); box-shadow: var(--shadow-lip-sm); transform: rotate(-3deg); --fa-icon: 22px; }
 .fa-streak--hot { background: var(--cherry); }
 .fa-streak[data-loop] { animation: fa-pop var(--dur-pop) var(--ease-bounce) infinite alternate; }
@@ -188,6 +193,9 @@ fa-silhouette { display: block; width: 100%; }
 .fa-levelcard[aria-disabled="true"] .fa-levelcard__art { background: var(--surface-sunken); }
 .fa-levelcard[aria-disabled="true"] .fa-levelcard__art > * { opacity: var(--opacity-disabled); }
 .fa-levelcard__lock { position: absolute; display: grid; place-items: center; width: 52px; height: 52px; border: var(--line-3) solid var(--outline); border-radius: 50%; background: var(--surface); color: var(--ink); opacity: 1 !important; --fa-icon: 26px; }
+.fa-levelcard--square { display: grid; justify-items: center; align-content: space-between; width: var(--level-tile); height: var(--level-tile); padding: calc(var(--space-3) - var(--line-3)); }
+.fa-levelcard--square .fa-levelcard__mini { display: block; width: var(--level-tile-art); height: var(--level-tile-art); }
+.fa-levelcard--square .fa-levelcard__title { font: 600 18px/24px var(--font-display); text-align: center; }
 
 /* ---------- Coach mark ---------- */
 .fa-coach { position: relative; display: inline-flex; align-items: center; gap: var(--space-3); max-width: 300px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--outline); color: var(--on-outline); font: 500 16px/22px var(--font-text); box-shadow: 0 5px 0 rgba(10, 14, 36, .3); --fa-icon: var(--icon-lg); }

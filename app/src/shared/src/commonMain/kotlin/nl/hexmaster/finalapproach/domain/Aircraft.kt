@@ -24,13 +24,16 @@ sealed interface AircraftStatus {
     data class ClearedToLand(val zone: LandingZone) : AircraftStatus
 
     /**
-     * An airplane on the runway after touchdown, rolling along [direction] for [remaining] more
-     * world units, then fading out for [fadeElapsed] seconds so far.
+     * An airplane on runway [runwayId] after touchdown, rolling along [direction] for [remaining]
+     * more world units, then fading out for [fadeElapsed] seconds so far. [elapsed] is the time
+     * since touchdown, in seconds.
      */
     data class RollingOut(
         val direction: Double,
         val remaining: Double,
+        val runwayId: String,
         val fadeElapsed: Double = 0.0,
+        val elapsed: Double = 0.0,
     ) : AircraftStatus
 }
 

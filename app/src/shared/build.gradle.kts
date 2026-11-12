@@ -30,11 +30,17 @@ kotlin {
             implementation(libs.compose.foundation)
             implementation(libs.compose.ui)
             implementation(libs.compose.components.resources)
+            implementation(libs.compose.ui.tooling.preview)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
         }
     }
+}
+
+// Renders the @Preview functions in the IDE; not part of the app.
+dependencies {
+    "androidRuntimeClasspath"(libs.compose.ui.tooling)
 }
 
 compose.resources {

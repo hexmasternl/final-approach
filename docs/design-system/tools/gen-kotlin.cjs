@@ -22,7 +22,10 @@ const kColor = v => {
 };
 // The sunset palette belongs to the splash page only, so it is kept out of the themes.
 const isSunset = n => n.startsWith('sunset-');
-const names = t.color.tokens.map(c => c.name).filter(n => !isSunset(n));
+// The lights of Dawn levels are not theme colours either; they go into FaLights.
+const isLight = n => n.startsWith('light-');
+const names = t.color.tokens.map(c => c.name).filter(n => !isSunset(n) && !isLight(n));
+const lightNames = t.color.tokens.map(c => c.name).filter(isLight);
 const sunsetNames = t.color.tokens.map(c => c.name).filter(isSunset);
 let colors = `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 
@@ -46,8 +49,11 @@ ${names.map(n => `    val ${camel(n)}: Color,`).join('\n')}
 }
 
 `;
-for (const [th, k] of [['light', 'DayColors'], ['dark', 'NightColors']])
-  colors += `val ${k} = FaColors(\n${names.map(n => `    ${camel(n)} = ${kColor(resolve(n, th))},`).join('\n')}\n)\n\n`;
+const themeDoc = {
+  DawnColors: '/**\n * The Dawn palette, for levels set before sunrise: the ground and strips are dim and warm, while\n * panels, chips, text and aircraft stay light as in Night. It is not an inverted UI. Tokens\n * without a Dawn value take their Day value.\n */',
+};
+for (const [th, k] of [['light', 'DayColors'], ['dark', 'NightColors'], ['dawn', 'DawnColors']])
+  colors += `${themeDoc[k] ? themeDoc[k] + '\n' : ''}val ${k} = FaColors(\n${names.map(n => `    ${camel(n)} = ${kColor(resolve(n, th))},`).join('\n')}\n)\n\n`;
 w('theme/FaColors.kt', colors.trimEnd() + '\n');
 w('theme/SunsetColors.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 
@@ -100,7 +106,32 @@ ${t.easing.tokens.map(k => { const m = /cubic-bezier\(([^)]+)\)/.exec(k.value)[1
 
 /** Opacity tokens. */
 object FaOpacity {
-${t.opacity.tokens.map(k => `    const val ${camel(k.name.replace(/^opacity-/, ''))} = ${k.value}f`).join('\n')}
+${t.opacity.tokens.filter(k => !isLight(k.name)).map(k => `    const val ${camel(k.name.replace(/^opacity-/, ''))} = ${k.value}f`).join('\n')}
+}
+`);
+
+// ---------- lights of Dawn levels
+const tok = (fam, n) => { const k = t[fam].tokens.find(x => x.name === n); if (!k) throw new Error('token ' + n); return k.value; };
+const secs = n => { const s = String(ms(tok('duration', n)) / 1000); return s.includes('.') ? s : s + '.0'; };
+w('theme/FaLights.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
+
+import androidx.compose.ui.graphics.Color
+
+/**
+ * Tokens for the lights of Dawn levels. Light is gentle: no light is brighter than
+ * [MAX_OPACITY] and no light cycle is faster than [MIN_CYCLE_SECONDS].
+ */
+object FaLights {
+    const val MAX_OPACITY = ${tok('opacity', 'light-max-opacity')}f
+    const val MIN_CYCLE_SECONDS = ${secs('dur-light-min')}
+
+    /** One full flash of the control tower beacon, in seconds. */
+    const val BEACON_CYCLE_SECONDS = ${secs('dur-beacon')}
+
+    /** One sweep of the running light along a runway, in seconds. */
+    const val RUNNING_LIGHT_CYCLE_SECONDS = ${secs('dur-running-light')}
+
+${lightNames.map(n => `    val ${camel(n.replace(/^light-/, ''))} = ${kColor(resolve(n, 'light'))}`).join('\n')}
 }
 `);
 
@@ -250,7 +281,7 @@ icons += iconNames.map(n => {
 }).join('\n');
 icons += '\n}\n';
 w('sprites/FaIcons.kt', icons);
-console.log('generated: theme/SunsetColors.kt, sprites/AirportSilhouette.kt, theme/FaColors.kt, theme/FaDimens.kt, theme/FaMotion.kt, sprites/AircraftSprites.kt, sprites/FaIcons.kt');
+console.log('generated: theme/SunsetColors.kt, sprites/AirportSilhouette.kt, theme/FaColors.kt, theme/FaDimens.kt, theme/FaMotion.kt, theme/FaLights.kt, sprites/AircraftSprites.kt, sprites/FaIcons.kt');
 
 // ---------- typography
 const styles = t.type.groups.flatMap(g => g.styles.map(s => ({ ...s, family: s.family || g.family })));
