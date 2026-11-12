@@ -147,6 +147,15 @@ class GameEngine(
         return picked
     }
 
+    /**
+     * Removes the path of aircraft [id]; it flies straight on in its current heading. An aircraft
+     * already cleared to land keeps its locked path.
+     */
+    fun clearPath(id: Int) {
+        if (inputBlocked) return
+        updateAircraft(id) { PathDrawing.begin(it) }
+    }
+
     /** Starts a new path for aircraft [id], replacing its old one. */
     fun beginPath(id: Int) {
         if (inputBlocked) return
