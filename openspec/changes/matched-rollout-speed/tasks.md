@@ -16,7 +16,7 @@
 
 - [x] 3.1 In `Collisions.find`, skip a pair when both are `RollingOut` with the same `runwayId` and a rollout direction within the named angular tolerance (design decision 1); verify with the tests in 3.2.
 - [x] 3.2 Add `kotlin.test` cases: in `CollisionsTest`, same runway same direction overlapping (rolling and fading) is not a collision, same runway opposite directions overlapping is, different runways overlapping is; in `GameEngineTest`, a jet landing right behind a light prop in the same direction completes both rollouts without game over, and two airplanes landing from opposite ends of a two-way runway end the level with a collision. Verify `./gradlew :shared:allTests` passes.
-- [ ] 3.3 Update the collision rule in `docs/game-design.md` (Failure and scoring) and the airplane rollout sentence in `CLAUDE.md` and `.github/copilot-instructions.md` to say all airplanes roll out at the light prop's speed and same-direction rollouts on one runway never collide; verify the three texts agree.
+- [x] 3.3 Update the collision rule in `docs/game-design.md` (Failure and scoring) and the airplane rollout sentence in `CLAUDE.md` and `.github/copilot-instructions.md` to say all airplanes roll out at the light prop's speed and same-direction rollouts on one runway never collide; verify the three texts agree.
 
 ## 4. Play check
 
