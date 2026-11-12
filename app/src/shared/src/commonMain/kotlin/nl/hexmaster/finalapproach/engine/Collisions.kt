@@ -1,12 +1,16 @@
 package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.Aircraft
+import nl.hexmaster.finalapproach.domain.AircraftStatus
+import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.Vec2
+import kotlin.math.abs
 
 /**
  * Finds aircraft whose collision shapes touched. Only aircraft with the same altitude state can
- * collide: a flying aircraft passes over one that has landed. Every aircraft in the list counts, rolling ones
+ * collide: a flying aircraft passes over one that has landed. Two airplanes rolling out on the
+ * same runway in the same direction never collide with each other. Every aircraft in the list counts, rolling ones
  * included; aircraft removed after landing are simply not in it. Distance alone is never a
  * collision.
  *
@@ -30,10 +34,25 @@ object Collisions {
             val a = aircraft[i]
             val b = aircraft[j]
             if (a.altitude != b.altitude) continue
+            if (rollingTogether(a, b)) continue
             if (touched(a, previous[a.id] ?: a.position, b, previous[b.id] ?: b.position, specs)) {
                 add(minOf(a.id, b.id) to maxOf(a.id, b.id))
             }
         }
+    }
+
+    /** Rollout directions closer than this, in radians, count as the same direction. */
+    const val SAME_DIRECTION_TOLERANCE = 0.1
+
+    /**
+     * True when [a] and [b] both roll out (or fade) on the same runway in the same direction:
+     * such airplanes never collide with each other.
+     */
+    fun rollingTogether(a: Aircraft, b: Aircraft): Boolean {
+        val rollA = a.status as? AircraftStatus.RollingOut ?: return false
+        val rollB = b.status as? AircraftStatus.RollingOut ?: return false
+        return rollA.runwayId == rollB.runwayId &&
+            abs(Angles.difference(rollA.direction, rollB.direction)) < SAME_DIRECTION_TOLERANCE
     }
 
     /** True when the shapes of [a] and [b] touch or overlap where they are now. */
