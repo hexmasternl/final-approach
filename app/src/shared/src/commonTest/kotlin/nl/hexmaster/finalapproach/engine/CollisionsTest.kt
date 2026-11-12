@@ -88,6 +88,28 @@ class CollisionsTest {
         assertEquals(listOf(1 to 2), Collisions.find(listOf(rolling, other), specs))
     }
 
+    private fun rolling(id: Int, x: Double, direction: Double, runway: String = "r", fade: Double = 0.0) =
+        jet(id, x, heading = direction).copy(
+            altitude = AltitudeState.Landed,
+            status = AircraftStatus.RollingOut(direction, if (fade > 0.0) 0.0 else 100.0, runway, fadeElapsed = fade),
+        )
+
+    @Test
+    fun sameRunwaySameDirectionRolloutsDoNotCollide() {
+        assertTrue(Collisions.find(listOf(rolling(1, 100.0, PI / 2), rolling(2, 120.0, PI / 2)), specs).isEmpty())
+        assertTrue(Collisions.find(listOf(rolling(1, 100.0, PI / 2), rolling(2, 120.0, PI / 2 + 0.05, fade = 0.2)), specs).isEmpty())
+    }
+
+    @Test
+    fun sameRunwayOppositeDirectionRolloutsCollide() {
+        assertEquals(listOf(1 to 2), Collisions.find(listOf(rolling(1, 100.0, PI / 2), rolling(2, 120.0, -PI / 2)), specs))
+    }
+
+    @Test
+    fun rolloutsOnDifferentRunwaysCollide() {
+        assertEquals(listOf(1 to 2), Collisions.find(listOf(rolling(1, 100.0, PI / 2), rolling(2, 120.0, PI / 2, runway = "s")), specs))
+    }
+
     @Test
     fun aDefaultSpecTypeWithoutATracedShapeIsADisc() {
         val spec = AircraftTypeSpec(speed = 1.0, turnRate = 1.0, landingPoints = 1, radius = 10.0)

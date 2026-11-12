@@ -296,6 +296,42 @@ class GameEngineTest {
     }
 
     @Test
+    fun aJetLandingRightBehindALightPropInTheSameDirectionDoesNotCollide() {
+        val engine = GameEngine(quiet, seed = 1)
+        val runway = level.runways.single().id
+        val prop = Aircraft(1, AircraftType.LightProp, Vec2(420.0, 400.0), PI / 2, hasEnteredViewport = true).copy(
+            altitude = AltitudeState.Landed,
+            status = AircraftStatus.RollingOut(PI / 2, 360.0, runway),
+        )
+        engine.place(listOf(prop, jet(2, Vec2(150.0, 400.0), PI / 2).copy(hasEnteredViewport = true)))
+        engine.beginPath(2)
+        engine.extendPath(2, Vec2(250.0, 400.0))
+        engine.extendPath(2, Vec2(400.0, 400.0))
+        assertIs<AircraftStatus.ClearedToLand>(engine.aircraft(2).status)
+        engine.run(20.0)
+        assertEquals(GameStatus.Playing, engine.state.value.status)
+        assertTrue(engine.state.value.aircraft.isEmpty(), "both rollouts finished")
+    }
+
+    @Test
+    fun airplanesLandingFromOppositeEndsOfATwoWayRunwayCollide() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(
+            listOf(
+                jet(1, Vec2(200.0, 400.0), PI / 2).copy(hasEnteredViewport = true),
+                jet(2, Vec2(1080.0, 400.0), -PI / 2).copy(hasEnteredViewport = true),
+            ),
+        )
+        engine.beginPath(1)
+        engine.extendPath(1, Vec2(400.0, 400.0))
+        engine.beginPath(2)
+        engine.extendPath(2, Vec2(880.0, 400.0))
+        engine.run(20.0)
+        val status = assertIs<GameStatus.GameOver>(engine.state.value.status)
+        assertEquals(GameOverReason.Collision, status.reason)
+    }
+
+    @Test
     fun aLandingAndACollisionInTheSameUpdateAreBothCounted() {
         val engine = GameEngine(quiet, seed = 1)
         val pad = level.helipads.single().position
