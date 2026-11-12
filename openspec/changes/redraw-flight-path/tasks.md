@@ -8,4 +8,4 @@
 
 ## 2. Docs
 
-- [ ] 2.1 Update `docs/game-design.md` for cancel and redraw and verify it matches the spec
+- [x] 2.1 Update `docs/game-design.md` for cancel and redraw and verify it matches the spec
