@@ -189,7 +189,7 @@ private fun MainMenuLayout(
         }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
-            if (small == null) { == MainMenuArrangement.Stacked) {
+            if (small == null) {
                 val top = (constraints.maxHeight - regular.height - gapPx - menuBox.height) / 2
                 regular.place((constraints.maxWidth - regular.width) / 2, top)
                 menuBox.place((constraints.maxWidth - menuBox.width) / 2, top + regular.height + gapPx)
