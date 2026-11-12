@@ -192,7 +192,9 @@ fa-silhouette { display: block; width: 100%; }
 .fa-dialog--compact .fa-dialog__body { margin: var(--space-1) 0 0; font: 500 16px/24px var(--font-text); }
 .fa-dialog--compact .fa-dialog__actions { grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--space-3); margin-top: var(--space-4); }
 .fa-dialog--compact:has(> .fa-dialog__stats) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-4); align-items: center; }
-.fa-dialog--compact:has(> .fa-dialog__stats) .fa-dialog__actions { grid-auto-flow: row; gap: var(--space-2); margin-top: var(--space-3); }
+.fa-dialog__lead { min-width: 0; }
+/* Stacked small buttons each keep a full touch-min row; the room under the face is their gap. */
+.fa-dialog--compact:has(> .fa-dialog__stats) .fa-dialog__actions { grid-auto-flow: row; grid-auto-rows: var(--touch-min); align-items: start; gap: 0; margin-top: var(--space-3); }
 .fa-dialog--compact .fa-dialog__stats { gap: var(--space-1) var(--space-2); margin: 0; }
 .fa-stat--compact { display: flex; align-items: center; gap: var(--space-2); padding: calc(var(--space-2) - var(--line-2)) var(--space-2); text-align: start; }
 .fa-stat--compact fa-aircraft { flex: none; }
@@ -767,11 +769,11 @@ h1,h2,h3,h4,p{margin:0}
       </div>
     </div>
     <dl class="fa-dialog__stats">
-      <div class="fa-stat fa-stat--compact"><fa-aircraft type="light-prop" livery="1" flat size="28"></fa-aircraft><dt>Light prop</dt><dd>12</dd></div>
-      <div class="fa-stat fa-stat--compact"><fa-aircraft type="turboprop" livery="1" flat size="28"></fa-aircraft><dt>Turboprop</dt><dd>9</dd></div>
-      <div class="fa-stat fa-stat--compact"><fa-aircraft type="jet" livery="1" flat size="28"></fa-aircraft><dt>Jet</dt><dd>7</dd></div>
-      <div class="fa-stat fa-stat--compact"><fa-aircraft type="jumbo" livery="1" flat size="28"></fa-aircraft><dt>Jumbo</dt><dd>4</dd></div>
-      <div class="fa-stat fa-stat--compact"><fa-aircraft type="helicopter" livery="1" flat size="28"></fa-aircraft><dt>Helicopter</dt><dd>11</dd></div>
+      <div class="fa-stat fa-stat--compact"><fa-aircraft type="light-prop" flat size="28"></fa-aircraft><dt>Light prop</dt><dd>12</dd></div>
+      <div class="fa-stat fa-stat--compact"><fa-aircraft type="turboprop" flat size="28"></fa-aircraft><dt>Turboprop</dt><dd>9</dd></div>
+      <div class="fa-stat fa-stat--compact"><fa-aircraft type="jet" flat size="28"></fa-aircraft><dt>Jet</dt><dd>7</dd></div>
+      <div class="fa-stat fa-stat--compact"><fa-aircraft type="jumbo" flat size="28"></fa-aircraft><dt>Jumbo</dt><dd>4</dd></div>
+      <div class="fa-stat fa-stat--compact"><fa-aircraft type="helicopter" flat size="28"></fa-aircraft><dt>Helicopter</dt><dd>11</dd></div>
       <div class="fa-stat fa-stat--compact"><dt>Total landed</dt><dd>43</dd></div>
       <div class="fa-stat fa-stat--compact"><dt>Points</dt><dd>12 450</dd></div>
     </dl>

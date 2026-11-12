@@ -209,11 +209,8 @@ private fun CompactStatsDialog(
     ) {
         Column(Modifier.weight(FaDialogDefaults.COMPACT_LEAD_WEIGHT), horizontalAlignment = Alignment.CenterHorizontally) {
             CompactCopy(title, body)
-            Column(
-                Modifier.fillMaxWidth().padding(top = FaDimens.space3),
-                verticalArrangement = Arrangement.spacedBy(FaDimens.space2),
-            ) {
-                // Small buttons keep the full 48dp touch target.
+            // Small buttons keep the full 48dp touch target; the room under each face is their gap.
+            Column(Modifier.fillMaxWidth().padding(top = FaDimens.space3)) {
                 actions.forEach { DialogButton(it, Modifier.fillMaxWidth(), FaButtonSize.Small) }
             }
         }

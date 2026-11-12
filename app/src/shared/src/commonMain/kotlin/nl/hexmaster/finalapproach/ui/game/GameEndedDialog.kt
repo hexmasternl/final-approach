@@ -24,6 +24,7 @@ import nl.hexmaster.finalapproach.ui.components.FaDialogLayout
 import nl.hexmaster.finalapproach.ui.components.LocalFaDialogLayout
 import nl.hexmaster.finalapproach.ui.components.displayName
 import nl.hexmaster.finalapproach.ui.components.faBlock
+import nl.hexmaster.finalapproach.ui.components.formatScore
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.sprites.drawAircraftBody
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
@@ -127,22 +128,17 @@ private fun StatsWell(label: String, value: Int, type: AircraftType?, modifier: 
 private fun CompactStatsWell(label: String, value: Int, type: AircraftType?, modifier: Modifier = Modifier) {
     val colors = FaTheme.colors
     val style = FaTheme.type
+    val shown = formatScore(value)
     Row(
         modifier
-            .semantics(mergeDescendants = true) { contentDescription = "$label $value" }
+            .semantics(mergeDescendants = true) { contentDescription = "$label $shown" }
             .faBlock(
                 fill = colors.surfaceSunken,
                 outline = colors.outline,
                 border = FaDimens.line2,
                 radius = FaDimens.radiusMd,
-                lip = FaShadows.lipSm,
             )
-            .padding(
-                start = FaDimens.space2,
-                top = FaDimens.space2,
-                end = FaDimens.space2,
-                bottom = FaDimens.space2 + FaShadows.lipSm,
-            ),
+            .padding(FaDimens.space2),
         horizontalArrangement = Arrangement.spacedBy(FaDimens.space2),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -151,7 +147,8 @@ private fun CompactStatsWell(label: String, value: Int, type: AircraftType?, mod
                 drawAircraftBody(type, colors.fuselage, Offset(size.width / 2f, size.height / 2f), size.minDimension, 0f, 0f, colors)
             }
         }
-        BasicText(label, Modifier.weight(1f), style = style.label.copy(color = colors.inkMuted))
-        BasicText(value.toString(), style = style.titleSm.copy(color = colors.ink), maxLines = 1)
+        // The label style is written in capitals.
+        BasicText(label.uppercase(), Modifier.weight(1f), style = style.label.copy(color = colors.inkMuted))
+        BasicText(shown, style = style.titleSm.copy(color = colors.ink), maxLines = 1)
     }
 }
