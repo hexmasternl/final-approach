@@ -87,6 +87,12 @@ object LevelDefaults {
     /** Length of the lead-in's Bezier handles, as a fraction of its chord. */
     const val LEAD_IN_HANDLE_FRACTION = 0.4
 
+    /** Seconds an airplane takes after touchdown to change from its flight speed to the landing speed. */
+    const val ROLLOUT_DECELERATION_SECONDS = 1.0
+
+    /** The aircraft type whose flight speed is the landing speed every airplane rolls out at. */
+    val LANDING_SPEED_REFERENCE = AircraftType.LightProp
+
     /** Rollout speed of an airplane, as a fraction of its flight speed. */
     const val ROLLOUT_SPEED_FRACTION = 0.6
 }
