@@ -57,17 +57,45 @@ object AircraftMotion {
         deltaSeconds: Double,
     ): MotionResult {
         if (status.remaining > 0.0) {
-            val spec = specs[aircraft.type]
-            val distance = min(spec.speed * spec.rolloutSpeedFraction * deltaSeconds, status.remaining)
+            val elapsed = status.elapsed + deltaSeconds
+            val rolled = rolloutDistance(aircraft, specs, landing, status.elapsed, elapsed)
+            val distance = min(rolled, status.remaining)
             return MotionResult(
                 aircraft.copy(
                     position = aircraft.position + Angles.direction(status.direction) * distance,
-                    status = status.copy(remaining = status.remaining - distance),
+                    status = status.copy(remaining = status.remaining - distance, elapsed = elapsed),
                 ),
             )
         }
         val faded = status.fadeElapsed + deltaSeconds
         if (faded >= landing.fadeSeconds) return MotionResult(null)
         return MotionResult(aircraft.copy(status = status.copy(fadeElapsed = faded)))
+    }
+
+    /**
+     * The distance rolled between [from] and [to] seconds after touchdown. The speed changes
+     * linearly from the airplane's flight speed to the landing speed (the flight speed of
+     * [LandingConfig.landingSpeedReference]) over [LandingConfig.rolloutDecelerationSeconds], then
+     * stays there. The distance is the exact integral, so it does not depend on the step size.
+     */
+    private fun rolloutDistance(
+        aircraft: Aircraft,
+        specs: EffectiveAircraftSpecs,
+        landing: LandingConfig,
+        from: Double,
+        to: Double,
+    ): Double {
+        val flight = specs[aircraft.type].speed
+        val landed = specs[landing.landingSpeedReference].speed
+        val decel = landing.rolloutDecelerationSeconds
+        fun travelled(t: Double): Double =
+            if (decel <= 0.0) {
+                landed * t
+            } else if (t <= decel) {
+                flight * t + (landed - flight) * t * t / (2.0 * decel)
+            } else {
+                (flight + landed) * decel / 2.0 + landed * (t - decel)
+            }
+        return travelled(to) - travelled(from)
     }
 }

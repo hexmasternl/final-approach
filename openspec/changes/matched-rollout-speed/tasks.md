@@ -7,7 +7,7 @@
 
 ## 2. Matched rollout speed
 
-- [ ] 2.1 In `AircraftMotion.rollOut`, compute the distance per step from the linear speed profile in design decision 3 (flight speed at touchdown, landing speed from `specs[landing.landingSpeedReference].speed` after `rolloutDecelerationSeconds`), advance `elapsed`, and clamp to `remaining`; verify with the tests in 2.3.
+- [x] 2.1 In `AircraftMotion.rollOut`, compute the distance per step from the linear speed profile in design decision 3 (flight speed at touchdown, landing speed from `specs[landing.landingSpeedReference].speed` after `rolloutDecelerationSeconds`), advance `elapsed`, and clamp to `remaining`; verify with the tests in 2.3.
 - [ ] 2.2 Remove `AircraftTypeSpec.rolloutSpeedFraction` and `LevelDefaults.ROLLOUT_SPEED_FRACTION`; verify a repository search finds neither name and the build passes.
 - [ ] 2.3 Add `kotlin.test` cases in `AircraftMotionTest`: the light prop rolls out at its own speed throughout; the turboprop, jet and jumbo move at their flight speed at touchdown, at the light prop's speed 1 s after touchdown and after that; a configured turboprop reference changes the landing speed; one large step and many small steps over the same time end at the same position; a rollout that ends within the slowdown fades out as usual. Verify `./gradlew :shared:allTests` passes.
 - [ ] 2.4 Update the airplane rollout rule in `docs/game-design.md` (Landing rules) to the shared landing speed and the 1-second slowdown; verify the doc no longer says "a fraction of its flight speed".
