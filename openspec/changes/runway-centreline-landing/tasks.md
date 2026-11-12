@@ -7,7 +7,7 @@
 
 ## 2. Snap the path to the centre line
 
-- [ ] 2.1 Implement the lead-in builder in `engine` (find J back along the drawn path, touchdown point T, cubic Bezier sampled at `minPointSpacing`, short-path fallback) as a pure function; verify `commonTest` cases: ends on the centre line, last segment along the landing direction, no corner at J, and for every airplane type, entries at the zone centre and both side edges at 0 and plus/minus the full tolerance give no turn tighter than the turning radius
+- [x] 2.1 Implement the lead-in builder in `engine` (find J back along the drawn path, touchdown point T, cubic Bezier sampled at `minPointSpacing`, short-path fallback) as a pure function; verify `commonTest` cases: ends on the centre line, last segment along the landing direction, no corner at J, and for every airplane type, entries at the zone centre and both side edges at 0 and plus/minus the full tolerance give no turn tighter than the turning radius
 - [ ] 2.2 Use it in `PathDrawing.extend` for runway hits only, and pass the airplane's effective turning radius from `GameEngine.extendPath`; update `PathDrawingTest` and `GameEngineTest` expectations that used the raw entry point; verify tests: off-centre entry ends on the centre line, two-way runway uses the entered end, misaligned and mid-runway crossings are not snapped, helipad paths still end at the entry point, a locked path ignores further points
 - [ ] 2.3 Update the landing rule in `docs/game-design.md`, the core rules in `CLAUDE.md` and `.github/copilot-instructions.md`; verify all three say the path is snapped onto the centre line with a lead-in and match the spec
 
