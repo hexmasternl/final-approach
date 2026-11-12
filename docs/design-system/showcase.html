@@ -777,15 +777,18 @@ h1,h2,h3,h4,p{margin:0}
 </div></div>
 </article>
 <article class="sc-comp" id="c-MainMenu">
-  <header><h3>Main Menu</h3><p>A reference composition of the main page: two buttons in front of the animated sky.</p></header>
+  <header><h3>Main Menu</h3><p>A reference composition of the main page: the wordmark and two buttons in front of the animated sky.</p></header>
   <div class="sc-demo sc-demo--screen"><div class="fa-stage" style="position:relative;display:block;width:960px;height:560px;min-height:0;padding:0;overflow:hidden;background:repeating-conic-gradient(from 6deg at 50% 50%, var(--sky-300) 0 9deg, var(--bg-sky) 9deg 18deg)">
   <fa-aircraft type="jet" livery="3" heading="118" size="108" style="position:absolute;left:150px;top:300px"></fa-aircraft>
   <fa-cloud data-loop style="position:absolute;left:96px;top:44px;width:150px"></fa-cloud>
   <fa-cloud data-loop style="position:absolute;left:740px;top:150px;width:110px"></fa-cloud>
   <fa-cloud data-loop style="position:absolute;left:560px;top:420px;width:170px"></fa-cloud>
-  <div style="position:absolute;left:340px;top:186px;display:grid;gap:16px;width:280px">
-    <button class="fa-btn fa-btn--lg fa-btn--block"><fa-icon name="play"></fa-icon>Take off</button>
-    <button class="fa-btn fa-btn--ghost fa-btn--block"><fa-icon name="settings"></fa-icon>Settings</button>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:48px">
+    <h1 class="fa-wordmark" style="margin:0">Final<span>Approach</span></h1>
+    <div style="display:grid;gap:16px;width:280px">
+      <button class="fa-btn fa-btn--lg fa-btn--block"><fa-icon name="play"></fa-icon>Take off</button>
+      <button class="fa-btn fa-btn--ghost fa-btn--block"><fa-icon name="settings"></fa-icon>Settings</button>
+    </div>
   </div>
   <p style="position:absolute;right:16px;bottom:16px;margin:0;font:800 13px/16px var(--font-text);letter-spacing:.08em;color:var(--on-sky-muted)">V 0.1.0</p>
 </div></div>
