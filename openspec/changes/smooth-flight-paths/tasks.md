@@ -10,4 +10,4 @@
 
 - [x] 2.1 Change `PathFollower` to use monotonic progress and a lookahead point; verify a test with a 150° corner never loops and stays within tolerance
 - [x] 2.2 Verify path end continues in last heading and a smoothed path ending on a runway/helipad still lands (tests)
-- [ ] 2.3 Update `docs/game-design.md` with the smoothing and following behavior and verify the doc matches the spec
+- [x] 2.3 Update `docs/game-design.md` with the smoothing and following behavior and verify the doc matches the spec

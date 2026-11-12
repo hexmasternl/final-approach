@@ -31,7 +31,8 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 4. Touching an aircraft removes its old path at once. A tap without a drag leaves it without a path, so it flies straight on in its current heading (cancel); a drag draws the replacement (redraw). An aircraft already cleared to land keeps its locked path.
 
 ## Flight behaviour
-- The aircraft turns towards its path no faster than its turn rate, so fast types fly wide curves and helicopters turn on the spot. Points it cannot turn onto are skipped rather than circled.
+- When the player lifts their finger (or the path enters a landing zone), the drawn path is smoothed for that aircraft's type: finger jitter is removed, corners are cut, and no corner is left tighter than a little more than the type's turning radius (speed / turn rate). A gentle path stays within a few world units of what was drawn; a sharp corner becomes a curve the aircraft can fly. The end of the path stays exactly where it was drawn, so a path ending on a landing zone still lands.
+- The aircraft follows its path strictly: it turns towards a point a short lookahead further along the path, no faster than its turn rate. Progress along the path only moves forward, so it never turns back to a point it has passed and never circles.
 - On path end the aircraft flies straight on in its last heading (no auto-landing, no auto-turn).
 - A path that enters a valid landing zone (runway threshold for airplanes, helipad for helicopters) clears the aircraft to land: the path is cut off at the point where it entered the zone, flashes white once, and takes no more drag points. Score is awarded at touchdown.
 - A path over the wrong zone type, or over the middle of a runway, does nothing; the path continues as drawn.
