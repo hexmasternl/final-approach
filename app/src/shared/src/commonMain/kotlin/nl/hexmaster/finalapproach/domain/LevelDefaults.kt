@@ -92,7 +92,4 @@ object LevelDefaults {
 
     /** The aircraft type whose flight speed is the landing speed every airplane rolls out at. */
     val LANDING_SPEED_REFERENCE = AircraftType.LightProp
-
-    /** Rollout speed of an airplane, as a fraction of its flight speed. */
-    const val ROLLOUT_SPEED_FRACTION = 0.6
 }
