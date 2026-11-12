@@ -58,7 +58,7 @@ class AircraftMotionTest {
         val rolling = states.filter { it.status is AircraftStatus.RollingOut }
         val touchdown = rolling.first().position
         val stopped = rolling.last().position
-        assertTrue(abs(touchdown.x - 320.0) < 1e-6, "touchdown $touchdown")
+        assertTrue(abs(touchdown.x - (320.0 + level.landing.touchdownDistance)) < 1e-6, "touchdown $touchdown")
         assertTrue(abs(stopped.distanceTo(touchdown) - 640.0 * 2.0 / 3.0) < 1e-6, "rolled ${stopped.distanceTo(touchdown)}")
         assertTrue(stopped.x > touchdown.x)
         val fading = rolling.count { (it.status as AircraftStatus.RollingOut).fadeElapsed > 0.0 }

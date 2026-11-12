@@ -17,7 +17,8 @@ object PathDrawing {
 
     /**
      * Adds [point] to the path. When the new segment validly enters a zone, the path ends at the
-     * entry point, is smoothed for the aircraft's type ([specs], [config]), is locked at [time]
+     * entry point and is smoothed for the aircraft's type ([specs], [config]); at a runway its end
+     * is then snapped onto the centre line through a [RunwayLeadIn]. The path is locked at [time]
      * and the aircraft is cleared to land. A locked path, or an aircraft no longer flying freely,
      * ignores further points.
      */
@@ -35,9 +36,20 @@ object PathDrawing {
         val from = points.lastOrNull() ?: aircraft.position
         val hit = LandingRules.check(from, point, aircraft.type.kind, zones, landing.alignmentTolerance)
             ?: return aircraft.copy(path = aircraft.path.copy(points = points + point))
+        val smoothed = smooth(aircraft, points + hit.entryPoint, specs, config)
+        val zone = hit.zone
+        val final = if (zone is LandingZone.Runway) {
+            val spec = specs[aircraft.type]
+            RunwayLeadIn.build(
+                aircraft.position, aircraft.heading, smoothed, zone,
+                spec.speed / spec.turnRate, landing, config.minPointSpacing,
+            )
+        } else {
+            smoothed
+        }
         return aircraft.copy(
-            path = FlightPath(smooth(aircraft, points + hit.entryPoint, specs, config), lockedAt = time),
-            status = AircraftStatus.ClearedToLand(hit.zone),
+            path = FlightPath(final, lockedAt = time),
+            status = AircraftStatus.ClearedToLand(zone),
         )
     }
 
