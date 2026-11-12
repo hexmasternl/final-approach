@@ -2,11 +2,11 @@
 
 ## 1. Design system
 
-- [ ] 1.1 Add the size tokens `dialog-max-width` (400px), `dialog-compact-max-width` and `dialog-compact-breakpoint` to `docs/design-system/tokens.json` with usage notes; verify the file still parses (`node -e "JSON.parse(require('fs').readFileSync('docs/design-system/tokens.json','utf8'))"`)
-- [ ] 1.2 Add `.fa-dialog--compact` (two-pane with stats, button row without) and `.fa-stat--compact` to `bundle.css` and to the inline CSS in `showcase.html`, using only token variables; verify by `grep` that the new rules contain no raw colour, radius or line values
-- [ ] 1.3 Add the paused and game over examples (game over with five type wells, Total landed and Points) in the compact variant to the showcase Dialog section, inside a 640×360 frame with a 50px banner placeholder under the card; verify in a browser that both fit the frame without overflow, Day and Night. If the game over example cannot fit with the levers in design.md, stop and raise it on issue #31
-- [ ] 1.4 Describe the variant and when it applies in `docs/design-system/components/Dialog.md`; verify it names the tokens from 1.1
-- [ ] 1.5 Regenerate the theme with `node docs/design-system/tools/gen-kotlin.cjs`; verify `FaDimens` gains the three values and `git diff` shows no other unexpected generated changes
+- [x] 1.1 Add the size tokens `dialog-max-width` (400px), `dialog-compact-max-width` and `dialog-compact-breakpoint` to `docs/design-system/tokens.json` with usage notes; verify the file still parses (`node -e "JSON.parse(require('fs').readFileSync('docs/design-system/tokens.json','utf8'))"`)
+- [x] 1.2 Add `.fa-dialog--compact` (two-pane with stats, button row without) and `.fa-stat--compact` to `bundle.css` and to the inline CSS in `showcase.html`, using only token variables; verify by `grep` that the new rules contain no raw colour, radius or line values
+- [x] 1.3 Add the paused and game over examples (game over with five type wells, Total landed and Points) in the compact variant to the showcase Dialog section, inside a 640×360 frame with a 50px banner placeholder under the card; verify in a browser that both fit the frame without overflow, Day and Night. If the game over example cannot fit with the levers in design.md, stop and raise it on issue #31
+- [x] 1.4 Describe the variant and when it applies in `docs/design-system/components/Dialog.md`; verify it names the tokens from 1.1
+- [x] 1.5 Regenerate the theme with `node docs/design-system/tools/gen-kotlin.cjs`; verify `FaDimens` gains the three values and `git diff` shows no other unexpected generated changes
 
 ## 2. FaDialog
 

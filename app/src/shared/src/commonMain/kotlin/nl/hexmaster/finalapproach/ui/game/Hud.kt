@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -13,9 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
-import nl.hexmaster.finalapproach.ui.components.FaButton
 import nl.hexmaster.finalapproach.ui.components.FaButtonVariant
 import nl.hexmaster.finalapproach.ui.components.FaDialog
+import nl.hexmaster.finalapproach.ui.components.FaDialogAction
 import nl.hexmaster.finalapproach.ui.components.FaIconButton
 import nl.hexmaster.finalapproach.ui.components.FaScoreCounter
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
@@ -73,9 +72,13 @@ fun hudBottom(topInset: Dp): Dp = topInset + FaDimens.space4 + FaDimens.hudChip 
 /** The options panel: Continue, Restart and Quit over a frozen game. */
 @Composable
 fun OptionsPanel(onContinue: () -> Unit, onRestart: () -> Unit, onQuit: () -> Unit) {
-    FaDialog(HudText.PAUSED_TITLE, HudText.PAUSED_BODY) {
-        FaButton(HudText.CONTINUE, onContinue, Modifier.fillMaxWidth(), FaButtonVariant.Primary)
-        FaButton(HudText.RESTART, onRestart, Modifier.fillMaxWidth(), FaButtonVariant.Secondary, icon = FaIcon.Restart)
-        FaButton(HudText.QUIT, onQuit, Modifier.fillMaxWidth(), FaButtonVariant.Danger)
-    }
+    FaDialog(
+        HudText.PAUSED_TITLE,
+        HudText.PAUSED_BODY,
+        actions = listOf(
+            FaDialogAction(HudText.CONTINUE, onContinue, FaButtonVariant.Primary),
+            FaDialogAction(HudText.RESTART, onRestart, FaButtonVariant.Secondary, FaIcon.Restart),
+            FaDialogAction(HudText.QUIT, onQuit, FaButtonVariant.Danger),
+        ),
+    )
 }
