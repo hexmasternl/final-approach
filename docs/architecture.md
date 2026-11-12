@@ -74,7 +74,7 @@ The splash page (`ui/splash`) is a pure function of time: `SplashTimeline.frameA
 The main page backdrop (rotating stripes, drifting clouds, one passing aircraft at a time) is advanced by `MenuBackdropSimulation`, a pure class that is unit tested and separate from the game engine. `MenuBackdrop` only draws its state. All its timings live in `MenuBackdropConfig`.
 
 ## Theme
-`ui/theme` holds the design system as Kotlin: `FaColors` (Day and Night), `FaTypography`, `FaDimens`, `FaShadows`, `FaMotion` and `FaOpacity`, plus sprite and icon path data in `ui/sprites`. These files are generated from the design-system tokens and carry a header saying so; change the design system first, then regenerate.
+`ui/theme` holds the design system as Kotlin: `FaColors` (Day, Night and Dawn), `FaLights`, `FaTypography`, `FaDimens`, `FaShadows`, `FaMotion` and `FaOpacity`, plus sprite and icon path data in `ui/sprites`. These files are generated from the design-system tokens and carry a header saying so; change the design system first, then regenerate.
 
 ## Build
 Run from `app/src`:

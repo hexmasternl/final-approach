@@ -4,7 +4,7 @@ The game renders with Compose Multiplatform. The HTML and CSS in this system are
 
 ## Mapping tokens to the theme
 
-- Colours: one `FaColors` data class with a property per colour token, in camelCase (`grass500`, `onAccent`, `path1`). Provide `DayColors` and `NightColors` and expose them through a `CompositionLocal`.
+- Colours: one `FaColors` data class with a property per colour token, in camelCase (`grass500`, `onAccent`, `path1`). Provide `DayColors`, `NightColors` and `DawnColors` and expose them through a `CompositionLocal`. The `sunset-` tokens go into `SunsetColors` and the `light-` tokens into `FaLights`, together with `light-max-opacity` and the light cycles in seconds; neither is part of `FaColors`.
 - Type: load `DynaPuff` and `Inconsolata` from the font files in `fonts/` as Compose resources. One `TextStyle` per type style, named as here (`displayLg`, `buttonLabel`, `callsign`).
 - Dimensions: `FaDimens` with spacing, radius, line, size and path values in `dp`. Sprite sizes are `dp` at 1x viewport scale and multiply by the world-to-screen factor.
 - Motion: durations in milliseconds and easings as `CubicBezierEasing` with the four numbers from the `easing` tokens.

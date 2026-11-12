@@ -16,6 +16,9 @@ object FaMotion {
     const val durSwayMs = 2400
     const val durDriftMs = 48000
     const val durRingSpinMs = 4000
+    const val durLightMinMs = 500
+    const val durBeaconMs = 1600
+    const val durRunningLightMs = 1200
 
     val easeBounce = CubicBezierEasing(0.34f, 1.56f, 0.64f, 1f)
     val easeSnap = CubicBezierEasing(0.2f, 0.9f, 0.3f, 1f)

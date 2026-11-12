@@ -53,4 +53,6 @@ object FaDimens {
     val spriteLightPropSide = 116.dp
     val towLine = 44.dp
     val warnRingMargin = 10.dp
+    val levelTile = 168.dp
+    val levelTileArt = 120.dp
 }
