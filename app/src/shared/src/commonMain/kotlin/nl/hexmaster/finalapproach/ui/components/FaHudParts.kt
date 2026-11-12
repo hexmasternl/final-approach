@@ -38,6 +38,9 @@ object HudConfig {
     /** The score value grows to this factor of its size when it rises, then returns. */
     const val SCORE_POP_SCALE = 1.15f
 
+    /** The share of `dur-pop` the score value spends growing; the rest it spends settling back. */
+    const val SCORE_POP_RISE_SHARE = 0.5f
+
     /** The aircraft thumbnail of a spawn counter is drawn at this fraction of the icon size. */
     const val COUNTER_SPRITE_FRACTION = 1f
 }
@@ -71,8 +74,9 @@ fun FaStatChip(label: String, value: Int, modifier: Modifier = Modifier, popOnRi
     val reduceMotion = FaTheme.reduceMotion
     LaunchedEffect(value) {
         if (popOnRise && !reduceMotion && value > shown) {
-            scale.animateTo(HudConfig.SCORE_POP_SCALE, tween(FaMotion.durPopMs / 2, easing = FaMotion.easeSnap))
-            scale.animateTo(1f, tween(FaMotion.durPopMs / 2, easing = FaMotion.easeBounce))
+            val riseMs = (FaMotion.durPopMs * HudConfig.SCORE_POP_RISE_SHARE).toInt()
+            scale.animateTo(HudConfig.SCORE_POP_SCALE, tween(riseMs, easing = FaMotion.easeSnap))
+            scale.animateTo(1f, tween(FaMotion.durPopMs - riseMs, easing = FaMotion.easeBounce))
         }
         shown = value
     }

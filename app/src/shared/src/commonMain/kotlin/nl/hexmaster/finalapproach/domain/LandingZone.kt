@@ -25,6 +25,18 @@ sealed interface LandingZone {
         val rolloutDistance: Double,
     ) : LandingZone {
         override val accepts: AircraftKind get() = AircraftKind.Airplane
+
+        /** The unit vector along the centre line in the landing direction. */
+        val along: Vec2 get() = Angles.direction(direction)
+
+        /** Where the runway begins for this landing direction, on the centre line. */
+        val threshold: Vec2 get() = area.center - along * (area.length / 2.0)
+
+        /** The point on the centre line [distance] past the threshold. */
+        fun centreLinePoint(distance: Double): Vec2 = threshold + along * distance
+
+        /** How far past the threshold [point] lies, measured along the centre line. */
+        fun distanceAlong(point: Vec2): Double = (point - threshold) dot along
     }
 }
 

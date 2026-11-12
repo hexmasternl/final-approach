@@ -78,6 +78,18 @@ object LevelDefaults {
     /** How long a rolled-out airplane takes to fade away, in seconds. */
     const val LANDED_FADE_SECONDS = 0.5
 
-    /** Rollout speed of an airplane, as a fraction of its flight speed. */
-    const val ROLLOUT_SPEED_FRACTION = 0.6
+    /** Distance from the threshold to the touchdown point on the centre line, in world units. */
+    const val TOUCHDOWN_DISTANCE = 40.0
+
+    /** How far back along the drawn path the runway lead-in starts, in turning radii. */
+    const val LEAD_IN_TURNING_RADII = 2.0
+
+    /** Length of the lead-in's Bezier handles, as a fraction of its chord. */
+    const val LEAD_IN_HANDLE_FRACTION = 0.4
+
+    /** Seconds an airplane takes after touchdown to change from its flight speed to the landing speed. */
+    const val ROLLOUT_DECELERATION_SECONDS = 1.0
+
+    /** The aircraft type whose flight speed is the landing speed every airplane rolls out at. */
+    val LANDING_SPEED_REFERENCE = AircraftType.LightProp
 }

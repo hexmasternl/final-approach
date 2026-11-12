@@ -83,9 +83,31 @@ class CollisionsTest {
 
     @Test
     fun rollingOutAircraftCollide() {
-        val rolling = jet(1, 100.0, heading = PI / 2).copy(status = AircraftStatus.RollingOut(PI / 2, 100.0))
-        val other = jet(2, 150.0, heading = -PI / 2).copy(status = AircraftStatus.RollingOut(-PI / 2, 100.0))
+        val rolling = jet(1, 100.0, heading = PI / 2).copy(status = AircraftStatus.RollingOut(PI / 2, 100.0, "r"))
+        val other = jet(2, 150.0, heading = -PI / 2).copy(status = AircraftStatus.RollingOut(-PI / 2, 100.0, "r"))
         assertEquals(listOf(1 to 2), Collisions.find(listOf(rolling, other), specs))
+    }
+
+    private fun rolling(id: Int, x: Double, direction: Double, runway: String = "r", fade: Double = 0.0) =
+        jet(id, x, heading = direction).copy(
+            altitude = AltitudeState.Landed,
+            status = AircraftStatus.RollingOut(direction, if (fade > 0.0) 0.0 else 100.0, runway, fadeElapsed = fade),
+        )
+
+    @Test
+    fun sameRunwaySameDirectionRolloutsDoNotCollide() {
+        assertTrue(Collisions.find(listOf(rolling(1, 100.0, PI / 2), rolling(2, 120.0, PI / 2)), specs).isEmpty())
+        assertTrue(Collisions.find(listOf(rolling(1, 100.0, PI / 2), rolling(2, 120.0, PI / 2 + 0.05, fade = 0.2)), specs).isEmpty())
+    }
+
+    @Test
+    fun sameRunwayOppositeDirectionRolloutsCollide() {
+        assertEquals(listOf(1 to 2), Collisions.find(listOf(rolling(1, 100.0, PI / 2), rolling(2, 120.0, -PI / 2)), specs))
+    }
+
+    @Test
+    fun rolloutsOnDifferentRunwaysCollide() {
+        assertEquals(listOf(1 to 2), Collisions.find(listOf(rolling(1, 100.0, PI / 2), rolling(2, 120.0, PI / 2, runway = "s")), specs))
     }
 
     @Test

@@ -34,6 +34,7 @@ import nl.hexmaster.finalapproach.engine.BestScore
 import nl.hexmaster.finalapproach.engine.GameEngine
 import nl.hexmaster.finalapproach.engine.GameState
 import nl.hexmaster.finalapproach.engine.GameStatus
+import nl.hexmaster.finalapproach.input.PathGesture
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.ui.BackHandler
@@ -155,36 +156,29 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
             .fillMaxSize()
             .onSizeChanged { screen = it }
             .pointerInput(engine) {
+                val gesture = PathGesture(engine)
                 awaitEachGesture {
                     val down = awaitFirstDown()
                     val view = currentViewport
                     val pickRadius = view.toWorldLength(FaDimens.touchAircraft.toPx().toDouble())
-                    val id = engine.select(view.worldOf(down.position), pickRadius)
-                        ?: return@awaitEachGesture
+                    if (!gesture.down(view.worldOf(down.position), pickRadius)) return@awaitEachGesture
                     down.consume()
-                    var drawing = false
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                        if (!change.pressed) break
-                        if (!drawing && (change.position - down.position).getDistance() > viewConfiguration.touchSlop) {
-                            drawing = true
-                            engine.beginPath(id)
+                    try {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                            if (!change.pressed) break
+                            val pastSlop = (change.position - down.position).getDistance() > viewConfiguration.touchSlop
+                            gesture.move(currentViewport.worldOf(change.position), pastSlop)
+                            change.consume()
                         }
-                        if (drawing) engine.extendPath(id, currentViewport.worldOf(change.position))
-                        change.consume()
+                    } finally {
+                        gesture.up()
                     }
-                    if (drawing) engine.endPath(id)
                 }
             },
     ) {
-        drawLevelGround(level, viewport, colors)
-        val (ground, buildings) = level.scenery.partition { it.isGround }
-        ground.forEach { drawScenery(it, viewport, colors) }
-        level.runways.forEach { drawRunway(it, viewport, colors, measurer, numberStyle) }
-        level.helipads.forEach { drawHelipad(it, viewport, colors, measurer, letterStyle) }
-        buildings.forEach { drawScenery(it, viewport, colors) }
-        drawAmbient(level, ambient, viewport, colors)
+        drawField(level, ambient, viewport, colors, measurer, numberStyle, letterStyle)
         drawPaths(state, viewport, colors, reduceMotion)
         drawAircraft(state, engine, viewport, colors, reduceMotion, ambient.lightOpacity.takeIf { level.theme == LevelTheme.Dawn })
         drawSelection(state, engine, viewport, colors)

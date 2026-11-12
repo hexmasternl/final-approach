@@ -50,4 +50,22 @@ class LandingZonesTest {
         assertEquals(30.0, zones.first { it.id == "b" }.area.radius)
         assertEquals(Vec2(1110.0, 200.0), zones.first { it.id == "a" }.area.center)
     }
+
+    @Test
+    fun oneWayRunwayCentreLineStartsAtItsThreshold() {
+        val zone = LandingZones.of(level(RunwayMode.OneWay(east))).filterIsInstance<LandingZone.Runway>().single()
+        assertTrue(zone.threshold.distanceTo(Vec2(320.0, 400.0)) < 1e-9, "${zone.threshold}")
+        assertTrue(zone.centreLinePoint(40.0).distanceTo(Vec2(360.0, 400.0)) < 1e-9)
+        assertTrue(near(zone.distanceAlong(Vec2(400.0, 430.0)), 80.0))
+    }
+
+    @Test
+    fun twoWayRunwayCentreLinesRunFromEachEnd() {
+        val zones = LandingZones.of(level(RunwayMode.TwoWay)).filterIsInstance<LandingZone.Runway>()
+        val eastbound = zones.first { abs(Angles.difference(it.direction, east)) < 1e-9 }
+        val westbound = zones.first { it !== eastbound }
+        assertTrue(eastbound.threshold.distanceTo(Vec2(320.0, 400.0)) < 1e-9, "${eastbound.threshold}")
+        assertTrue(westbound.threshold.distanceTo(Vec2(960.0, 400.0)) < 1e-9, "${westbound.threshold}")
+        assertTrue(westbound.centreLinePoint(40.0).distanceTo(Vec2(920.0, 400.0)) < 1e-9)
+    }
 }

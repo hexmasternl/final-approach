@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import nl.hexmaster.finalapproach.domain.LevelConfig
 import nl.hexmaster.finalapproach.domain.LevelScenery
 import nl.hexmaster.finalapproach.domain.LevelTheme
@@ -44,11 +43,6 @@ private object LevelSelectText {
 }
 
 private object LevelSelectDefaults {
-    /** Side of a square level tile. */
-    val tile = 168.dp
-
-    /** Side of the miniature inside a tile. */
-    val miniature = 120.dp
     const val DAWN_ALPHA = 0.35f
     const val RUNWAY_STROKE_FRACTION = 0.7f
 }
@@ -87,19 +81,19 @@ fun LevelSelectPage(
 }
 
 @Composable
-private fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
+internal fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
     val colors = FaTheme.colors
     val type = FaTheme.type
     Column(
         Modifier
-            .size(LevelSelectDefaults.tile)
+            .size(FaDimens.levelTile)
             .faBlock(colors.surface, colors.outline, FaDimens.line3, FaDimens.radiusLg, FaShadows.lipLg)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(FaDimens.space3),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Canvas(Modifier.size(LevelSelectDefaults.miniature)) { drawLevelMiniature(level, colors) }
+        Canvas(Modifier.size(FaDimens.levelTileArt)) { drawLevelMiniature(level, colors) }
         BasicText(level.name, style = type.titleSm.copy(color = colors.ink, textAlign = TextAlign.Center))
     }
 }

@@ -1,15 +1,19 @@
 package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.Aircraft
+import nl.hexmaster.finalapproach.domain.AircraftKind
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
+import nl.hexmaster.finalapproach.domain.LandingConfig
+import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.roundToInt
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -51,6 +55,19 @@ class AircraftMotionTest {
     }
 
     @Test
+    fun anOffCentreLandingTouchesDownAndRollsOutOnTheCentreLine() {
+        AircraftType.entries.filter { it.kind == AircraftKind.Airplane }.forEach { type ->
+            val plane = cleared(type, Vec2(-400.0, 440.0), PI / 2, Vec2(0.0, 440.0), Vec2(400.0, 440.0))
+            val zone = assertIs<LandingZone.Runway>(assertIs<AircraftStatus.ClearedToLand>(plane.status).zone)
+            val rolling = runOut(plane).first.filter { it.status is AircraftStatus.RollingOut }
+            val touchdown = rolling.first().position
+            val along = zone.distanceAlong(touchdown)
+            assertTrue(along >= 0.0 && along <= zone.area.length, "$type touched down $along past the threshold")
+            rolling.forEach { assertTrue(abs(it.position.y - 400.0) < 1e-6, "$type rolled at ${it.position}") }
+        }
+    }
+
+    @Test
     fun airplaneRollsTwoThirdsOfTheRunwayThenFadesAndIsRemoved() {
         val plane = cleared(AircraftType.Jet, Vec2(150.0, 400.0), PI / 2, Vec2(400.0, 400.0))
         val (states, events) = runOut(plane)
@@ -58,7 +75,7 @@ class AircraftMotionTest {
         val rolling = states.filter { it.status is AircraftStatus.RollingOut }
         val touchdown = rolling.first().position
         val stopped = rolling.last().position
-        assertTrue(abs(touchdown.x - 320.0) < 1e-6, "touchdown $touchdown")
+        assertTrue(abs(touchdown.x - (320.0 + level.landing.touchdownDistance)) < 1e-6, "touchdown $touchdown")
         assertTrue(abs(stopped.distanceTo(touchdown) - 640.0 * 2.0 / 3.0) < 1e-6, "rolled ${stopped.distanceTo(touchdown)}")
         assertTrue(stopped.x > touchdown.x)
         val fading = rolling.count { (it.status as AircraftStatus.RollingOut).fadeElapsed > 0.0 }
@@ -96,5 +113,68 @@ class AircraftMotionTest {
     fun removedAircraftAreNotInTheCollisionCheck() {
         val a = Aircraft(1, AircraftType.Jet, Vec2(100.0, 100.0), 0.0)
         assertNull(Collisions.find(listOf(a), specs).firstOrNull())
+    }
+
+    private fun touchedDown(type: AircraftType, remaining: Double = 10_000.0): Aircraft =
+        Aircraft(1, type, Vec2(0.0, 0.0), PI / 2, status = AircraftStatus.RollingOut(PI / 2, remaining, "r"))
+
+    /** The speed of [aircraft] over a tiny step, and the aircraft after it. */
+    private fun speedAt(aircraft: Aircraft, landing: LandingConfig = level.landing): Double {
+        val tiny = 1e-4
+        val next = assertNotNull(AircraftMotion.step(aircraft, specs, landing, tiny).aircraft)
+        return next.position.distanceTo(aircraft.position) / tiny
+    }
+
+    /** Rolls [aircraft] for [seconds] in steps of [step]. */
+    private fun roll(aircraft: Aircraft, seconds: Double, step: Double, landing: LandingConfig = level.landing): Aircraft =
+        (1..(seconds / step).roundToInt()).fold(aircraft) { a, _ ->
+            assertNotNull(AircraftMotion.step(a, specs, landing, step).aircraft)
+        }
+
+    @Test
+    fun theLightPropRollsOutAtItsFlightSpeed() {
+        val prop = touchedDown(AircraftType.LightProp)
+        val speed = specs[AircraftType.LightProp].speed
+        assertEquals(speed, speedAt(prop), 1e-3)
+        assertEquals(speed, speedAt(roll(prop, 0.5, dt)), 1e-3)
+        assertEquals(speed, speedAt(roll(prop, 2.0, dt)), 1e-3)
+    }
+
+    @Test
+    fun fasterAirplanesSlowDownToTheLightPropSpeedWithinTheDecelerationTime() {
+        val landed = specs[AircraftType.LightProp].speed
+        listOf(AircraftType.Turboprop, AircraftType.Jet, AircraftType.Jumbo).forEach { type ->
+            val plane = touchedDown(type)
+            assertEquals(specs[type].speed, speedAt(plane), 0.1, "$type at touchdown")
+            val half = speedAt(roll(plane, level.landing.rolloutDecelerationSeconds / 2.0, dt))
+            assertTrue(half < specs[type].speed && half > landed, "$type halfway at $half")
+            assertEquals(landed, speedAt(roll(plane, level.landing.rolloutDecelerationSeconds, dt)), 1e-3, "$type after the slowdown")
+            assertEquals(landed, speedAt(roll(plane, 3.0, dt)), 1e-3, "$type later")
+        }
+    }
+
+    @Test
+    fun theLandingSpeedFollowsTheConfiguredReferenceType() {
+        val landing = level.landing.copy(landingSpeedReference = AircraftType.Turboprop)
+        val jet = roll(touchedDown(AircraftType.Jet), 2.0, dt, landing)
+        assertEquals(specs[AircraftType.Turboprop].speed, speedAt(jet, landing), 1e-3)
+    }
+
+    @Test
+    fun theRolledDistanceDoesNotDependOnTheStepSize() {
+        val jumbo = touchedDown(AircraftType.Jumbo)
+        val big = assertNotNull(AircraftMotion.step(jumbo, specs, level.landing, 1.5).aircraft)
+        val small = roll(jumbo, 1.5, 0.01)
+        assertTrue(big.position.distanceTo(small.position) < 1e-6, "${big.position} vs ${small.position}")
+    }
+
+    @Test
+    fun aRolloutThatEndsDuringTheSlowdownStillFadesOut() {
+        val (states, events) = runOut(touchedDown(AircraftType.Jumbo, remaining = 30.0))
+        assertTrue(events.isEmpty())
+        val last = assertIs<AircraftStatus.RollingOut>(states.last().status)
+        assertEquals(0.0, last.remaining)
+        assertTrue(last.elapsed < level.landing.rolloutDecelerationSeconds)
+        assertTrue(states.any { (it.status as AircraftStatus.RollingOut).fadeElapsed > 0.0 })
     }
 }
