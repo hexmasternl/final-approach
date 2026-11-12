@@ -44,7 +44,7 @@ object AircraftMotion {
             position = touchdown,
             heading = zone.direction,
             altitude = AltitudeState.Landed,
-            status = AircraftStatus.RollingOut(zone.direction, zone.rolloutDistance),
+            status = AircraftStatus.RollingOut(zone.direction, zone.rolloutDistance, zone.runwayId),
         )
         return MotionResult(rolling, listOf(landed))
     }

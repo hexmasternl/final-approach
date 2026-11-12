@@ -3,7 +3,7 @@
 ## 1. Config and state
 
 - [x] 1.1 Add `ROLLOUT_DECELERATION_SECONDS = 1.0` and `LANDING_SPEED_REFERENCE = AircraftType.LightProp` to `LevelDefaults`, and `rolloutDecelerationSeconds` and `landingSpeedReference` to `LandingConfig` with those defaults and KDoc; verify `./gradlew :shared:allTests` compiles and passes.
-- [ ] 1.2 Add `runwayId: String` and `elapsed: Double = 0.0` to `AircraftStatus.RollingOut`, fill `runwayId` in `AircraftMotion.approach` from the runway zone, and update test fixtures that build `RollingOut`; verify `./gradlew :shared:allTests` passes.
+- [x] 1.2 Add `runwayId: String` and `elapsed: Double = 0.0` to `AircraftStatus.RollingOut`, fill `runwayId` in `AircraftMotion.approach` from the runway zone, and update test fixtures that build `RollingOut`; verify `./gradlew :shared:allTests` passes.
 
 ## 2. Matched rollout speed
 

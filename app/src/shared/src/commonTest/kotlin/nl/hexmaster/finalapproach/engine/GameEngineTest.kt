@@ -247,7 +247,7 @@ class GameEngineTest {
         val engine = GameEngine(quiet, seed = 1)
         val rolling = jet(1, Vec2(300.0, 300.0)).copy(
             altitude = AltitudeState.Landed,
-            status = AircraftStatus.RollingOut(0.0, 500.0),
+            status = AircraftStatus.RollingOut(0.0, 500.0, "r"),
         )
         engine.place(listOf(rolling, jet(2, Vec2(300.0, 300.0))))
         engine.update(dt)
@@ -283,11 +283,11 @@ class GameEngineTest {
         val engine = GameEngine(quiet, seed = 1)
         val east = jet(1, Vec2(600.0, 400.0), PI / 2).copy(
             altitude = AltitudeState.Landed,
-            status = AircraftStatus.RollingOut(PI / 2, 500.0),
+            status = AircraftStatus.RollingOut(PI / 2, 500.0, "r"),
         )
         val west = jet(2, Vec2(680.0, 400.0), -PI / 2).copy(
             altitude = AltitudeState.Landed,
-            status = AircraftStatus.RollingOut(-PI / 2, 500.0),
+            status = AircraftStatus.RollingOut(-PI / 2, 500.0, "r"),
         )
         engine.place(listOf(east, west))
         engine.run(2.0)

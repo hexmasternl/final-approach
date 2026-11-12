@@ -83,8 +83,8 @@ class CollisionsTest {
 
     @Test
     fun rollingOutAircraftCollide() {
-        val rolling = jet(1, 100.0, heading = PI / 2).copy(status = AircraftStatus.RollingOut(PI / 2, 100.0))
-        val other = jet(2, 150.0, heading = -PI / 2).copy(status = AircraftStatus.RollingOut(-PI / 2, 100.0))
+        val rolling = jet(1, 100.0, heading = PI / 2).copy(status = AircraftStatus.RollingOut(PI / 2, 100.0, "r"))
+        val other = jet(2, 150.0, heading = -PI / 2).copy(status = AircraftStatus.RollingOut(-PI / 2, 100.0, "r"))
         assertEquals(listOf(1 to 2), Collisions.find(listOf(rolling, other), specs))
     }
 
