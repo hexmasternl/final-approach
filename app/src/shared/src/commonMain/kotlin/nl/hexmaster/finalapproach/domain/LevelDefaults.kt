@@ -8,8 +8,11 @@ object LevelDefaults {
     /** The default set of aircraft a runway accepts: every airplane. */
     val ALL_AIRPLANES: Set<AircraftType> = AircraftType.entries.filter { it.kind == AircraftKind.Airplane }.toSet()
 
-    /** The height at the top of the world kept clear of zones for the HUD, in world units. */
-    const val HUD_BAND = 140.0
+    /**
+     * The height at the top of the world kept clear of zones for the HUD, in world units. Covers
+     * the HUD on the smallest supported phone, which `HudFitTest` checks.
+     */
+    const val HUD_BAND = 160.0
 
     /**
      * Closest a new aircraft may spawn to any other aircraft, centre to centre, in world units.
