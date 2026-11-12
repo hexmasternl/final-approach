@@ -102,7 +102,10 @@ data class HelipadConfig(
 /**
  * How landings work in a level. Zones are invisible; [alignmentTolerance] is in radians,
  * [rolloutFraction] is a fraction of the runway length, [fadeSeconds] is how long a landed
- * airplane takes to fade out.
+ * airplane takes to fade out. A runway path is snapped onto the centre line: it touches down
+ * [touchdownDistance] past the threshold, through a lead-in that starts [leadInTurningRadii]
+ * turning radii back along the drawn path, with Bezier handles of [leadInHandleFraction] of the
+ * lead-in's chord.
  */
 data class LandingConfig(
     val helipadZoneRadius: Double = LevelDefaults.HELIPAD_ZONE_RADIUS,
@@ -111,6 +114,9 @@ data class LandingConfig(
     val alignmentTolerance: Double = LevelDefaults.LANDING_TOLERANCE,
     val rolloutFraction: Double = LevelDefaults.ROLLOUT_FRACTION,
     val fadeSeconds: Double = LevelDefaults.LANDED_FADE_SECONDS,
+    val touchdownDistance: Double = LevelDefaults.TOUCHDOWN_DISTANCE,
+    val leadInTurningRadii: Double = LevelDefaults.LEAD_IN_TURNING_RADII,
+    val leadInHandleFraction: Double = LevelDefaults.LEAD_IN_HANDLE_FRACTION,
 )
 
 /**

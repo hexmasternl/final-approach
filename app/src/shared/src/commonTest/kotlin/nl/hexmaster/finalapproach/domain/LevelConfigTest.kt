@@ -33,6 +33,14 @@ class LevelConfigTest {
     }
 
     @Test
+    fun landingConfigDefaultsToTheCentreLineValues() {
+        val landing = LandingConfig()
+        assertEquals(40.0, landing.touchdownDistance)
+        assertEquals(2.0, landing.leadInTurningRadii)
+        assertEquals(0.4, landing.leadInHandleFraction)
+    }
+
+    @Test
     fun overriddenSeparationApplies() {
         val config = minimal().copy(world = WorldConfig(1000.0, 600.0, spawnSeparation = 120.0))
         assertEquals(120.0, config.world.spawnSeparation)

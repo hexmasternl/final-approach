@@ -2,7 +2,7 @@
 
 ## 1. Config and domain
 
-- [ ] 1.1 Add `touchdownDistance`, `leadInTurningRadii` and `leadInHandleFraction` to `LandingConfig`, with constants in `LevelDefaults` (40.0, 2.0, 0.4); verify a `LevelConfigTest` case checks the defaults and no new literal appears in engine code
+- [x] 1.1 Add `touchdownDistance`, `leadInTurningRadii` and `leadInHandleFraction` to `LandingConfig`, with constants in `LevelDefaults` (40.0, 2.0, 0.4); verify a `LevelConfigTest` case checks the defaults and no new literal appears in engine code
 - [ ] 1.2 Add a derived `threshold` and a centre-line point helper to `LandingZone.Runway`; verify `LandingZonesTest` cases for a one-way runway and both ends of a two-way runway
 
 ## 2. Snap the path to the centre line
