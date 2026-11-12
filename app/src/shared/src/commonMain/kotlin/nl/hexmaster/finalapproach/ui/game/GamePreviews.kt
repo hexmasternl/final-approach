@@ -11,13 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
-import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.LevelConfig
 import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.input.WorldViewport
-import nl.hexmaster.finalapproach.ui.components.FaStatChip
+import nl.hexmaster.finalapproach.ui.components.FaScoreCounter
 import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
+import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
@@ -25,14 +25,12 @@ import nl.hexmaster.finalapproach.ui.theme.FaTheme
 private object PreviewData {
     const val BEST = 240
     const val SCORE = 130
+    const val BEST_LARGE = 18_720
+    const val SCORE_LARGE = 12_450
     const val AMBIENT_SECONDS = 40.0
     const val AMBIENT_STEP = 0.05
     const val PHONE_WIDTH = 800
     const val PHONE_HEIGHT = 380
-
-    /** Spawn counts that differ per type, so every counter shows its own number. */
-    fun spawned(types: List<AircraftType>): Map<AircraftType, Int> =
-        types.mapIndexed { index, type -> type to index + 2 }.toMap()
 }
 
 /** A level's field as the game draws it, with ambient life that has run for a while. */
@@ -76,8 +74,6 @@ private fun HudPreview(level: LevelConfig) {
             Hud(
                 best = PreviewData.BEST,
                 score = PreviewData.SCORE,
-                types = level.spawnedTypes,
-                spawned = PreviewData.spawned(level.spawnedTypes),
                 onOptions = {},
             )
         }
@@ -92,12 +88,15 @@ private fun MeadowHudPreview() = HudPreview(Levels.meadowField)
 @Composable
 private fun SavannaHudPreview() = HudPreview(Levels.savannaDawn)
 
-/** The score chip; switch to interactive mode and change the score to see the pop. */
+/** The score chips; switch to interactive mode and change the score to see the pop. */
 @Preview
 @Composable
 private fun ScoreChipPreview() {
     FaTheme {
-        Box(Modifier.padding(FaDimens.space4)) { FaStatChip(HudText.SCORE, PreviewData.SCORE, popOnRise = true) }
+        Row(Modifier.padding(FaDimens.space4), horizontalArrangement = Arrangement.spacedBy(FaDimens.space3)) {
+            FaScoreCounter(HudText.BEST, PreviewData.BEST_LARGE, compact = true, icon = FaIcon.Star, iconColor = FaTheme.colors.sunDeep)
+            FaScoreCounter(HudText.SCORE, PreviewData.SCORE_LARGE, popOnRise = true)
+        }
     }
 }
 

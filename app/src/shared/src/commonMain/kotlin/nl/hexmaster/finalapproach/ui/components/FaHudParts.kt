@@ -2,14 +2,13 @@ package nl.hexmaster.finalapproach.ui.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
@@ -20,14 +19,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
-import nl.hexmaster.finalapproach.ui.sprites.drawAircraftBody
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaMotion
 import nl.hexmaster.finalapproach.ui.theme.FaShadows
@@ -40,9 +38,6 @@ object HudConfig {
 
     /** The share of `dur-pop` the score value spends growing; the rest it spends settling back. */
     const val SCORE_POP_RISE_SHARE = 0.5f
-
-    /** The aircraft thumbnail of a spawn counter is drawn at this fraction of the icon size. */
-    const val COUNTER_SPRITE_FRACTION = 1f
 }
 
 /** The outlined chip face every HUD item stands on. */
@@ -58,15 +53,24 @@ private fun Modifier.hudChipFace(): Modifier {
             radius = FaDimens.radiusMd,
             lip = FaShadows.lipSm,
         )
-        .padding(start = FaDimens.space3, end = FaDimens.space3, bottom = FaShadows.lipSm)
+        .padding(start = FaDimens.space4, end = FaDimens.space4, bottom = FaShadows.lipSm)
 }
 
 /**
- * A HUD chip with a [label] and a [value]. The value pops when it rises, unless the device asks
- * for reduced motion.
+ * The Score Counter: a HUD chip with an optional leading [icon] and the [label] above the
+ * [value]. [compact] shows the value in the smaller `score-compact` style, as for Best. The value
+ * pops when it rises if [popOnRise] is set, unless the device asks for reduced motion.
  */
 @Composable
-fun FaStatChip(label: String, value: Int, modifier: Modifier = Modifier, popOnRise: Boolean = false) {
+fun FaScoreCounter(
+    label: String,
+    value: Int,
+    modifier: Modifier = Modifier,
+    compact: Boolean = false,
+    icon: FaIcon? = null,
+    iconColor: Color = FaTheme.colors.ink,
+    popOnRise: Boolean = false,
+) {
     val colors = FaTheme.colors
     val type = FaTheme.type
     val scale = remember { Animatable(1f) }
@@ -84,45 +88,21 @@ fun FaStatChip(label: String, value: Int, modifier: Modifier = Modifier, popOnRi
         modifier
             .hudChipFace()
             .semantics(mergeDescendants = true) { contentDescription = "$label $value" },
-        horizontalArrangement = Arrangement.spacedBy(FaDimens.space2),
+        horizontalArrangement = Arrangement.spacedBy(FaDimens.space3),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        BasicText(label, style = type.label.copy(color = colors.inkMuted))
-        BasicText(
-            value.toString(),
-            modifier = Modifier.graphicsLayer {
-                scaleX = scale.value
-                scaleY = scale.value
-            },
-            style = type.titleMd.copy(color = colors.ink),
-        )
-    }
-}
-
-/** A HUD chip showing how many aircraft of [type] spawned: the silhouette and the count. */
-@Composable
-fun FaSpawnCounter(type: AircraftType, count: Int, modifier: Modifier = Modifier) {
-    val colors = FaTheme.colors
-    val textStyle = FaTheme.type.titleMd
-    Row(
-        modifier
-            .hudChipFace()
-            .semantics(mergeDescendants = true) { contentDescription = "${type.displayName} $count" },
-        horizontalArrangement = Arrangement.spacedBy(FaDimens.space2),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Canvas(Modifier.size(FaDimens.iconLg)) {
-            drawAircraftBody(
-                type,
-                colors.fuselage,
-                Offset(size.width / 2f, size.height / 2f),
-                size.minDimension * HudConfig.COUNTER_SPRITE_FRACTION,
-                0f,
-                0f,
-                colors,
+        if (icon != null) FaIconImage(icon, iconColor, FaDimens.iconMd)
+        Column {
+            BasicText(label.uppercase(), style = type.label.copy(color = colors.inkMuted))
+            BasicText(
+                formatScore(value),
+                modifier = Modifier.graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                },
+                style = (if (compact) type.scoreCompact else type.score).copy(color = colors.ink),
             )
         }
-        BasicText(count.toString(), style = textStyle.copy(color = colors.ink))
     }
 }
 

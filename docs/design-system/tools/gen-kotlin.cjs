@@ -326,7 +326,7 @@ fun rememberFaTypography(): FaTypography {
     )
     return remember(display, text) {
         FaTypography(
-${styles.map(s => `            ${camel(s.name)} = TextStyle(fontFamily = ${s.family}, fontWeight = FontWeight(${s.fontWeight}), fontSize = ${sp(s.fontSize)}, lineHeight = ${sp(s.lineHeight)}${s.letterSpacing ? `, letterSpacing = ${parseFloat(s.letterSpacing)}.em` : ''}),`).join('\n')}
+${styles.map(s => `            ${camel(s.name)} = TextStyle(fontFamily = ${s.family}, fontWeight = FontWeight(${s.fontWeight}), fontSize = ${sp(s.fontSize)}, lineHeight = ${sp(s.lineHeight)}${s.letterSpacing ? `, letterSpacing = ${parseFloat(s.letterSpacing)}.em` : ''}${s.fontVariantNumeric === 'tabular-nums' ? ', fontFeatureSettings = "tnum"' : ''}),`).join('\n')}
         )
     }
 }
