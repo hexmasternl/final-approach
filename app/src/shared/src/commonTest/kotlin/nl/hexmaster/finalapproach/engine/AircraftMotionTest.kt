@@ -11,6 +11,7 @@ import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
+import nl.hexmaster.finalapproach.domain.meadow
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.roundToInt
@@ -24,6 +25,7 @@ import kotlin.test.assertTrue
 class AircraftMotionTest {
 
     private val level = Levels.meadowField
+    private val runway = level.runways.single()
     private val zones = LandingZones.of(level)
     private val specs = EffectiveAircraftSpecs.Defaults
     private val dt = 0.05
@@ -47,7 +49,7 @@ class AircraftMotionTest {
 
     @Test
     fun helicopterLandsAtThePathEndAndIsRemoved() {
-        val heli = cleared(AircraftType.Helicopter, Vec2(900.0, 400.0), PI / 2, Vec2(1200.0, 400.0))
+        val heli = cleared(AircraftType.Helicopter, meadow(900.0, 400.0), PI / 2, meadow(1200.0, 400.0))
         assertIs<AircraftStatus.ClearedToLand>(heli.status)
         val (states, events) = runOut(heli)
         assertEquals(listOf(GameEvent.Landed(1, AircraftType.Helicopter)), events)
@@ -57,26 +59,26 @@ class AircraftMotionTest {
     @Test
     fun anOffCentreLandingTouchesDownAndRollsOutOnTheCentreLine() {
         AircraftType.entries.filter { it.kind == AircraftKind.Airplane }.forEach { type ->
-            val plane = cleared(type, Vec2(-400.0, 440.0), PI / 2, Vec2(0.0, 440.0), Vec2(400.0, 440.0))
+            val plane = cleared(type, meadow(-400.0, 440.0), PI / 2, meadow(0.0, 440.0), meadow(400.0, 440.0))
             val zone = assertIs<LandingZone.Runway>(assertIs<AircraftStatus.ClearedToLand>(plane.status).zone)
             val rolling = runOut(plane).first.filter { it.status is AircraftStatus.RollingOut }
             val touchdown = rolling.first().position
             val along = zone.distanceAlong(touchdown)
             assertTrue(along >= 0.0 && along <= zone.area.length, "$type touched down $along past the threshold")
-            rolling.forEach { assertTrue(abs(it.position.y - 400.0) < 1e-6, "$type rolled at ${it.position}") }
+            rolling.forEach { assertTrue(abs(it.position.y - runway.position.y) < 1e-6, "$type rolled at ${it.position}") }
         }
     }
 
     @Test
     fun airplaneRollsTwoThirdsOfTheRunwayThenFadesAndIsRemoved() {
-        val plane = cleared(AircraftType.Jet, Vec2(150.0, 400.0), PI / 2, Vec2(400.0, 400.0))
+        val plane = cleared(AircraftType.Jet, meadow(150.0, 400.0), PI / 2, meadow(400.0, 400.0))
         val (states, events) = runOut(plane)
         assertEquals(listOf(GameEvent.Landed(1, AircraftType.Jet)), events)
         val rolling = states.filter { it.status is AircraftStatus.RollingOut }
         val touchdown = rolling.first().position
         val stopped = rolling.last().position
-        assertTrue(abs(touchdown.x - (320.0 + level.landing.touchdownDistance)) < 1e-6, "touchdown $touchdown")
-        assertTrue(abs(stopped.distanceTo(touchdown) - 640.0 * 2.0 / 3.0) < 1e-6, "rolled ${stopped.distanceTo(touchdown)}")
+        assertTrue(abs(touchdown.x - (runway.position.x - runway.length / 2.0 + level.landing.touchdownDistance)) < 1e-6, "touchdown $touchdown")
+        assertTrue(abs(stopped.distanceTo(touchdown) - runway.length * 2.0 / 3.0) < 1e-6, "rolled ${stopped.distanceTo(touchdown)}")
         assertTrue(stopped.x > touchdown.x)
         val fading = rolling.count { (it.status as AircraftStatus.RollingOut).fadeElapsed > 0.0 }
         assertTrue(fading * dt <= level.landing.fadeSeconds + dt, "fade steps $fading")
@@ -84,8 +86,8 @@ class AircraftMotionTest {
 
     @Test
     fun eachEndRollsOutInItsOwnDirection() {
-        val fromWest = cleared(AircraftType.LightProp, Vec2(150.0, 400.0), PI / 2, Vec2(400.0, 400.0))
-        val fromEast = cleared(AircraftType.LightProp, Vec2(1130.0, 400.0), -PI / 2, Vec2(880.0, 400.0))
+        val fromWest = cleared(AircraftType.LightProp, meadow(150.0, 400.0), PI / 2, meadow(400.0, 400.0))
+        val fromEast = cleared(AircraftType.LightProp, meadow(1130.0, 400.0), -PI / 2, meadow(880.0, 400.0))
         val westRoll = runOut(fromWest).first.first { it.status is AircraftStatus.RollingOut }
         val eastRoll = runOut(fromEast).first.first { it.status is AircraftStatus.RollingOut }
         assertTrue(abs(Angles.difference(westRoll.heading, PI / 2)) < 1e-9)
@@ -94,8 +96,8 @@ class AircraftMotionTest {
 
     @Test
     fun opposingLandingsOnATwoWayRunwayCollideMidRunway() {
-        var west: Aircraft? = cleared(AircraftType.Jet, Vec2(200.0, 400.0), PI / 2, Vec2(400.0, 400.0)).copy(id = 1)
-        var east: Aircraft? = cleared(AircraftType.Jet, Vec2(1080.0, 400.0), -PI / 2, Vec2(880.0, 400.0)).copy(id = 2)
+        var west: Aircraft? = cleared(AircraftType.Jet, meadow(200.0, 400.0), PI / 2, meadow(400.0, 400.0)).copy(id = 1)
+        var east: Aircraft? = cleared(AircraftType.Jet, meadow(1080.0, 400.0), -PI / 2, meadow(880.0, 400.0)).copy(id = 2)
         var collision: List<Pair<Int, Int>> = emptyList()
         repeat(2000) {
             if (collision.isNotEmpty()) return@repeat

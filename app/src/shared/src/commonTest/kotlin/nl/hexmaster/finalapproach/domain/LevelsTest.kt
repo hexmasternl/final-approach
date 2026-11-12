@@ -35,6 +35,21 @@ class LevelsTest {
     @Test
     fun meadowFieldReadsAsASmallAirfield() {
         val kinds = Levels.meadowField.scenery.map { it.kind }.toSet()
-        assertEquals(SceneryKind.entries.toSet(), kinds)
+        val airfield = setOf(
+            SceneryKind.Taxiway, SceneryKind.Apron, SceneryKind.Terminal, SceneryKind.Tower,
+            SceneryKind.Hangar, SceneryKind.Windsock, SceneryKind.Tree,
+        )
+        assertTrue(kinds.containsAll(airfield), "missing ${airfield - kinds}")
+    }
+
+    @Test
+    fun meadowFieldLiesInFarmland() {
+        val kinds = Levels.meadowField.scenery.map { it.kind }.toSet()
+        val surroundings = setOf(
+            SceneryKind.Field, SceneryKind.Hedge, SceneryKind.Fence, SceneryKind.Farmhouse,
+            SceneryKind.Barn, SceneryKind.Road, SceneryKind.Pond, SceneryKind.ForestEdge,
+        )
+        assertTrue(kinds.containsAll(surroundings), "missing ${surroundings - kinds}")
+        assertTrue(Levels.meadowField.paddock != null, "the paddock holds the cows and the farmer")
     }
 }

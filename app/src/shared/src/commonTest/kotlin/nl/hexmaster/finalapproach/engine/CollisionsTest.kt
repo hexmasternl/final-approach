@@ -9,6 +9,7 @@ import nl.hexmaster.finalapproach.domain.Circle
 import nl.hexmaster.finalapproach.domain.CollisionShape
 import nl.hexmaster.finalapproach.domain.DefaultAircraftSpecs
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
+import nl.hexmaster.finalapproach.domain.LevelDefaults
 import nl.hexmaster.finalapproach.domain.Vec2
 import kotlin.math.PI
 import kotlin.test.Test
@@ -30,22 +31,26 @@ class CollisionsTest {
     private fun jet(id: Int, x: Double, y: Double = 300.0, heading: Double = 0.0) =
         Aircraft(id, AircraftType.Jet, Vec2(x, y), heading)
 
-    // A default jet's wing tip circle sits 24 units out with radius 4.5, so its half span is 28.5.
+    // Before the world zoom a default jet's wing tip circle sat 24 units out with radius 4.5, so
+    // its half span was 28.5. Shapes follow the zoom, and so do the gaps these tests leave.
+
+    /** The x of a second jet [gap] pre-zoom units to the right of one at x = 100. */
+    private fun beside(gap: Double) = 100.0 + gap * LevelDefaults.WORLD_ZOOM
 
     @Test
     fun closeButNotTouchingIsNoCollision() {
-        assertTrue(Collisions.find(listOf(jet(1, 100.0), jet(2, 160.0)), specs).isEmpty())
-        assertFalse(Collisions.overlap(jet(1, 100.0), jet(2, 160.0), specs))
+        assertTrue(Collisions.find(listOf(jet(1, 100.0), jet(2, beside(60.0))), specs).isEmpty())
+        assertFalse(Collisions.overlap(jet(1, 100.0), jet(2, beside(60.0)), specs))
     }
 
     @Test
     fun touchingShapesCollide() {
-        assertEquals(listOf(1 to 2), Collisions.find(listOf(jet(1, 100.0), jet(2, 157.0)), specs))
+        assertEquals(listOf(1 to 2), Collisions.find(listOf(jet(1, 100.0), jet(2, beside(57.0))), specs))
     }
 
     @Test
     fun overlappingShapesCollide() {
-        assertEquals(listOf(1 to 2), Collisions.find(listOf(jet(2, 100.0), jet(1, 150.0)), specs))
+        assertEquals(listOf(1 to 2), Collisions.find(listOf(jet(2, 100.0), jet(1, beside(50.0))), specs))
     }
 
     @Test
