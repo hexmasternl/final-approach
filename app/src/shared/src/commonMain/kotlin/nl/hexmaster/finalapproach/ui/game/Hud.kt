@@ -55,7 +55,7 @@ fun Hud(
         Row(
             Modifier.align(Alignment.TopStart),
             horizontalArrangement = Arrangement.spacedBy(FaDimens.space3),
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             FaScoreCounter(HudText.BEST, best, compact = true, icon = FaIcon.Star, iconColor = FaTheme.colors.sunDeep)
             FaScoreCounter(HudText.SCORE, score, popOnRise = true)
@@ -68,7 +68,7 @@ fun Hud(
  * Distance from the top of the screen to the bottom of the HUD, lip included, when the system
  * keeps [topInset] clear at the top: `space-4` inset, then one `hud-chip` tall row and its lip.
  */
-fun hudBottom(topInset: Dp): Dp = topInset + FaDimens.space4 + FaDimens.hudChip + FaShadows.lipSm
+fun hudBottom(topInset: Dp): Dp = topInset + FaDimens.space4 + FaDimens.hudChip + FaShadows.lip
 
 /** The options panel: Continue, Restart and Quit over a frozen game. */
 @Composable

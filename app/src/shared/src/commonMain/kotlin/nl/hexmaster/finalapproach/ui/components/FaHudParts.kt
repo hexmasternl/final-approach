@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicText
@@ -45,15 +46,15 @@ object HudConfig {
 private fun Modifier.hudChipFace(): Modifier {
     val colors = FaTheme.colors
     return this
-        .height(FaDimens.hudChip + FaShadows.lipSm)
+        .heightIn(min = FaDimens.hudChip + FaShadows.lip)
         .faBlock(
             fill = colors.surface,
             outline = colors.outline,
             border = FaDimens.line3,
             radius = FaDimens.radiusMd,
-            lip = FaShadows.lipSm,
+            lip = FaShadows.lip,
         )
-        .padding(start = FaDimens.space4, end = FaDimens.space4, bottom = FaShadows.lipSm)
+        .padding(start = FaDimens.space4, end = FaDimens.space4, bottom = FaShadows.lip)
 }
 
 /**
@@ -81,6 +82,8 @@ fun FaScoreCounter(
             val riseMs = (FaMotion.durPopMs * HudConfig.SCORE_POP_RISE_SHARE).toInt()
             scale.animateTo(HudConfig.SCORE_POP_SCALE, tween(riseMs, easing = FaMotion.easeSnap))
             scale.animateTo(1f, tween(FaMotion.durPopMs - riseMs, easing = FaMotion.easeBounce))
+        } else {
+            scale.snapTo(1f)
         }
         shown = value
     }
@@ -123,17 +126,17 @@ fun FaIconButton(icon: FaIcon, description: String, onClick: () -> Unit, modifie
     Box(
         modifier
             .width(FaDimens.hudChip)
-            .height(FaDimens.hudChip + FaShadows.lipSm)
+            .height(FaDimens.hudChip + FaShadows.lip)
             .faBlock(
                 fill = colors.surface,
                 outline = colors.outline,
                 border = FaDimens.line3,
                 radius = FaDimens.radiusMd,
-                lip = FaShadows.lipSm,
+                lip = FaShadows.lip,
             )
             .clickable(role = Role.Button, onClick = onClick)
             .semantics { contentDescription = description }
-            .padding(bottom = FaShadows.lipSm),
+            .padding(bottom = FaShadows.lip),
         contentAlignment = Alignment.Center,
     ) {
         FaIconImage(icon, colors.ink, FaDimens.iconMd)
