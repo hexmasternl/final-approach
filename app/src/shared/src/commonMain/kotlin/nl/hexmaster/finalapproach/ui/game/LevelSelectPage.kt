@@ -81,7 +81,7 @@ fun LevelSelectPage(
 }
 
 @Composable
-private fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
+internal fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
     val colors = FaTheme.colors
     val type = FaTheme.type
     Column(

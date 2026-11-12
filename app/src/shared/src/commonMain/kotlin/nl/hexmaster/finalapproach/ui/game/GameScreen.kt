@@ -178,13 +178,7 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
                 }
             },
     ) {
-        drawLevelGround(level, viewport, colors)
-        val (ground, buildings) = level.scenery.partition { it.isGround }
-        ground.forEach { drawScenery(it, viewport, colors) }
-        level.runways.forEach { drawRunway(it, viewport, colors, measurer, numberStyle) }
-        level.helipads.forEach { drawHelipad(it, viewport, colors, measurer, letterStyle) }
-        buildings.forEach { drawScenery(it, viewport, colors) }
-        drawAmbient(level, ambient, viewport, colors)
+        drawField(level, ambient, viewport, colors, measurer, numberStyle, letterStyle)
         drawPaths(state, viewport, colors, reduceMotion)
         drawAircraft(state, engine, viewport, colors, reduceMotion, ambient.lightOpacity.takeIf { level.theme == LevelTheme.Dawn })
         drawSelection(state, engine, viewport, colors)
