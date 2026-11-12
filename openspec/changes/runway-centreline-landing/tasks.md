@@ -13,7 +13,7 @@
 
 ## 3. Touchdown and rollout
 
-- [ ] 3.1 Add `AircraftMotionTest` cases: an airplane cleared with an off-centre entry touches down on the centre line within the zone depth from the threshold, and every rollout position lies on the centre line, for each airplane type; change `AircraftMotion` only if a case fails
+- [x] 3.1 Add `AircraftMotionTest` cases: an airplane cleared with an off-centre entry touches down on the centre line within the zone depth from the threshold, and every rollout position lies on the centre line, for each airplane type; change `AircraftMotion` only if a case fails
 
 ## 4. Integration
 

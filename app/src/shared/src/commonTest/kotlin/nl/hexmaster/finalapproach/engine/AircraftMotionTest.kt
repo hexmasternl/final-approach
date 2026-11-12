@@ -1,10 +1,12 @@
 package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.Aircraft
+import nl.hexmaster.finalapproach.domain.AircraftKind
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
+import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
@@ -48,6 +50,19 @@ class AircraftMotionTest {
         val (states, events) = runOut(heli)
         assertEquals(listOf(GameEvent.Landed(1, AircraftType.Helicopter)), events)
         assertTrue(states.none { it.status is AircraftStatus.RollingOut })
+    }
+
+    @Test
+    fun anOffCentreLandingTouchesDownAndRollsOutOnTheCentreLine() {
+        AircraftType.entries.filter { it.kind == AircraftKind.Airplane }.forEach { type ->
+            val plane = cleared(type, Vec2(-400.0, 440.0), PI / 2, Vec2(0.0, 440.0), Vec2(400.0, 440.0))
+            val zone = assertIs<LandingZone.Runway>(assertIs<AircraftStatus.ClearedToLand>(plane.status).zone)
+            val rolling = runOut(plane).first.filter { it.status is AircraftStatus.RollingOut }
+            val touchdown = rolling.first().position
+            val along = zone.distanceAlong(touchdown)
+            assertTrue(along >= 0.0 && along <= zone.area.length, "$type touched down $along past the threshold")
+            rolling.forEach { assertTrue(abs(it.position.y - 400.0) < 1e-6, "$type rolled at ${it.position}") }
+        }
     }
 
     @Test
