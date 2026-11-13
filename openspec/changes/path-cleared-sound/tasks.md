@@ -29,4 +29,4 @@
 ## 6. Checks
 
 - [ ] 6.1 Run the play-policy-critic agent on the change (new resource type). Verify it reports no open findings, or file them as issues.
-- [ ] 6.2 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug` from `app/src`, and `openspec validate path-cleared-sound --strict`. Verify all pass.
+- [x] 6.2 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug` from `app/src`, and `openspec validate path-cleared-sound --strict`. Verify all pass.
