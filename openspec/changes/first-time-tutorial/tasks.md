@@ -21,7 +21,7 @@
 - [x] 3.3 Add failure restart from a step snapshot (decision 7) with `retryReason`. Tests: a turboprop departure and a collision during the helicopter step restore aircraft and score to the step start, re-spawn the step's aircraft, set the reason, and never set `GameOver`. Verify the tests pass.
 - [x] 3.4 Add `skipTutorial()` and the hand-over (decision 8): tutorial cleared, aircraft kept, spawner started with level time counted from hand-over, normal failures from then on, tutorial landings scored. Tests for skip on step 1, skip with aircraft in the air, first spawn after the first spawn delay in phase 1, and a collision after hand-over ending the level. Verify the tests pass.
 - [x] 3.5 Make `restart()` start the tutorial from step 1 when it was active, and keep pause/resume independent of holds. Tests: Restart during step 4 returns to step 1; pause then resume during an explanation stays held. Verify the tests pass.
-- [ ] 3.6 Describe the tutorial in `docs/game-design.md` (when it runs, the six steps, holds, failure restart, skip, completion and hand-over) and name `Tutorial.kt`, `TutorialDirector`, `TutorialStore` in `docs/architecture.md` in place of `TutorialHint`. Verify `grep -rn "TutorialHint\|hints" docs/` finds no stale mention.
+- [x] 3.6 Describe the tutorial in `docs/game-design.md` (when it runs, the six steps, holds, failure restart, skip, completion and hand-over) and name `Tutorial.kt`, `TutorialDirector`, `TutorialStore` in `docs/architecture.md` in place of `TutorialHint`. Verify `grep -rn "TutorialHint\|hints" docs/` finds no stale mention.
 
 ## 4. UI
 
