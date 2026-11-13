@@ -131,7 +131,7 @@ data class LandingConfig(
 /**
  * The world a level is played in. The viewport is the rectangle from 0,0 to [width],[height].
  * An aircraft that has been in the viewport leaves it when it is more than [leaveMargin] beyond
- * an edge. [spawnSeparation] only applies to spawning; aircraft collide when their shapes touch.
+ * an edge and has no path; one on a path is lost only when its path ends out there. [spawnSeparation] only applies to spawning; aircraft collide when their shapes touch.
  * Aircraft closer than [warningDistance] (centre to centre) are warned. [maxStepSeconds] is the
  * longest simulation step.
  */

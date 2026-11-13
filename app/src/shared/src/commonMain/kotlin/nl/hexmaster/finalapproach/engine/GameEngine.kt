@@ -350,7 +350,9 @@ class GameEngine(
             aircraft
         }
 
-    private fun hasLeft(aircraft: Aircraft) = aircraft.hasEnteredViewport && !playArea.contains(aircraft.position)
+    /** An aircraft that has been in the viewport and is beyond the leave margin is lost only when it has no path. */
+    private fun hasLeft(aircraft: Aircraft) =
+        aircraft.hasEnteredViewport && aircraft.path.isEmpty && !playArea.contains(aircraft.position)
 
     /** Game over when two aircraft touched during the step from [previous], or one has left. */
     private fun failureOf(aircraft: List<Aircraft>, previous: Map<Int, Vec2>): GameStatus {
