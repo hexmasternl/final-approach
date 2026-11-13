@@ -37,6 +37,7 @@ private fun SettingsPreview() {
             host = SettingsPreviewData.host,
             settings = PlayerSettings(reduceMotion = ReduceMotionChoice.On),
             onSoundEffects = {},
+            onKeepScreenOn = {},
             onReduceMotion = {},
             onBack = {},
         )

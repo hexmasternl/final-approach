@@ -42,6 +42,9 @@ private object SettingsText {
     const val SOUND = "Sound"
     const val SOUND_EFFECTS = "Sound effects"
     const val SOUND_EFFECTS_BODY = "Engines, dings and boings"
+    const val GAMEPLAY = "Gameplay"
+    const val KEEP_SCREEN_ON = "Keep screen on"
+    const val KEEP_SCREEN_ON_BODY = "While a level is playing"
     const val ACCESSIBILITY = "Accessibility"
     const val REDUCE_MOTION = "Reduce motion"
     const val DEVICE = "Device"
@@ -70,6 +73,7 @@ fun SettingsPage(
     host: AppHost,
     settings: PlayerSettings,
     onSoundEffects: (Boolean) -> Unit,
+    onKeepScreenOn: (Boolean) -> Unit,
     onReduceMotion: (ReduceMotionChoice) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
@@ -108,6 +112,11 @@ fun SettingsPage(
                 GroupLabel(SettingsText.SOUND)
                 SettingRow(SettingsText.SOUND_EFFECTS, SettingsText.SOUND_EFFECTS_BODY) {
                     FaToggle(settings.soundEffects, onSoundEffects)
+                }
+
+                GroupLabel(SettingsText.GAMEPLAY)
+                SettingRow(SettingsText.KEEP_SCREEN_ON, SettingsText.KEEP_SCREEN_ON_BODY) {
+                    FaToggle(settings.keepScreenOn, onKeepScreenOn)
                 }
 
                 GroupLabel(SettingsText.ACCESSIBILITY)

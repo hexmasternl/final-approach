@@ -66,6 +66,7 @@ fun App(host: AppHost) {
                 host = host,
                 settings = settings,
                 onSoundEffects = { on -> settingsController.update { it.copy(soundEffects = on) } },
+                onKeepScreenOn = { on -> settingsController.update { it.copy(keepScreenOn = on) } },
                 onReduceMotion = { choice -> settingsController.update { it.copy(reduceMotion = choice) } },
                 onBack = { screen = Screen.Main },
             )
