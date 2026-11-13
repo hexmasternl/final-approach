@@ -69,7 +69,7 @@ class AircraftTypeSpecTest {
         // The light prop's wing tip circle: 33.5 sprite units out, 8.5 in radius, on a 96-unit sprite.
         val spec = specs.getValue(AircraftType.LightProp)
         val scale = spec.spriteSize / CollisionShape.SPRITE_UNITS
-        assertEquals(1.5, scale, 1e-12)
+        assertEquals(LevelDefaults.WORLD_ZOOM * 0.6, scale, 1e-12)
         assertTrue(spec.shape.circles.any { abs(it.center.x - 33.5 * scale) < 1e-9 && abs(it.radius - 8.5 * scale) < 1e-9 })
     }
 

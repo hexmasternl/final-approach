@@ -10,12 +10,13 @@ class WorldZoomTest {
 
     @Test
     fun everyLevelIsTheFormerWorldTimesTheOneZoomFactor() {
-        assertEquals(2.5, zoom)
+        assertEquals(1.5, zoom)
+        assertEquals((1.0 + 2.0) / 2.0, zoom)
         Levels.all.forEach { level ->
             assertEquals(1280.0 * zoom, level.world.width, level.id)
             assertEquals(720.0 * zoom, level.world.height, level.id)
-            assertEquals(3200.0, level.world.width, level.id)
-            assertEquals(1800.0, level.world.height, level.id)
+            assertEquals(1920.0, level.world.width, level.id)
+            assertEquals(1080.0, level.world.height, level.id)
         }
     }
 

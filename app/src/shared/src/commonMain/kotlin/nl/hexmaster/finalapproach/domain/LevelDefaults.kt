@@ -13,10 +13,10 @@ object LevelDefaults {
      * [BASE_WORLD_HEIGHT] times this. Runways, helipads, landing zones and scenery keep their
      * world sizes, so the airfield takes a smaller share of the screen. Every world-unit value
      * that belongs to an aircraft or to the player's finger is multiplied by it, so aircraft
-     * look, move, warn and spawn on screen as they did before the zoom-out. At 2.5 the airfield
-     * is half as large on screen as it was at the former zoom of 1.25.
+     * look, move, warn and spawn on screen as they did before the zoom-out. At 1.5, the midpoint of
+     * the original world (1) and a doubled world (2), the world is 1920 by 1080.
      */
-    const val WORLD_ZOOM = 2.5
+    const val WORLD_ZOOM = 1.5
 
     /** Size of the world before the zoom-out, in world units. */
     const val BASE_WORLD_WIDTH = 1280.0
