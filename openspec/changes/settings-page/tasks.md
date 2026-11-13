@@ -35,7 +35,7 @@
 
 ## 6. Settings page
 
-- [ ] 6.1 Add `ui/settings/SettingsPage.kt`: header with back icon button and "Settings", SOUND / ACCESSIBILITY / ABOUT groups, Sound effects row with toggle, Reduce motion row with segmented control, Privacy policy ghost button, "Final Approach <version>" caption, vertical scroll and safe-drawing insets, all from theme tokens; verify in a debug preview in portrait and in a short landscape size that every control is reachable
+- [x] 6.1 Add `ui/settings/SettingsPage.kt`: header with back icon button and "Settings", SOUND / ACCESSIBILITY / ABOUT groups, Sound effects row with toggle, Reduce motion row with segmented control, Privacy policy ghost button, "Final Approach <version>" caption, vertical scroll and safe-drawing insets, all from theme tokens; verify in a debug preview in portrait and in a short landscape size that every control is reachable
 - [ ] 6.2 Wire the page into `ui/App.kt` in place of the placeholder: controls call `SettingsController.update`, Privacy policy calls `host.openUrl`, back and the back icon return to `Screen.Main`; remove the unused placeholder strings; verify `:androidApp:assembleDebug` passes
 - [ ] 6.3 Describe the settings page in `docs/game-design.md` and the `Screen.Settings` route in `docs/architecture.md`; verify both match the specs
 
