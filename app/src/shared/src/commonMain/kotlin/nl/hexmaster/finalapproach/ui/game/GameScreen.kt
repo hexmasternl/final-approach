@@ -200,7 +200,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
             if (!engine.state.value.paused) clock += delta
             // Touches that start on an aircraft near a side edge must not become a back gesture; the zones
             // are sent only when they change.
-            val planned = gestureZones(engine.state.value, isLevelRunning(engine.state.value) || collision?.dialogVisible == false, currentViewport, screen, leftStrip, rightStrip, currentDensity)
+            val planned = gestureZones(engine.state.value, isLevelRunning(engine.state.value), currentViewport, screen, leftStrip, rightStrip, currentDensity)
             if (planned != zones) {
                 zones = planned
                 host.setGestureExclusion(planned)
