@@ -73,16 +73,41 @@ For each issue in order:
 3. Implement the tasks in order, as the `openspec-apply-change` skill describes.
 4. **Commit very frequently**: at least once per completed task, ticking the task in `tasks.md` in the same commit. Message: `<change-name>: <what the task did>`. Never batch several tasks into one commit, and never leave finished work uncommitted.
 5. When the tasks are done, from `app/src` run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug`. Fix failures and commit the fixes. A failure you cannot fix counts as blocked.
-6. Review your own work with the critic agents that apply, and fix what they report as must-fix: `android-critic` for Kotlin and Gradle, `design-critic` for any UI, sprite, motion or copy, `play-policy-critic` for the manifest, permissions, dependencies, data or store-facing content. Commit the fixes.
-7. Move the issue to `In review`.
+6. Move the issue to `In review`. The critic review comes once, for the whole run, in step 4.
 
 If an issue is blocked (unclear requirement, failing build you cannot fix, missing dependency), commit what is safe, revert or leave out what is broken so the branch still builds and its tests pass, move the issue back to `Ready`, comment on the issue explaining exactly what blocked it, and continue with the next issue. Skip issues that depend on a blocked one, for the same reason.
 
 Do not archive changes and do not close issues: that happens after the pull request is merged.
 
-## 4. Push and open the pull request
+## 4. Critic review: at most three rounds
 
-When every issue has been handled:
+When every issue you planned has been implemented or blocked, have the critic agents verify the whole run before you push. Skip this step only if no issue was implemented.
+
+The critics that apply to the run's diff (`git diff origin/development...HEAD`):
+
+- `android-critic`: always, for any Kotlin, Gradle or manifest change.
+- `design-critic`: when the diff touches UI, the theme, sprites, motion, copy or `docs/design-system`.
+- `play-policy-critic`: when the diff touches the manifest, permissions, dependencies, networking, data storage, ads, purchases or store-facing content.
+
+A critic is **satisfied** when its verdict is not a blocking one: `android-critic` gives `SOUND` or `SOUND WITH NOTES`; `design-critic` and `play-policy-critic` give `COMPLIANT` or `COMPLIANT WITH NOTES`. `NEEDS WORK` and `NOT COMPLIANT` are not satisfied.
+
+Each round:
+
+1. Run every applicable critic that is not yet satisfied, in parallel. Give each the run's diff, the list of changes and issues in the run, and, from round 2 on, its previous findings and what you changed in response. A critic satisfied in an earlier round is run again only if a later fix touched files in its area.
+2. `STATUS: critic round <n>/3 - <critic>: <verdict>` for each.
+3. If every critic is satisfied, stop the review.
+4. Otherwise fix every blocking finding: defects and rule breaks first. A finding you disagree with, or that the change's spec contradicts, is not fixed silently: record why you left it. Do not fix notes and suggestions in the review loop; list them in the pull request.
+5. After the fixes, run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug` from `app/src`. Commit the fixes in small commits: `<change-name>: address <critic> round <n>: <what>`.
+
+**Stop after round 3**, whether or not the critics are satisfied. Never start a fourth round. If any critic is still not satisfied after round 3, the run still pushes and opens the pull request (step 5), but:
+
+- the pull request title starts with `[critics not satisfied]`,
+- the pull request body opens, before anything else, with a section `## Critic review not satisfied`, which names each unsatisfied critic, its last verdict and its open findings with file and line, and says that three review rounds were used and a human must decide,
+- `STATUS: critic review stopped after 3 rounds - not satisfied: <critics>`.
+
+## 5. Push and open the pull request
+
+When the critic review has ended:
 
 1. Check that the branch builds and `./gradlew :shared:allTests` passes.
 2. `git push -u origin <branch>`.
@@ -94,10 +119,11 @@ The pull request body:
 - one section per implemented issue, in the order implemented: the change name, `Refs #<number>` (never `Closes` or `Fixes`), and what it does in a few sentences,
 - the ordering plan and its reasoning,
 - issues that were skipped or blocked, and why,
+- the critic review: how many rounds were used, each critic's final verdict, findings left unfixed on purpose with the reason, and the notes and suggestions that were not acted on,
 - remaining human checks as an unticked checklist.
 
 Then comment on each implemented issue with the pull request link. If no issue was implemented, do not push or open a pull request; print the summary instead.
 
-## 5. Finish
+## 6. Finish
 
-End with a short summary: the pull request link, the issues moved to `In review`, and the issues skipped or blocked with their reasons.
+End with a short summary: the pull request link, the issues moved to `In review`, the issues skipped or blocked with their reasons, and the critic review result (satisfied, or not satisfied after three rounds and by which critics).
