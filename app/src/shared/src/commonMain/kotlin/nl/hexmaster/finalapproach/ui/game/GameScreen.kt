@@ -33,6 +33,7 @@ import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.engine.BestScore
 import nl.hexmaster.finalapproach.engine.GameEngine
 import nl.hexmaster.finalapproach.engine.TutorialProgress
+import nl.hexmaster.finalapproach.engine.GameOverReason
 import nl.hexmaster.finalapproach.engine.GameState
 import nl.hexmaster.finalapproach.engine.GameStatus
 import nl.hexmaster.finalapproach.input.PathGesture
@@ -98,6 +99,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     var screen by remember { mutableStateOf(IntSize.Zero) }
     val rings = remember(engine) { ProximityRings() }
     var clock by remember(engine) { mutableStateOf(0.0) }
+    var collision by remember(engine) { mutableStateOf<CollisionSequence?>(null) }
     val colors = FaTheme.colors
     val reduceMotion = FaTheme.reduceMotion
     val ambient = remember(engine, reduceMotion) { AmbientLife(level, seed = level.id.hashCode().toLong(), reduceMotion = reduceMotion) }
@@ -164,6 +166,14 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
             if (!engine.state.value.paused) rings.update(engine.state.value, { engine.specs[it.type].shape.boundingRadius }, (delta * MILLIS_PER_SECOND).toFloat())
             if (!engine.state.value.paused) ambient.update(delta)
             if (!engine.state.value.paused) clock += delta
+            // The collision sequence starts when the level ends by a collision, and goes when it restarts.
+            val ended = engine.state.value.status as? GameStatus.GameOver
+            val current = collision
+            collision = when {
+                ended == null || ended.reason != GameOverReason.Collision -> null
+                current == null -> CollisionSequence(ended.aircraftIds, proximityRingAngle(clock, reduceMotion), reduceMotion)
+                else -> current.also { it.advance((delta * MILLIS_PER_SECOND).toFloat()) }
+            }
         }
     }
 
@@ -210,7 +220,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
         state.tutorial?.demo?.let { drawTutorialDemoPath(it, viewport, colors) }
         drawAircraft(state, engine, viewport, colors, reduceMotion, ambient.lightOpacity.takeIf { level.theme == LevelTheme.Dawn })
         drawSelection(state, engine, viewport, colors)
-        drawProximityRings(rings, proximityRingAngle(clock, reduceMotion), reduceMotion, viewport, colors)
+        drawProximityRings(rings, proximityRingAngle(clock, reduceMotion), reduceMotion, viewport, colors, skip = collision?.aircraftIds.orEmpty())
         state.tutorial?.demo?.let { drawTutorialDemoFinger(it, viewport, colors, clock, reduceMotion) }
     }
     Hud(
@@ -222,7 +232,10 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     state.tutorial?.let { tutorial ->
         TutorialOverlay(tutorial, level, state.aircraft, viewport, onGotIt = engine::acknowledgeTutorial)
     }
-    val over = state.status as? GameStatus.GameOver
+    collision?.let {
+        CollisionOverlay(it, state, engine, viewport, reduceMotion, ambient.lightOpacity.takeIf { level.theme == LevelTheme.Dawn })
+    }
+    val over = (state.status as? GameStatus.GameOver)?.takeIf { it.reason != GameOverReason.Collision || collision?.dialogVisible == true }
     if (over != null) {
         GameEndedDialog(
             reason = over.reason,
@@ -251,9 +264,11 @@ private fun DrawScope.drawProximityRings(
     reduceMotion: Boolean,
     viewport: WorldViewport,
     colors: FaColors,
+    skip: List<Int>,
 ) {
     val margin = FaDimens.warnRingMargin.toPx()
     for (ring in rings.all) {
+        if (ring.id in skip) continue
         drawProximityRing(viewport.offsetOf(ring.position), viewport.px(ring.radius) + margin, angle, if (reduceMotion) 1f else ring.scale, ring.alpha, colors)
     }
 }

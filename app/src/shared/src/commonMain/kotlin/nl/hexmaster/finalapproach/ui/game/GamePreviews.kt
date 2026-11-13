@@ -3,6 +3,7 @@ package nl.hexmaster.finalapproach.ui.game
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,12 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import nl.hexmaster.finalapproach.domain.Aircraft
+import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.LevelConfig
 import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.Levels
+import nl.hexmaster.finalapproach.domain.Vec2
+import nl.hexmaster.finalapproach.engine.GameEngine
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.ui.components.FaScoreCounter
 import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
@@ -24,6 +30,7 @@ import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.sceneryLines
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
+import nl.hexmaster.finalapproach.ui.theme.FaMotion
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** Sample data for the previews: a run part way through a level. Not used by the game. */
@@ -37,6 +44,11 @@ private object PreviewData {
     const val PHONE_WIDTH = 800
     const val PHONE_HEIGHT = 380
     const val SHEET_HEIGHT = 520
+    const val COLLISION_X = 900.0
+    const val COLLISION_Y = 420.0
+    const val COLLISION_HEADING = 1.2
+    const val OTHER_X = 400.0
+    const val OTHER_Y = 300.0
 }
 
 /**
@@ -184,3 +196,43 @@ private fun LevelTilesPreview() {
         }
     }
 }
+
+/** The collision view: two aircraft on the field when they touch, [elapsedMs] after the collision. */
+@Composable
+private fun CollisionPreview(elapsedMs: Float) {
+    val level = Levels.meadowField
+    val engine = remember {
+        GameEngine(level, seed = 1).also {
+            it.place(
+                listOf(
+                    Aircraft(1, AircraftType.Jet, Vec2(PreviewData.COLLISION_X, PreviewData.COLLISION_Y), 0.0, livery = 1),
+                    Aircraft(2, AircraftType.Turboprop, Vec2(PreviewData.COLLISION_X, PreviewData.COLLISION_Y), PreviewData.COLLISION_HEADING, livery = 2),
+                    Aircraft(3, AircraftType.LightProp, Vec2(PreviewData.OTHER_X, PreviewData.OTHER_Y), 0.0, livery = 3),
+                ),
+            )
+        }
+    }
+    val sequence = remember(elapsedMs) { CollisionSequence(listOf(1, 2), 0f, reduceMotion = false).apply { advance(elapsedMs) } }
+    Box(Modifier.fillMaxSize()) {
+        FieldPreview(level)
+        FaTheme {
+            val state = engine.state.value
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                val density = LocalDensity.current
+                val viewport = WorldViewport(
+                    level.world.width, level.world.height,
+                    with(density) { maxWidth.toPx() }.toDouble(), with(density) { maxHeight.toPx() }.toDouble(),
+                )
+                CollisionOverlay(sequence, state, engine, viewport, reduceMotion = false, lightOpacity = null)
+            }
+        }
+    }
+}
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun CollisionMidFadePreview() = CollisionPreview(elapsedMs = FaMotion.durCollisionFadeMs / 2f)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun CollisionHeldPreview() = CollisionPreview(elapsedMs = FaMotion.durCollisionFadeMs + FaMotion.durCollisionHoldMs / 2f)
