@@ -244,3 +244,15 @@ fa-silhouette { display: block; width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   .fa-stage *, .fa-stage *::before, .fa-stage *::after, fa-aircraft *, fa-side-aircraft *, fa-windsock *, fa-cloud, fa-burst { animation: none !important; transition: none !important; }
 }
+
+.fa-coach--explain { display: block; max-width: var(--coach-explain-max-width); }
+.fa-coach--explain .fa-btn { margin-top: var(--space-3); }
+.fa-coach--track[data-loop] { animation: none; }
+.fa-highlight { position: relative; display: inline-block; padding: var(--highlight-margin); border: var(--line-3) dashed var(--sun); border-radius: var(--radius-lg); outline: var(--line-4) dashed var(--outline); outline-offset: calc(var(--line-3) * -1 - 1px); animation: fa-march var(--dur-march) linear infinite; }
+.fa-highlight--round { border-radius: 50%; }
+.fa-demo { position: relative; width: 300px; height: 70px; }
+.fa-demo__path { position: absolute; left: 20px; right: 20px; top: 34px; border-top: var(--path-dot) dotted var(--on-outline); filter: drop-shadow(0 0 0 var(--outline)); }
+.fa-demo__finger { position: absolute; top: 14px; left: 20px; --fa-icon: var(--icon-lg); animation: fa-demo-drag var(--dur-demo-drag) var(--ease-out-soft) infinite; }
+@keyframes fa-demo-drag { from { transform: translateX(0); } 85%, to { transform: translateX(240px); } }
+@keyframes fa-march { to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .fa-highlight, .fa-demo__finger { animation: none; } .fa-demo__finger { transform: translateX(240px); } }

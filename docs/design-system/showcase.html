@@ -249,7 +249,7 @@ fa-silhouette { display: block; width: 100%; }
 .fa-levelcard--square .fa-levelcard__title { font: 600 18px/24px var(--font-display); text-align: center; }
 
 /* ---------- Coach mark ---------- */
-.fa-coach { position: relative; display: inline-flex; align-items: center; gap: var(--space-3); max-width: 300px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--outline); color: var(--on-outline); font: 500 16px/22px var(--font-text); box-shadow: 0 5px 0 rgba(10, 14, 36, .3); --fa-icon: var(--icon-lg); }
+.fa-coach { position: relative; display: inline-flex; align-items: center; gap: var(--space-3); max-width: var(--coach-max-width); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--outline); color: var(--on-outline); font: 500 16px/22px var(--font-text); box-shadow: 0 5px 0 rgba(10, 14, 36, .3); --fa-icon: var(--icon-lg); }
 .fa-coach::after { content: ""; position: absolute; left: 34px; top: 100%; border: 10px solid transparent; border-top-color: var(--outline); border-bottom: 0; }
 .fa-coach--up::after { top: auto; bottom: 100%; border-top: 0; border-bottom: 10px solid var(--outline); }
 .fa-coach b { display: block; font: 600 18px/22px var(--font-display); }
@@ -380,6 +380,17 @@ h1,h2,h3,h4,p{margin:0}
   h2,h3,.sc-sub{break-after:avoid}
 }
 
+.fa-coach--explain { display: block; max-width: var(--coach-explain-max-width); }
+.fa-coach--explain .fa-btn { margin-top: var(--space-3); }
+.fa-coach--track[data-loop] { animation: none; }
+.fa-highlight { position: relative; display: inline-block; padding: var(--highlight-margin); border: var(--line-3) dashed var(--sun); border-radius: var(--radius-lg); outline: var(--line-4) dashed var(--outline); outline-offset: calc(var(--line-3) * -1 - 1px); animation: fa-march var(--dur-march) linear infinite; }
+.fa-highlight--round { border-radius: 50%; }
+.fa-demo { position: relative; width: 300px; height: 70px; }
+.fa-demo__path { position: absolute; left: 20px; right: 20px; top: 34px; border-top: var(--path-dot) dotted var(--on-outline); filter: drop-shadow(0 0 0 var(--outline)); }
+.fa-demo__finger { position: absolute; top: 14px; left: 20px; --fa-icon: var(--icon-lg); animation: fa-demo-drag var(--dur-demo-drag) var(--ease-out-soft) infinite; }
+@keyframes fa-demo-drag { from { transform: translateX(0); } 85%, to { transform: translateX(240px); } }
+@keyframes fa-march { to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .fa-highlight, .fa-demo__finger { animation: none; } .fa-demo__finger { transform: translateX(240px); } }
 </style>
 </head>
 <body>
@@ -811,7 +822,12 @@ h1,h2,h3,h4,p{margin:0}
 <div class="fa-item" style="align-items:flex-start;gap:22px">
   <fa-runway length="240" numbers="09/27" state="ok"></fa-runway>
   <div class="fa-coach fa-coach--up"><fa-icon name="plane"></fa-icon><span><span class="fa-coach__step">Step 2 of 2</span><b>Drag to the runway</b>End the path lined up with the strip.</span></div>
-</div></div>
+</div>
+<div class="fa-item" style="align-items:flex-start;gap:22px"><div class="fa-coach fa-coach--explain"><span class="fa-coach__step">Step 2 of 6</span><b>This is runway 27</b>Airplanes land here. Come in from the right, lined up with the runway.<br><button class="fa-btn fa-btn--sm">Got it</button></div></div>
+<div class="fa-item" style="align-items:flex-start;gap:22px"><div class="fa-coach fa-coach--track"><fa-icon name="plane"></fa-icon><span><span class="fa-coach__step">Step 3 of 6</span><b>Light prop inbound</b>It needs to land.</span></div><fa-aircraft type="light-prop" livery="1" heading="40" style="margin-left:14px"></fa-aircraft></div>
+<div class="fa-item"><span class="fa-highlight"><fa-runway length="240" numbers="09/27" mode="one-way"></fa-runway></span><span class="fa-highlight fa-highlight--round" style="margin-left:24px"><fa-helipad></fa-helipad></span></div>
+<div class="fa-item"><div class="fa-demo"><div class="fa-demo__path"></div><fa-icon class="fa-demo__finger" name="finger"></fa-icon></div><span class="fa-chip">Drag demo (still with reduced motion)</span></div>
+</div>
 </article>
 <article class="sc-comp" id="c-Wordmark">
   <header><h3>Wordmark</h3><p>The game's name set in DynaPuff, outlined and tilted.</p></header>
