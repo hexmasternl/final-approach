@@ -85,7 +85,7 @@ class PathSmootherTest {
 
     @Test
     fun aFinishedZigZagIsStoredSmoothed() {
-        val level = Levels.meadowField.let { it.copy(spawn = it.spawn.copy(firstSpawnDelay = 10_000.0)) }
+        val level = twoWayMeadowField.let { it.copy(spawn = it.spawn.copy(firstSpawnDelay = 10_000.0)) }
         val engine = GameEngine(level, seed = 1)
         val start = Vec2(200.0, 150.0)
         engine.place(listOf(Aircraft(1, AircraftType.Jet, start, east)))
@@ -100,7 +100,7 @@ class PathSmootherTest {
 
     @Test
     fun smoothedCurvedPathsStillLand() {
-        val level = Levels.meadowField.let { it.copy(spawn = it.spawn.copy(firstSpawnDelay = 10_000.0)) }
+        val level = twoWayMeadowField.let { it.copy(spawn = it.spawn.copy(firstSpawnDelay = 10_000.0)) }
         val pad = LandingZones.of(level).filterIsInstance<LandingZone.Helipad>().first().area.center
         val cases = listOf(
             Aircraft(1, AircraftType.LightProp, meadow(100.0, 220.0), east) to

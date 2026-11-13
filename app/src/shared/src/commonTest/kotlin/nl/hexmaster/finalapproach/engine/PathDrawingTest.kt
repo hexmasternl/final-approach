@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
 
 class PathDrawingTest {
 
-    private val level = Levels.meadowField
+    private val level = twoWayMeadowField
     private val zones = LandingZones.of(level)
 
     private fun draw(aircraft: Aircraft, vararg points: Vec2): Aircraft =

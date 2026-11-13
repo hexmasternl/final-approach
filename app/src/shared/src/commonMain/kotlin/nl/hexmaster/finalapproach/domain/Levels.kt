@@ -36,6 +36,8 @@ object Levels {
 
     private const val EAST = PI / 2
     private const val SOUTH = PI
+    private const val WEST = 3 * PI / 2
+    private const val SOUTH_WEST = 5 * PI / 4
 
     private fun world() = WorldConfig(width = LevelDefaults.WORLD_WIDTH, height = LevelDefaults.WORLD_HEIGHT)
 
@@ -83,7 +85,7 @@ object Levels {
         SceneryItem(kind, Vec2(x, y), width, length, rotation)
 
     /**
-     * Level 2: an airport on an island in the sea. A long main runway, a shorter diagonal runway
+     * Level 2: an airport on an island in the sea. A long main runway, a shorter one-way diagonal runway (22, approached from the north-east)
      * that crosses it (the jumbo does not fit on it) and a helipad. Around it a beach with palms,
      * a jetty on the east shore and open sea on every side.
      */
@@ -103,6 +105,7 @@ object Levels {
                 orientation = PI / 4,
                 length = 400.0,
                 accepted = WITHOUT_JUMBO,
+                mode = RunwayMode.OneWay(SOUTH_WEST),
             ),
         ),
         helipads = listOf(HelipadConfig(id = "h1", position = Vec2(1350.0, 450.0))),
@@ -204,7 +207,7 @@ object Levels {
     )
 
     /**
-     * Level 1: one two-way runway in the middle, one helipad on the right, a gentle build-up. The
+     * Level 1: one one-way runway (27, approached from the east) in the middle, one helipad on the right, a gentle build-up. The
      * airfield lies in farmland: crop fields, hedges, a farm, two roads, a pond and a forest edge.
      */
     val meadowField: LevelConfig = LevelConfig(
@@ -218,7 +221,7 @@ object Levels {
                 position = Vec2(960.0, 630.0),
                 orientation = EAST,
                 length = 640.0,
-                mode = RunwayMode.TwoWay,
+                mode = RunwayMode.OneWay(WEST),
             ),
         ),
         helipads = listOf(HelipadConfig(id = "h1", position = Vec2(1430.0, 630.0))),

@@ -2,6 +2,7 @@ package nl.hexmaster.finalapproach.domain
 
 import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.ceil
 
 /** Day is the default; Night is for night levels; Dawn is the dim light before sunrise. */
 enum class LevelTheme { Day, Night, Dawn }
@@ -73,7 +74,8 @@ data class RunwayConfig(
     /** Runway number painted at the end an airplane on [heading] lands from: heading / 10 degrees. */
     fun numberFor(heading: Double): String {
         val degrees = Math360.degreesOf(heading)
-        val number = ((degrees + 5.0) / 10.0).toInt().let { if (it == 0) 36 else it }
+        // Halves round down, so a 225 degree heading is runway 22.
+        val number = ceil(degrees / 10.0 - 0.5 - 1e-9).toInt().let { if (it <= 0) 36 else it }
         return number.toString().padStart(2, '0')
     }
 }
