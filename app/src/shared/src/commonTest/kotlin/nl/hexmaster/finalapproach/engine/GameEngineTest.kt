@@ -4,9 +4,11 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.AltitudeState
+import nl.hexmaster.finalapproach.domain.LandingZones
 import nl.hexmaster.finalapproach.domain.LevelDefaults
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
+import nl.hexmaster.finalapproach.domain.isPickable
 import nl.hexmaster.finalapproach.domain.meadow
 import kotlin.math.PI
 import kotlin.test.Test
@@ -177,6 +179,29 @@ class GameEngineTest {
         val out = -level.world.leaveMargin - 30.0
         engine.draw(1, Vec2(out, 300.0), Vec2(out, 360.0), Vec2(100.0, 360.0))
         engine.run(3.0) { assertEquals(GameStatus.Playing, it.status) }
+    }
+
+    @Test
+    fun anAircraftIsPickableUnlessRollingOutOrLanding() {
+        val flying = jet(1, Vec2(300.0, 300.0))
+        assertTrue(flying.isPickable)
+        assertTrue(flying.copy(status = AircraftStatus.ClearedToLand(zone = Levels.meadowField.let { LandingZones.of(it).first() })).isPickable)
+        assertFalse(flying.copy(status = AircraftStatus.RollingOut(0.0, 100.0, "r")).isPickable)
+        assertFalse(flying.copy(status = AircraftStatus.Landing()).isPickable)
+    }
+
+    @Test
+    fun aRollingOutAirplaneIsNotSelected() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(jet(1, Vec2(300.0, 300.0)).copy(status = AircraftStatus.RollingOut(0.0, 100.0, "r"))))
+        assertEquals(null, engine.select(Vec2(300.0, 300.0), 100.0))
+    }
+
+    @Test
+    fun aLandingHelicopterIsNotSelected() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(Aircraft(1, AircraftType.Helicopter, Vec2(300.0, 300.0), 0.0, status = AircraftStatus.Landing())))
+        assertEquals(null, engine.select(Vec2(300.0, 300.0), 100.0))
     }
 
     @Test

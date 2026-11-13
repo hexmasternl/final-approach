@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
+import nl.hexmaster.finalapproach.domain.isPickable
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
@@ -180,7 +181,7 @@ class GameEngine(
     fun select(point: Vec2, pickRadius: Double): Int? {
         if (inputBlocked) return null
         val picked = mutableState.value.aircraft
-            .filter { it.status !is AircraftStatus.RollingOut && it.status !is AircraftStatus.Landing }
+            .filter { it.isPickable }
             .map { it to it.position.distanceTo(point) }
             .filter { (_, distance) -> distance <= pickRadius }
             .minByOrNull { (_, distance) -> distance }

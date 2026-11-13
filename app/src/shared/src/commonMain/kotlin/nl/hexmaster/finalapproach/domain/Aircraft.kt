@@ -44,6 +44,10 @@ sealed interface AircraftStatus {
     ) : AircraftStatus
 }
 
+/** True while the player can pick the aircraft: not a rolling-out airplane and not a landing helicopter. */
+val Aircraft.isPickable: Boolean
+    get() = status !is AircraftStatus.RollingOut && status !is AircraftStatus.Landing
+
 /**
  * One aircraft in a level. It holds no speed of its own: speed comes from the run's
  * [EffectiveAircraftSpecs] for its [type], so every aircraft of a type flies alike.

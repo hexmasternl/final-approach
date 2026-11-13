@@ -1,7 +1,7 @@
 ## 1. Running rule and pickable test
 
-- [ ] 1.1 Add `isLevelRunning(state)` beside `shouldKeepScreenOn` and make `shouldKeepScreenOn` use it. Extend `KeepScreenOnTest` (or add `LevelRunningTest`) for running, paused, game over and tutorial step. Verify: `./gradlew :shared:allTests`.
-- [ ] 1.2 Extract `Aircraft.isPickable` (not `RollingOut`, not `Landing`) and use it in `GameEngine.select`. Existing selection tests stay green; add one test per excluded status. Verify: `./gradlew :shared:allTests`.
+- [x] 1.1 Add `isLevelRunning(state)` beside `shouldKeepScreenOn` and make `shouldKeepScreenOn` use it. Extend `KeepScreenOnTest` (or add `LevelRunningTest`) for running, paused, game over and tutorial step. Verify: `./gradlew :shared:allTests`.
+- [x] 1.2 Extract `Aircraft.isPickable` (not `RollingOut`, not `Landing`) and use it in `GameEngine.select`. Existing selection tests stay green; add one test per excluded status. Verify: `./gradlew :shared:allTests`.
 
 ## 2. Platform boundary
 
