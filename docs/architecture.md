@@ -65,6 +65,8 @@ final-approach/
 
 - `settings`: a `SettingsStore` (`platform/SettingsStore.kt`, `load()` and `save(PlayerSettings)`; `InMemorySettingsStore` for tests). `SettingsController` (`platform/SettingsController.kt`) loads it once, exposes `StateFlow<PlayerSettings>` and writes every `update` through. `PlayerSettings` and `ReduceMotionChoice` live in `domain/PlayerSettings.kt`. Android keeps them in a private `settings` preferences file.
 
+The settings page is `Screen.Settings` in `ui/App.kt`, drawn by `ui/settings/SettingsPage.kt` from `FaToggle` and `FaSegmentedControl` (`ui/components`). It is stateless: `App` passes the current `PlayerSettings` and callbacks that call `SettingsController.update`; Privacy policy calls `host.openUrl`.
+
 Reduced motion: `App` computes `settings.reduceMotion.resolve(host.reduceMotion)` and passes it to `FaTheme`; every screen reads `FaTheme.reduceMotion`. `host.reduceMotion` is read only in `App`. Device follows the device; On and Off override it.
 
 `AndroidAppHost` in `androidApp` is the Android implementation. Tests use `FakeAppHost` from `commonTest`.
