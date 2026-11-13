@@ -18,6 +18,7 @@ Motion is bouncy and short. Things arrive with one overshoot, controls snap, and
 | Aircraft selected | Ring pops in, then rotates slowly | `dur-quick`, then 7s per turn | Soft click |
 | Drawing a path | Dashes march to the end dot | `dur-march` per dash | Light pencil tick per segment |
 | Cleared to land | Path cut off, flashes white once (solid with reduced motion): the sound is the flash's twin | `dur-pop` | Success chime |
+| Tutorial drag demo | The finger travels the dotted path from the aircraft to the landing end, pauses, repeats. With reduced motion: the dotted path with the finger still at its end | `dur-demo-drag`, pause `dur-pop`, `ease-out-soft` | none |
 | Valid landing zone | Halo pulses | 1s, alternating | none |
 | Touchdown | Squash and stretch, then the sprite is removed | `dur-land` | Ding |
 | Safe landing | Star burst, score popup rises | `dur-burst`, popup 1.8s | Ding, higher on a streak |

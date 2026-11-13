@@ -46,6 +46,11 @@ Assign `path-1` to `path-6` in spawn order and free a colour when its aircraft l
 - A helipad is 112px across, with a `marking-warn` ring and a `marking` H.
 - Zone feedback appears only while an aircraft is selected and its path ends on the zone.
 
+## Tutorial overlays
+
+- **Zone highlight** (layer `z-zone`): a dashed outline `highlight-margin` (`space-3`) outside the runway rectangle or the helipad circle, `line-3` `sun` over a `line-4` `outline` casing, dashes from `path-dash` and `path-gap`, marching on `dur-march` (still with reduced motion). A chunky arrow in the same style stands outside the landing end and points along the landing direction. It never fills the zone.
+- **Drag demo**: a dotted path in `on-outline` with an `outline` casing (`path-dot`) from the aircraft to the landing end, and a `finger` icon at `icon-lg` travelling along it. See `motion-audio.md`.
+
 ## World zoom
 
 A level's world is 1920 by 1080 world units: the 1280 by 720 playfield times one zoom factor of 1.5 (the middle of 1 and 2), the same for every level. Runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a smaller share of the screen in the middle, with open surroundings on every side. Runway and helipad markings (threshold bars, centre line, touchdown patches, numbers, the helipad ring and H) shrink with the airfield: each is drawn as its token's value in world units, the proportions of the 64px runway and 112px helipad here. Everything that belongs to an aircraft or to the player's finger is multiplied by the same factor, so it is unchanged on screen: aircraft size and speed, the proximity warning, spawn spacing and margins, the path reach and point spacing, the HUD band, and the touchdown point the runway lead-in ends at. Path strokes, the pick area and all UI are in dp and do not change.
