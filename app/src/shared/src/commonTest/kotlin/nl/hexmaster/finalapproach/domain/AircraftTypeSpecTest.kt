@@ -1,7 +1,6 @@
 package nl.hexmaster.finalapproach.domain
 
 import kotlin.math.abs
-import kotlin.math.round
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -40,7 +39,6 @@ class AircraftTypeSpecTest {
         val zoom = LevelDefaults.WORLD_ZOOM
         val all = order + AircraftType.Jumbo
         val expected = listOf(20.0, 55.0 * 2.0 / 3.0, 50.0, 100.0 * 2.0 / 3.0, 65.0)
-        assertEquals(listOf(20.0, 36.67, 50.0, 66.67, 65.0), expected.map { round(it * 100.0) / 100.0 })
         expected.zip(all).forEach { (speed, type) -> assertEquals(speed * zoom, specs.getValue(type).speed, 1e-9, "$type") }
     }
 
@@ -74,7 +72,7 @@ class AircraftTypeSpecTest {
     }
 
     @Test
-    fun everyTypeCrossesTheWorldInTheSameTimeAsBefore() {
+    fun everyTypeCrossesTheWorldInTheSameTimeAsAtZoomOne() {
         val former = listOf(20.0, 55.0 * 2.0 / 3.0, 50.0, 100.0 * 2.0 / 3.0, 65.0)
         (order + AircraftType.Jumbo).zip(former).forEach { (type, speed) ->
             val before = LevelDefaults.BASE_WORLD_WIDTH / speed

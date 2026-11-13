@@ -163,6 +163,7 @@ object Levels {
         ),
         scenery = listOf(
             strip(SceneryKind.Road, 960.0, 194.0, length = 3400.0, width = TRACK_WIDTH, rotation = 1.48),
+            strip(SceneryKind.Road, 305.0, 730.0, length = 610.0, width = TRACK_WIDTH, rotation = EAST),
             area(SceneryKind.Waterhole, 1630.0, 590.0, width = 190.0, height = 130.0),
             area(SceneryKind.Apron, 760.0, 730.0, width = 300.0, height = 100.0),
             area(SceneryKind.Taxiway, 800.0, 656.0, width = 44.0, height = 48.0),

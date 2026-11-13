@@ -128,6 +128,7 @@ object LevelConfigValidator {
         if (world.spawnMargin < 0.0) add("The spawn margin must not be negative")
         addAll(config.aircraftTuning.problems())
         if (config.landing.helicopterLandingSeconds <= 0.0) add("The helicopter landing sequence must last longer than zero seconds")
+        if (config.landing.landingSpeedFactor <= 0.0) add("The landing speed factor must be positive")
         if (config.spawn.edges.isEmpty()) add("At least one spawn edge must be permitted")
     }
 

@@ -92,6 +92,9 @@ class WorldViewportTest {
                 assertEquals(original.toScreenLength(it.width) / 1.5, phone.toScreenLength(it.width), 1e-9, "${level.id}/${it.id}")
                 assertEquals(original.toScreenLength(it.length) / 1.5, phone.toScreenLength(it.length), 1e-9, "${level.id}/${it.id}")
             }
+            level.helipads.forEach {
+                assertEquals(original.toScreenLength(it.radius) / 1.5, phone.toScreenLength(it.radius), 1e-9, "${level.id}/${it.id}")
+            }
         }
         assertEquals(64.0 / 3.0, phone.toScreenLength(LevelDefaults.RUNWAY_WIDTH), 1e-9)
         assertEquals(112.0 / 3.0, phone.toScreenLength(LevelDefaults.HELIPAD_RADIUS * 2), 1e-9)

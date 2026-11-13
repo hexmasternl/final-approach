@@ -67,13 +67,13 @@ Scenery is everything on the ground that is not a landing zone: buildings, vehic
 
 ### Minimum sizes
 
-Measured on the reference phone (800 by 360dp), where one world unit is 0.2dp:
+Measured on the reference phone (800 by 360dp), where one world unit is 0.333dp:
 
 | What | At least | In world units |
 |---|---|---|
-| Animals, people and vehicles, longest side | 10dp | 50 |
-| A bird, wing tip to wing tip | 8dp | 40 |
-| Any inner detail (ear, leg, window, crop row) | 1.5dp | 7.5 |
+| Animals, people and vehicles, longest side | 10dp | 30 |
+| A bird, wing tip to wing tip | 8dp | 24 |
+| Any inner detail (ear, leg, window, crop row) | 1.5dp | 4.5 |
 
 Sizes are level data or ambient configuration in world units, never numbers in drawing code.
 
