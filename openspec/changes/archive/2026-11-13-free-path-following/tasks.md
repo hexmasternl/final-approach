@@ -6,6 +6,6 @@
 
 ## 2. Docs
 
-- [ ] 2.1 Update `docs/game-design.md`, `docs/architecture.md`, `CLAUDE.md` and `.github/copilot-instructions.md` so turn rate no longer limits turning; verify by searching for "turn rate" and "turning radius"
+- [x] 2.1 Update `docs/game-design.md`, `docs/architecture.md`, `CLAUDE.md` and `.github/copilot-instructions.md` so turn rate no longer limits turning; verify by searching for "turn rate" and "turning radius"
 - [x] 2.2 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug`; verify both pass
 - [ ] 2.3 Human check: draw sharp zig-zags for a jet and a jumbo on a device and confirm they follow the line

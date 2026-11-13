@@ -21,14 +21,14 @@ Continue SHALL close the options panel and resume the game exactly where it was 
 
 #### Scenario: Continue
 - **WHEN** the player taps Continue
-- **THEN** the panel closes, and aircraft, paths, score and counters are as they were when the panel opened and the game runs again
+- **THEN** the panel closes, and aircraft, paths and score are as they were when the panel opened and the game runs again
 
 ### Requirement: Restart
 Restart SHALL reset the level and start it from scratch.
 
 #### Scenario: Restart
 - **WHEN** the player taps Restart
-- **THEN** the panel closes, all aircraft are removed, the current score is 0, every spawn counter is 0 and the level runs from its start
+- **THEN** the panel closes, all aircraft are removed, the current score is 0 and the level runs from its start
 
 #### Scenario: Best score kept
 - **WHEN** the player restarts
