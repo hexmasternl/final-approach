@@ -4,10 +4,10 @@ The visual reference for every task is `reference/final-approach-v2.html` in thi
 
 ## 1. Tokens
 
-- [ ] 1.1 Add the material, accent and `paper` ramps to `tokens.json` with Day and Night values from `reference/tokens.css`, step roles from design Decision 2 and a usage note per step; keep every existing token name and value; verify with a script that every pre-change token name still resolves to its pre-change value
-- [ ] 1.2 Add Dawn values for the ramps that differ at dawn, the single tokens `window`, `beacon`, `muzzle`, `shadow`, `shadow-opacity`, and the line ranks `line-hero`, `line-zone`, `line-ui`, `line-ui-sm`, `line-detail`; verify each has a usage note
-- [ ] 1.3 Add Nunito to the fonts and add the body, caption and row styles in Nunito; move `label`, `readout` and `callsign` to weight 700 or heavier; verify no text style in Inconsolata is lighter than 700 and none in Nunito lighter than 600
-- [ ] 1.4 Add the v2 size, radius and elevation tokens (strip height 40, lip heights, contact shadow, nested radii for small, medium, large and dialog) and mark the v1-only tokens `"deprecated": "<replacement>"`; verify every deprecated token names an existing replacement
+- [x] 1.1 Add the material, accent and `paper` ramps to `tokens.json` with Day and Night values from `reference/tokens.css`, step roles from design Decision 2 and a usage note per step; keep every existing token name and value; verify with a script that every pre-change token name still resolves to its pre-change value
+- [x] 1.2 Add Dawn values for the ramps that differ at dawn, the single tokens `window`, `beacon`, `muzzle`, `shadow`, `shadow-opacity`, and the line ranks `line-hero`, `line-zone`, `line-ui`, `line-ui-sm`, `line-detail`; verify each has a usage note
+- [x] 1.3 Add Nunito to the fonts and add the body, caption and row styles in Nunito; move `label`, `readout` and `callsign` to weight 700 or heavier; verify no text style in Inconsolata is lighter than 700 and none in Nunito lighter than 600
+- [x] 1.4 Add the v2 size, radius and elevation tokens (strip height 40, lip heights, contact shadow, nested radii for small, medium, large and dialog) and mark the v1-only tokens `"deprecated": "<replacement>"`; verify every deprecated token names an existing replacement
 - [ ] 1.5 Teach `tools/gen-kotlin.cjs` to read ramps, line ranks and the deprecated marker (emit `@Deprecated` with the replacement); run it and verify `./gradlew :shared:allTests` and `:androidApp:assembleDebug` pass with no hand-written app code changed
 
 ## 2. Principles and rules
