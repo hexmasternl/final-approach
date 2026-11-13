@@ -2,8 +2,8 @@
 
 ## 1. Design system and docs
 
-- [ ] 1.1 Add the "Cleared to land" row to the moments table in `docs/design-system/motion-audio.md` (design decision 6). Verify the "Valid landing zone" row is unchanged and the new row names the white flash as the sound's visual twin.
-- [ ] 1.2 Describe the success sound in `docs/game-design.md` (when it plays, when it does not, one per clearance, kept with reduced motion). Verify it matches the `sound-effects` spec.
+- [x] 1.1 Add the "Cleared to land" row to the moments table in `docs/design-system/motion-audio.md` (design decision 6). Verify the "Valid landing zone" row is unchanged and the new row names the white flash as the sound's visual twin.
+- [x] 1.2 Describe the success sound in `docs/game-design.md` (when it plays, when it does not, one per clearance, kept with reduced motion). Verify it matches the `sound-effects` spec.
 
 ## 2. Engine clearance event
 
