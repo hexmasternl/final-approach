@@ -2,6 +2,7 @@ package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
+import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.FlightPath
 import nl.hexmaster.finalapproach.domain.LandingConfig
@@ -67,7 +68,15 @@ object PathDrawing {
         return aircraft.copy(path = aircraft.path.copy(points = smooth(aircraft, aircraft.path.points, config)))
     }
 
+    /**
+     * Smooths [points] from the aircraft. Leading points the aircraft is already level with or past
+     * (for example where the finger first touched, behind the nose) are dropped so the path never
+     * hooks back; the last point is always kept.
+     */
     private fun smooth(aircraft: Aircraft, points: List<Vec2>, config: EngineConfig): List<Vec2> {
-        return PathSmoother.smooth(aircraft.position, points, config)
+        val forward = Angles.direction(aircraft.heading)
+        var first = 0
+        while (first < points.lastIndex && ((points[first] - aircraft.position) dot forward) <= 0.0) first++
+        return PathSmoother.smooth(aircraft.position, points.drop(first), config)
     }
 }

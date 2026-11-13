@@ -123,4 +123,13 @@ class PathDrawingTest {
         assertIs<AircraftStatus.ClearedToLand>(again.status)
         assertTrue(again.path.locked)
     }
+
+    @Test
+    fun aFirstPointBehindTheAircraftIsDroppedNotFlownBackTo() {
+        val plane = Aircraft(1, AircraftType.Jet, meadow(300.0, 100.0), PI / 2)
+        val drawn = draw(plane, meadow(270.0, 100.0), meadow(500.0, 100.0), meadow(700.0, 100.0))
+        val finished = PathDrawing.finish(drawn, EffectiveAircraftSpecs.Defaults, EngineConfig())
+        assertTrue(finished.path.points.all { it.x > plane.position.x }, "${finished.path.points}")
+        assertEquals(meadow(700.0, 100.0), finished.path.points.last())
+    }
 }
