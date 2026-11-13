@@ -23,6 +23,7 @@ object FaDimens {
     val radiusPill = 999.dp
 
     // Lines and flight path
+    val lineFine = 1.5.dp
     val line1 = 2.dp
     val line2 = 3.dp
     val line3 = 4.dp

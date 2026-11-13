@@ -44,8 +44,8 @@
 .fa-p-tower-light { fill: var(--sunset-tower-light); stroke: none; }
 
 /* ---------- World elements ---------- */
-fa-aircraft, fa-side-aircraft, fa-silhouette, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst { display: inline-block; flex: none; line-height: 0; }
-fa-aircraft svg, fa-side-aircraft svg, fa-silhouette svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg { display: block; width: 100%; height: 100%; overflow: visible; }
+fa-aircraft, fa-side-aircraft, fa-silhouette, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst, fa-scenery { display: inline-block; flex: none; line-height: 0; }
+fa-aircraft svg, fa-side-aircraft svg, fa-silhouette svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg, fa-scenery svg { display: block; width: 100%; height: 100%; overflow: visible; }
 fa-aircraft { position: relative; width: var(--fa-size, 64px); height: var(--fa-size, 64px); filter: drop-shadow(5px 8px 3px var(--shadow-ground)); }
 fa-aircraft[flat] { filter: none; }
 .fa-aircraft__sprite { display: block; width: 100%; height: 100%; transition: transform var(--dur-quick) var(--ease-snap); }

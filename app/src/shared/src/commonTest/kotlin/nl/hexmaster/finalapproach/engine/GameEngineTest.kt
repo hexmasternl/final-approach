@@ -4,8 +4,10 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.AltitudeState
+import nl.hexmaster.finalapproach.domain.LevelDefaults
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
+import nl.hexmaster.finalapproach.domain.meadow
 import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -165,7 +167,7 @@ class GameEngineTest {
     @Test
     fun closeAircraftAreWarnedUntilTheySeparate() {
         val engine = GameEngine(quiet, seed = 1)
-        engine.place(listOf(jet(1, Vec2(560.0, 200.0), -PI / 2), jet(2, Vec2(660.0, 200.0), PI / 2)))
+        engine.place(listOf(jet(1, Vec2(560.0, 200.0), -PI / 2), jet(2, Vec2(560.0 + 80.0 * zoom, 200.0), PI / 2)))
         assertEquals(setOf(1, 2), engine.state.value.warnedAircraft)
         engine.update(0.02)
         assertEquals(setOf(1, 2), engine.state.value.warnedAircraft)
@@ -180,9 +182,9 @@ class GameEngineTest {
         engine.place(
             listOf(
                 jet(1, Vec2(500.0, 200.0), 0.0),
-                jet(2, Vec2(600.0, 200.0), 0.0),
-                jet(3, Vec2(550.0, 280.0), 0.0),
-                jet(4, Vec2(900.0, 200.0), 0.0),
+                jet(2, Vec2(500.0 + 80.0 * zoom, 200.0), 0.0),
+                jet(3, Vec2(500.0 + 40.0 * zoom, 200.0 + 64.0 * zoom), 0.0),
+                jet(4, Vec2(500.0 + 320.0 * zoom, 200.0), 0.0),
             ),
         )
         assertEquals(setOf(1, 2, 3), engine.state.value.warnedAircraft)
@@ -257,10 +259,10 @@ class GameEngineTest {
     @Test
     fun anAirplaneIsInFlightUntilTouchdownAndLandedThroughRollout() {
         val engine = GameEngine(quiet, seed = 1)
-        engine.place(listOf(jet(1, Vec2(150.0, 400.0), PI / 2).copy(hasEnteredViewport = true)))
+        engine.place(listOf(jet(1, meadow(150.0, 400.0), PI / 2).copy(hasEnteredViewport = true)))
         engine.beginPath(1)
-        engine.extendPath(1, Vec2(250.0, 400.0))
-        engine.extendPath(1, Vec2(400.0, 400.0))
+        engine.extendPath(1, meadow(250.0, 400.0))
+        engine.extendPath(1, meadow(400.0, 400.0))
         assertIs<AircraftStatus.ClearedToLand>(engine.aircraft(1).status)
         var sawRollout = false
         engine.run(10.0) { state ->
@@ -281,11 +283,11 @@ class GameEngineTest {
     @Test
     fun twoLandedAirplanesThatMeetOnTheRunwayCollide() {
         val engine = GameEngine(quiet, seed = 1)
-        val east = jet(1, Vec2(600.0, 400.0), PI / 2).copy(
+        val east = jet(1, meadow(600.0, 400.0), PI / 2).copy(
             altitude = AltitudeState.Landed,
             status = AircraftStatus.RollingOut(PI / 2, 500.0, "r"),
         )
-        val west = jet(2, Vec2(680.0, 400.0), -PI / 2).copy(
+        val west = jet(2, meadow(680.0, 400.0), -PI / 2).copy(
             altitude = AltitudeState.Landed,
             status = AircraftStatus.RollingOut(-PI / 2, 500.0, "r"),
         )
@@ -299,14 +301,14 @@ class GameEngineTest {
     fun aJetLandingRightBehindALightPropInTheSameDirectionDoesNotCollide() {
         val engine = GameEngine(quiet, seed = 1)
         val runway = level.runways.single().id
-        val prop = Aircraft(1, AircraftType.LightProp, Vec2(420.0, 400.0), PI / 2, hasEnteredViewport = true).copy(
+        val prop = Aircraft(1, AircraftType.LightProp, meadow(420.0, 400.0), PI / 2, hasEnteredViewport = true).copy(
             altitude = AltitudeState.Landed,
             status = AircraftStatus.RollingOut(PI / 2, 360.0, runway),
         )
-        engine.place(listOf(prop, jet(2, Vec2(150.0, 400.0), PI / 2).copy(hasEnteredViewport = true)))
+        engine.place(listOf(prop, jet(2, meadow(150.0, 400.0), PI / 2).copy(hasEnteredViewport = true)))
         engine.beginPath(2)
-        engine.extendPath(2, Vec2(250.0, 400.0))
-        engine.extendPath(2, Vec2(400.0, 400.0))
+        engine.extendPath(2, meadow(250.0, 400.0))
+        engine.extendPath(2, meadow(400.0, 400.0))
         assertIs<AircraftStatus.ClearedToLand>(engine.aircraft(2).status)
         engine.run(20.0)
         assertEquals(GameStatus.Playing, engine.state.value.status)
@@ -318,14 +320,14 @@ class GameEngineTest {
         val engine = GameEngine(quiet, seed = 1)
         engine.place(
             listOf(
-                jet(1, Vec2(200.0, 400.0), PI / 2).copy(hasEnteredViewport = true),
-                jet(2, Vec2(1080.0, 400.0), -PI / 2).copy(hasEnteredViewport = true),
+                jet(1, meadow(200.0, 400.0), PI / 2).copy(hasEnteredViewport = true),
+                jet(2, meadow(1080.0, 400.0), -PI / 2).copy(hasEnteredViewport = true),
             ),
         )
         engine.beginPath(1)
-        engine.extendPath(1, Vec2(400.0, 400.0))
+        engine.extendPath(1, meadow(400.0, 400.0))
         engine.beginPath(2)
-        engine.extendPath(2, Vec2(880.0, 400.0))
+        engine.extendPath(2, meadow(880.0, 400.0))
         engine.run(20.0)
         val status = assertIs<GameStatus.GameOver>(engine.state.value.status)
         assertEquals(GameOverReason.Collision, status.reason)
@@ -350,6 +352,9 @@ class GameEngineTest {
     }
 
     private fun jet(id: Int, position: Vec2, heading: Double = 0.0) = Aircraft(id, AircraftType.Jet, position, heading)
+
+    /** Gaps between aircraft are written in units before the world zoom-out and follow it. */
+    private val zoom = LevelDefaults.WORLD_ZOOM
 
     private fun GameEngine.aircraft(id: Int) = assertNotNull(state.value.aircraft.firstOrNull { it.id == id })
 }

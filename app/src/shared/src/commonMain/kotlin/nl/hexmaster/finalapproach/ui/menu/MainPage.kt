@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -19,12 +18,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.random.Random
 import nl.hexmaster.finalapproach.platform.AppHost
@@ -33,6 +33,8 @@ import nl.hexmaster.finalapproach.ui.components.FaButton
 import nl.hexmaster.finalapproach.ui.components.FaButtonSize
 import nl.hexmaster.finalapproach.ui.components.FaButtonVariant
 import nl.hexmaster.finalapproach.ui.components.FaDialog
+import nl.hexmaster.finalapproach.ui.components.FaWordmark
+import nl.hexmaster.finalapproach.ui.components.FaWordmarkSize
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
@@ -57,8 +59,10 @@ private object MainPageDefaults {
 }
 
 /**
- * The home screen: Take off and Settings in front of the animated sky, the app version in the
- * bottom-right corner, and quitting through the back button with a confirmation.
+ * The home screen: the Final Approach wordmark and the Take off and Settings buttons in front of
+ * the animated sky, the app version in the bottom-right corner, and quitting through the back
+ * button with a confirmation. The regular wordmark sits above the menu; when that does not fit
+ * the height inside the system bars, the small wordmark sits to the left of it.
  */
 @Composable
 fun MainPage(
@@ -97,30 +101,35 @@ fun MainPage(
         // While the dialog is open, the page behind it is hidden from screen readers.
         val behindDialog = if (quitOpen) Modifier.clearAndSetSemantics { } else Modifier
         Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).then(behindDialog)) {
-            Column(
-                Modifier.align(Alignment.Center).width(MainPageDefaults.menuWidth),
-                verticalArrangement = Arrangement.spacedBy(FaDimens.space4),
-            ) {
-                FaButton(
-                    text = MainPageText.TAKE_OFF,
-                    onClick = onTakeOff,
-                    modifier = Modifier.fillMaxWidth(),
-                    size = FaButtonSize.Large,
-                    icon = FaIcon.Play,
-                )
-                FaButton(
-                    text = MainPageText.SETTINGS,
-                    onClick = onSettings,
-                    modifier = Modifier.fillMaxWidth(),
-                    variant = FaButtonVariant.Ghost,
-                    icon = FaIcon.Settings,
-                )
-            }
-
-            BasicText(
-                MainPageText.version(host.versionName),
-                modifier = Modifier.align(Alignment.BottomEnd).padding(FaDimens.space4),
-                style = FaTheme.type.label.copy(color = FaTheme.colors.onSkyMuted),
+            MainMenuLayout(
+                versionLabel = {
+                    BasicText(
+                        MainPageText.version(host.versionName),
+                        style = FaTheme.type.label.copy(color = FaTheme.colors.onSkyMuted),
+                    )
+                },
+                wordmark = { FaWordmark(size = it) },
+                menu = {
+                    Column(
+                        Modifier.width(MainPageDefaults.menuWidth),
+                        verticalArrangement = Arrangement.spacedBy(FaDimens.space4),
+                    ) {
+                        FaButton(
+                            text = MainPageText.TAKE_OFF,
+                            onClick = onTakeOff,
+                            modifier = Modifier.fillMaxWidth(),
+                            size = FaButtonSize.Large,
+                            icon = FaIcon.Play,
+                        )
+                        FaButton(
+                            text = MainPageText.SETTINGS,
+                            onClick = onSettings,
+                            modifier = Modifier.fillMaxWidth(),
+                            variant = FaButtonVariant.Ghost,
+                            icon = FaIcon.Settings,
+                        )
+                    }
+                },
             )
         }
 
@@ -142,6 +151,54 @@ fun MainPage(
                     variant = FaButtonVariant.Ghost,
                 )
             }
+        }
+    }
+}
+
+private enum class MainMenuSlot { Version, Menu, Regular, Small }
+
+/**
+ * Places the wordmark and the menu as one centred group and the version label bottom-right. The
+ * arrangement is chosen from measured sizes, not from orientation.
+ */
+@Composable
+private fun MainMenuLayout(
+    versionLabel: @Composable () -> Unit,
+    wordmark: @Composable (FaWordmarkSize) -> Unit,
+    menu: @Composable () -> Unit,
+) {
+    val edge = FaDimens.space4
+    val gap = FaDimens.space7
+    SubcomposeLayout(Modifier.fillMaxSize()) { constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val edgePx = edge.roundToPx()
+        val gapPx = gap.roundToPx()
+        val version = subcompose(MainMenuSlot.Version, versionLabel).map { it.measure(loose) }.first()
+        val menuBox = subcompose(MainMenuSlot.Menu, menu).map { it.measure(loose) }.first()
+        val regular = subcompose(MainMenuSlot.Regular) { wordmark(FaWordmarkSize.Regular) }.map { it.measure(loose) }.first()
+
+        val reserved = 2 * (version.height + edgePx)
+        val available: Dp = (constraints.maxHeight - reserved).coerceAtLeast(0).toDp()
+        val stacked: Dp = (regular.height + gapPx + menuBox.height).toDp()
+        val arrangement = chooseMainMenuArrangement(available, stacked)
+
+        val small = if (arrangement == MainMenuArrangement.Beside) {
+            subcompose(MainMenuSlot.Small) { wordmark(FaWordmarkSize.Small) }.map { it.measure(loose) }.first()
+        } else {
+            null
+        }
+
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            if (small == null) {
+                val top = (constraints.maxHeight - regular.height - gapPx - menuBox.height) / 2
+                regular.place((constraints.maxWidth - regular.width) / 2, top)
+                menuBox.place((constraints.maxWidth - menuBox.width) / 2, top + regular.height + gapPx)
+            } else {
+                val left = (constraints.maxWidth - small.width - gapPx - menuBox.width) / 2
+                small.place(left, (constraints.maxHeight - small.height) / 2)
+                menuBox.place(left + small.width + gapPx, (constraints.maxHeight - menuBox.height) / 2)
+            }
+            version.place(constraints.maxWidth - version.width - edgePx, constraints.maxHeight - version.height - edgePx)
         }
     }
 }

@@ -35,7 +35,7 @@ class LevelConfigTest {
     @Test
     fun landingConfigDefaultsToTheCentreLineValues() {
         val landing = LandingConfig()
-        assertEquals(40.0, landing.touchdownDistance)
+        assertEquals(80.0, landing.touchdownDistance)
         assertEquals(2.0, landing.leadInTurningRadii)
         assertEquals(0.4, landing.leadInHandleFraction)
     }
