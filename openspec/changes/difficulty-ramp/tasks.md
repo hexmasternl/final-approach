@@ -2,7 +2,7 @@
 
 ## 1. Ramp config and rule
 
-- [ ] 1.1 Add `WeightCap`, `DifficultyRamp` and `LevelConfig.ramp: DifficultyRamp? = null` in `domain/LevelConfig.kt`, and `RAMP_STEP_SECONDS`, `RAMP_INTERVAL_DROP_SECONDS`, `RAMP_AIRCRAFT_EVERY_STEPS`, `RAMP_WEIGHT_CAPS` in `domain/LevelDefaults.kt` (design decision 4). KDoc each field. Verify: `./gradlew :shared:allTests` compiles and passes.
+- [x] 1.1 Add `WeightCap`, `DifficultyRamp` and `LevelConfig.ramp: DifficultyRamp? = null` in `domain/LevelConfig.kt`, and `RAMP_STEP_SECONDS`, `RAMP_INTERVAL_DROP_SECONDS`, `RAMP_AIRCRAFT_EVERY_STEPS`, `RAMP_WEIGHT_CAPS` in `domain/LevelDefaults.kt` (design decision 4). KDoc each field. Verify: `./gradlew :shared:allTests` compiles and passes.
 - [ ] 1.2 Extend `LevelConfig.phaseAt` with the closed-form ramp step, clamped at the final step (design decisions 1 to 3). Verify: `LevelConfigTest` cases for no ramp (unchanged), before step 1, interval floor clamp, weights alternating to their caps with no skip, maximum in the air every `aircraftEverySteps`, identical phase at the final step and far beyond it, allowed types equal to the last phase's; `./gradlew :shared:allTests` passes.
 
 ## 2. Validation

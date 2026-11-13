@@ -3,6 +3,7 @@ package nl.hexmaster.finalapproach.domain
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.ceil
+import kotlin.math.floor
 
 /** Day is the default; Night is for night levels; Dawn is the dim light before sunrise. */
 enum class LevelTheme { Day, Night, Dawn }
@@ -173,6 +174,64 @@ data class DifficultyPhase(
     val allowedTypes: Set<AircraftType> get() = weights.keys
 }
 
+/** The highest weight a ramp raises [type] to. */
+data class WeightCap(val type: AircraftType, val maxWeight: Int)
+
+/**
+ * How difficulty keeps rising after a level's last phase. Ramp step n starts [stepSeconds] times n
+ * after the last phase started. Each step lowers both spawn intervals by [intervalDropSeconds]
+ * (the minimum never below [intervalFloorSeconds]; the range keeps the width of the last phase),
+ * raises the weight of the next type in [weightCaps] by 1 unless it is at its cap (the list order is
+ * the rotation), and, on every [aircraftEverySteps]th step, raises the maximum in the air by 1, up to
+ * [maxAircraftCap]. Once every limit is reached the active phase no longer changes.
+ */
+data class DifficultyRamp(
+    val intervalFloorSeconds: Double,
+    val maxAircraftCap: Int,
+    val stepSeconds: Double = LevelDefaults.RAMP_STEP_SECONDS,
+    val intervalDropSeconds: Double = LevelDefaults.RAMP_INTERVAL_DROP_SECONDS,
+    val aircraftEverySteps: Int = LevelDefaults.RAMP_AIRCRAFT_EVERY_STEPS,
+    val weightCaps: List<WeightCap> = LevelDefaults.RAMP_WEIGHT_CAPS,
+) {
+    /** The ramp step after [last] at which every limit has been reached, so no later step differs. */
+    internal fun finalStep(last: DifficultyPhase): Int {
+        var step = ceil(((last.spawnIntervalMin - intervalFloorSeconds) / intervalDropSeconds) - EPSILON).toInt()
+        step = maxOf(step, (maxAircraftCap - last.maxAircraft) * aircraftEverySteps)
+        weightCaps.forEachIndexed { index, cap ->
+            val need = cap.maxWeight - (last.weights[cap.type] ?: cap.maxWeight)
+            if (need > 0) step = maxOf(step, index + 1 + (need - 1) * weightCaps.size)
+        }
+        return maxOf(step, 0)
+    }
+
+    /** The phase for ramp step [step] (at least 1), derived from [last]. */
+    internal fun phaseAfter(last: DifficultyPhase, step: Int): DifficultyPhase {
+        val width = last.spawnIntervalMax - last.spawnIntervalMin
+        val min = maxOf(intervalFloorSeconds, last.spawnIntervalMin - step * intervalDropSeconds)
+        val count = weightCaps.size
+        val weights = last.weights.mapValues { (type, base) ->
+            val index = weightCaps.indexOfFirst { it.type == type }
+            if (index < 0) {
+                base
+            } else {
+                val raises = if (step > index) (step - 1 - index) / count + 1 else 0
+                minOf(maxOf(base, weightCaps[index].maxWeight), base + raises)
+            }
+        }
+        return DifficultyPhase(
+            startSeconds = last.startSeconds + step * stepSeconds,
+            spawnIntervalMin = min,
+            spawnIntervalMax = min + width,
+            weights = weights,
+            maxAircraft = minOf(maxOf(last.maxAircraft, maxAircraftCap), last.maxAircraft + step / aircraftEverySteps),
+        )
+    }
+
+    private companion object {
+        const val EPSILON = 1e-9
+    }
+}
+
 /** How and where aircraft enter. */
 data class SpawnRules(
     val edges: Set<SpawnEdge> = SpawnEdge.entries.toSet(),
@@ -220,10 +279,20 @@ data class LevelConfig(
     val wind: Wind? = null,
     val emergencyAircraft: Boolean = false,
     val tutorial: TutorialScript? = null,
+    val ramp: DifficultyRamp? = null,
 ) {
-    /** The phase active at [levelTime] seconds: the last one that has started. */
-    fun phaseAt(levelTime: Double): DifficultyPhase =
-        phases.lastOrNull { it.startSeconds <= levelTime } ?: phases.first()
+    /**
+     * The phase active at [levelTime] seconds: the last one that has started. With a [ramp], after
+     * the last phase it is the derived ramp step, clamped at the final step.
+     */
+    fun phaseAt(levelTime: Double): DifficultyPhase {
+        val configured = phases.lastOrNull { it.startSeconds <= levelTime } ?: phases.first()
+        val ramp = ramp ?: return configured
+        if (configured !== phases.last()) return configured
+        val elapsed = levelTime - configured.startSeconds
+        val step = minOf(floor(elapsed / ramp.stepSeconds + RAMP_EPSILON).toInt(), ramp.finalStep(configured))
+        return if (step < 1) configured else ramp.phaseAfter(configured, step)
+    }
 
     /** The aircraft types this level spawns in any phase, in roster order. */
     val spawnedTypes: List<AircraftType>
@@ -248,3 +317,6 @@ data class LevelConfig(
         return this
     }
 }
+
+/** Absorbs floating-point error when a level time lands exactly on a ramp step. */
+private const val RAMP_EPSILON = 1e-9
