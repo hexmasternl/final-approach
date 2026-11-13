@@ -38,7 +38,7 @@ class AircraftTypeSpecTest {
     fun speedsAreTheFormerSpeedsTimesTheWorldZoom() {
         val former = listOf(40.0, 55.0, 75.0, 100.0, 130.0)
         assertEquals(former.map { it * LevelDefaults.WORLD_ZOOM }, order.map { specs.getValue(it).speed })
-        assertEquals(listOf(50.0, 68.75, 93.75, 125.0, 162.5), order.map { specs.getValue(it).speed })
+        assertEquals(listOf(100.0, 137.5, 187.5, 250.0, 325.0), order.map { specs.getValue(it).speed })
     }
 
     @Test
@@ -56,7 +56,7 @@ class AircraftTypeSpecTest {
         // The light prop's wing tip circle: 33.5 sprite units out, 8.5 in radius, on a 96-unit sprite.
         val spec = specs.getValue(AircraftType.LightProp)
         val scale = spec.spriteSize / CollisionShape.SPRITE_UNITS
-        assertEquals(0.75, scale, 1e-12)
+        assertEquals(1.5, scale, 1e-12)
         assertTrue(spec.shape.circles.any { abs(it.center.x - 33.5 * scale) < 1e-9 && abs(it.radius - 8.5 * scale) < 1e-9 })
     }
 

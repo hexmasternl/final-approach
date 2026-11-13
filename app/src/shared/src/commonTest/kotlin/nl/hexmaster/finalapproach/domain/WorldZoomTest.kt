@@ -10,12 +10,12 @@ class WorldZoomTest {
 
     @Test
     fun everyLevelIsTheFormerWorldTimesTheOneZoomFactor() {
-        assertEquals(1.25, zoom)
+        assertEquals(2.5, zoom)
         Levels.all.forEach { level ->
             assertEquals(1280.0 * zoom, level.world.width, level.id)
             assertEquals(720.0 * zoom, level.world.height, level.id)
-            assertEquals(1600.0, level.world.width, level.id)
-            assertEquals(900.0, level.world.height, level.id)
+            assertEquals(3200.0, level.world.width, level.id)
+            assertEquals(1800.0, level.world.height, level.id)
         }
     }
 
@@ -26,6 +26,8 @@ class WorldZoomTest {
         assertEquals(150.0 * zoom, LevelDefaults.WARNING_DISTANCE)
         assertEquals(60.0 * zoom, LevelDefaults.SPAWN_MARGIN)
         assertEquals(60.0 * zoom, LevelDefaults.LEAVE_MARGIN)
+        // The lead-in is flown on the aircraft's turning circle, so where it touches down follows the zoom.
+        assertEquals(32.0 * zoom, LevelDefaults.TOUCHDOWN_DISTANCE)
         Levels.all.forEach { level ->
             assertEquals(LevelDefaults.SPAWN_SEPARATION, level.world.spawnSeparation, level.id)
             assertEquals(LevelDefaults.WARNING_DISTANCE, level.world.warningDistance, level.id)
@@ -42,7 +44,7 @@ class WorldZoomTest {
         assertEquals(44.0, LevelDefaults.HELIPAD_ZONE_RADIUS)
         assertEquals(140.0, LevelDefaults.RUNWAY_ZONE_DEPTH)
         assertEquals(96.0, LevelDefaults.RUNWAY_ZONE_WIDTH)
-        assertEquals(40.0, LevelDefaults.TOUCHDOWN_DISTANCE)
+        assertEquals(67.5, SceneryDefaults.PARKED_AIRCRAFT_SIZE)
     }
 
     @Test

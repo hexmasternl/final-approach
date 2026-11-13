@@ -14,6 +14,8 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.isSpecified
 import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.HelipadConfig
 import nl.hexmaster.finalapproach.domain.LevelScenery
@@ -42,6 +44,30 @@ internal fun WorldViewport.px(worldLength: Double): Float = toScreenLength(world
 internal fun degreesOf(radians: Double): Float = (radians * DEGREES_PER_RADIAN).toFloat()
 
 private const val DEGREES_PER_RADIAN = 180.0 / PI
+
+/**
+ * The markings of runways and helipads belong to the airfield and shrink with it: a token is
+ * drawn as that many world units, the scale of the design system's 64-unit runway and 112-unit
+ * helipad, so the markings always fit their runway or pad.
+ */
+private class FieldScale(viewport: WorldViewport, private val density: Float) {
+    private val pxPerUnit = viewport.px(WORLD_UNIT)
+
+    fun px(token: Dp): Float = token.value * pxPerUnit
+
+    /** [style] with its text sized like the markings. */
+    fun text(style: TextStyle): TextStyle {
+        val factor = pxPerUnit / density
+        return style.copy(
+            fontSize = if (style.fontSize.isSpecified) style.fontSize * factor else style.fontSize,
+            lineHeight = if (style.lineHeight.isSpecified) style.lineHeight * factor else style.lineHeight,
+        )
+    }
+
+    private companion object {
+        const val WORLD_UNIT = 1.0
+    }
+}
 
 /** The outline of runways and helipads: `line-3`, the stroke of everything that is part of play. */
 private fun DrawScope.outlineStroke() =
@@ -81,14 +107,15 @@ internal fun DrawScope.drawRunway(
     val center = viewport.offsetOf(runway.position)
     val lengthPx = viewport.px(runway.length)
     val widthPx = viewport.px(runway.width)
+    val field = FieldScale(viewport, density)
     inFrame(center, runway.orientation, widthPx, lengthPx) { rect ->
-        outlinedRect(rect, colors.asphalt500, colors, FaDimens.radiusSm.toPx())
-        val inset = FaDimens.space4.toPx()
-        val barLength = FaDimens.space5.toPx()
-        val barWidth = FaDimens.line4.toPx()
-        val patchLength = FaDimens.space8.toPx()
+        outlinedRect(rect, colors.asphalt500, colors, field.px(FaDimens.radiusSm))
+        val inset = field.px(FaDimens.space4)
+        val barLength = field.px(FaDimens.space5)
+        val barWidth = field.px(FaDimens.line4)
+        val patchLength = field.px(FaDimens.space8)
         val patchWidth = rect.width / 2f
-        val numberRoom = FaDimens.space7.toPx()
+        val numberRoom = field.px(FaDimens.space7)
         // Touchdown patches past the numbers, then four threshold bars at each end.
         listOf(rect.top + inset + barLength + numberRoom, rect.bottom - inset - barLength - numberRoom - patchLength)
             .forEach { y -> drawRect(colors.asphalt700, Offset(rect.center.x - patchWidth / 2f, y), Size(patchWidth, patchLength)) }
@@ -98,8 +125,8 @@ internal fun DrawScope.drawRunway(
             drawRect(colors.marking, Offset(x, rect.top + inset), Size(barWidth, barLength))
             drawRect(colors.marking, Offset(x, rect.bottom - inset - barLength), Size(barWidth, barLength))
         }
-        val dash = FaDimens.space5.toPx()
-        val gap = FaDimens.space4.toPx()
+        val dash = field.px(FaDimens.space5)
+        val gap = field.px(FaDimens.space4)
         val clear = inset + barLength + numberRoom
         var y = rect.top + clear
         while (y + dash < rect.bottom - clear) {
@@ -107,12 +134,13 @@ internal fun DrawScope.drawRunway(
             y += dash + gap
         }
     }
-    val numberInset = FaDimens.space4.toPx() + FaDimens.space5.toPx() + FaDimens.space7.toPx() / 2f
+    val numberInset = field.px(FaDimens.space4) + field.px(FaDimens.space5) + field.px(FaDimens.space7) / 2f
+    val fieldNumberStyle = field.text(numberStyle)
     for (heading in runway.landingHeadings) {
         val direction = Angles.direction(heading)
         val threshold = center - Offset(direction.x.toFloat(), direction.y.toFloat()) * (lengthPx / 2f)
         val at = threshold + Offset(direction.x.toFloat(), direction.y.toFloat()) * numberInset
-        val layout = measurer.measure(runway.numberFor(heading), numberStyle)
+        val layout = measurer.measure(runway.numberFor(heading), fieldNumberStyle)
         rotate(degreesOf(heading), at) {
             drawText(
                 layout,
@@ -133,15 +161,16 @@ internal fun DrawScope.drawHelipad(
 ) {
     val center = viewport.offsetOf(pad.position)
     val radius = viewport.px(pad.radius)
+    val field = FieldScale(viewport, density)
     drawCircle(colors.asphalt500, radius, center)
     drawCircle(colors.outline, radius, center, style = outlineStroke())
     drawCircle(
         colors.markingWarn,
-        radius - FaDimens.space3.toPx(),
+        radius - field.px(FaDimens.space3),
         center,
-        style = Stroke(width = FaDimens.line4.toPx()),
+        style = Stroke(width = field.px(FaDimens.line4)),
     )
-    val layout = measurer.measure(HELIPAD_LETTER, letterStyle)
+    val layout = measurer.measure(HELIPAD_LETTER, field.text(letterStyle))
     drawText(layout, color = colors.marking, topLeft = center - Offset(layout.size.width / 2f, layout.size.height / 2f))
 }
 
