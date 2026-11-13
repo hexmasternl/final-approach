@@ -69,14 +69,20 @@ private const val MILLIS_PER_SECOND = 1000.0
  * options panel. Quit leaves through [onQuit].
  */
 @Composable
-fun GameScreen(host: AppHost, sounds: SoundPlayer, onQuit: () -> Unit, level: LevelConfig = Levels.meadowField) {
+fun GameScreen(
+    host: AppHost,
+    sounds: SoundPlayer,
+    keepScreenOnSetting: Boolean,
+    onQuit: () -> Unit,
+    level: LevelConfig = Levels.meadowField,
+) {
     FaTheme(dawn = level.theme == LevelTheme.Dawn, reduceMotion = FaTheme.reduceMotion) {
-        GameContent(host, sounds, onQuit, level)
+        GameContent(host, sounds, keepScreenOnSetting, onQuit, level)
     }
 }
 
 @Composable
-private fun GameContent(host: AppHost, sounds: SoundPlayer, onQuit: () -> Unit, level: LevelConfig) {
+private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting: Boolean, onQuit: () -> Unit, level: LevelConfig) {
     val engine = remember(level) { GameEngine(level) }
     val state by engine.state.collectAsState()
     val bestScore = remember(level, host) { BestScore(host.highScores, level.id) }
@@ -95,6 +101,10 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, onQuit: () -> Unit, 
         host.lockLandscape(true)
         onDispose { host.lockLandscape(false) }
     }
+    // The screen stays on only while the level runs; leaving the screen always restores the timeout.
+    val keepScreenOn = shouldKeepScreenOn(keepScreenOnSetting, state)
+    LaunchedEffect(host, keepScreenOn) { host.keepScreenOn(keepScreenOn) }
+    DisposableEffect(host) { onDispose { host.keepScreenOn(false) } }
     fun openOptions() {
         engine.pause()
         optionsOpen = true

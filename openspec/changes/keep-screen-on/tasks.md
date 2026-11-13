@@ -18,7 +18,7 @@
 ## 3. Rule and game screen
 
 - [x] 3.1 Add `shouldKeepScreenOn(setting: Boolean, state: GameState): Boolean` in `ui/game` with `commonTest` tests: true when setting on, not paused and `Playing`; false when paused, when `GameOver`, and when the setting is off. Verify: `./gradlew :shared:allTests`.
-- [ ] 3.2 In `GameScreen`, read the setting, call `host.keepScreenOn(shouldKeepScreenOn(setting, state))` whenever the value changes, and call `host.keepScreenOn(false)` on dispose. Verify: `./gradlew :androidApp:assembleDebug`; no other screen calls `keepScreenOn`.
+- [x] 3.2 In `GameScreen`, read the setting, call `host.keepScreenOn(shouldKeepScreenOn(setting, state))` whenever the value changes, and call `host.keepScreenOn(false)` on dispose. Verify: `./gradlew :androidApp:assembleDebug`; no other screen calls `keepScreenOn`.
 
 ## 4. Device checks (human)
 

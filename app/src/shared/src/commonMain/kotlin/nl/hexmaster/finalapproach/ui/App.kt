@@ -58,6 +58,7 @@ fun App(host: AppHost) {
             Screen.Game -> GameScreen(
                 host = host,
                 sounds = sounds,
+                keepScreenOnSetting = settings.keepScreenOn,
                 onQuit = { screen = Screen.Main },
                 level = Levels.byId(levelId) ?: Levels.meadowField,
             )
