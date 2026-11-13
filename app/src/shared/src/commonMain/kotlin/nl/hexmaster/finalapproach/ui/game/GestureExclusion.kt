@@ -59,8 +59,8 @@ private fun edgeIntervals(
 ): List<IntRange> {
     if (strip <= 0) return emptyList()
     val candidates = aircraft
-        .filter { it.pickable && distance(it) - pickRadius < strip }
-        .sortedWith(compareBy({ if (it.id == selectedId) 0 else 1 }, distance))
+        .filter { it.pickable && distance(it) + pickRadius > 0f && distance(it) - pickRadius < strip }
+        .sortedWith(compareBy({ if (it.id == selectedId) 0 else 1 }, { distance(it).coerceAtLeast(0f) }))
     var accepted = emptyList<IntRange>()
     for (target in candidates) {
         val top = (target.y - halfHeight).toInt().coerceIn(0, screenHeight)

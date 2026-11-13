@@ -44,6 +44,16 @@ class GestureExclusionTest {
     }
 
     @Test
+    fun anAircraftWhosePickAreaIsEntirelyOffScreenGetsNoneAndTakesNoBudget() {
+        assertEquals(emptyList(), plan(at(1, -(pick + 10f), 500f)))
+        val onScreen = (0 until 3).map { at(10 + it, 100f, 100f + it * 300f) }
+        val off = (0 until 3).map { at(20 + it, -500f, 150f + it * 300f) }
+        val zones = plan(*(off + onScreen).toTypedArray(), rightStrip = 0)
+        assertEquals(2, zones.size)
+        assertTrue(zones.all { it.top in 0..1000 })
+    }
+
+    @Test
     fun aNonPickableAircraftGetsNone() {
         assertEquals(emptyList(), plan(at(1, 50f, 500f, pickable = false)))
     }

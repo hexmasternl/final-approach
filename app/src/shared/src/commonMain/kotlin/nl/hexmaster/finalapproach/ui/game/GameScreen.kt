@@ -131,7 +131,8 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
         onDispose { host.keepScreenOn(false) }
     }
     // The system bars hide only while the level runs; leaving the screen always shows them again.
-    val running = isLevelRunning(state)
+    // The collision sequence still counts as the level running until the dialog shows.
+    val running = isLevelRunning(state) || collision?.dialogVisible == false
     LaunchedEffect(host, running) { host.setImmersive(running) }
     DisposableEffect(host) {
         onDispose {
@@ -199,7 +200,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
             if (!engine.state.value.paused) clock += delta
             // Touches that start on an aircraft near a side edge must not become a back gesture; the zones
             // are sent only when they change.
-            val planned = gestureZones(engine.state.value, currentViewport, screen, leftStrip, rightStrip, currentDensity)
+            val planned = gestureZones(engine.state.value, isLevelRunning(engine.state.value) || collision?.dialogVisible == false, currentViewport, screen, leftStrip, rightStrip, currentDensity)
             if (planned != zones) {
                 zones = planned
                 host.setGestureExclusion(planned)
@@ -290,6 +291,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
 /** The side-edge zones for [state] while its level runs, none otherwise; see [planGestureExclusion]. */
 private fun gestureZones(
     state: GameState,
+    running: Boolean,
     viewport: WorldViewport,
     screen: IntSize,
     leftStrip: Int,
@@ -297,7 +299,7 @@ private fun gestureZones(
     density: Density,
     config: GestureExclusionConfig = GestureExclusionConfig(),
 ): List<ScreenRect> {
-    if (!isLevelRunning(state) || screen == IntSize.Zero) return emptyList()
+    if (!running || screen == IntSize.Zero) return emptyList()
     val targets = state.aircraft.map {
         val at = viewport.offsetOf(it.position)
         GestureTarget(it.id, at.x, at.y, it.isPickable)
