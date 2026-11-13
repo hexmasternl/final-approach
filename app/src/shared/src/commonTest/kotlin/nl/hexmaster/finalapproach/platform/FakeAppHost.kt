@@ -9,6 +9,8 @@ class FakeAppHost(
 
     override val highScores = InMemoryHighScoreStore()
 
+    override val settings = InMemorySettingsStore()
+
     override val sounds = RecordingSoundPlayer()
 
     var quitCalls = 0

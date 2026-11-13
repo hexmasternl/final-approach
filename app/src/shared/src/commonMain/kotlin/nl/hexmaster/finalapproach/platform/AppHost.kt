@@ -20,6 +20,9 @@ interface AppHost {
     /** Where the personal best score of each level is kept. */
     val highScores: HighScoreStore
 
+    /** Where the player's settings are kept. */
+    val settings: SettingsStore
+
     /** Ads; [NoOpAds] on a platform that has none. */
     val ads: Ads get() = NoOpAds
 
