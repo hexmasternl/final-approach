@@ -100,6 +100,9 @@ object LevelDefaults {
     /** How long a rolled-out airplane takes to fade away, in seconds. */
     const val LANDED_FADE_SECONDS = 0.5
 
+    /** How long a helicopter takes to descend and land on its helipad, in seconds. */
+    const val HELICOPTER_LANDING_SECONDS = 3.0
+
     /**
      * Distance from the threshold to the touchdown point on the centre line, in world units. The
      * lead-in to it is flown on the aircraft's turning circle, so it follows the zoom.

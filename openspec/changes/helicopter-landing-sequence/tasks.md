@@ -1,8 +1,8 @@
 ## 1. Domain and engine
 
-- [ ] 1.1 Add `AircraftStatus.Landing(elapsed)` and `LandingConfig.helicopterLandingSeconds = 3.0` (validated greater than zero); verify with a config validation test
-- [ ] 1.2 Change `AircraftMotion` so a helicopter whose path is empty starts `Landing`, advances `elapsed`, and on completion emits `Landed` and is removed; verify with `commonTest` for sequence length, no `Landed` before the end and exactly one at the end
-- [ ] 1.3 Skip `Landing` aircraft in collision detection, in the proximity warning and in `GameEngine.select`; verify with `commonTest`: an aircraft overlapping a landing helicopter does not collide, other pairs still do, and the helicopter can collide before the sequence starts
+- [x] 1.1 Add `AircraftStatus.Landing(elapsed)` and `LandingConfig.helicopterLandingSeconds = 3.0` (validated greater than zero); verify with a config validation test
+- [x] 1.2 Change `AircraftMotion` so a helicopter whose path is empty starts `Landing`, advances `elapsed`, and on completion emits `Landed` and is removed; verify with `commonTest` for sequence length, no `Landed` before the end and exactly one at the end
+- [x] 1.3 Skip `Landing` aircraft in collision detection, in the proximity warning and in `GameEngine.select`; verify with `commonTest`: an aircraft overlapping a landing helicopter does not collide, other pairs still do, and the helicopter can collide before the sequence starts
 
 ## 2. UI
 
