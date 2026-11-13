@@ -38,6 +38,7 @@ object Levels {
     private const val SOUTH = PI
     private const val WEST = 3 * PI / 2
     private const val SOUTH_WEST = 5 * PI / 4
+    private const val NORTH_WEST = 7 * PI / 4
 
     private fun world() = WorldConfig(width = LevelDefaults.WORLD_WIDTH, height = LevelDefaults.WORLD_HEIGHT)
 
@@ -207,6 +208,17 @@ object Levels {
     )
 
     /**
+     * The tutorial traffic of Meadow Field, entering outside the viewport. The airplanes come in from
+     * the east side, where an aligned westbound approach to runway 27 still fits; the helicopter
+     * comes from the west above the runway.
+     */
+    private val meadowTutorial = TutorialScript(
+        lightProp = ScriptedEntry(Vec2(1800.0, -LevelDefaults.SPAWN_MARGIN), SOUTH_WEST),
+        turboprop = ScriptedEntry(Vec2(1800.0, LevelDefaults.WORLD_HEIGHT + LevelDefaults.SPAWN_MARGIN), NORTH_WEST),
+        helicopter = ScriptedEntry(Vec2(-LevelDefaults.SPAWN_MARGIN, 300.0), EAST),
+    )
+
+    /**
      * Level 1: one one-way runway (27, approached from the east) in the middle, one helipad on the right, a gentle build-up. The
      * airfield lies in farmland: crop fields, hedges, a farm, two roads, a pond and a forest edge.
      */
@@ -262,6 +274,7 @@ object Levels {
             item(SceneryKind.Tree, 1690.0, 920.0),
             // The farmland around the airfield.
         ),
+        tutorial = meadowTutorial,
         phases = listOf(
             DifficultyPhase(
                 startSeconds = 0.0,
