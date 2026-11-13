@@ -90,7 +90,7 @@ object AircraftMotion {
     /**
      * The distance rolled between [from] and [to] seconds after touchdown. The speed changes
      * linearly from the airplane's flight speed to the landing speed (the flight speed of
-     * [LandingConfig.landingSpeedReference]) over [LandingConfig.rolloutDecelerationSeconds], then
+     * [LandingConfig.landingSpeedReference] times [LandingConfig.landingSpeedFactor]) over [LandingConfig.rolloutDecelerationSeconds], then
      * stays there. The distance is the exact integral, so it does not depend on the step size.
      */
     private fun rolloutDistance(
@@ -101,7 +101,7 @@ object AircraftMotion {
         to: Double,
     ): Double {
         val flight = specs[aircraft.type].speed
-        val landed = specs[landing.landingSpeedReference].speed
+        val landed = specs[landing.landingSpeedReference].speed * landing.landingSpeedFactor
         val decel = landing.rolloutDecelerationSeconds
         fun travelled(t: Double): Double =
             if (decel <= 0.0) {

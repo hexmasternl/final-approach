@@ -39,6 +39,13 @@ class LevelConfigValidatorTest {
     }
 
     @Test
+    fun aLandingSpeedFactorOfZeroOrLessIsRejected() {
+        listOf(0.0, -0.5).forEach { factor ->
+            assertProblem(valid().copy(landing = valid().landing.copy(landingSpeedFactor = factor)), "landing speed factor")
+        }
+    }
+
+    @Test
     fun noLandingZone() {
         val config = valid().copy(runways = emptyList(), helipads = emptyList())
         assertProblem(config, "landing zone is required")
