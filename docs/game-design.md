@@ -53,7 +53,7 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 - **HUD**: one compact row along the top edge, as the design system's Hud Bar. Top left the best score for the level (compact, with a star) and the current score; scores of 1000 or more group thousands with a thin space (`12 450`). The HUD stays inside the top band of the world that no landing zone enters. Top right a cog wheel pauses the game (no movement, spawning or input) and opens the options panel: Continue, Restart, Quit. Back opens the same panel. The best score is stored per level on the device.
 - **Proximity warning**: while two aircraft are closer than the warning distance (centre to centre), both get a spinning dashed ring in the warning colour. It is only a warning; nothing fails until the shapes touch.
 - Score: each safe landing adds the landed type's effective points (helicopter least, jumbo most). Collisions and misses add nothing. Bonuses for streaks and tight sequencing may come later.
-- Difficulty rises over time: spawn rate and aircraft variety increase.
+- Difficulty rises over time: spawn rate and aircraft variety increase. After the last phase a difficulty ramp keeps raising the pressure in steps until per-level limits are reached; then it stays at that final pressure for the rest of the level.
 
 ## World size and zoom
 Every level is played in a world of 1920 by 1080 world units: the former 1280 by 720 world times one zoom factor, `LevelDefaults.WORLD_ZOOM` = 1.5, the same for all levels. The factor is the middle between the original size (1) and a doubled world (2), which was too far out. The camera is pulled back: runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a smaller share of the screen in the middle, with open surroundings on every side for aircraft to fly and line up in. Each level's layout sits in the middle of the world, and its scenery reaches out to the edges.
@@ -78,11 +78,19 @@ A level is a `LevelConfig` in code (`domain/Levels.kt`), validated before it is 
 - **World:** the viewport size in world units (1920 by 1080 for every level), the spawn margin, the leave margin, the spawn separation, the warning distance and the longest simulation step.
 - **Zones:** runways (position, axis orientation, length, width, mode) and helipads (position, radius). Zones lie inside the viewport and never overlap.
 - **Runway mode:** *one-way* accepts landings on one heading only; *two-way* accepts both ends, and the approach picks the end. Approaches within the landing tolerance (default 30 degrees) of a landing heading count as aligned. The runway number is the landing heading in tens of degrees (`09`, `27`).
-- **Difficulty curve:** a list of phases. Each phase starts at a level time and sets the spawn interval range, the weight of each allowed aircraft type and the maximum number of aircraft in the air. The active phase is the last one that has started; phases step, they do not blend.
+- **Difficulty curve:** a list of phases. Each phase starts at a level time and sets the spawn interval range, the weight of each allowed aircraft type and the maximum number of aircraft in the air. The active phase is the last one that has started; phases step, they do not blend. After the last phase, a **difficulty ramp** takes over: every step (60 seconds by default) both spawn intervals drop by 0.5 seconds (down to the level's floor, the range keeping its width), the weight of the next type in the rotation (jet up to 4, then jumbo up to 3, alternating) goes up by 1 unless it is at its cap, and every second step the maximum in the air goes up by 1 (up to the level's cap). No new types appear. When every limit is reached the active phase stays the same. Times count from the end of the tutorial, and the values are a starting point for playtesting.
 - **Run rules:** an optional seed (none means a fresh one per run), an optional duration (none means endless) and an optional landing goal.
 - **Scoring, wind, emergencies, hints:** lives, a points multiplier, and slots for later features that default to off.
 
 ### Build-up
+The ramp per level (step times count from the start of the last configured phase):
+
+| Level | Ramp starts | Step | Floor | Cap in the air | All limits reached |
+|---|---|---|---|---|---|
+| Meadow Field | 2:00 | 60 s | 2.5 s | 5 | 6:00 |
+| Island | 1:00 | 60 s | 2.0 s | 6 | 5:00 |
+| Savanna | 1:00 | 45 s | 1.5 s | 7 | 4:45 |
+
 The spawner draws every random number from one seeded generator, so a seed replays a run exactly. The first spawn comes after a short delay; after each spawn the next interval is drawn from the active phase's range, and the type is picked by weight. At the phase's aircraft cap the spawn waits until an aircraft lands or leaves.
 
 Level 1, **Meadow Field**, is played in landscape. One one-way runway, 27 (approached from the east, flying west), lies left to right in the middle; the 09 end is plain asphalt and landings from the west do nothing, with a helipad on the right, on a striped lawn. A taxiway, an apron with parked aircraft and vehicles, a terminal with a control tower, a hangar, a windsock and trees make it read as a small airfield. Around it lies farmland: crop fields with rows, hedges, a fence, a farmhouse and a barn, two roads, a pond, a forest edge and a paddock with cows and a farmer. All of this decoration is level data and never covers a landing zone. It opens with only light props and helicopters (two at a time), adds turboprops after 45 seconds and all five types after two minutes, with at most three aircraft in the air.
