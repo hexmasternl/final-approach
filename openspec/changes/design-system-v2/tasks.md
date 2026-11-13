@@ -18,12 +18,12 @@ The visual reference for every task is `reference/final-approach-v2.html` in thi
 
 ## 3. Scenery sprites
 
-- [ ] 3.1 Extend the sprite format in `bundle.js` with a height tier, a shadow silhouette and a rotatable flag, and replace the generator's four-fill and colour checks with the checks of design Decision 5; verify each check with one failing sample sprite
-- [ ] 3.2 Carry over from `reference/world.cjs`: tree (three sizes), pine (two sizes), bush, rock, hay bale, farmhouse, barn, silo, cow, car, fuel truck, windsock, control tower, terminal, hangar, cloud, with ramp steps as paint keys; verify the generated SVGs match the reference tiles side by side
-- [ ] 3.3 Draw the remaining meadow and airfield sprites on W1 to W9: farmer, bird (two wing frames), baggage cart, fence piece, hedge piece, crop-field tiles (wheat, green, ploughed), parked aircraft in `tin` tones; verify each passes the generator checks
-- [ ] 3.4 Draw the island sprites: palm, jetty, sailboat, yacht, container vessel, wave, wake, and the beach transition; verify each passes the generator checks
-- [ ] 3.5 Draw the savanna sprites: acacia, zebra, elephant, savanna bush and rock variants, waterhole and dirt-road transitions; verify each passes the generator checks
-- [ ] 3.6 Regenerate `assets/scenery/*.svg`; verify every sprite in `bundle.js` has an SVG and no orphan SVG remains
+- [x] 3.1 Extend the sprite format in `bundle.js` with a height tier, a shadow silhouette and a rotatable flag, and replace the generator's four-fill and colour checks with the checks of design Decision 5; verify each check with one failing sample sprite
+- [x] 3.2 Carry over from `reference/world.cjs`: tree (three sizes), pine (two sizes), bush, rock, hay bale, farmhouse, barn, silo, cow, car, fuel truck, windsock, control tower, terminal, hangar, cloud, with ramp steps as paint keys; verify the generated SVGs match the reference tiles side by side
+- [x] 3.3 Draw the remaining meadow and airfield sprites on W1 to W9: farmer, bird (two wing frames), baggage cart, fence piece, hedge piece, crop-field tiles (wheat, green, ploughed), parked aircraft in `tin` tones; verify each passes the generator checks
+- [x] 3.4 Draw the island sprites: palm, jetty, sailboat, yacht, container vessel, wave, wake, and the beach transition; verify each passes the generator checks
+- [x] 3.5 Draw the savanna sprites: acacia, zebra, elephant, savanna bush and rock variants, waterhole and dirt-road transitions; verify each passes the generator checks
+- [x] 3.6 Regenerate `assets/scenery/*.svg`; verify every sprite in `bundle.js` has an SVG and no orphan SVG remains
 
 ## 4. Ground and landing zones
 

@@ -1,5 +1,6 @@
-// Generates the Compose theme values and sprite data from the design-system sources, and the
-// scenery SVG assets (assets/scenery) from the scenery sprites in bundle.js.
+// Generates the Compose theme values and sprite data from the design-system sources, checks the
+// v2 scenery sprites in bundle.js against the world rules, and writes them as SVG assets
+// (assets/scenery).
 // usage, from the repository root: node docs/design-system/tools/gen-kotlin.cjs
 const fs = require('fs');
 const path = require('path');
@@ -216,31 +217,34 @@ ${partsOf(side.svg, '    ')}
 `;
 w('sprites/AircraftSprites.kt', sprites);
 
-// ---------- scenery sprites
+// ---------- scenery sprites for the app's v1 world
+// The app's world is not ported to v2 yet, so its sprite data is still generated from the v1
+// sprites in tools/scenery-v1.js. Port the world, then generate this from FA.WORLD instead.
+const V1 = require(path.join(__dirname, 'scenery-v1.js'));
 const pascal = n => n.replace(/(^|-)(\w)/g, (_, __, c) => c.toUpperCase());
-const sceneryRoles = Object.keys(FA.SCENERY_FILL);
-const roleOfToken = Object.fromEntries(sceneryRoles.map(r => [FA.SCENERY_FILL[r], r]));
+const sceneryRoles = Object.keys(V1.SCENERY_FILL);
+const roleOfToken = Object.fromEntries(sceneryRoles.map(r => [V1.SCENERY_FILL[r], r]));
 const strokeName = { outline: 'Outline', fine: 'Fine' };
 const lineOf = n => parseFloat(tok('line', n));
 const sceneryShapes = (name, a) => {
   const shapes = [];
   const re = /<(rect|path|circle|ellipse) \{\{([a-z-]+)\}\}([^>]*)\/>/g;
   let m;
-  while ((m = re.exec(a.svg))) shapes.push({ tag: m[1], key: m[2], attrs: m[3], paint: FA.sceneryPaint(m[2]) });
+  while ((m = re.exec(a.svg))) shapes.push({ tag: m[1], key: m[2], attrs: m[3], paint: V1.sceneryPaint(m[2]) });
   if (shapes.length !== (a.svg.match(/<(rect|path|circle|ellipse)\b/g) || []).length) throw new Error(`scenery ${name}: a shape has no paint key`);
   // The rules of world.md, checked here so a sprite that breaks them never reaches the game.
   const fills = new Set(shapes.map(x => x.paint.fill).filter(Boolean));
-  if (fills.size > FA.SCENERY_MAX_FILLS) throw new Error(`scenery ${name}: ${fills.size} fill colours (${[...fills].join(', ')}), at most ${FA.SCENERY_MAX_FILLS}`);
+  if (fills.size > V1.SCENERY_MAX_FILLS) throw new Error(`scenery ${name}: ${fills.size} fill colours (${[...fills].join(', ')}), at most ${V1.SCENERY_MAX_FILLS}`);
   for (const x of shapes) for (const token of [x.paint.fill, x.paint.stroke && x.paint.strokeColor]) {
     if (!token) continue;
     const resolved = [token]; let v = cmap[token];
     while (typeof v === 'string' && /^\{(.+)\}$/.test(v)) { resolved.push(v.slice(1, -1)); v = cmap[v.slice(1, -1)]; }
-    const pathColours = FA.SCENERY_BANNED.filter(b => resolved.includes(b) || (typeof cmap[b] === 'string' && resolved.includes(cmap[b].slice(1, -1))));
-    if (pathColours.length && FA.SCENERY_ACCENT[name] !== token) throw new Error(`scenery ${name}: ${token} is not a scenery colour (${pathColours.join(', ')})`);
+    const pathColours = V1.SCENERY_BANNED.filter(b => resolved.includes(b) || (typeof cmap[b] === 'string' && resolved.includes(cmap[b].slice(1, -1))));
+    if (pathColours.length && V1.SCENERY_ACCENT[name] !== token) throw new Error(`scenery ${name}: ${token} is not a scenery colour (${pathColours.join(', ')})`);
   }
   return shapes;
 };
-const sceneryEntries = Object.entries(FA.SCENERY).map(([name, a]) => ({ name, a, shapes: sceneryShapes(name, a) }));
+const sceneryEntries = Object.entries(V1.SCENERY).map(([name, a]) => ({ name, a, shapes: sceneryShapes(name, a) }));
 w('sprites/ScenerySprites.kt', `// Generated from the design system scenery sprites (components/bundle.js). Do not edit by hand.
 package nl.hexmaster.finalapproach.ui.sprites
 
@@ -252,10 +256,10 @@ internal enum class SceneryPaint { ${sceneryRoles.map(pascal).join(', ')} }
 
 /** The theme colour of a scenery paint role. */
 internal fun FaColors.scenery(paint: SceneryPaint): Color = when (paint) {
-${sceneryRoles.map(r => `    SceneryPaint.${pascal(r)} -> ${camel(FA.SCENERY_FILL[r])}`).join('\n')}
+${sceneryRoles.map(r => `    SceneryPaint.${pascal(r)} -> ${camel(V1.SCENERY_FILL[r])}`).join('\n')}
 }
 
-/** How a scenery shape is stroked: not at all, with the scenery outline (\`${FA.SCENERY_STROKE.outline}\`) or with the detail line (\`${FA.SCENERY_STROKE.fine}\`). */
+/** How a scenery shape is stroked: not at all, with the scenery outline (\`${V1.SCENERY_STROKE.outline}\`) or with the detail line (\`${V1.SCENERY_STROKE.fine}\`). */
 internal enum class SceneryStroke { None, Outline, Fine }
 
 /** One shape of a scenery sprite, as SVG path data on the sprite's grid. A null [fill] is a stroke only. */
@@ -279,15 +283,53 @@ ${shapes.map(x => `            SceneryPart(${x.paint.fill ? 'SceneryPaint.' + pa
     ),`).join('\n')}
 }
 `);
-// The same sprites as standalone SVG files, painted with the Day values.
+console.log(`generated: sprites/ScenerySprites.kt (${sceneryEntries.length} v1 sprites)`);
+
+// ---------- scenery sprites of design system v2: rule checks and SVG assets
+// The world rules of world.md, checked here so a sprite that breaks them never reaches the kit.
+const material = tk => { const m = /^([a-z]+)-\d+$/.exec(tk); return m ? m[1] : tk; };
+const worldEntries = Object.entries(FA.WORLD);
+for (const [name, a] of worldEntries) {
+  const keys = [...(a.svg + a.sh).matchAll(/\{\{([a-z0-9\/.-]+)\}\}/g)].map(m => FA.worldPaint(m[1]));
+  const shapes = (a.svg.match(/<(rect|path|circle|ellipse|polygon)\b/g) || []).length;
+  const painted = (a.svg.match(/<(rect|path|circle|ellipse|polygon) \{\{/g) || []).length;
+  const inClip = (a.svg.match(/<clipPath[^>]*>.*?<\/clipPath>/g) || []).join('').match(/<(rect|path|circle|ellipse|polygon)\b/g) || [];
+  if (painted + inClip.length !== shapes) throw new Error(`scenery ${name}: a shape has no paint key`);
+  const used = new Set();
+  for (const p of keys) for (const tk of [p.fill, p.stroke]) {
+    if (!tk) continue;
+    if (!cmap[tk]) throw new Error(`scenery ${name}: unknown colour token ${tk}`);
+    if (ctok[tk].deprecated) throw new Error(`scenery ${name}: ${tk} is a v1 token`);
+    if (FA.WORLD_BANNED.includes(tk)) throw new Error(`scenery ${name}: ${tk} belongs to aircraft and paths (W9)`);
+    if (FA.WORLD_TRIM.includes(tk)) continue;
+    const mat = material(tk);
+    if (FA.WORLD_ACCENT[name] === mat) continue;
+    if (/^(cherry|tangerine|sun|sky|mint|paper)$/.test(mat)) throw new Error(`scenery ${name}: ${tk} is a UI colour (W9)`);
+    used.add(mat);
+  }
+  // wood and soil, and the two leaf greens, are one material each
+  const mats = new Set([...used].map(m => ({ soil: 'wood', pine: 'leaf', grass: 'leaf' })[m] || m));
+  // W2: three materials; a sprite that only carries other things (a vessel with containers, a cart with luggage) may hold more
+  const trim = a.trim || [];
+  if (trim.length > 2 || trim.some(m => !mats.has(m))) throw new Error(`scenery ${name}: trim names at most two materials the sprite uses`);
+  trim.forEach(m => mats.delete(m));
+  if (mats.size > FA.WORLD_MAX_MATERIALS && !a.carries) throw new Error(`scenery ${name}: ${mats.size} materials (${[...mats].join(', ')}), at most ${FA.WORLD_MAX_MATERIALS} (W2)`);
+  if (!keys.some(p => p.stroke === 'outline') && a.tier !== 'flat') throw new Error(`scenery ${name}: no outline silhouette (W3)`);
+  if (a.tier === 'flat' && keys.some(p => p.stroke === 'outline')) throw new Error(`scenery ${name}: flat ground has no outline (W6)`);
+  if (a.tier !== 'flat' && !a.sh) throw new Error(`scenery ${name}: no cast shadow (W1)`);
+  if (!['flat', 'S', 'M', 'L'].includes(a.tier)) throw new Error(`scenery ${name}: height tier`);
+  if ((a.tier === 'M') && a.rotates) throw new Error(`scenery ${name}: a standing sprite does not rotate (W5)`);
+}
+// The sprites as standalone SVG files, shadow included, painted with the Day values.
 const sceneryDir = path.join(DS, 'assets', 'scenery');
 fs.mkdirSync(sceneryDir, { recursive: true });
-for (const f of fs.readdirSync(sceneryDir)) if (f.endsWith('.svg') && !FA.SCENERY[f.slice(0, -4)]) fs.unlinkSync(path.join(sceneryDir, f));
-const literal = key => { const p = FA.sceneryPaint(key);
-  return `fill="${p.fill ? resolve(p.fill, 'light') : 'none'}"` + (p.stroke ? ` stroke="${resolve(p.strokeColor, 'light')}" stroke-width="${lineOf(FA.SCENERY_STROKE[p.stroke])}" stroke-linejoin="round" stroke-linecap="round"` : ''); };
-for (const { name, a } of sceneryEntries)
-  fs.writeFileSync(path.join(sceneryDir, name + '.svg'), FA.scenerySvg(name, literal).replace(' aria-hidden="true"', ` width="${a.width}" height="${a.height}"`) + '\n');
-console.log(`generated: sprites/ScenerySprites.kt, assets/scenery (${sceneryEntries.length} sprites)`);
+for (const f of fs.readdirSync(sceneryDir)) if (f.endsWith('.svg') && !FA.WORLD[f.slice(0, -4)]) fs.unlinkSync(path.join(sceneryDir, f));
+const literal = key => { const p = FA.worldPaint(key);
+  return `fill="${p.fill ? resolve(p.fill, 'light') : 'none'}"` + (p.stroke ? ` stroke="${resolve(p.stroke, 'light')}" stroke-width="${p.width}"` : ''); };
+const castOpacity = tok('opacity', 'opacity-shadow-cast');
+for (const [name, a] of worldEntries)
+  fs.writeFileSync(path.join(sceneryDir, name + '.svg'), FA.worldSvg(name, literal, { shadowAttr: `fill="${resolve('shadow-cast', 'light')}" opacity="${castOpacity}"` }).replace(' aria-hidden="true"', ` width="${a.w}" height="${a.h}"`) + '\n');
+console.log(`generated: assets/scenery (${worldEntries.length} v2 sprites)`);
 
 // ---------- airport silhouette
 const sil = FA.SILHOUETTE;

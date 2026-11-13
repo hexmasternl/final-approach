@@ -177,6 +177,14 @@ for (const [n, v, u] of [
   ['toggle-knob-v2', '26px', 'Diameter of the v2 toggle knob.'],
   ['segment-height', '36px', 'Height of a segment of a segmented control (the touch area is touch-min).'],
 ]) push('size', n, v, u);
+for (const [n, v, u] of [
+  ['shadow-air-blur', '5px', 'Blur of the soft shadow under an aircraft, in world units of a scene.'],
+  ['shadow-cloud-blur', '7px', 'Blur of the soft shadow under a cloud, in world units of a scene.'],
+  ['rule-dash', '6px', 'Dash length of a dashed rule on paper: the perforation of a dialog, the rule under a panel header.'],
+  ['rule-gap', '4px', 'Gap between the dashes of a dashed rule on paper.'],
+]) push('size', n, v, u);
+push('opacity', 'opacity-shadow-air', '0.26', 'The soft shadow under an aircraft in a scene.');
+push('opacity', 'opacity-shadow-cloud', '0.2', 'The soft shadow under a cloud in a scene.');
 push('opacity', 'opacity-shadow-cast', '0.32', 'The one layer that holds every hard ground shadow is drawn at this opacity.');
 push('opacity', 'opacity-shine', '0.6', 'The shine on a coloured button.');
 push('opacity', 'opacity-eyebrow', '0.75', 'The eyebrow label in the header band of a dialog.');

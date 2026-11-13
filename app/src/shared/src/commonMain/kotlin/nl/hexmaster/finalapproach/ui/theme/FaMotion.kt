@@ -39,4 +39,6 @@ object FaOpacity {
     const val shadowCast = 0.32f
     const val shine = 0.6f
     const val eyebrow = 0.75f
+    const val shadowAir = 0.26f
+    const val shadowCloud = 0.2f
 }

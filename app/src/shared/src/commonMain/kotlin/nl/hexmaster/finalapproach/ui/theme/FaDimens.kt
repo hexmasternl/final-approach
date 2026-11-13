@@ -115,4 +115,8 @@ object FaDimens {
     val toggleHeightV2 = 34.dp
     val toggleKnobV2 = 26.dp
     val segmentHeight = 36.dp
+    val shadowAirBlur = 5.dp
+    val shadowCloudBlur = 7.dp
+    val ruleDash = 6.dp
+    val ruleGap = 4.dp
 }
