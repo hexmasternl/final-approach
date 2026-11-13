@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import nl.hexmaster.finalapproach.ui.components.FaButton
+import nl.hexmaster.finalapproach.ui.components.FaButtonSize
 import nl.hexmaster.finalapproach.ui.components.FaButtonVariant
 import nl.hexmaster.finalapproach.ui.components.FaDialog
 import nl.hexmaster.finalapproach.ui.components.FaDialogAction
@@ -44,6 +46,7 @@ fun Hud(
     score: Int,
     onOptions: () -> Unit,
     modifier: Modifier = Modifier,
+    onSkipTutorial: (() -> Unit)? = null,
 ) {
     Box(
         modifier
@@ -59,7 +62,17 @@ fun Hud(
             FaScoreCounter(HudText.BEST, best, compact = true, icon = FaIcon.Star, iconColor = FaTheme.colors.sunDeep)
             FaScoreCounter(HudText.SCORE, score, popOnRise = true)
         }
-        FaIconButton(FaIcon.Settings, HudText.OPTIONS, onOptions, Modifier.align(Alignment.TopEnd))
+        Row(
+            Modifier.align(Alignment.TopEnd),
+            horizontalArrangement = Arrangement.spacedBy(FaDimens.space3),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Only while the first-time tutorial runs.
+            if (onSkipTutorial != null) {
+                FaButton(TutorialText.SKIP, onSkipTutorial, variant = FaButtonVariant.Ghost, size = FaButtonSize.Small)
+            }
+            FaIconButton(FaIcon.Settings, HudText.OPTIONS, onOptions)
+        }
     }
 }
 
