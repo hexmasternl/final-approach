@@ -42,6 +42,22 @@ class FakeAppHost(
     override fun lockLandscape(locked: Boolean) {
         landscapeLocked = locked
     }
+
+    /** The last value passed to [setImmersive]. */
+    var immersive = false
+        private set
+
+    override fun setImmersive(enabled: Boolean) {
+        immersive = enabled
+    }
+
+    /** The last list passed to [setGestureExclusion]. */
+    var gestureExclusion: List<ScreenRect> = emptyList()
+        private set
+
+    override fun setGestureExclusion(rects: List<ScreenRect>) {
+        gestureExclusion = rects
+    }
 }
 
 /** A [SoundPlayer] that lists what was played. */
