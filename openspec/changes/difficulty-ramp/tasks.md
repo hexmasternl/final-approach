@@ -7,7 +7,7 @@
 
 ## 2. Validation
 
-- [ ] 2.1 Add `rampProblems` to `LevelConfigValidator` (design decision 6): positive step and drop, floor positive and not above the last phase's minimum, cap not below the last phase's maximum, aircraft step count at least 1, weight cap types allowed in the last phase, no duplicates, caps not below the last-phase weight. Verify: one `LevelConfigValidatorTest` case per rule asserting a message starting with "The difficulty ramp", and a valid ramp yields no problem.
+- [x] 2.1 Add `rampProblems` to `LevelConfigValidator` (design decision 6): positive step and drop, floor positive and not above the last phase's minimum, cap not below the last phase's maximum, aircraft step count at least 1, weight cap types allowed in the last phase, no duplicates, caps not below the last-phase weight. Verify: one `LevelConfigValidatorTest` case per rule asserting a message starting with "The difficulty ramp", and a valid ramp yields no problem.
 
 ## 3. Levels
 
