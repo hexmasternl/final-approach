@@ -1,5 +1,5 @@
 // Builds the social visuals and the Play Store feature graphic from the design kit.
-// Reuses the tokens, fonts, component CSS and custom elements inlined in ../../showcase.html,
+// Reuses the tokens, fonts, component CSS and custom elements of the design system (tools/build-showcase.cjs),
 // writes one HTML file per visual next to this script, and renders each to PNG with headless Chrome.
 // Usage: node build.cjs [chromePath]
 const fs = require('fs');
@@ -8,14 +8,8 @@ const { execFileSync } = require('child_process');
 
 const here = __dirname;
 const outDir = path.resolve(here, '..');
-const showcase = fs.readFileSync(path.resolve(here, '../../showcase.html'), 'utf8').split(/\r?\n/);
-
-const styleEnd = showcase.findIndex(l => l.trim() === '</style>');
-const kitStart = showcase.findIndex(l => l.includes('Final Approach world kit'));
-const head = showcase.slice(2, styleEnd).join('\n'); // from <head> up to before </style>
-let kit = [];
-for (let i = kitStart - 1; i < showcase.length; i++) { kit.push(showcase[i]); if (showcase[i].trim() === '</script>') break; }
-kit = kit.join('\n');
+// The tokens, fonts, component CSS and the kit script: the same parts the showcase is built from.
+const { head, kit } = require(path.resolve(here, '../../tools/build-showcase.cjs')).parts();
 
 const chrome = process.argv[2] || [
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
@@ -30,16 +24,16 @@ body{position:relative;font:500 16px/24px var(--font-text);color:var(--ink);}
 .abs{position:absolute;}
 .sky{background:repeating-conic-gradient(from 6deg at 50% 118%, var(--sky-300) 0 9deg, var(--bg-sky) 9deg 18deg);}
 .sky--c{background:repeating-conic-gradient(from 3deg at 50% 50%, var(--sky-300) 0 9deg, var(--bg-sky) 9deg 18deg);}
-.field{background:repeating-linear-gradient(102deg, var(--grass-500) 0 64px, var(--grass-700) 64px 128px);}
-.band{position:absolute;left:0;right:0;border-bottom:var(--line-4) solid var(--outline);}
-.band--bottom{border-bottom:0;border-top:var(--line-4) solid var(--outline);}
+.field{background:repeating-linear-gradient(97deg, var(--grass-500) 0 52px, var(--grass-600) 52px 104px);}
+.band{position:absolute;left:0;right:0;border-bottom:var(--line-zone) solid var(--outline);}
+.band--bottom{border-bottom:0;border-top:var(--line-zone) solid var(--outline);}
 .h-xl{margin:0;font:700 96px/96px var(--font-display);letter-spacing:-.015em;color:var(--on-sky);}
 .h-lg{margin:0;font:700 76px/80px var(--font-display);letter-spacing:-.01em;color:var(--on-sky);}
 .h-md{margin:0;font:700 56px/60px var(--font-display);color:var(--ink);}
 .kick{margin:0;font:800 22px/26px var(--font-text);letter-spacing:.12em;text-transform:uppercase;color:var(--on-sky-muted);}
-.sub{margin:0;font:600 28px/38px var(--font-text);color:var(--ink-muted);}
-.card{background:var(--surface);border:var(--line-4) solid var(--outline);border-radius:var(--radius-xl);box-shadow:0 10px 0 var(--outline);}
-.tag{display:inline-flex;align-items:center;gap:10px;padding:10px 22px;border:var(--line-3) solid var(--outline);border-radius:var(--radius-pill);background:var(--sun);color:var(--on-accent);font:700 26px/30px var(--font-display);box-shadow:0 6px 0 var(--outline);}
+.sub{margin:0;font:700 28px/38px var(--font-body);color:var(--ink-muted);}
+.card{background:var(--paper-100);border-radius:var(--radius-dialog);box-shadow:inset 0 -8px 0 var(--paper-400),0 0 0 var(--line-zone) var(--outline),0 12px 0 3px var(--contact-field);}
+.tag{display:inline-flex;align-items:center;gap:10px;padding:10px 22px;border-radius:var(--radius-pill);background:var(--sun-500);color:var(--on-accent);font:700 26px/30px var(--font-display);box-shadow:inset 0 3px 0 var(--sun-200),inset 0 -5px 0 var(--sun-700),0 0 0 var(--line-zone) var(--outline),0 0 0 7px var(--paper-0),0 7px 0 7px var(--contact);}
 .tag fa-icon{--fa-icon:28px;}
 .center{left:0;right:0;text-align:center;}
 .sc{transform-origin:top left;}
@@ -70,16 +64,16 @@ const path_ = (d, livery, kind = 'idle', dot = true) => {
   return `<g class="fa-path--${kind}" style="--fa-livery:var(--path-${livery})"><path class="fa-path-casing" d="${d}"/><path class="fa-path-dash" d="${d}"/>${dot ? `<circle class="fa-path-dot" cx="${end[0]}" cy="${end[1]}" r="11"/>` : ''}</g>`;
 };
 const svg = (w, h, inner) => `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" style="position:absolute;inset:0" aria-hidden="true">${inner}</svg>`;
-const hud = (score = '12 450', streak = 'x3', next = { type: 'jumbo', livery: 5, edge: 'arrow-left' }, lost = 1) => `
+const hud = (score = '12&#8201;450', streak = 'x3', next = { type: 'jumbo', livery: 5, edge: 'arrow-left' }, lost = 1) => `
 <div class="fa-hud" style="position:absolute;inset:0 0 auto 0">
   <div class="fa-hud__group">
-    <div class="fa-hudchip fa-score"><span><span class="fa-hudchip__label">Score</span><span class="fa-score__value">${score}</span></span></div>
+    <div class="fa-strip"><span class="fa-strip__label fa-strip__label--sun">Score</span><span class="fa-strip__value">${score}</span></div>
     <span class="fa-streak"><fa-icon name="bolt"></fa-icon>${streak}</span>
   </div>
   <div class="fa-hud__group">
-    <div class="fa-hudchip fa-next"><span class="fa-hudchip__label">Next up</span><fa-aircraft type="${next.type}" livery="${next.livery}" heading="270" flat></fa-aircraft><span class="fa-next__edge"><fa-icon name="${next.edge}"></fa-icon></span></div>
-    <div class="fa-hudchip"><span class="fa-lives" role="img" aria-label="lives">${[0, 1, 2].map(i => `<fa-icon class="fa-life${i >= 3 - lost ? ' fa-life--lost' : ''}" name="heart"></fa-icon>`).join('')}</span></div>
-    <button class="fa-iconbtn" aria-label="Pause"><fa-icon name="pause"></fa-icon></button>
+    <div class="fa-strip fa-next"><span class="fa-strip__label">Next</span><span class="fa-strip__value"><fa-aircraft type="${next.type}" livery="${next.livery}" heading="270" flat></fa-aircraft><span class="fa-next__edge"><fa-icon name="${next.edge}"></fa-icon></span></span></div>
+    <div class="fa-strip" role="img" aria-label="lives"><span class="fa-strip__value fa-lives">${[0, 1, 2].map(i => `<fa-icon class="fa-life${i >= 3 - lost ? ' fa-life--lost' : ''}" name="heart"></fa-icon>`).join('')}</span></div>
+    <button class="fa-iconbtn fa-iconbtn--hud" aria-label="Pause"><fa-icon name="pause"></fa-icon></button>
   </div>
 </div>`;
 const ring = (inner, size = 110) => `<span style="position:relative;display:grid;place-items:center;width:${size}px;height:${size}px">${inner}<svg class="fa-warn-ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="fa-warn-ring__casing" cx="50" cy="50" r="46"/><circle class="fa-warn-ring__dash" cx="50" cy="50" r="46"/></svg></span>`;
@@ -118,7 +112,7 @@ visuals.push({ name: '02-sunset-splash', w: S, h: S, bg: 'fa-sunset', body: `
 // 03 Gameplay: a busy field
 visuals.push({ name: '03-gameplay-field', w: S, h: S, bg: 'field', body: `
 <div class="abs" style="left:0;top:0;width:800px;height:800px;transform:scale(1.35);transform-origin:0 0">
-<fa-runway length="380" numbers="09/27" state="ok" style="position:absolute;left:150px;top:400px;transform:rotate(-14deg)"></fa-runway>
+<fa-runway length="380" numbers="09/27" zone="ok" style="position:absolute;left:150px;top:400px;transform:rotate(-14deg)"></fa-runway>
 <fa-helipad style="position:absolute;left:600px;top:470px"></fa-helipad>
 <fa-windsock style="position:absolute;left:470px;top:520px"></fa-windsock>
 ${svg(800, 800,
@@ -152,7 +146,7 @@ const fleet = [
 const fleetCell = ([t, l, n, d], size) => `<div style="display:flex;flex-direction:column;align-items:center;gap:18px">
   <div style="height:${Math.max(size, 200)}px;display:grid;place-items:center"><fa-aircraft type="${t}" livery="${l}" size="${size}"></fa-aircraft></div>
   <span class="fa-chip" style="font-size:22px;padding:8px 18px">${n}</span>
-  <span style="font:700 20px/24px var(--font-text);color:var(--on-outline)">${d}</span></div>`;
+  <span style="font:800 20px/24px var(--font-body);color:var(--ink)">${d}</span></div>`;
 visuals.push({ name: '04-meet-the-fleet', w: S, h: S, bg: 'field', body: `
 <div class="band sky" style="top:0;height:250px"></div>
 <p class="kick abs center" style="top:58px">Five flying toys</p>
@@ -163,7 +157,7 @@ visuals.push({ name: '04-meet-the-fleet', w: S, h: S, bg: 'field', body: `
 <div class="abs" style="left:0;right:0;top:640px;display:flex;justify-content:space-evenly;align-items:flex-end;padding:0 120px">
   ${fleetCell(fleet[3], 290)}${fleetCell(fleet[4], 170)}
 </div>
-`, css: `<style>.fa-chip{box-shadow:0 4px 0 var(--outline)}</style>`.replace(/<\/?style>/g, '') });
+`});
 
 // 05 How to play
 visuals.push({ name: '05-how-to-play', w: S, h: S, bg: 'field', body: `
@@ -175,7 +169,7 @@ visuals.push({ name: '05-how-to-play', w: S, h: S, bg: 'field', body: `
 </div>
 <fa-aircraft type="light-prop" livery="1" heading="40" selected size="120" style="position:absolute;left:800px;top:300px"></fa-aircraft>
 ${svg(S, S, path_('M860 420C900 520 700 560 560 600', 1, 'march'))}
-<fa-runway length="420" numbers="09/27" state="ok" style="position:absolute;left:110px;top:600px;transform:rotate(-6deg)"></fa-runway>
+<fa-runway length="420" numbers="09/27" zone="ok" style="position:absolute;left:110px;top:600px;transform:rotate(-6deg)"></fa-runway>
 <div class="abs sc" style="left:520px;top:690px;transform:scale(1.6)">
   <div class="fa-coach fa-coach--up"><fa-icon name="plane"></fa-icon><span><span class="fa-coach__step">Step 2 of 3</span><b>Drag to the runway</b>End the path lined up.</span></div>
 </div>
@@ -187,7 +181,7 @@ ${svg(S, S, path_('M860 420C900 520 700 560 560 600', 1, 'march'))}
 
 // 06 Streaks
 visuals.push({ name: '06-streak-combo', w: S, h: S, bg: 'field', body: `
-<fa-runway length="640" numbers="18/36" state="ok" style="position:absolute;left:200px;top:640px;transform:rotate(8deg)"></fa-runway>
+<fa-runway length="640" numbers="18/36" zone="ok" style="position:absolute;left:200px;top:640px;transform:rotate(8deg)"></fa-runway>
 <fa-burst kind="star" style="position:absolute;left:120px;top:560px;width:220px;height:220px"></fa-burst>
 <fa-burst kind="star" style="position:absolute;left:760px;top:600px;width:180px;height:180px"></fa-burst>
 <fa-aircraft type="turboprop" livery="2" heading="98" size="130" style="position:absolute;left:470px;top:600px"></fa-aircraft>
@@ -223,16 +217,16 @@ visuals.push({ name: '08-choose-your-airport', w: S, h: S, bg: 'sky--c', body: `
 <p class="h-xl abs center" style="top:112px">Choose your airport</p>
 <div class="abs" style="left:0;right:0;top:330px;display:flex;justify-content:center;gap:28px;transform:scale(1.3);transform-origin:center top">
 <button class="fa-levelcard" style="transform:rotate(-4deg) translateY(16px)">
-  <span class="fa-levelcard__art"><fa-runway length="300" numbers="09/27" style="transform:rotate(-8deg)"></fa-runway></span>
-  <span class="fa-levelcard__body"><span class="fa-levelcard__title">Meadow Field</span><span class="fa-levelcard__meta">BEST 18 200</span><span class="fa-levelcard__tags"><span class="fa-chip fa-chip--sky">1 runway</span></span></span>
+  <span class="fa-levelcard__art"><fa-scene level="meadow" ground crop="330 190 1330 700"></fa-scene><span class="fa-levelcard__badge"><span class="fa-chip fa-chip--sun"><fa-icon name="star"></fa-icon>18&#8201;200</span></span></span>
+  <span class="fa-levelcard__body"><span class="fa-levelcard__title">Meadow Field</span><span class="fa-levelcard__tags"><span class="fa-chip">1 runway</span><span class="fa-chip">1 helipad</span></span></span>
 </button>
 <button class="fa-levelcard is-focus">
-  <span class="fa-levelcard__art"><fa-runway length="300" numbers="04/22" style="transform:rotate(18deg) translateY(-8px)"></fa-runway><fa-helipad style="right:14px;bottom:10px"></fa-helipad></span>
-  <span class="fa-levelcard__body"><span class="fa-levelcard__title">Twin Pines</span><span class="fa-levelcard__meta">BEST 9 750</span><span class="fa-levelcard__tags"><span class="fa-chip fa-chip--sky">1 runway</span><span class="fa-chip fa-chip--sky">1 helipad</span></span></span>
+  <span class="fa-levelcard__art"><fa-scene level="island" ground crop="300 150 1330 780"></fa-scene><span class="fa-levelcard__badge"><span class="fa-chip fa-chip--sun"><fa-icon name="star"></fa-icon>9&#8201;750</span></span></span>
+  <span class="fa-levelcard__body"><span class="fa-levelcard__title">Island</span><span class="fa-levelcard__tags"><span class="fa-chip">1 runway</span><span class="fa-chip">1 helipad</span></span></span>
 </button>
 <button class="fa-levelcard" aria-disabled="true" style="transform:rotate(4deg) translateY(16px)">
-  <span class="fa-levelcard__art"><fa-runway length="300" numbers="13/31" style="transform:rotate(-30deg)"></fa-runway><span class="fa-levelcard__lock"><fa-icon name="lock"></fa-icon></span></span>
-  <span class="fa-levelcard__body"><span class="fa-levelcard__title">Harbour Cross</span><span class="fa-levelcard__meta">LAND 50 TO UNLOCK</span><span class="fa-levelcard__tags"><span class="fa-chip"><fa-icon name="lock"></fa-icon>Locked</span></span></span>
+  <span class="fa-levelcard__art"><fa-scene level="savanna" ground crop="300 190 1330 700"></fa-scene><span class="fa-levelcard__lock"><span><fa-icon name="lock"></fa-icon></span></span></span>
+  <span class="fa-levelcard__body"><span class="fa-levelcard__title">Savanna</span><span class="fa-levelcard__tags"><span class="fa-chip fa-chip--plain">Land 50 to unlock</span></span></span>
 </button>
 </div>
 <fa-aircraft type="jet" livery="4" heading="70" size="140" style="position:absolute;left:60px;top:860px"></fa-aircraft>
@@ -241,7 +235,7 @@ visuals.push({ name: '08-choose-your-airport', w: S, h: S, bg: 'sky--c', body: `
 
 // 09 Night shift
 visuals.push({ name: '09-night-shift', w: S, h: S, bg: 'field', theme: 'dark', body: `
-<fa-runway length="600" numbers="27/09" state="ok" style="position:absolute;left:220px;top:600px;transform:rotate(12deg)"></fa-runway>
+<fa-runway length="600" numbers="27/09" zone="ok" style="position:absolute;left:220px;top:600px;transform:rotate(12deg)"></fa-runway>
 <fa-helipad style="position:absolute;left:840px;top:430px"></fa-helipad>
 ${svg(S, S, path_('M920 840C820 760 640 760 560 690', 1, 'march') + path_('M756 412C820 400 880 430 896 486', 6))}
 <fa-aircraft type="jumbo" livery="5" heading="290" size="150" style="position:absolute;left:880px;top:780px"></fa-aircraft>
@@ -249,7 +243,7 @@ ${svg(S, S, path_('M920 840C820 760 640 760 560 690', 1, 'march') + path_('M756 
 <fa-aircraft type="light-prop" livery="2" heading="60" style="position:absolute;left:120px;top:880px"></fa-aircraft>
 <fa-cloud style="position:absolute;left:60px;top:640px;width:200px"></fa-cloud>
 <div class="band sky" style="top:0;height:330px"></div>
-<span class="abs" style="left:860px;top:60px;width:110px;height:110px;border-radius:50%;background:var(--surface);border:var(--line-3) solid var(--outline);box-shadow:inset -22px -10px 0 var(--surface-sunken)"></span>
+<span class="abs" style="left:860px;top:60px;width:110px;height:110px;border-radius:50%;background:var(--paper-100);box-shadow:inset -22px -10px 0 var(--paper-300),0 0 0 var(--line-zone) var(--outline)"></span>
 <p class="kick abs" style="left:70px;top:76px">New levels in the works</p>
 <p class="h-xl abs" style="left:70px;top:118px">Night shift</p>
 <div class="abs" style="left:70px;top:236px"><span class="tag" style="background:var(--sky-500)"><fa-icon name="star"></fa-icon>Coming soon</span></div>
@@ -264,13 +258,14 @@ visuals.push({ name: '10-beat-the-best', w: S, h: S, bg: 'field', body: `
 <p class="abs center" style="top:48px;margin:0;font:700 72px/76px var(--font-display);color:var(--on-outline)">Can you beat 18 200?</p>
 <div class="abs" style="left:0;right:0;top:172px;display:flex;justify-content:center">
   <div class="fa-dialog" role="dialog" style="width:420px;transform:scale(1.65);transform-origin:center top">
-    <h2 class="fa-dialog__title">Game over</h2>
-    <p class="fa-dialog__body">Two aircraft got too close over runway 27.</p>
+    <header class="fa-dialog__head fa-dialog__head--danger"><span class="fa-dialog__eyebrow">Tower log · runway 27</span><h2 class="fa-dialog__title">Game over</h2></header>
+    <p class="fa-dialog__body">Two aircraft got too close over runway 27.<br><span class="fa-stamp">Too close</span></p>
+    <hr class="fa-perf">
     <dl class="fa-dialog__stats">
-      <div class="fa-stat"><dt>Score</dt><dd>12 450</dd></div>
+      <div class="fa-stat"><dt>Score</dt><dd>12&#8201;450</dd></div>
       <div class="fa-stat"><dt>Landed</dt><dd>37</dd></div>
       <div class="fa-stat"><dt>Best streak</dt><dd>x6</dd></div>
-      <div class="fa-stat"><dt>Best</dt><dd>18 200</dd></div>
+      <div class="fa-stat"><dt>Best</dt><dd>18&#8201;200</dd></div>
     </dl>
     <div class="fa-dialog__actions">
       <button class="fa-btn fa-btn--lg fa-btn--block"><fa-icon name="restart"></fa-icon>Try again</button>
@@ -288,9 +283,9 @@ visuals.push({ name: 'play-store-feature-graphic', w: 1024, h: 500, bg: 'sky', b
   <h1 class="fa-wordmark" style="font-size:92px;line-height:88px;-webkit-text-stroke-width:15px;text-shadow:0 8px 0 var(--outline)">Final<span>Approach</span></h1>
   <div style="margin:44px 0 0 8px"><span class="tag" style="font-size:22px;padding:8px 18px"><fa-icon name="play"></fa-icon>Draw. Land. Repeat.</span></div>
 </div>
-<div class="abs field" style="left:620px;top:-40px;width:480px;height:600px;transform:rotate(8deg);border:var(--line-4) solid var(--outline);border-radius:var(--radius-xl);box-shadow:-10px 10px 0 var(--outline);overflow:hidden">
+<div class="abs field" style="left:620px;top:-40px;width:480px;height:600px;transform:rotate(8deg);border-radius:var(--radius-dialog);box-shadow:0 0 0 var(--line-zone) var(--outline),-10px 10px 0 3px var(--contact);overflow:hidden">
   <div style="position:absolute;inset:0;transform:rotate(-8deg) translate(-56px,10px)">
-    <fa-runway length="380" numbers="09/27" state="ok" style="position:absolute;left:90px;top:330px;transform:rotate(-14deg)"></fa-runway>
+    <fa-runway length="380" numbers="09/27" zone="ok" style="position:absolute;left:90px;top:330px;transform:rotate(-14deg)"></fa-runway>
     <fa-helipad style="position:absolute;left:330px;top:120px"></fa-helipad>
     ${svg(520, 600, path_('M130 120C40 250 90 360 170 380', 1, 'march') + path_('M420 360C440 300 420 240 386 176', 6))}
     <fa-aircraft type="jet" livery="1" heading="200" selected style="position:absolute;left:96px;top:84px"></fa-aircraft>
