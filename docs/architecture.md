@@ -64,6 +64,8 @@ final-approach/
 
 - `settings`: a `SettingsStore` (`platform/SettingsStore.kt`, `load()` and `save(PlayerSettings)`; `InMemorySettingsStore` for tests). `SettingsController` (`platform/SettingsController.kt`) loads it once, exposes `StateFlow<PlayerSettings>` and writes every `update` through. `PlayerSettings` and `ReduceMotionChoice` live in `domain/PlayerSettings.kt`. Android keeps them in a private `settings` preferences file.
 
+Reduced motion: `App` computes `settings.reduceMotion.resolve(host.reduceMotion)` and passes it to `FaTheme`; every screen reads `FaTheme.reduceMotion`. `host.reduceMotion` is read only in `App`. Device follows the device; On and Off override it.
+
 `AndroidAppHost` in `androidApp` is the Android implementation. Tests use `FakeAppHost` from `commonTest`.
 
 Ads go through `AppHost.ads` (`platform/Ads.kt`): `preload()`, `showInterstitial(onDismissed)` and a composable `Banner(modifier)`. `onDismissed` is called exactly once whether the ad was shown, failed or was not ready, so a level never waits on an ad. `NoOpAds` is the default (tests, iOS). `GameScreen` pauses the engine until the interstitial before a level is dismissed, and a restart waits for it too. The Android implementation (AdMob and the UMP consent flow) lives only in `androidApp`; no ads SDK type reaches `commonMain`. Ad IDs come from the build type: test units in debug, the real units in release.

@@ -100,6 +100,9 @@ Ambient life is decoration too: cows wander inside the paddock beside a farmer, 
 ### Fair entry
 Aircraft enter just outside a permitted edge (by the spawn margin) and head for a random point in the central safe region (the middle half of each axis), plus a small random jitter (up to 15 degrees). An entry is only used when its straight line crosses at least half of the viewport's shorter side and stays on screen for at least four seconds at the aircraft's speed, and when it lies at least the spawn separation from every aircraft, including those not yet on screen. Otherwise the spawner tries again, up to eight times, and then delays the spawn briefly.
 
+## Settings
+The settings page (opened from the main page) holds the player's choices, applied at once and kept on the device. **Reduce motion** has three choices: Device follows the device's setting, On always reduces motion, Off never does. The effective value is what every screen reads: the main page backdrop, the splash page, and in game the rings, paths and ambient life.
+
 ## Look and feel
 Cartoon style; see `art-style.md`.
 

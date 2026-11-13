@@ -12,7 +12,7 @@
 
 - [x] 2.1 In `ui/App.kt`, collect the controller's settings and pass `reduceMotion.resolve(host.reduceMotion)` to `FaTheme`; verify by building and by a grep that `host.reduceMotion` is now read only in `App.kt`
 - [x] 2.2 Switch `ui/menu/MainPage.kt` and `ui/splash/SplashPage.kt` from `host.reduceMotion` to `FaTheme.reduceMotion`, and make sure every `remember` that captures reduced motion keys on it; verify `./gradlew :shared:allTests` and `:androidApp:assembleDebug` pass
-- [ ] 2.3 Add a paragraph on the effective reduced-motion value to `docs/game-design.md` and `docs/architecture.md`; verify both say Device follows the device and On and Off override it
+- [x] 2.3 Add a paragraph on the effective reduced-motion value to `docs/game-design.md` and `docs/architecture.md`; verify both say Device follows the device and On and Off override it
 
 ## 3. Sound gate
 
