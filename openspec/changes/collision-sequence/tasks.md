@@ -8,8 +8,8 @@
 
 ## 2. Timeline
 
-- [ ] 2.1 Add `CollisionSequence` in `ui/game` (design decision 1): `advance(deltaMs)`, `blackoutAlpha`, `dialogVisible`, colliding ids, captured ring angle, reduced-motion mode. No literals; durations and easing from `FaMotion`.
-- [ ] 2.2 `commonTest` tests: alpha 0 at start, between 0 and 1 at 500 ms, 1 at 1000 ms; no dialog at 1500 ms, dialog at 2000 ms; with reduced motion alpha 1 at 0 ms and dialog at 1000 ms. Verify: `./gradlew :shared:allTests` passes.
+- [x] 2.1 Add `CollisionSequence` in `ui/game` (design decision 1): `advance(deltaMs)`, `blackoutAlpha`, `dialogVisible`, colliding ids, captured ring angle, reduced-motion mode. No literals; durations and easing from `FaMotion`.
+- [x] 2.2 `commonTest` tests: alpha 0 at start, between 0 and 1 at 500 ms, 1 at 1000 ms; no dialog at 1500 ms, dialog at 2000 ms; with reduced motion alpha 1 at 0 ms and dialog at 1000 ms. Verify: `./gradlew :shared:allTests` passes.
 
 ## 3. Rendering and wiring
 
