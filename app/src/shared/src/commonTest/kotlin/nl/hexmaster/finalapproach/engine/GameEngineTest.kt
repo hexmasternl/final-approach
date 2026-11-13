@@ -4,9 +4,11 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.AltitudeState
+import nl.hexmaster.finalapproach.domain.LandingZones
 import nl.hexmaster.finalapproach.domain.LevelDefaults
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
+import nl.hexmaster.finalapproach.domain.isPickable
 import nl.hexmaster.finalapproach.domain.meadow
 import kotlin.math.PI
 import kotlin.test.Test
@@ -106,6 +108,100 @@ class GameEngineTest {
         engine.run(1.0)
         assertEquals(GameStatus.Playing, engine.state.value.status)
         assertFalse(engine.aircraft(1).hasEnteredViewport)
+    }
+
+    private fun helicopterAt(x: Double) =
+        Aircraft(1, AircraftType.Helicopter, Vec2(x, 300.0), -PI / 2, hasEnteredViewport = true)
+
+    private fun GameEngine.draw(id: Int, vararg points: Vec2) {
+        beginPath(id)
+        points.forEach { extendPath(id, it) }
+    }
+
+    @Test
+    fun aPathThatLeavesTheMarginAndComesBackKeepsTheLevelGoing() {
+        val engine = GameEngine(quiet, seed = 1)
+        val out = -level.world.leaveMargin - 40.0
+        engine.place(listOf(helicopterAt(30.0)))
+        engine.draw(1, Vec2(out, 300.0), Vec2(out, 360.0), Vec2(100.0, 360.0))
+        var leftmost = 0.0
+        engine.run(8.0) { state ->
+            assertEquals(GameStatus.Playing, state.status)
+            state.aircraft.firstOrNull()?.let { leftmost = minOf(leftmost, it.position.x) }
+        }
+        assertTrue(leftmost < -level.world.leaveMargin, "the helicopter never went beyond the margin")
+    }
+
+    @Test
+    fun aPathThatEndsBeyondTheMarginLosesTheLevelWhenThePathEnds() {
+        val engine = GameEngine(quiet, seed = 1)
+        val out = -level.world.leaveMargin - 40.0
+        engine.place(listOf(helicopterAt(30.0)))
+        engine.draw(1, Vec2(out, 300.0))
+        engine.run(8.0) { state ->
+            if (state.status == GameStatus.Playing) {
+                val plane = assertNotNull(state.aircraft.firstOrNull())
+                assertTrue(plane.path.points.isNotEmpty() || plane.position.x >= -level.world.leaveMargin)
+            }
+        }
+        val status = assertIs<GameStatus.GameOver>(engine.state.value.status)
+        assertEquals(GameOverReason.LeftArea, status.reason)
+        assertEquals(listOf(1), status.aircraftIds)
+    }
+
+    @Test
+    fun anAircraftWhosePathEndedInsideAndFliesStraightOutLosesTheLevel() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(helicopterAt(200.0)))
+        engine.draw(1, Vec2(150.0, 300.0))
+        engine.run(30.0)
+        assertEquals(GameOverReason.LeftArea, assertIs<GameStatus.GameOver>(engine.state.value.status).reason)
+    }
+
+    @Test
+    fun aTapOnAnAircraftBeyondTheMarginLosesTheLevelAtTheNextUpdate() {
+        val engine = GameEngine(quiet, seed = 1)
+        val out = -level.world.leaveMargin - 40.0
+        engine.place(listOf(helicopterAt(out + 20.0)))
+        engine.draw(1, Vec2(out - 200.0, 300.0))
+        engine.update(0.01)
+        assertEquals(GameStatus.Playing, engine.state.value.status)
+        engine.clearPath(1)
+        engine.update(0.01)
+        assertEquals(GameOverReason.LeftArea, assertIs<GameStatus.GameOver>(engine.state.value.status).reason)
+    }
+
+    @Test
+    fun aNewPathDrawnJustBeforeLeavingKeepsTheAircraftInPlay() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(helicopterAt(20.0)))
+        engine.run(0.5)
+        val out = -level.world.leaveMargin - 30.0
+        engine.draw(1, Vec2(out, 300.0), Vec2(out, 360.0), Vec2(100.0, 360.0))
+        engine.run(3.0) { assertEquals(GameStatus.Playing, it.status) }
+    }
+
+    @Test
+    fun anAircraftIsPickableUnlessRollingOutOrLanding() {
+        val flying = jet(1, Vec2(300.0, 300.0))
+        assertTrue(flying.isPickable)
+        assertTrue(flying.copy(status = AircraftStatus.ClearedToLand(zone = Levels.meadowField.let { LandingZones.of(it).first() })).isPickable)
+        assertFalse(flying.copy(status = AircraftStatus.RollingOut(0.0, 100.0, "r")).isPickable)
+        assertFalse(flying.copy(status = AircraftStatus.Landing()).isPickable)
+    }
+
+    @Test
+    fun aRollingOutAirplaneIsNotSelected() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(jet(1, Vec2(300.0, 300.0)).copy(status = AircraftStatus.RollingOut(0.0, 100.0, "r"))))
+        assertEquals(null, engine.select(Vec2(300.0, 300.0), 100.0))
+    }
+
+    @Test
+    fun aLandingHelicopterIsNotSelected() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(Aircraft(1, AircraftType.Helicopter, Vec2(300.0, 300.0), 0.0, status = AircraftStatus.Landing())))
+        assertEquals(null, engine.select(Vec2(300.0, 300.0), 100.0))
     }
 
     @Test

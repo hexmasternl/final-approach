@@ -99,15 +99,19 @@ A level config SHALL define a difficulty curve as an ordered list of phases over
 - **THEN** the last phase stays active
 
 ### Requirement: Optional level settings with defaults
-A level config SHALL carry these optional fields, each with a default that changes nothing: an aircraft speed multiplier, scoring (lives and a points multiplier), wind (direction and strength), an emergency-aircraft flag and tutorial hints. All tunable values SHALL have defaults defined in config, not as magic numbers in logic.
+A level config SHALL carry these optional fields, each with a default that changes nothing: an aircraft speed multiplier, scoring (lives and a points multiplier), wind (direction and strength), an emergency-aircraft flag and a tutorial script. All tunable values SHALL have defaults defined in config, not as magic numbers in logic.
 
 #### Scenario: Defaults change nothing
 - **WHEN** a level config sets none of the optional fields
-- **THEN** the speed multiplier is 1, there is no wind, no emergency aircraft and no hints
+- **THEN** the speed multiplier is 1, there is no wind, no emergency aircraft and no tutorial
 
 #### Scenario: Speed multiplier
 - **WHEN** a level config sets a speed multiplier
 - **THEN** the multiplier is available to the engine without any change to the aircraft roster
+
+#### Scenario: Only Meadow Field has a tutorial
+- **WHEN** the built-in levels are inspected
+- **THEN** Meadow Field carries a tutorial script and no other level does
 
 ### Requirement: Validation
 A level config SHALL be validated, and an invalid config SHALL be rejected with a message that names the problem. A config is valid only when all of these hold: it has at least one landing zone; every landing zone lies inside the viewport; no two landing zones overlap; it has at least one phase and the first phase starts at time 0; phase start times strictly increase; each spawn interval range is positive and its minimum is not above its maximum; each phase has at least one aircraft type and every weight is positive; each phase's maximum aircraft is at least 1; every aircraft type allowed in a phase has a matching landing zone (an airplane type needs a runway, a helicopter needs a helipad); the spawn separation is positive.
@@ -137,7 +141,7 @@ A level config SHALL be validated, and an invalid config SHALL be rejected with 
 - **THEN** validation succeeds
 
 ### Requirement: The first level is a level config
-The first level (issue #5, Meadow Field) SHALL be defined as a valid `LevelConfig`: one two-way runway lying left to right in the middle of the viewport, one helipad on the right side clear of the runway, and a difficulty curve whose first phase allows only light props and helicopters and whose maximum aircraft in the air is three.
+The first level (issue #5, Meadow Field) SHALL be defined as a valid `LevelConfig`: one one-way runway (runway 27) lying left to right in the middle of the viewport, one helipad on the right side clear of the runway, and a difficulty curve whose first phase allows only light props and helicopters and whose maximum aircraft in the air is three.
 
 #### Scenario: First level is valid
 - **WHEN** the first level config is validated

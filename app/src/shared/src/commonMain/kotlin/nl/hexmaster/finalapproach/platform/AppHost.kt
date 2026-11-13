@@ -43,7 +43,24 @@ interface AppHost {
 
     /** Locks the app in landscape while [locked] is true; false releases the lock. */
     fun lockLandscape(locked: Boolean)
+
+    /**
+     * Hides the system bars while [enabled]; they only appear briefly after a swipe from their
+     * edge. False shows them again. Only the game screen calls it, while a level is running.
+     * Does nothing on a platform without system bars.
+     */
+    fun setImmersive(enabled: Boolean) {}
+
+    /**
+     * Excludes [rects], in window pixels, from the system's edge gestures such as back; an empty
+     * list removes every zone. Only the game screen calls it, while a level is running. Does
+     * nothing where the platform has no such gestures.
+     */
+    fun setGestureExclusion(rects: List<ScreenRect>) {}
 }
+
+/** A rectangle in window pixels: [left] and [top] are inside it, [right] and [bottom] are not. */
+data class ScreenRect(val left: Int, val top: Int, val right: Int, val bottom: Int)
 
 /**
  * Delivers back presses to the screen that is currently on top. The host calls [dispatch];

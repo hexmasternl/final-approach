@@ -2,6 +2,9 @@ package nl.hexmaster.finalapproach.ui.game
 
 import nl.hexmaster.finalapproach.engine.GameOverReason
 import nl.hexmaster.finalapproach.engine.GameState
+import nl.hexmaster.finalapproach.engine.TutorialPhase
+import nl.hexmaster.finalapproach.engine.TutorialState
+import nl.hexmaster.finalapproach.engine.TutorialStep
 import nl.hexmaster.finalapproach.engine.GameStatus
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -23,6 +26,19 @@ class KeepScreenOnTest {
     fun aFinishedLevelDoesNot() {
         val over = GameState(status = GameStatus.GameOver(GameOverReason.Collision, listOf(1, 2)))
         assertFalse(shouldKeepScreenOn(true, over))
+    }
+
+    @Test
+    fun aLevelIsRunningUnlessItIsPausedOrOver() {
+        assertTrue(isLevelRunning(GameState()))
+        assertFalse(isLevelRunning(GameState(paused = true)))
+        assertFalse(isLevelRunning(GameState(status = GameStatus.GameOver(GameOverReason.LeftArea, listOf(1)))))
+    }
+
+    @Test
+    fun aTutorialStepCountsAsRunning() {
+        val step = GameState(tutorial = TutorialState(TutorialStep.entries.first(), TutorialPhase.entries.first()))
+        assertTrue(isLevelRunning(step))
     }
 
     @Test

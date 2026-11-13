@@ -8,6 +8,7 @@ object LevelConfigValidator {
     fun validate(config: LevelConfig): List<String> = buildList {
         addAll(zoneProblems(config))
         addAll(curveProblems(config))
+        addAll(rampProblems(config))
         addAll(worldProblems(config))
         addAll(sceneryProblems(config))
     }
@@ -114,6 +115,41 @@ object LevelConfigValidator {
             }
             if (types.any { it.kind == AircraftKind.Airplane } && config.runways.isEmpty()) {
                 add("$name allows airplanes, and airplanes need a runway")
+            }
+        }
+    }
+
+    private fun rampProblems(config: LevelConfig): List<String> = buildList {
+        val ramp = config.ramp ?: return@buildList
+        val last = config.phases.lastOrNull() ?: return@buildList
+        if (ramp.stepSeconds <= 0.0) add("The difficulty ramp step time must be positive")
+        if (ramp.intervalDropSeconds <= 0.0) add("The difficulty ramp interval drop must be positive")
+        if (ramp.intervalFloorSeconds <= 0.0) add("The difficulty ramp interval floor must be positive")
+        if (ramp.intervalFloorSeconds > last.spawnIntervalMin) {
+            add(
+                "The difficulty ramp floor of ${ramp.intervalFloorSeconds}s is above the last phase's " +
+                    "minimum interval of ${last.spawnIntervalMin}s",
+            )
+        }
+        if (ramp.maxAircraftCap < last.maxAircraft) {
+            add(
+                "The difficulty ramp aircraft cap of ${ramp.maxAircraftCap} is below the last phase's " +
+                    "maximum of ${last.maxAircraft}",
+            )
+        }
+        if (ramp.aircraftEverySteps < 1) add("The difficulty ramp aircraft step count must be at least 1")
+        ramp.weightCaps.groupBy { it.type }.filterValues { it.size > 1 }.keys.forEach {
+            add("The difficulty ramp lists a weight cap for $it more than once")
+        }
+        ramp.weightCaps.forEach { cap ->
+            val weight = last.weights[cap.type]
+            if (weight == null) {
+                add("The difficulty ramp has a weight cap for ${cap.type}, which the last phase does not allow")
+            } else if (cap.maxWeight < weight) {
+                add(
+                    "The difficulty ramp weight cap of ${cap.maxWeight} for ${cap.type} is below its " +
+                        "weight of $weight in the last phase",
+                )
             }
         }
     }

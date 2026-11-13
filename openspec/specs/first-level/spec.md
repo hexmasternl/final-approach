@@ -6,11 +6,15 @@ TBD - created by archiving change first-level. Update Purpose after archive.
 ## Requirements
 
 ### Requirement: Take off opens the first level
-Tapping Take off on the main page SHALL open the game screen with the Meadow Field level. Back SHALL return to the main page.
+Tapping Take off on the main page SHALL open the game screen with the Meadow Field level. For a player who has not completed the tutorial, the level SHALL start with the tutorial's first step; otherwise aircraft SHALL start to arrive as usual. Back SHALL return to the main page.
 
 #### Scenario: Take off
-- **WHEN** the player taps Take off
+- **WHEN** a player who has completed the tutorial taps Take off
 - **THEN** the game screen shows Meadow Field and aircraft start to arrive
+
+#### Scenario: Take off for the first time
+- **WHEN** a player who has not completed the tutorial taps Take off
+- **THEN** the game screen shows Meadow Field with the tutorial's goal step and no aircraft
 
 #### Scenario: Back
 - **WHEN** the player presses back on the game screen
@@ -39,11 +43,15 @@ The world SHALL be scaled uniformly to fit the screen and centred, so the whole 
 - **THEN** the result is the original point
 
 ### Requirement: Meadow Field airport
-The level SHALL show one runway, 09 on the left end and 27 on the right, in the middle of the screen, and one helipad on the right, on the striped lawn. It SHALL show decoration that makes it read as a small airfield: a taxiway, an apron, a terminal with a control tower, a hangar, a windsock and trees. Decoration SHALL be level data and SHALL NOT cover a runway, a helipad or their landing zones.
+The level SHALL show one runway in the middle of the screen, marked as one-way runway 27, and one helipad on the right, on the striped lawn. It SHALL show decoration that makes it read as a small airfield: a taxiway, an apron, a terminal with a control tower, a hangar, a windsock and trees. Decoration SHALL be level data and SHALL NOT cover a runway, a helipad or their landing zones.
 
 #### Scenario: Layout
 - **WHEN** the level is shown
 - **THEN** the runway lies left to right in the middle and the helipad is on the right
+
+#### Scenario: Runway 27 marking
+- **WHEN** the level is shown
+- **THEN** the runway shows the number 27 and threshold bars only at its right end, nothing of the kind at its left end, and chevrons on its centre line pointing left
 
 #### Scenario: Decoration is clear of zones
 - **WHEN** the Meadow Field config is validated

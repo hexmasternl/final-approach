@@ -4,16 +4,22 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Rect
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import nl.hexmaster.finalapproach.domain.PlayerSettings
 import nl.hexmaster.finalapproach.domain.ReduceMotionChoice
 import nl.hexmaster.finalapproach.platform.Ads
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.platform.BackDispatcher
 import nl.hexmaster.finalapproach.platform.HighScoreStore
+import nl.hexmaster.finalapproach.platform.ScreenRect
 import nl.hexmaster.finalapproach.platform.SettingsStore
 import nl.hexmaster.finalapproach.platform.SoundPlayer
 import nl.hexmaster.finalapproach.platform.TutorialStore
@@ -114,6 +120,31 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
+    }
+
+    /** The last value requested, so the activity can re-apply it when the window regains focus. */
+    private var immersive = false
+
+    override fun setImmersive(enabled: Boolean) {
+        immersive = enabled
+        applyImmersive()
+    }
+
+    /** Hides or shows the system bars as last requested; transient bars appear on a swipe from their edge. */
+    fun applyImmersive() {
+        val window = activity.window
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        if (immersive) {
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+        } else {
+            controller.show(WindowInsetsCompat.Type.systemBars())
+        }
+    }
+
+    override fun setGestureExclusion(rects: List<ScreenRect>) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return
+        activity.window.decorView.systemGestureExclusionRects = rects.map { Rect(it.left, it.top, it.right, it.bottom) }
     }
 
     override fun lockLandscape(locked: Boolean) {

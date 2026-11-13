@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
+import nl.hexmaster.finalapproach.domain.isPickable
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
@@ -77,6 +78,9 @@ class GameEngine(
 
     /** Level time when the tutorial ended; the difficulty curve and first spawn delay count from here. */
     private var handoverTime = 0.0
+
+    /** The time the difficulty curve and its ramp count: level time since the tutorial ended. */
+    internal val difficultyTime: Double get() = mutableState.value.levelTime - handoverTime
 
     /** Clearances made by input since the last update; the next update reports them. */
     private var pendingEvents: List<GameEvent> = emptyList()
@@ -177,7 +181,7 @@ class GameEngine(
     fun select(point: Vec2, pickRadius: Double): Int? {
         if (inputBlocked) return null
         val picked = mutableState.value.aircraft
-            .filter { it.status !is AircraftStatus.RollingOut && it.status !is AircraftStatus.Landing }
+            .filter { it.isPickable }
             .map { it to it.position.distanceTo(point) }
             .filter { (_, distance) -> distance <= pickRadius }
             .minByOrNull { (_, distance) -> distance }
@@ -350,7 +354,9 @@ class GameEngine(
             aircraft
         }
 
-    private fun hasLeft(aircraft: Aircraft) = aircraft.hasEnteredViewport && !playArea.contains(aircraft.position)
+    /** An aircraft that has been in the viewport and is beyond the leave margin is lost only when it has no path. */
+    private fun hasLeft(aircraft: Aircraft) =
+        aircraft.hasEnteredViewport && aircraft.path.isEmpty && !playArea.contains(aircraft.position)
 
     /** Game over when two aircraft touched during the step from [previous], or one has left. */
     private fun failureOf(aircraft: List<Aircraft>, previous: Map<Int, Vec2>): GameStatus {
