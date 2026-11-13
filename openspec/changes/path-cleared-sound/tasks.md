@@ -19,7 +19,7 @@
 
 ## 4. The MP3
 
-- [ ] 4.1 Convert `audio/sfx/success.wav` to `app/src/androidApp/src/main/res/raw/success.mp3` with ffmpeg (design decision 5): mono, 44.1 kHz, 128 kbps, leading silence trimmed. Write the exact command and ffmpeg version in `audio/README.md`. Verify with `ffprobe` that the file is mono, 44100 Hz, about 128 kbps, and that its first audible sample is within about 30 ms of the start.
+- [ ] 4.1 Convert `audio/sfx/success.wav` to `app/src/androidApp/src/main/res/raw/success.mp3` with ffmpeg (design decision 5): mono, 44.1 kHz, 128 kbps, leading silence trimmed. Write the exact command and ffmpeg version in `audio/README.md`. Verify with `ffprobe` that the file is mono, 44100 Hz, about 128 kbps, and that its first audible sample is within about 30 ms of the start. **Not done by the autocoder run (no ffmpeg on the machine): `res/raw/success.wav` is a copy of the source for now and `audio/README.md` has the command; a human converts it.**
 
 ## 5. Android playback
 
