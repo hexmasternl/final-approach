@@ -4,6 +4,7 @@ package nl.hexmaster.finalapproach.domain
 data class PlayerSettings(
     val soundEffects: Boolean = true,
     val reduceMotion: ReduceMotionChoice = ReduceMotionChoice.Device,
+    val keepScreenOn: Boolean = true,
 )
 
 /** How the player wants reduced motion decided: follow the device, or force it on or off. */

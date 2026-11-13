@@ -21,6 +21,7 @@ private const val PREFERENCES_NAME = "best-scores"
 private const val SETTINGS_PREFERENCES_NAME = "settings"
 private const val KEY_SOUND_EFFECTS = "sound_effects"
 private const val KEY_REDUCE_MOTION = "reduce_motion"
+private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
 
 /** The Android side of [AppHost]. */
 class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
@@ -68,6 +69,7 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
                 reduceMotion = ReduceMotionChoice.entries
                     .firstOrNull { it.name == preferences.getString(KEY_REDUCE_MOTION, null) }
                     ?: defaults.reduceMotion,
+                keepScreenOn = preferences.getBoolean(KEY_KEEP_SCREEN_ON, defaults.keepScreenOn),
             )
         }
 
@@ -75,6 +77,7 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
             preferences.edit()
                 .putBoolean(KEY_SOUND_EFFECTS, settings.soundEffects)
                 .putString(KEY_REDUCE_MOTION, settings.reduceMotion.name)
+                .putBoolean(KEY_KEEP_SCREEN_ON, settings.keepScreenOn)
                 .apply()
         }
     }

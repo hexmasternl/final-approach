@@ -12,6 +12,7 @@ class PlayerSettingsTest {
         val settings = PlayerSettings()
         assertTrue(settings.soundEffects)
         assertEquals(ReduceMotionChoice.Device, settings.reduceMotion)
+        assertTrue(settings.keepScreenOn)
     }
 
     @Test

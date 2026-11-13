@@ -11,7 +11,7 @@
 
 ## 2. Setting
 
-- [ ] 2.1 Add `keepScreenOn: Boolean`, default `true`, to the settings store from #66, persisted like its other values. Add a `commonTest` test that the default is on and a saved value is read back. Verify: `./gradlew :shared:allTests`.
+- [x] 2.1 Add `keepScreenOn: Boolean`, default `true`, to the settings store from #66, persisted like its other values. Add a `commonTest` test that the default is on and a saved value is read back. Verify: `./gradlew :shared:allTests`.
 - [ ] 2.2 Add a Gameplay section between Sound and Accessibility on the settings page with an `fa-setting` row and Toggle: "Keep screen on" / "While a level is playing", bound to the stored value. Use theme tokens and the section header from #66; no literals. Verify: preview or run, the row shows on by default and toggling it changes the stored value at once.
 - [ ] 2.3 Add the Keep screen on setting to the settings section of `docs/game-design.md`. Verify: read the section.
 

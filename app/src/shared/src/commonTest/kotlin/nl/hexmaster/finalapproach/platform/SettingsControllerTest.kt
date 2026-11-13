@@ -26,8 +26,8 @@ class SettingsControllerTest {
     @Test
     fun aNewControllerOnTheSameStoreLoadsTheSavedValue() {
         val store = InMemorySettingsStore()
-        SettingsController(store).update { it.copy(soundEffects = false, reduceMotion = ReduceMotionChoice.Off) }
+        SettingsController(store).update { it.copy(soundEffects = false, reduceMotion = ReduceMotionChoice.Off, keepScreenOn = false) }
         val restarted = SettingsController(store)
-        assertEquals(PlayerSettings(soundEffects = false, reduceMotion = ReduceMotionChoice.Off), restarted.settings.value)
+        assertEquals(PlayerSettings(soundEffects = false, reduceMotion = ReduceMotionChoice.Off, keepScreenOn = false), restarted.settings.value)
     }
 }
