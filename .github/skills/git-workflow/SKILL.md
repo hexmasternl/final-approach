@@ -106,13 +106,8 @@ Never target `main`. Do not merge the pull request yourself unless the user asks
 Archive only after the change's pull request has been merged into `development`. Check with `gh pr list --head "change/<change-name>" --state merged`. If it is not merged, stop and say so.
 
 1. **Archive on `development`.** In the main checkout: `git switch development && git pull --ff-only`, run the OpenSpec archive as its skill describes, then commit and push `development`.
-2. **Close the issue.** `gh issue close <number> --comment "Archived OpenSpec change <change-name>."`
-3. **Move the issue to Done**, if it is on a GitHub project:
-   - `gh issue view <number> --json projectItems` lists the projects it is on. No items: skip this step.
-   - For each project, find the Status field and its Done option with `gh project field-list <project-number> --owner <owner> --format json`, and the item id with `gh project item-list <project-number> --owner <owner> --format json`.
-   - `gh project item-edit --id <item-id> --project-id <project-id> --field-id <status-field-id> --single-select-option-id <done-option-id>`.
-   - If `gh` lacks the `project` scope, say so and ask the user to run `gh auth refresh -s project`. Do not skip silently.
-4. **Clean up the worktree and branches.**
+2. **Close the issues and move them to Done.** Follow the `close-archived-issues` skill: it finds every issue of the change (from `proposal.md` and from the issues' change reference blocks), keeps open any issue another active change still needs, closes the rest with a comment, and moves each to the Done lane of every GitHub project it is on.
+3. **Clean up the worktree and branches.**
 
    ```bash
    git worktree remove "../final-approach-worktrees/<change-name>"
