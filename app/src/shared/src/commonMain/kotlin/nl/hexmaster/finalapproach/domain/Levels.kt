@@ -136,6 +136,7 @@ object Levels {
             item(SceneryKind.Rock, 800.0, 796.0),
         ),
         phases = busyPhases(maxAircraft = 4),
+        ramp = DifficultyRamp(intervalFloorSeconds = 2.0, maxAircraftCap = 6),
     )
 
     /**
@@ -205,6 +206,7 @@ object Levels {
             // The open savanna around the airfield.
         ),
         phases = busyPhases(maxAircraft = 5),
+        ramp = DifficultyRamp(intervalFloorSeconds = 1.5, maxAircraftCap = 7, stepSeconds = 45.0),
     )
 
     /**
@@ -275,6 +277,7 @@ object Levels {
             // The farmland around the airfield.
         ),
         tutorial = meadowTutorial,
+        ramp = DifficultyRamp(intervalFloorSeconds = 2.5, maxAircraftCap = 5),
         phases = listOf(
             DifficultyPhase(
                 startSeconds = 0.0,

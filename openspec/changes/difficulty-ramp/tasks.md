@@ -11,7 +11,7 @@
 
 ## 3. Levels
 
-- [ ] 3.1 Set the ramps in `domain/Levels.kt`: Meadow Field floor 2.5 / cap 5, Island 2.0 / 6, Savanna 1.5 / 7 with `stepSeconds = 45.0`; leave `busyPhases` and Meadow's phases untouched (design decision 5). Verify: `LevelsTest` asserts each level's timeline from the spec (Meadow at 3:00, 4:00, 5:00, 6:00 and 10:00; Island at 2:00, 3:00, 4:00, 5:00 and 10:00; Savanna at 1:45, 2:30, 3:15, 4:00, 4:45 and 10:00), that all levels validate, that Meadow's configured phases stay at most 3 and its active phase at most 5 at any time, and that the configured phases equal their previous values.
+- [x] 3.1 Set the ramps in `domain/Levels.kt`: Meadow Field floor 2.5 / cap 5, Island 2.0 / 6, Savanna 1.5 / 7 with `stepSeconds = 45.0`; leave `busyPhases` and Meadow's phases untouched (design decision 5). Verify: `LevelsTest` asserts each level's timeline from the spec (Meadow at 3:00, 4:00, 5:00, 6:00 and 10:00; Island at 2:00, 3:00, 4:00, 5:00 and 10:00; Savanna at 1:45, 2:30, 3:15, 4:00, 4:45 and 10:00), that all levels validate, that Meadow's configured phases stay at most 3 and its active phase at most 5 at any time, and that the configured phases equal their previous values.
 
 ## 4. Spawner and engine
 
