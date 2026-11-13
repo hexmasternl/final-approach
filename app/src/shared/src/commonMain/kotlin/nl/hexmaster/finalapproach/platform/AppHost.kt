@@ -23,6 +23,9 @@ interface AppHost {
     /** Ads; [NoOpAds] on a platform that has none. */
     val ads: Ads get() = NoOpAds
 
+    /** Sound effects; [SilentSoundPlayer] on a platform that has no player. */
+    val sounds: SoundPlayer get() = SilentSoundPlayer
+
     /** Locks the app in landscape while [locked] is true; false releases the lock. */
     fun lockLandscape(locked: Boolean)
 }

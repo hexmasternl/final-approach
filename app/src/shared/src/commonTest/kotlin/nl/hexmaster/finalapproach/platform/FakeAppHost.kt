@@ -9,6 +9,8 @@ class FakeAppHost(
 
     override val highScores = InMemoryHighScoreStore()
 
+    override val sounds = RecordingSoundPlayer()
+
     var quitCalls = 0
         private set
 
@@ -21,5 +23,14 @@ class FakeAppHost(
 
     override fun lockLandscape(locked: Boolean) {
         landscapeLocked = locked
+    }
+}
+
+/** A [SoundPlayer] that lists what was played. */
+class RecordingSoundPlayer : SoundPlayer {
+    val played = mutableListOf<SoundEffect>()
+
+    override fun play(effect: SoundEffect) {
+        played += effect
     }
 }
