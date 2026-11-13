@@ -2,7 +2,7 @@
 
 ## 1. Design system
 
-- [ ] 1.1 Add `finger.svg` to `docs/design-system/assets/icons/` in the icon set's stroke style and add it to the showcase icon grid. Verify it renders next to `tap` at `icon-sm`, `icon-md` and `icon-lg` with the same stroke weight and round joins.
+- [x] 1.1 Add `finger.svg` to `docs/design-system/assets/icons/` in the icon set's stroke style and add it to the showcase icon grid. Verify it renders next to `tap` at `icon-sm`, `icon-md` and `icon-lg` with the same stroke weight and round joins.
 - [ ] 1.2 Update `docs/design-system/components/CoachMark.md` with the gesture, explanation (`fa-coach--explain`, Got it) and tracking (`fa-coach--track`) variants and the new dismissal rule, as design decision 10; record "Got it" as the one exception to the verb rule. Verify the file no longer says "never with a button" without the gesture qualifier.
 - [ ] 1.3 Add tokens to `tokens.json` and the showcase tables: `coach-max-width` (300px), `coach-explain-max-width` (360px), `highlight-margin` (`space-3`), `dur-demo-drag` (1800ms). Verify every new token appears in both and the existing `.fa-coach` CSS uses `coach-max-width` instead of the literal.
 - [ ] 1.4 Describe the zone highlight and the drag demo (with its reduced-motion still) in `docs/design-system/world.md` and `motion-audio.md`, and add one line for the Skip tutorial button to `components/HudBar.md`. Verify the layers named match decision 10.
