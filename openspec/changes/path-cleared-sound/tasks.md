@@ -23,7 +23,7 @@
 
 ## 5. Android playback
 
-- [ ] 5.1 Implement `sounds` in `AndroidAppHost` with a `SoundPool` (design decision 4): game audio attributes, `MAX_SOUND_STREAMS` as a named constant, `R.raw.success` loaded once, released when the activity is destroyed. Verify `./gradlew :androidApp:assembleDebug` succeeds.
+- [x] 5.1 Implement `sounds` in `AndroidAppHost` with a `SoundPool` (design decision 4): game audio attributes, `MAX_SOUND_STREAMS` as a named constant, `R.raw.success` loaded once, released when the activity is destroyed. Verify `./gradlew :androidApp:assembleDebug` succeeds.
 - [ ] 5.2 Human, on a device: clear an airplane to a runway and a helicopter to a helipad; the sound plays once each, together with the flash. Clear two aircraft in quick succession; two sounds play without cutting off. Re-route a cleared aircraft and clear it again; it plays again. Draw into open air, a misaligned approach, the wrong end of a one-way runway, and the wrong zone type; nothing plays. Turn reduced motion on; the sound still plays. Turn the media volume off; the clearance is still visible.
 
 ## 6. Checks

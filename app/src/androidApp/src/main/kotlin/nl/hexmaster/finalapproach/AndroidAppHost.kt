@@ -8,6 +8,7 @@ import nl.hexmaster.finalapproach.platform.Ads
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.platform.BackDispatcher
 import nl.hexmaster.finalapproach.platform.HighScoreStore
+import nl.hexmaster.finalapproach.platform.SoundPlayer
 
 private const val PREFERENCES_NAME = "best-scores"
 
@@ -26,6 +27,10 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
 
     override val ads: Ads = AdMobAds(activity)
 
+    private val soundPlayer = AndroidSoundPlayer(activity)
+
+    override val sounds: SoundPlayer = soundPlayer
+
     /** Best scores live in a private preferences file, one integer per level. */
     override val highScores = object : HighScoreStore {
         private val preferences = activity.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -35,6 +40,11 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
         override fun save(levelId: String, score: Int) {
             preferences.edit().putInt(levelId, score).apply()
         }
+    }
+
+    /** Frees what the host holds on to; call when the activity is destroyed. */
+    fun release() {
+        soundPlayer.release()
     }
 
     override fun quit() {
