@@ -12,5 +12,5 @@
 ## 3. Docs and checks
 
 - [x] 3.1 Update `docs/game-design.md` and `docs/architecture.md` with the 1.5 factor and 1920 x 1080 worlds; verify they match the code
-- [ ] 3.2 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug`; verify both pass
+- [x] 3.2 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug`; verify both pass
 - [ ] 3.3 Human check: play each level on a phone and decide whether the zoom feels right
