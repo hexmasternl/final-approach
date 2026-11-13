@@ -11,8 +11,8 @@
 
 ## 3. Exclusion planner
 
-- [ ] 3.1 Add `GestureExclusionConfig` (`maxHeightPerEdge = 200.dp`, `zoneHalfHeight = 48.dp`) and the pure `planGestureExclusion` in `ui/game/GestureExclusion.kt` as in design decision 4. Verify: compiles.
-- [ ] 3.2 Add `GestureExclusionTest` in `commonTest`: aircraft near the left and the right edge get a zone spanning the strip and centred on them; an aircraft away from the edges gets none; a non-pickable aircraft gets none; zero strip width gives none; zones are clamped to the screen; overlapping zones merge; with many aircraft on one edge the total stays within the cap; the selected aircraft is kept first, then the closest to the edge. Verify: `./gradlew :shared:allTests`.
+- [x] 3.1 Add `GestureExclusionConfig` (`maxHeightPerEdge = 200.dp`, `zoneHalfHeight = 48.dp`) and the pure `planGestureExclusion` in `ui/game/GestureExclusion.kt` as in design decision 4. Verify: compiles.
+- [x] 3.2 Add `GestureExclusionTest` in `commonTest`: aircraft near the left and the right edge get a zone spanning the strip and centred on them; an aircraft away from the edges gets none; a non-pickable aircraft gets none; zero strip width gives none; zones are clamped to the screen; overlapping zones merge; with many aircraft on one edge the total stays within the cap; the selected aircraft is kept first, then the closest to the edge. Verify: `./gradlew :shared:allTests`.
 
 ## 4. Game screen wiring
 
