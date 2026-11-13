@@ -145,10 +145,10 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
         }
     }
     BackHandler(host) {
-        when {
-            state.status is GameStatus.GameOver -> onQuit()
-            optionsOpen -> closeOptions()
-            else -> openOptions()
+        when (backAction(state, optionsOpen)) {
+            BackAction.Quit -> onQuit()
+            BackAction.CloseOptions -> closeOptions()
+            BackAction.OpenOptions -> openOptions()
         }
     }
 
