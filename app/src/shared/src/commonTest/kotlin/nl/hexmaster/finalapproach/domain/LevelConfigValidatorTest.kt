@@ -39,6 +39,13 @@ class LevelConfigValidatorTest {
     }
 
     @Test
+    fun aLandingSpeedFactorOfZeroOrLessIsRejected() {
+        listOf(0.0, -0.5).forEach { factor ->
+            assertProblem(valid().copy(landing = valid().landing.copy(landingSpeedFactor = factor)), "landing speed factor")
+        }
+    }
+
+    @Test
     fun noLandingZone() {
         val config = valid().copy(runways = emptyList(), helipads = emptyList())
         assertProblem(config, "landing zone is required")
@@ -201,5 +208,11 @@ class LevelConfigValidatorTest {
         // Another flat kind is not an apron.
         val taxiway = apron.copy(kind = SceneryKind.Taxiway)
         assertProblem(valid().copy(scenery = listOf(taxiway, parked(200.0, 500.0))), "apron")
+    }
+
+    @Test
+    fun theHelicopterLandingSequenceMustHaveALength() {
+        assertEquals(3.0, LandingConfig().helicopterLandingSeconds)
+        assertProblem(valid().copy(landing = LandingConfig(helicopterLandingSeconds = 0.0)), "helicopter", "landing")
     }
 }

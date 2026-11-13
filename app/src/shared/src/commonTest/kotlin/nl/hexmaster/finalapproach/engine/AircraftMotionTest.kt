@@ -134,17 +134,18 @@ class AircraftMotionTest {
         }
 
     @Test
-    fun theLightPropRollsOutAtItsFlightSpeed() {
+    fun theLightPropStartsAtItsFlightSpeedAndSlowsToHalfOfItWithinTheDecelerationTime() {
         val prop = touchedDown(AircraftType.LightProp)
         val speed = specs[AircraftType.LightProp].speed
-        assertEquals(speed, speedAt(prop), 1e-3)
-        assertEquals(speed, speedAt(roll(prop, 0.5, dt)), 1e-3)
-        assertEquals(speed, speedAt(roll(prop, 2.0, dt)), 1e-3)
+        val decel = level.landing.rolloutDecelerationSeconds
+        assertEquals(speed, speedAt(prop), 0.1)
+        assertEquals(speed * 0.5, speedAt(roll(prop, decel, dt)), 1e-3)
+        assertEquals(speed * 0.5, speedAt(roll(prop, 3.0, dt)), 1e-3)
     }
 
     @Test
-    fun fasterAirplanesSlowDownToTheLightPropSpeedWithinTheDecelerationTime() {
-        val landed = specs[AircraftType.LightProp].speed
+    fun everyAirplaneSlowsDownToHalfTheLightPropSpeedWithinTheDecelerationTime() {
+        val landed = specs[AircraftType.LightProp].speed * 0.5
         listOf(AircraftType.Turboprop, AircraftType.Jet, AircraftType.Jumbo).forEach { type ->
             val plane = touchedDown(type)
             assertEquals(specs[type].speed, speedAt(plane), 0.1, "$type at touchdown")
@@ -159,7 +160,24 @@ class AircraftMotionTest {
     fun theLandingSpeedFollowsTheConfiguredReferenceType() {
         val landing = level.landing.copy(landingSpeedReference = AircraftType.Turboprop)
         val jet = roll(touchedDown(AircraftType.Jet), 2.0, dt, landing)
-        assertEquals(specs[AircraftType.Turboprop].speed, speedAt(jet, landing), 1e-3)
+        assertEquals(specs[AircraftType.Turboprop].speed * 0.5, speedAt(jet, landing), 1e-3)
+    }
+
+    @Test
+    fun aFactorOfOneGivesTheFullReferenceSpeed() {
+        val landing = level.landing.copy(landingSpeedFactor = 1.0)
+        val speed = specs[AircraftType.LightProp].speed
+        assertEquals(speed, speedAt(roll(touchedDown(AircraftType.LightProp), 2.0, dt, landing), landing), 1e-3)
+        assertEquals(speed, speedAt(roll(touchedDown(AircraftType.Jet), 2.0, dt, landing), landing), 1e-3)
+    }
+
+    @Test
+    fun theRolloutStillCoversTwoThirdsOfTheRunwayBeforeTheFade() {
+        val zone = zones.filterIsInstance<LandingZone.Runway>().first { it.runwayId == runway.id }
+        val plane = Aircraft(1, AircraftType.Jet, Vec2(0.0, 0.0), PI / 2, status = AircraftStatus.RollingOut(PI / 2, zone.rolloutDistance, runway.id))
+        val (states, _) = runOut(plane)
+        val rolled = states.last().position.distanceTo(plane.position)
+        assertEquals(runway.length * level.landing.rolloutFraction, rolled, 1e-6)
     }
 
     @Test

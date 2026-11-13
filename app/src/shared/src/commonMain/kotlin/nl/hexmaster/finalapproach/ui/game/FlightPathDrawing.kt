@@ -82,5 +82,5 @@ internal fun DrawScope.drawFlightPath(points: List<Offset>, liveryColor: Color, 
     val end = points.last()
     val dotRadius = FaDimens.pathDot.toPx() / 2f
     drawCircle(color, dotRadius, end, alpha = alpha)
-    drawCircle(colors.outline, dotRadius, end, alpha = alpha, style = Stroke(FaDimens.line3.toPx()))
+    drawCircle(colors.outline, dotRadius, end, alpha = alpha, style = Stroke(FaDimens.line2.toPx()))
 }

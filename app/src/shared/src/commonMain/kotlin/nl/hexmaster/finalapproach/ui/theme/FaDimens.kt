@@ -28,11 +28,11 @@ object FaDimens {
     val line2 = 3.dp
     val line3 = 4.dp
     val line4 = 6.dp
-    val pathStroke = 8.dp
-    val pathCasing = 14.dp
-    val pathDash = 18.dp
-    val pathGap = 16.dp
-    val pathDot = 22.dp
+    val pathStroke = 3.dp
+    val pathCasing = 7.dp
+    val pathDash = 10.dp
+    val pathGap = 8.dp
+    val pathDot = 12.dp
     val warnRingDash = 10.dp
     val warnRingGap = 8.dp
 

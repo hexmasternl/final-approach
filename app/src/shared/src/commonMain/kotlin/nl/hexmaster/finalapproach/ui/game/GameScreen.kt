@@ -44,6 +44,8 @@ import nl.hexmaster.finalapproach.ui.sprites.drawAircraftBody
 import nl.hexmaster.finalapproach.ui.sprites.drawAircraftShadow
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
+import nl.hexmaster.finalapproach.ui.theme.FaMotion
+import nl.hexmaster.finalapproach.ui.theme.FaOpacity
 import nl.hexmaster.finalapproach.ui.theme.FaShadows
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
@@ -242,6 +244,17 @@ private fun DrawScope.drawPaths(state: GameState, viewport: WorldViewport, color
 private fun spriteSizePx(aircraft: Aircraft, engine: GameEngine, viewport: WorldViewport): Float =
     viewport.px(engine.specs[aircraft.type].spriteSize)
 
+/**
+ * Size of the body sprite: a helicopter in its landing sequence shrinks onto its shadow, which
+ * keeps full size. With reduced motion it is drawn in the final still pose all the time.
+ */
+private fun bodySizePx(aircraft: Aircraft, engine: GameEngine, viewport: WorldViewport, reduceMotion: Boolean): Float {
+    val full = spriteSizePx(aircraft, engine, viewport)
+    val status = aircraft.status as? AircraftStatus.Landing ?: return full
+    val progress = if (reduceMotion) 1f else (status.elapsed / engine.level.landing.helicopterLandingSeconds).toFloat().coerceIn(0f, 1f)
+    return full * (1f + (FaOpacity.descentScaleEnd - 1f) * FaMotion.easeOutSoft.transform(progress))
+}
+
 /** Ground shadows of everything airborne first, then every aircraft on top. */
 private fun DrawScope.drawAircraft(
     state: GameState,
@@ -277,7 +290,7 @@ private fun DrawScope.drawAircraft(
                 aircraft.type,
                 colors.livery(aircraft.livery),
                 viewport.offsetOf(aircraft.position),
-                spriteSizePx(aircraft, engine, viewport),
+                bodySizePx(aircraft, engine, viewport, reduceMotion),
                 degreesOf(aircraft.heading),
                 time,
                 colors,

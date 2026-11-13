@@ -2,40 +2,29 @@ package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.Overlap
 import nl.hexmaster.finalapproach.domain.Vec2
-import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.ceil
-import kotlin.math.max
 
 /**
  * Turns a drawn polyline into one an aircraft can fly. Finger jitter is removed, the line is
- * resampled evenly and its corners are cut. Then a virtual aircraft of the same speed, but able
- * to turn only as tight as the minimum radius, follows that line from the real aircraft's pose;
- * the track it flies is the smoothed path. So no corner is tighter than the minimum radius, and
- * the real aircraft, which can turn a little tighter, can always fly it. The last point stays
- * exactly where it was drawn.
+ * resampled evenly and its corners are rounded. There is no turn limit: the aircraft follows the
+ * result exactly. The last point stays exactly where it was drawn.
  */
 object PathSmoother {
 
     /**
-     * Smooths [points] for an aircraft at [start] with [heading], flying at [speed] with
-     * [turnRate]. Returns the new points ahead of the aircraft; [start] itself is not included.
+     * Smooths [points] drawn from [start]. Returns the new points ahead of the aircraft; [start]
+     * itself is not included.
      */
     fun smooth(
         start: Vec2,
-        heading: Double,
         points: List<Vec2>,
-        speed: Double,
-        turnRate: Double,
         config: EngineConfig = EngineConfig(),
     ): List<Vec2> {
-        if (points.isEmpty() || speed <= 0.0 || turnRate <= 0.0) return points
-        val smoothing = config.smoothing
-        val turningRadius = speed / turnRate
-        val spacing = max(config.minPointSpacing, turningRadius * smoothing.spacingTurnFraction)
-        var line = resample(simplify(listOf(start) + points, smoothing.tolerance), spacing)
-        repeat(smoothing.chaikinIterations) { line = chaikin(line) }
-        return fly(start, heading, line.drop(1), speed, turnRate / smoothing.minRadiusFactor, spacing, config)
+        if (points.isEmpty()) return points
+        var line = resample(simplify(listOf(start) + points, config.smoothing.tolerance), config.minPointSpacing)
+        repeat(config.smoothing.chaikinIterations) { line = chaikin(line) }
+        return line.drop(1)
     }
 
     /** Radius of the circle through [a], [b] and [c]; infinite for points on one line. */
@@ -43,39 +32,6 @@ object PathSmoother {
         val cross = abs((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x))
         if (cross < COLLINEAR) return Double.POSITIVE_INFINITY
         return a.distanceTo(b) * b.distanceTo(c) * c.distanceTo(a) / (2.0 * cross)
-    }
-
-    /** The track of a virtual aircraft following [line], sampled every [spacing]. */
-    private fun fly(
-        start: Vec2,
-        heading: Double,
-        line: List<Vec2>,
-        speed: Double,
-        turnRate: Double,
-        spacing: Double,
-        config: EngineConfig,
-    ): List<Vec2> {
-        val end = line.last()
-        val stepSeconds = spacing / config.smoothing.flightSubsteps / speed
-        val stepLength = speed * stepSeconds
-        val drawnLength = (listOf(start) + line).zipWithNext().sumOf { (a, b) -> a.distanceTo(b) }
-        val circle = 2.0 * PI * speed / turnRate
-        val maxSteps = ceil(config.smoothing.flightLengthFactor * (drawnLength + circle) / stepLength).toInt()
-        val track = mutableListOf<Vec2>()
-        var pose = PathFollower.Pose(start, heading, line)
-        var sinceSample = 0.0
-        var steps = 0
-        while (pose.points.isNotEmpty() && steps < maxSteps) {
-            pose = PathFollower.advance(pose, speed, turnRate, stepSeconds, config)
-            sinceSample += stepLength
-            if (sinceSample >= spacing && pose.points.isNotEmpty()) {
-                track += pose.position
-                sinceSample = 0.0
-            }
-            steps++
-        }
-        while (track.isNotEmpty() && track.last().distanceTo(end) < spacing) track.removeAt(track.lastIndex)
-        return track + end
     }
 
     /** Douglas-Peucker: drops points within [tolerance] of the line between kept points. */

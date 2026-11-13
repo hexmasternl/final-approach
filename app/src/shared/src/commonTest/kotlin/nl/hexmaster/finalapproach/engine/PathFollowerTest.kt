@@ -1,11 +1,12 @@
 package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.Aircraft
+import nl.hexmaster.finalapproach.domain.AircraftTuning
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.Angles
-import nl.hexmaster.finalapproach.domain.AircraftTuning
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.FlightPath
+import nl.hexmaster.finalapproach.domain.Overlap
 import nl.hexmaster.finalapproach.domain.Vec2
 import kotlin.math.PI
 import kotlin.math.abs
@@ -29,17 +30,14 @@ class PathFollowerTest {
         val path = FlightPath(listOf(Vec2(100.0, 0.0), Vec2(100.0, 100.0)))
         val a = Aircraft(1, AircraftType.Jet, Vec2.Zero, PI / 2, path)
         val b = Aircraft(2, AircraftType.Jet, Vec2.Zero, PI / 2, path, livery = 3)
-        val flownA = fly(a, 50).map { it.position }
-        val flownB = fly(b, 50).map { it.position }
-        assertEquals(flownA, flownB)
+        assertEquals(fly(a, 50).map { it.position }, fly(b, 50).map { it.position })
     }
 
     @Test
     fun equalDistanceInEqualStepsStraightOnAfterThePath() {
         val start = Aircraft(1, AircraftType.Turboprop, Vec2.Zero, PI / 2, FlightPath(listOf(Vec2(30.0, 0.0))))
-        val positions = fly(start, 40).map { it.position }
         val expected = specs.speedOf(AircraftType.Turboprop) * dt
-        positions.zipWithNext().forEach { (from, to) ->
+        fly(start, 40).map { it.position }.zipWithNext().forEach { (from, to) ->
             assertTrue(abs(from.distanceTo(to) - expected) < 1e-9, "step ${from.distanceTo(to)}")
         }
     }
@@ -51,25 +49,40 @@ class PathFollowerTest {
         val emptied = states.indexOfFirst { it.path.isEmpty }
         assertTrue(emptied > 0, "path never consumed")
         val after = states.drop(emptied)
-        assertTrue(abs(after.first().heading - PI / 2) < 0.2, "heading ${after.first().heading}")
+        assertTrue(abs(after.first().heading - PI / 2) < 1e-9, "heading ${after.first().heading}")
         after.forEach { assertEquals(after.first().heading, it.heading) }
     }
 
     @Test
-    fun headingNeverTurnsFasterThanTheTurnRate() {
-        val start = Aircraft(1, AircraftType.Jumbo, Vec2.Zero, 0.0, FlightPath(listOf(Vec2(0.0, 400.0))))
-        val maxTurn = specs[AircraftType.Jumbo].turnRate * dt
-        fly(start, 60).zipWithNext().forEach { (a, b) ->
-            val turned = abs(Angles.difference(a.heading, b.heading))
-            assertTrue(turned <= maxTurn + 1e-9, "turned $turned")
+    fun everyTypeStaysOnThePathThroughAHairpinAndFliesStraightOnAfter() {
+        val corner = Vec2(300.0, 0.0)
+        val back = Angles.direction(PI / 2 + Angles.degrees(150.0))
+        val path = listOf(corner, corner + back * 300.0)
+        val line = listOf(Vec2.Zero) + path
+        AircraftType.entries.forEach { type ->
+            var aircraft = Aircraft(1, type, Vec2.Zero, PI / 2, FlightPath(path))
+            var steps = 0
+            while (!aircraft.path.isEmpty && steps < 2000) {
+                aircraft = PathFollower.step(aircraft, specs, dt)
+                val off = line.zipWithNext().minOf { (a, b) -> Overlap.closestPointOnSegment(a, b, aircraft.position).distanceTo(aircraft.position) }
+                if (!aircraft.path.isEmpty) assertTrue(off < 1e-6, "$type strayed $off")
+                steps++
+            }
+            assertTrue(aircraft.path.isEmpty, "$type never finished")
+            val last = Angles.heading(path.last() - corner)
+            assertTrue(abs(Angles.difference(aircraft.heading, last)) < 1e-9, "$type heading ${aircraft.heading} vs $last")
+            val after = PathFollower.step(aircraft, specs, dt)
+            assertEquals(aircraft.heading, after.heading)
+            assertTrue(abs(aircraft.position.distanceTo(after.position) - specs[type].speed * dt) < 1e-9, "$type step")
         }
     }
 
     @Test
-    fun aPointInsideTheTurningCircleIsDroppedInsteadOfCircled() {
-        val start = Aircraft(1, AircraftType.Jumbo, Vec2.Zero, 0.0, FlightPath(listOf(Vec2(40.0, 0.0))))
-        val end = fly(start, 5).last()
-        assertTrue(end.path.isEmpty)
+    fun aStepThatCrossesSeveralPointsStillCoversTheFullDistance() {
+        val start = Aircraft(1, AircraftType.Jumbo, Vec2.Zero, 0.0, FlightPath(listOf(Vec2(0.0, 1.0), Vec2(1.0, 1.0), Vec2(1.0, 2.0))))
+        val moved = PathFollower.step(start, specs, 1.0)
+        assertTrue(moved.path.isEmpty)
+        assertEquals(Angles.heading(Vec2(0.0, 1.0)), moved.heading)
     }
 
     @Test
