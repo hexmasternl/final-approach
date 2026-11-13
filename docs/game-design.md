@@ -11,13 +11,13 @@ A top-down, cartoon-style view of an airport. Aircraft enter the viewport from t
 ## Aircraft
 | Type | Kind | Speed (units/s) | Turn rate | Landing points | Lands on |
 |------|------|-----------------|-----------|----------------|----------|
-| Helicopter | Helicopter | 50 (slowest) | Very high | 10 | Helipad |
-| Light prop | Airplane | 68.75 | High | 20 | Runway |
-| Turboprop | Airplane | 93.75 | Medium | 30 | Runway |
-| Jet | Airplane | 125 | Low | 50 | Runway |
-| Jumbo | Airplane | 162.5 (fastest) | Very low | 80 | Runway |
+| Helicopter | Helicopter | 100 (slowest) | Very high | 10 | Helipad |
+| Light prop | Airplane | 137.5 | High | 20 | Runway |
+| Turboprop | Airplane | 187.5 | Medium | 30 | Runway |
+| Jet | Airplane | 250 | Low | 50 | Runway |
+| Jumbo | Airplane | 325 (fastest) | Very low | 80 | Runway |
 
-Values are defaults in `DefaultAircraftSpecs` and are tunable. Each speed is its value in the former 1280 by 720 world (40, 55, 75, 100, 130) times the world zoom of 1.25 (see World size and zoom), so every type crosses the screen in the same time as before. Speed rises from helicopter to jumbo, each type at least 15% faster than the one before, so the gaps show in play. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings. The jumbo is the fastest, balanced by its very low turn rate.
+Values are defaults in `DefaultAircraftSpecs` and are tunable. Each speed is its value in the former 1280 by 720 world (40, 55, 75, 100, 130) times the world zoom of 2.5 (see World size and zoom), so every type crosses the screen in the same time as before. Speed rises from helicopter to jumbo, each type at least 15% faster than the one before, so the gaps show in play. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings. The jumbo is the fastest, balanced by its very low turn rate.
 
 Every aircraft of a type flies at exactly the same speed, with no random variation, and its speed never changes during a run.
 
@@ -55,25 +55,26 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 - Difficulty rises over time: spawn rate and aircraft variety increase.
 
 ## World size and zoom
-Every level is played in a world of 1600 by 900 world units: the former 1280 by 720 world times one zoom factor, `LevelDefaults.WORLD_ZOOM` = 1.25, the same for all levels. The camera is pulled back: runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a smaller share of the screen and its surroundings show on every side.
+Every level is played in a world of 3200 by 1800 world units: the former 1280 by 720 world times one zoom factor, `LevelDefaults.WORLD_ZOOM` = 2.5, the same for all levels. The camera is pulled back: runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a small share of the screen in the middle, with wide open surroundings on every side for aircraft to fly and line up in. The zoom was 1.25 (a 1600 by 900 world) before it was doubled, so the airfield is now half as large on screen as it was then. Each level's layout sits in the middle of the world, and its scenery reaches out to the edges.
 
 What belongs to an aircraft or to the player's finger is multiplied by the same factor, so it is unchanged on screen:
 
-| Multiplied by the zoom | Before | Now |
+| Multiplied by the zoom | Base | Now |
 |---|---|---|
-| Aircraft speed | 40 to 130 | 50 to 162.5 |
-| Aircraft radius, and with it sprite size and collision shape | 24 to 44 | 30 to 55 |
-| Warning distance | 150 | 187.5 |
-| Spawn separation | 160 | 200 |
-| Spawn margin and leave margin | 60 | 75 |
-| HUD band at the top of the world | 160 | 200 |
-| Path reach radius, minimum point spacing, smoothing tolerance | 6, 12, 4 | 7.5, 15, 5 |
+| Aircraft speed | 40 to 130 | 100 to 325 |
+| Aircraft radius, and with it sprite size and collision shape | 24 to 44 | 60 to 110 |
+| Warning distance | 150 | 375 |
+| Spawn separation | 160 | 400 |
+| Spawn margin and leave margin | 60 | 150 |
+| HUD band at the top of the world | 160 | 400 |
+| Path reach radius, minimum point spacing, smoothing tolerance | 6, 12, 4 | 15, 30, 10 |
+| Touchdown distance past the threshold | 32 | 80 |
 
-Turn rates, all timings, the landing tolerance and every fraction stay; turning circles (speed divided by turn rate) therefore grow with the zoom and look the same on screen. Runway width (64), helipad radius (56), the landing zone sizes and the touchdown distance stay too, so on screen they are a fifth smaller: on an 800 by 360dp phone a runway is 25.6dp wide and a helipad 44.8dp across. The pick area and the path strokes are in dp and do not change. Any new world-unit distance that describes an aircraft or the finger must be written as its base value times `WORLD_ZOOM`.
+Turn rates, all timings, the landing tolerance and every fraction stay; turning circles (speed divided by turn rate) therefore grow with the zoom and look the same on screen. The runway lead-in is flown on that turning circle, so the touchdown point it ends at follows the zoom too. Runway width (64), helipad radius (56), runway lengths, the landing zone sizes and all scenery, the parked aircraft included, stay, so on screen they are less than half the size they had in the 1280 by 720 world: on an 800 by 360dp phone a world unit is 0.2dp, a runway is 12.8dp wide and a helipad 22.4dp across. Runway and helipad markings (bars, numbers, the helipad ring and H) shrink with them. The pick area and the path strokes are in dp and do not change. Any new world-unit distance that describes an aircraft or the finger must be written as its base value times `WORLD_ZOOM`.
 
 ## Levels
 A level is a `LevelConfig` in code (`domain/Levels.kt`), validated before it is played. It holds:
-- **World:** the viewport size in world units (1600 by 900 for every level), the spawn margin, the leave margin, the spawn separation, the warning distance and the longest simulation step.
+- **World:** the viewport size in world units (3200 by 1800 for every level), the spawn margin, the leave margin, the spawn separation, the warning distance and the longest simulation step.
 - **Zones:** runways (position, axis orientation, length, width, mode) and helipads (position, radius). Zones lie inside the viewport and never overlap.
 - **Runway mode:** *one-way* accepts landings on one heading only; *two-way* accepts both ends, and the approach picks the end. Approaches within the landing tolerance (default 30 degrees) of a landing heading count as aligned. The runway number is the landing heading in tens of degrees (`09`, `27`).
 - **Difficulty curve:** a list of phases. Each phase starts at a level time and sets the spawn interval range, the weight of each allowed aircraft type and the maximum number of aircraft in the air. The active phase is the last one that has started; phases step, they do not blend.
@@ -91,7 +92,7 @@ Levels 2 and 3 are set on an island (a beach with waves, palms and a jetty, and 
 Scenery is decoration only: no game rule reads it, and a seeded run plays out the same with a level's scenery removed. It is level data (`SceneryItem`: a kind, a centre, a size and a rotation, in world units) and is validated with the level:
 - No scenery covers a runway, a helipad or a landing zone.
 - Only flat ground (taxiways, aprons, fields, roads, ponds, waterholes, jetties) may lie under the HUD band; buildings, plants, vehicles, animals and people stay below it, and so do the ambient birds and boats.
-- A parked aircraft stands on an apron. It is three quarters of the light prop's size, has no livery and no shadow, and cannot be selected.
+- A parked aircraft stands on an apron. It is airfield scenery and shrinks with the airfield (67.5 world units square, less than half the flying light prop), has no livery and no shadow, and cannot be selected.
 
 Ambient life is decoration too: cows wander inside the paddock beside a farmer, a flock of three birds with flapping wings crosses now and then, a boat with a wake sails past the island, and at dawn the tower beacon and the aircraft lights glow. With reduced motion no bird or boat appears, wings and cows hold still, and the lights are steady. How scenery looks is set by the design system (`docs/design-system/world.md`).
 

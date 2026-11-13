@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.unit.Dp
-import nl.hexmaster.finalapproach.domain.LevelDefaults
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import kotlin.math.max
@@ -23,12 +22,12 @@ internal class SceneryLines(val outline: Float, val fine: Float, val corner: Flo
 
 /**
  * The scenery lines for a world drawn at [pxPerWorldUnit]. Scenery belongs to the airfield, so
- * its lines are world lengths at the scale before the world zoom-out and shrink with the field;
- * they are never wider on screen than their token. That keeps scenery lighter than an aircraft,
- * whose outline grew with the zoom.
+ * its lines are world lengths, [SCENERY_UNITS_PER_DP] world units per dp of their token, and
+ * shrink with the field; they are never wider on screen than their token. That keeps scenery
+ * lighter than an aircraft, whose outline does not shrink with the world zoom.
  */
 internal fun DrawScope.sceneryLines(pxPerWorldUnit: Float): SceneryLines {
-    val pxPerUnit = pxPerWorldUnit / LevelDefaults.WORLD_ZOOM.toFloat()
+    val pxPerUnit = pxPerWorldUnit * SCENERY_UNITS_PER_DP
     fun shrinking(token: Dp): Float = min(token.toPx(), token.value * pxPerUnit)
     return SceneryLines(
         outline = shrinking(FaDimens.line2),
@@ -36,6 +35,9 @@ internal fun DrawScope.sceneryLines(pxPerWorldUnit: Float): SceneryLines {
         corner = shrinking(FaDimens.radiusSm),
     )
 }
+
+/** World units a scenery line is wide per dp of its token. */
+private const val SCENERY_UNITS_PER_DP = 0.8f
 
 private class ParsedSceneryPart(val part: SceneryPart, val path: Path)
 
