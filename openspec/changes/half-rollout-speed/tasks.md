@@ -6,7 +6,7 @@
 
 ## 2. Docs
 
-- [ ] 2.1 Update the landing rules and the collision paragraph in `docs/game-design.md` (landing speed is half the light prop's flight speed, the light prop slows too, same-direction rollouts do not collide because all airplanes reach one landing speed); verify no "light prop's speed" wording about rollouts remains
+- [x] 2.1 Update the landing rules and the collision paragraph in `docs/game-design.md` (landing speed is half the light prop's flight speed, the light prop slows too, same-direction rollouts do not collide because all airplanes reach one landing speed); verify no "light prop's speed" wording about rollouts remains
 - [ ] 2.2 Update the matching core rule in `CLAUDE.md` and the landing line in `.github/copilot-instructions.md` so both say airplanes roll out at one shared landing speed (half the light prop's flight speed); verify the two files agree with `docs/game-design.md`
 
 ## 3. Check
