@@ -44,4 +44,16 @@ The visual reference for every task is `reference/final-approach-v2.html` in thi
 - [ ] 6.3 Regenerate `showcase.pdf` and rebuild the visuals in `visuals/` that show scenery or UI; verify each PNG was regenerated from its source
 - [ ] 6.4 Confirm nothing that must stay changed: verify `git diff development -- docs/design-system/assets/aircraft docs/design-system/assets/icons` is empty and the duration, easing, zIndex and path token values are equal to `development`
 - [ ] 6.5 Human check: publish the updated design system to https://claude.ai/artifact/WPS86AMwfU8Ph1ehK5kdpL and confirm it matches `showcase.html`
-- [ ] 6.6 Create the follow-up issue for porting the app to v2 (theme usage, sprite drawing, level drawing, components, app-facing specs, removal of deprecated tokens); verify it links back to #76
+- [ ] 6.6 Create the follow-up issue for porting the app's world to v2 (scenery sprite drawing, runway and helipad drawing, level backdrops and miniatures, world-facing specs, removal of deprecated tokens); verify it links back to #76
+
+## 7. App UI components
+
+- [ ] 7.1 Bundle Nunito (600, 700, 800) in `composeResources`, move the body, caption and row text styles to it in `FaTypography`, and expose the v2 elevation values (lip heights, contact shadow, nested radii) through the theme; verify no text style in Nunito is lighter than 600 and `:shared:allTests` passes
+- [ ] 7.2 Add the moulded-surface and flat-surface primitives of design Decision 8 in `ui/components`, with pressed, focused and disabled states and reduced-motion handling; rebuild `FaButton` (primary, secondary, ghost, danger; small, medium, large; icon) on them; verify in previews against the reference page and by grep that the files hold no colour, size or duration literal
+- [ ] 7.3 Rebuild `FaToggle` and `FaSegmentedControl` on the primitives, keeping their semantics (role, state description, 48dp touch target); verify in the settings previews in Day and Night
+- [ ] 7.4 Rebuild the HUD parts as flight strips and stickers (score, best, spawn counter, lives, next aircraft, streak, score popup, pause button); verify `HudFitTest` passes with the 40dp strip height and that only the pause button draws a lip
+- [ ] 7.5 Rebuild `FaDialog` as the boarding pass (header band with eyebrow and title, body, perforation, stub with stats and actions; vertical perforation in the compact landscape layout) and the panel surface; verify `FaDialogLayoutTest` passes and the dialog previews fit 640 by 360dp with system bars and a 50dp banner
+- [ ] 7.6 Move the pause dialog and the game-ended dialog onto the new `FaDialog` with their header tone, eyebrow and, for game ended, the reason stamp; verify every button, label, stat and back behaviour named in the `pause-menu` and `game-ended-dialog` specs is still present and behaves the same
+- [ ] 7.7 Port the remaining users: level tiles (moulded card, chips, locked state), coach marks, the settings page and the main page; verify each screen's preview in Day and Night and that `level-selection`, `settings-page`, `main-page` and `tutorial-overlays` scenarios still hold
+- [ ] 7.8 Run `./gradlew :shared:allTests :androidApp:assembleDebug`; then have the design-critic, android-critic and play-policy-critic agents review the branch and fix what they find; verify each agent's final report names no open finding
+- [ ] 7.9 Human check: play one level on a phone in portrait and landscape and confirm the HUD, pause dialog, game-ended dialog, level select and settings read well over the field

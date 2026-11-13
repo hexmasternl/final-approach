@@ -4,7 +4,7 @@ GitHub issue: #76
 
 ## Why
 
-Aircraft look good, but everything else in a level reads as primitive, and the UI reads as coarse. The cause is in the design system's own rules: scenery is built from primitives under a four-fill budget, nothing on the ground has light or shadow, every inner line is navy, and every UI shape carries a 4dp outline plus a navy lip. A new direction, version 2, was drawn and approved on 2026-11-14; this change makes it the design system.
+Aircraft look good, but everything else in a level reads as primitive, and the UI reads as coarse. The cause is in the design system's own rules: scenery is built from primitives under a four-fill budget, nothing on the ground has light or shadow, every inner line is navy, and every UI shape carries a 4dp outline plus a navy lip. A new direction, version 2, was drawn and approved on 2026-11-14; this change makes it the design system and brings the app's UI components to it.
 
 ## What Changes
 
@@ -16,28 +16,33 @@ Aircraft look good, but everything else in a level reads as primitive, and the U
 - **Ground and landing zones.** The airfield is mown in stripes parallel to the runway and the countryside is not. Runways and helipads keep their footprint and world size and gain a shoulder, a rough-grass fringe, fuller markings and lights. Taxiways, aprons, roads, fields and water get their transition bands.
 - **Components.** Button, IconButton, Toggle, SegmentedControl, Chip, HudBar and its readouts, StreakBadge, ScorePopup, Panel, Dialog (portrait and landscape), LevelCard and CoachMark are respecified and rebuilt in `bundle.css`. HUD readouts become flat 40dp strips; pause is the only HUD control with a lip.
 - **Showcase.** `showcase.html` and `showcase.pdf` are regenerated for v2 in Day, Night and Dawn, the social visuals that show scenery or UI are rebuilt, and the published design system is updated.
+- **App UI components.** The Compose UI components are ported to v2: buttons and icon buttons, toggle, segmented control, chips, the HUD (flight strips, lives, next aircraft, streak and score stickers, pause button), panels, the dialog as a boarding pass in portrait and landscape, with the pause dialog and the game-ended dialog built on it, level tiles, coach marks, and the settings and main pages that use them. Body text in the app moves to Nunito. No screen gains or loses a control, a label or a behaviour.
+- **App UI components.** The Compose UI components are ported to v2: buttons and icon buttons, toggle, segmented control, chips, the HUD (flight strips, lives, next aircraft, streak and score stickers, pause button), panels, the dialog as a boarding pass in portrait and landscape, with the pause dialog and the game-ended dialog built on it, level tiles, coach marks, and the settings and main pages that use them. Body text in the app moves to Nunito. No screen gains or loses a control, a label or a behaviour.
 - **Instructions.** The design-system sections of `CLAUDE.md` and `.github/copilot-instructions.md` are rewritten for v2.
 
 The approved proposal page and its sources are kept in this change's `reference/` folder. They are the visual reference for every task.
 
-Out of scope: any change to app code (Compose theme values beyond what regeneration adds, sprites, composables, level data), which is a follow-up change that ports the app and then removes the v1 tokens; new levels or scenery kinds; gameplay; sound; the splash page's sunset scene; the app icon; aircraft sprites, liveries, path colours, the flight path, the icon set, motion tokens, layer order, touch sizes and copy, all of which stay as they are.
+Out of scope: the world in the app (scenery sprites, runway and helipad drawing, level backdrops, level data, the ground of level miniatures), which keeps its v1 look until a follow-up change ports it and then removes the v1 tokens; new levels or scenery kinds; gameplay; sound; the splash page's sunset scene; the app icon; aircraft sprites, liveries, path colours, the flight path, the icon set, motion tokens, layer order, touch sizes and copy, all of which stay as they are.
 
-Depends on: nothing. Overlaps with `detailed-scenery` (#33): that change's open scenery drawing tasks target the v1 look and are superseded by this change; its world-zoom, level-layout and ambient work is unaffected. Until the follow-up port lands, the app keeps rendering v1.
+Depends on: nothing. Overlaps with `detailed-scenery` (#33): that change's open scenery drawing tasks target the v1 look and are superseded by this change; its world-zoom, level-layout and ambient work is unaffected. Until the follow-up port lands, the app shows v2 UI over a v1 world.
 
 ## Capabilities
 
 ### New Capabilities
 
 - `design-system`: what the design system defines and guarantees: its principles, token families, line ranks, scenery and landing-zone construction rules, component construction rules, the showcase, and what must stay stable for the app that is generated from it.
+- `ui-components`: how the app's UI components look and respond: moulded controls, flat readouts, the boarding-pass dialog, type, and the states every control has.
 
 ### Modified Capabilities
 
-None. No app behaviour changes in this change. The app-facing specs that describe the v1 look (`level-themes`, `runway-markings`, `player-hud`, `game-ended-dialog`, `pause-menu`, `level-selection`, `tutorial-overlays`) change in the follow-up port.
+None. No app behaviour changes: every existing requirement of `player-hud`, `game-ended-dialog`, `pause-menu`, `level-selection`, `settings-page`, `main-page` and `tutorial-overlays` holds unchanged. The specs that describe the v1 world (`level-themes`, `runway-markings`) change in the follow-up port.
 
 ## Impact
 
 - Design system: `tokens.json`, `brand-book.md`, `world.md`, `motion-audio.md` (unchanged values, new references), `compose.md`, every file in `components/`, `bundle.css`, `bundle.js` (scenery sprites, runway, helipad, cloud, windsock), `assets/scenery/*.svg`, `showcase.html`, `showcase.pdf`, `visuals/`, `tools/gen-kotlin.cjs` (reads ramps and line ranks; scenery budget check replaced by the tone and material checks).
-- Generated code: running the generator adds the new tokens to `ui/theme`; existing names keep their values, so the app builds and looks as before.
+- Generated code: running the generator adds the new tokens to `ui/theme`; existing names keep their values, so the v1 world still draws as before.
+- `shared` `ui`: `ui/components` (button, surface, toggle, segmented control, HUD parts, dialog, coach mark), `ui/game` (`Hud.kt`, `GameEndedDialog.kt`, the pause dialog in `GameScreen.kt`, `LevelSelectPage.kt`, `TutorialOverlay.kt`), `ui/menu/MainPage.kt`, `ui/settings/SettingsPage.kt`, `ui/theme` (typography, elevation), previews, and the Nunito font files in `composeResources`.
+- Tests: `HudFitTest`, `FaDialogLayoutTest` where they pin sizes.
 - Docs: `CLAUDE.md`, `.github/copilot-instructions.md`, `docs/art-style.md`.
-- Fonts: Nunito (SIL Open Font License) is added to the design system's fonts.
+- Fonts: Nunito (SIL Open Font License) is added to the design system's fonts and bundled in the app.
 - No new runtime dependencies.

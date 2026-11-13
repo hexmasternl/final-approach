@@ -9,9 +9,9 @@
 
 ## Goals / Non-Goals
 
-**Goals:** the design system describes and shows v2 only; the app still builds and looks the same after regeneration; the reference sources are carried over rather than redrawn.
+**Goals:** the design system describes and shows v2 only; the app's UI components are v2; the app's world still draws as v1 from the same generated theme; the reference sources are carried over rather than redrawn.
 
-**Non-Goals:** porting any composable, sprite drawing or level data; removing v1 tokens; redesigning aircraft, icons, the flight path or motion.
+**Non-Goals:** porting scenery sprite drawing, runway and helipad drawing, level backdrops or level data; removing v1 tokens; redesigning aircraft, icons, the flight path or motion; changing what any screen contains or does.
 
 ## Decisions
 
@@ -55,18 +55,28 @@ The four-fill and colour checks are replaced by: at most three materials per spr
 
 `HudBar` readouts become `FlightStrip`: a 40dp flat strip with an optional labelled cell and a value. `Chip` becomes the flat tinted tag. The streak badge and score popup become `Sticker`. Old component files are rewritten in place where the name still fits and renamed where it does not, with the old name noted so the port can map it.
 
+### 8. The app port stops at the UI layer
+
+Everything under `ui/components`, plus the screens that compose them, moves to v2. Everything that draws the world (`ui/sprites`, `AirfieldDrawing.kt`, `LevelBackdrop.kt`, ambient life) is left alone and keeps reading the v1 token names, which is why those names must survive (Decision 1). Level tiles keep their v1 miniature inside the v2 card.
+
+One moulded-surface primitive draws face, highlight, lip, outline and contact shadow from a tone set (light, base, lip, edge) and a press state; button, icon button, level tile, toggle knob and selected segment all use it, so "a lip means pressable" is enforced by which composables call it. Flat surfaces (strip, chip, coach mark) use a second primitive with no lip. The dialog composable keeps its slots (title, body, stats, actions) and gains a header tone and an eyebrow, so the pause and game-ended dialogs change by passing those, not by restructuring.
+
+Why in this change: the owner asked for the UI components, including both dialogs, to move with the design system. Alternative considered: port the world too; rejected because it collides with the open `detailed-scenery` work and triples the size of the pull request.
+
 ## Risks / Trade-offs
 
+- v2 UI over a v1 world looks mixed until the world is ported → accepted by the owner; the follow-up issue is created in this change.
+
 - More detail could hurt readability of aircraft and paths → W4, W8 and W9 exist for this; the showcase game screens are reviewed by the design-critic agent with aircraft over the busiest scenery, in Day, Night and Dawn.
-- The app and the design system disagree until the port lands → `CLAUDE.md` says so in one line, and the deprecated tokens name their replacements.
+- The app's world and the design system disagree until the world port lands → `CLAUDE.md` says so in one line, and the deprecated tokens name their replacements.
 - `detailed-scenery` has open tasks that draw v1 scenery → flagged in the proposal and the issue; the owner decides whether to drop them before either change is applied.
 - Token count roughly doubles → fixed step roles (Decision 2) keep choosing a tone mechanical.
 - Sprites at 0.33dp per world unit show little of their detail → minimum sizes from v1 stay, and detail that falls under 1.5dp is left out of the sprite rather than drawn.
 
 ## Migration Plan
 
-1. This change merges: design system is v2, app unchanged.
-2. Follow-up change ports theme usage, sprite drawing, level drawing and components, and updates the app-facing specs.
+1. This change merges: design system and app UI are v2, the app's world is v1.
+2. Follow-up change ports sprite drawing and level drawing, and updates the world-facing specs.
 3. A last task of that follow-up removes the deprecated tokens.
 
 Rollback: revert the merge commit; the app never depended on a v2-only token.
