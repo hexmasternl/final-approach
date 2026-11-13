@@ -23,7 +23,7 @@ Players watch traffic and plan without touching the screen. With a short screen 
 
 ### Modified Capabilities
 
-None. The settings page itself is introduced by the change for #66; this change adds a row to it, specified here.
+None. The settings page itself is introduced by `settings-page` (#66); this change adds a row to it, specified here.
 
 ## Out of scope
 
@@ -34,7 +34,7 @@ None. The settings page itself is introduced by the change for #66; this change 
 
 ## Depends on
 
-- #66, the settings page and its settings store. This change adds one row and one stored value to them, and must be implemented after #66's change is merged.
+- `settings-page` (#66): the settings page and its settings store (`player-settings`). This change adds one row and one stored value to them, and must be implemented after `settings-page` is merged.
 
 ## Impact
 

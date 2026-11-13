@@ -2,7 +2,7 @@
 
 ## Context
 
-`GameScreen` already asks the host for a platform behaviour while it is shown (`AppHost.lockLandscape`, set in a `DisposableEffect`). The engine exposes `GameState.paused` and `GameState.status` (`Playing` or `GameOver`). `GameScreen` pauses the engine while the options panel is open and while the interstitial before a level is showing; a restart from the game-ended dialog keeps the status `GameOver` until the ad is dismissed. The settings page and its device-local settings store come from the change for #66 and are not built yet.
+`GameScreen` already asks the host for a platform behaviour while it is shown (`AppHost.lockLandscape`, set in a `DisposableEffect`). The engine exposes `GameState.paused` and `GameState.status` (`Playing` or `GameOver`). `GameScreen` pauses the engine while the options panel is open and while the interstitial before a level is showing; a restart from the game-ended dialog keeps the status `GameOver` until the ad is dismissed. The settings page and its device-local settings store come from the `settings-page` change (#66) and are not built yet.
 
 ## Decisions
 
@@ -31,7 +31,7 @@ Rejected: deciding from `optionsOpen` and dialog visibility in the composable. T
 
 The setting is read from the settings store from #66 when the game screen opens. Settings open only from the main page, so the value cannot change mid-level; if Settings ever opens from the game, reading it as observable state makes the change apply at once without changing the rule.
 
-### 4. The setting lives in #66's settings store
+### 4. The setting lives in the `settings-page` store
 
 Add a `keepScreenOn: Boolean` value, default `true`, to the settings store that #66 introduces, persisted the same way as its other values (device-local, not backed up). Use whatever read/write shape #66 settles on; do not create a second store.
 
@@ -65,5 +65,5 @@ Fallback, if removal breaks ads: keep the SDK's merged permission, narrow the cr
 
 ## Risks
 
-- **#66 not merged first:** this change cannot add a row to a page that does not exist. Implement it after #66's change is merged into `development`.
+- **`settings-page` (#66) not merged first:** this change cannot add a row to a page that does not exist. Implement it after `settings-page` is merged into `development`.
 - **Removing a dependency's `WAKE_LOCK`:** WorkManager or Play services may try to take a wake lock and fail without the permission. Decision 6 makes this a checked step with a stated fallback.

@@ -1,6 +1,6 @@
 ## 0. Prerequisite
 
-- [ ] 0.1 Confirm the change for #66 (settings page and settings store) is merged into `development` before starting. Verify: the settings page and its store exist on the branch.
+- [ ] 0.1 Confirm `settings-page` (#66: settings page and settings store) is merged into `development` before starting. Verify: the settings page and its store exist on the branch.
 
 ## 1. Platform hook
 
