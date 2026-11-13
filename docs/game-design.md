@@ -11,13 +11,13 @@ A top-down, cartoon-style view of an airport. Aircraft enter the viewport from t
 ## Aircraft
 | Type | Kind | Speed (units/s) | Turn rate (lead-in length only) | Landing points | Lands on |
 |------|------|-----------------|-----------|----------------|----------|
-| Helicopter | Helicopter | 50 (slowest) | Very high | 10 | Helipad |
-| Light prop | Airplane | 91.67 | High | 20 | Runway |
-| Turboprop | Airplane | 125 | Medium | 30 | Runway |
-| Jet | Airplane | 166.67 | Low | 50 | Runway |
-| Jumbo | Airplane | 162.5 | Very low | 80 | Runway |
+| Helicopter | Helicopter | 30 (slowest) | Very high | 10 | Helipad |
+| Light prop | Airplane | 55 | High | 20 | Runway |
+| Turboprop | Airplane | 75 | Medium | 30 | Runway |
+| Jet | Airplane | 100 | Low | 50 | Runway |
+| Jumbo | Airplane | 97.5 | Very low | 80 | Runway |
 
-Values are defaults in `DefaultAircraftSpecs` and are tunable. The default flight speeds live in one parameter file, `domain/AircraftSpeeds.kt`, at zoom factor 1: helicopter 20, light prop 36.67, turboprop 50, jet 66.67 and jumbo 65. `DefaultAircraftSpecs` multiplies them by the world zoom of 2.5 (see World size and zoom). Speed rises from helicopter to jet, each type at least 15% faster than the one before, so the gaps show in play; the jumbo (half the former size and half the former speed) is about as fast as the jet and is not part of that ordering. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings.
+Values are defaults in `DefaultAircraftSpecs` and are tunable. The default flight speeds live in one parameter file, `domain/AircraftSpeeds.kt`, at zoom factor 1: helicopter 20, light prop 36.67, turboprop 50, jet 66.67 and jumbo 65. `DefaultAircraftSpecs` multiplies them by the world zoom of 1.5 (see World size and zoom). Speed rises from helicopter to jet, each type at least 15% faster than the one before, so the gaps show in play; the jumbo (half the former size and half the former speed) is about as fast as the jet and is not part of that ordering. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings.
 
 Every aircraft of a type flies at exactly the same speed, with no random variation, and its speed never changes during a run.
 
@@ -55,26 +55,26 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 - Difficulty rises over time: spawn rate and aircraft variety increase.
 
 ## World size and zoom
-Every level is played in a world of 3200 by 1800 world units: the former 1280 by 720 world times one zoom factor, `LevelDefaults.WORLD_ZOOM` = 2.5, the same for all levels. The camera is pulled back: runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a small share of the screen in the middle, with wide open surroundings on every side for aircraft to fly and line up in. The zoom was 1.25 (a 1600 by 900 world) before it was doubled, so the airfield is now half as large on screen as it was then. Each level's layout sits in the middle of the world, and its scenery reaches out to the edges.
+Every level is played in a world of 1920 by 1080 world units: the former 1280 by 720 world times one zoom factor, `LevelDefaults.WORLD_ZOOM` = 1.5, the same for all levels. The factor is the middle between the original size (1) and a doubled world (2), which was too far out. The camera is pulled back: runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a smaller share of the screen in the middle, with open surroundings on every side for aircraft to fly and line up in. Each level's layout sits in the middle of the world, and its scenery reaches out to the edges.
 
 What belongs to an aircraft or to the player's finger is multiplied by the same factor, so it is unchanged on screen:
 
 | Multiplied by the zoom | Base | Now |
 |---|---|---|
-| Aircraft speed | 20 to 66.67 | 50 to 166.67 |
-| Aircraft radius, and with it sprite size and collision shape | 22 to 30 | 55 to 75 |
-| Warning distance | 150 | 375 |
-| Spawn separation | 160 | 400 |
-| Spawn margin and leave margin | 60 | 150 |
-| HUD band at the top of the world | 160 | 400 |
-| Path reach radius, minimum point spacing, smoothing tolerance | 6, 12, 4 | 15, 30, 10 |
-| Touchdown distance past the threshold | 32 | 80 |
+| Aircraft speed | 20 to 66.67 | 30 to 100 |
+| Aircraft radius, and with it sprite size and collision shape | 22 to 30 | 33 to 45 |
+| Warning distance | 150 | 225 |
+| Spawn separation | 160 | 240 |
+| Spawn margin and leave margin | 60 | 90 |
+| HUD band at the top of the world | 160 | 240 |
+| Path reach radius, minimum point spacing, smoothing tolerance | 6, 12, 4 | 9, 18, 6 |
+| Touchdown distance past the threshold | 32 | 48 |
 
-The turn rate (it only sets the runway lead-in length), all timings, the landing tolerance and every fraction stay; the lead-in length (speed divided by turn rate) therefore grows with the zoom and looks the same on screen. So the touchdown point it ends at follows the zoom too. Runway width (64), helipad radius (56), runway lengths, the landing zone sizes and all scenery, the parked aircraft included, stay, so on screen they are less than half the size they had in the 1280 by 720 world: on an 800 by 360dp phone a world unit is 0.2dp, a runway is 12.8dp wide and a helipad 22.4dp across. Runway and helipad markings (bars, numbers, the helipad ring and H) shrink with them. The pick area and the path strokes are in dp and do not change. Any new world-unit distance that describes an aircraft or the finger must be written as its base value times `WORLD_ZOOM`.
+The turn rate (it only sets the runway lead-in length), all timings, the landing tolerance and every fraction stay; the lead-in length (speed divided by turn rate) therefore grows with the zoom and looks the same on screen. So the touchdown point it ends at follows the zoom too. Runway width (64), helipad radius (56), runway lengths, the landing zone sizes and all scenery, the parked aircraft included, stay, so on screen they are smaller than in the 1280 by 720 world: on an 800 by 360dp phone a world unit is 0.333dp, a runway is 21.3dp wide and a helipad 37.3dp across. Runway and helipad markings (bars, numbers, the helipad ring and H) shrink with them. The pick area and the path strokes are in dp and do not change. Any new world-unit distance that describes an aircraft or the finger must be written as its base value times `WORLD_ZOOM`.
 
 ## Levels
 A level is a `LevelConfig` in code (`domain/Levels.kt`), validated before it is played. It holds:
-- **World:** the viewport size in world units (3200 by 1800 for every level), the spawn margin, the leave margin, the spawn separation, the warning distance and the longest simulation step.
+- **World:** the viewport size in world units (1920 by 1080 for every level), the spawn margin, the leave margin, the spawn separation, the warning distance and the longest simulation step.
 - **Zones:** runways (position, axis orientation, length, width, mode) and helipads (position, radius). Zones lie inside the viewport and never overlap.
 - **Runway mode:** *one-way* accepts landings on one heading only; *two-way* accepts both ends, and the approach picks the end. Approaches within the landing tolerance (default 30 degrees) of a landing heading count as aligned. The runway number is the landing heading in tens of degrees (`09`, `27`).
 - **Difficulty curve:** a list of phases. Each phase starts at a level time and sets the spawn interval range, the weight of each allowed aircraft type and the maximum number of aircraft in the air. The active phase is the last one that has started; phases step, they do not blend.

@@ -6,11 +6,11 @@
 
 ## 2. Backdrop
 
-- [ ] 2.1 Make the backdrop of each level cover the whole larger world and spread or thin the scenery in the border; verify with previews of the three levels on 800 x 360dp that no edge shows empty background
+- [x] 2.1 Make the backdrop of each level cover the whole larger world and spread or thin the scenery in the border; verify with previews of the three levels on 800 x 360dp that no edge shows empty background
 - [ ] 2.2 Check on 800 x 360dp that runways stay at least 24dp wide and helipads at least 40dp across (the `world-scale` readability rule); if not, say so on the issue before changing the factor
 
 ## 3. Docs and checks
 
-- [ ] 3.1 Update `docs/game-design.md` and `docs/architecture.md` with the 1.5 factor and 1920 x 1080 worlds; verify they match the code
+- [x] 3.1 Update `docs/game-design.md` and `docs/architecture.md` with the 1.5 factor and 1920 x 1080 worlds; verify they match the code
 - [ ] 3.2 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug`; verify both pass
 - [ ] 3.3 Human check: play each level on a phone and decide whether the zoom feels right
