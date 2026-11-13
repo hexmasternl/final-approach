@@ -20,6 +20,12 @@ class FakeAppHost(
         quitCalls++
     }
 
+    val openedUrls = mutableListOf<String>()
+
+    override fun openUrl(url: String) {
+        openedUrls += url
+    }
+
     var landscapeLocked = false
         private set
 

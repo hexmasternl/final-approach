@@ -17,6 +17,9 @@ interface AppHost {
     /** Closes the app. */
     fun quit()
 
+    /** Opens [url] in the device's browser. Does nothing when no app can open it. */
+    fun openUrl(url: String)
+
     /** Where the personal best score of each level is kept. */
     val highScores: HighScoreStore
 

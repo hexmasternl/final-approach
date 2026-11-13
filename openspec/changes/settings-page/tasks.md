@@ -23,8 +23,8 @@
 
 ## 4. Platform URL opening
 
-- [ ] 4.1 Add `fun openUrl(url: String)` to `AppHost` and the `AppLinks.PRIVACY_POLICY_URL` constant (the URL from `update-privacy-policy`); implement it in `AndroidAppHost` with `ACTION_VIEW`, swallowing `ActivityNotFoundException`; update test doubles; verify `:androidApp:assembleDebug` and `:shared:allTests` pass
-- [ ] 4.2 Add `openUrl` to the `AppHost` description in `docs/architecture.md`; verify the text is there
+- [x] 4.1 Add `fun openUrl(url: String)` to `AppHost` and the `AppLinks.PRIVACY_POLICY_URL` constant (the URL from `update-privacy-policy`); implement it in `AndroidAppHost` with `ACTION_VIEW`, swallowing `ActivityNotFoundException`; update test doubles; verify `:androidApp:assembleDebug` and `:shared:allTests` pass
+- [x] 4.2 Add `openUrl` to the `AppHost` description in `docs/architecture.md`; verify the text is there
 
 ## 5. Design-system components
 

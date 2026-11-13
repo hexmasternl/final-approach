@@ -1,7 +1,10 @@
 package nl.hexmaster.finalapproach
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import nl.hexmaster.finalapproach.domain.PlayerSettings
@@ -77,6 +80,14 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
 
     override fun quit() {
         activity.finish()
+    }
+
+    override fun openUrl(url: String) {
+        try {
+            activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (_: ActivityNotFoundException) {
+            // No browser on this device: stay on the page.
+        }
     }
 
     override fun lockLandscape(locked: Boolean) {
