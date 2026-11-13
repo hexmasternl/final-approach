@@ -26,7 +26,7 @@
 ## 4. UI
 
 - [x] 4.1 Port the design-system additions to the theme: `FaDimens` (`coachMaxWidth`, `coachExplainMaxWidth`, `highlightMargin`), `FaMotion.durDemoDragMs`, `FaIcon.Finger`. Verify `assembleDebug` passes and the values match `tokens.json`.
-- [ ] 4.2 Add `ui/components/FaCoachMark.kt` (tail up or down, step line, title, body, optional Got it with a 48dp touch target) with previews for each variant. Verify the previews against the showcase.
+- [x] 4.2 Add `ui/components/FaCoachMark.kt` (tail up or down, step line, title, body, optional Got it with a 48dp touch target) with previews for each variant. Verify the previews against the showcase.
 - [ ] 4.3 Add `ui/game/TutorialOverlay.kt` and wire it into `GameScreen`: engine constructed with the completion check, coach mark placement and tracking, highlight and demo drawn at their layers, reduced-motion still, Skip button in the HUD row, `TutorialText` copy (decision 12), `TutorialProgress` fed with events. Verify `assembleDebug` passes and a `GamePreviews` preview shows each step.
 - [ ] 4.4 Human task: on a device with a fresh install, play the tutorial through, fail a step on purpose, quit and return mid-tutorial, skip on a second fresh install, and repeat once with reduced motion on. Check every scenario in `specs/level-tutorial` and `specs/tutorial-overlays`, and that after completion a restart of the app goes straight to the normal level.
 
