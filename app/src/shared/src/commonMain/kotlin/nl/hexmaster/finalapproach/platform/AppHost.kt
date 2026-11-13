@@ -23,6 +23,9 @@ interface AppHost {
     /** Where the personal best score of each level is kept. */
     val highScores: HighScoreStore
 
+    /** Where it is kept that the first-time tutorial of a level was completed. */
+    val tutorials: TutorialStore
+
     /** Where the player's settings are kept. */
     val settings: SettingsStore
 

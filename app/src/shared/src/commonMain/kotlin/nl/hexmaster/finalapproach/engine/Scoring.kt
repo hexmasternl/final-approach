@@ -17,13 +17,16 @@ sealed interface GameEvent {
 
     /** An aircraft left the area without landing. */
     data class LeftArea(val aircraftId: Int) : GameEvent
+
+    /** The first-time tutorial ended, by Got it on its last step or by Skip. Reported once. */
+    data object TutorialCompleted : GameEvent
 }
 
 /** Only landings score: each adds its type's effective landing points. */
 object Scoring {
     fun pointsFor(event: GameEvent, specs: EffectiveAircraftSpecs): Int = when (event) {
         is GameEvent.Landed -> specs.pointsOf(event.type)
-        is GameEvent.ClearedToLand, is GameEvent.Collided, is GameEvent.LeftArea -> 0
+        is GameEvent.ClearedToLand, is GameEvent.Collided, is GameEvent.LeftArea, GameEvent.TutorialCompleted -> 0
     }
 
     fun apply(score: Int, events: List<GameEvent>, specs: EffectiveAircraftSpecs): Int =

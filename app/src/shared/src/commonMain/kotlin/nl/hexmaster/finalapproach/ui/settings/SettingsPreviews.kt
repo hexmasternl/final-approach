@@ -8,6 +8,7 @@ import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.platform.BackDispatcher
 import nl.hexmaster.finalapproach.platform.InMemoryHighScoreStore
 import nl.hexmaster.finalapproach.platform.InMemorySettingsStore
+import nl.hexmaster.finalapproach.platform.InMemoryTutorialStore
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 private object SettingsPreviewData {
@@ -23,6 +24,7 @@ private object SettingsPreviewData {
         override val back = BackDispatcher()
         override val highScores = InMemoryHighScoreStore()
         override val settings = InMemorySettingsStore()
+        override val tutorials = InMemoryTutorialStore()
         override fun quit() = Unit
         override fun keepScreenOn(on: Boolean) = Unit
         override fun openUrl(url: String) = Unit

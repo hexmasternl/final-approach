@@ -10,7 +10,7 @@ object SoundCues {
     fun of(events: List<GameEvent>): List<SoundEffect> = events.mapNotNull { event ->
         when (event) {
             is GameEvent.ClearedToLand -> SoundEffect.Success
-            is GameEvent.Landed, is GameEvent.Collided, is GameEvent.LeftArea -> null
+            is GameEvent.Landed, is GameEvent.Collided, is GameEvent.LeftArea, GameEvent.TutorialCompleted -> null
         }
     }
 }

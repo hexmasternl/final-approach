@@ -16,9 +16,11 @@ import nl.hexmaster.finalapproach.platform.BackDispatcher
 import nl.hexmaster.finalapproach.platform.HighScoreStore
 import nl.hexmaster.finalapproach.platform.SettingsStore
 import nl.hexmaster.finalapproach.platform.SoundPlayer
+import nl.hexmaster.finalapproach.platform.TutorialStore
 
 private const val PREFERENCES_NAME = "best-scores"
 private const val SETTINGS_PREFERENCES_NAME = "settings"
+private const val TUTORIAL_PREFERENCES_NAME = "tutorials"
 private const val KEY_SOUND_EFFECTS = "sound_effects"
 private const val KEY_REDUCE_MOTION = "reduce_motion"
 private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
@@ -56,6 +58,17 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
     /** Frees what the host holds on to; call when the activity is destroyed. */
     fun release() {
         soundPlayer.release()
+    }
+
+    /** Tutorial completion lives in a private preferences file, one boolean per tutorial id. */
+    override val tutorials = object : TutorialStore {
+        private val preferences = activity.getSharedPreferences(TUTORIAL_PREFERENCES_NAME, Context.MODE_PRIVATE)
+
+        override fun isCompleted(tutorialId: String): Boolean = preferences.getBoolean(tutorialId, false)
+
+        override fun markCompleted(tutorialId: String) {
+            preferences.edit().putBoolean(tutorialId, true).apply()
+        }
     }
 
     /** Settings live in their own private preferences file; the enum is stored by name and unknown values fall back to the default. */
