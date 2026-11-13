@@ -11,9 +11,17 @@ import nl.hexmaster.finalapproach.domain.Vec2
 /** Builds an aircraft's path from drag input, and cuts it off where it enters a landing zone. */
 object PathDrawing {
 
-    /** Starts a fresh path, replacing the old one, unless the aircraft is already cleared to land. */
+    /**
+     * Starts a fresh path, replacing the old one. An aircraft cleared to land has its clearance
+     * cancelled: its locked path is removed and it flies freely again, keeping position and heading.
+     * An airplane that has touched down (rolling out) cannot be re-routed.
+     */
     fun begin(aircraft: Aircraft): Aircraft =
-        if (aircraft.status == AircraftStatus.Flying) aircraft.copy(path = FlightPath()) else aircraft
+        when (aircraft.status) {
+            AircraftStatus.Flying, is AircraftStatus.ClearedToLand ->
+                aircraft.copy(path = FlightPath(), status = AircraftStatus.Flying)
+            else -> aircraft
+        }
 
     /**
      * Adds [point] to the path. When the new segment validly enters a zone, the path ends at the

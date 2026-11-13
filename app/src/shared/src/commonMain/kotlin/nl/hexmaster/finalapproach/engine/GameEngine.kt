@@ -149,7 +149,7 @@ class GameEngine(
 
     /**
      * Removes the path of aircraft [id]; it flies straight on in its current heading. An aircraft
-     * already cleared to land keeps its locked path.
+     * cleared to land has its clearance cancelled too. A rolling-out airplane is left alone.
      */
     fun clearPath(id: Int) {
         if (inputBlocked) return

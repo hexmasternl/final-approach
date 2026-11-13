@@ -28,7 +28,7 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 1. **Tap** an aircraft to select it. The pick area is at least 72dp, and the nearest aircraft wins.
 2. **Drag** to draw a path; the path is shown as a dashed cartoon line.
 3. The aircraft follows the path at its own speed.
-4. Touching an aircraft removes its old path at once. A tap without a drag leaves it without a path, so it flies straight on in its current heading (cancel); a drag draws the replacement (redraw). An aircraft already cleared to land keeps its locked path.
+4. Touching an aircraft removes its old path at once. A tap without a drag leaves it without a path, so it flies straight on in its current heading (cancel); a drag draws the replacement (redraw). This holds for an aircraft cleared to land too: touching it cancels the clearance, and it can be re-routed until it has landed (an airplane at touchdown, a helicopter when its landing sequence starts).
 
 ## Flight behaviour
 - When the player lifts their finger (or the path enters a landing zone), the drawn path is smoothed: finger jitter is removed and corners are rounded. There is no turn limit. A gentle path stays within a few world units of what was drawn; a sharp corner becomes a short curve. The end of the path stays exactly where it was drawn, so a path ending on a landing zone still lands.

@@ -4,6 +4,7 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.Angles
+import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
 import nl.hexmaster.finalapproach.domain.Levels
@@ -81,7 +82,7 @@ class PathDrawingTest {
         val drawn = listOf(meadow(1200.0, 100.0), meadow(50.0, 50.0))
             .fold(locked) { a, p -> PathDrawing.extend(a, p, zones, level.landing, 6.0) }
         assertEquals(locked, drawn)
-        assertEquals(drawn, PathDrawing.begin(drawn))
+        assertEquals(drawn, PathDrawing.finish(drawn, EffectiveAircraftSpecs.Defaults, EngineConfig()))
     }
 
     @Test
@@ -90,5 +91,36 @@ class PathDrawingTest {
         val drawn = draw(heli, meadow(1000.0, 100.0), meadow(1200.0, 100.0))
         assertEquals(AircraftStatus.Flying, drawn.status)
         assertEquals(listOf(meadow(1000.0, 100.0), meadow(1200.0, 100.0)), drawn.path.points)
+    }
+
+    @Test
+    fun beginningAPathCancelsTheClearanceOfAnAirplaneAndAHelicopter() {
+        val plane = draw(Aircraft(1, AircraftType.LightProp, meadow(100.0, 400.0), PI / 2), meadow(200.0, 400.0), meadow(400.0, 400.0))
+        val heli = draw(Aircraft(2, AircraftType.Helicopter, meadow(900.0, 400.0), PI / 2), meadow(1000.0, 400.0), meadow(1200.0, 400.0))
+        listOf(plane, heli).forEach { cleared ->
+            assertIs<AircraftStatus.ClearedToLand>(cleared.status)
+            val again = PathDrawing.begin(cleared)
+            assertEquals(AircraftStatus.Flying, again.status)
+            assertTrue(again.path.isEmpty)
+            assertTrue(!again.path.locked)
+            assertEquals(cleared.position, again.position)
+            assertEquals(cleared.heading, again.heading)
+        }
+    }
+
+    @Test
+    fun aRollingOutAirplaneCannotBeReRouted() {
+        val rolling = Aircraft(1, AircraftType.LightProp, meadow(100.0, 400.0), PI / 2)
+            .copy(status = AircraftStatus.RollingOut(0.0, 500.0, "r"))
+        assertEquals(rolling, PathDrawing.begin(rolling))
+    }
+
+    @Test
+    fun aReRoutedPathIntoAZoneClearsTheAircraftAgain() {
+        val plane = Aircraft(1, AircraftType.LightProp, meadow(100.0, 400.0), PI / 2)
+        val cleared = draw(plane, meadow(200.0, 400.0), meadow(400.0, 400.0))
+        val again = draw(cleared, meadow(200.0, 400.0), meadow(400.0, 400.0))
+        assertIs<AircraftStatus.ClearedToLand>(again.status)
+        assertTrue(again.path.locked)
     }
 }
