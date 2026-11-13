@@ -7,3 +7,5 @@ Trough: `surface-sunken`, `line-2` `outline`, `radius-md`, `shadow-well`, `space
 Used for difficulty. The game design ties difficulty to what a collision costs, so show the consequence under the control in `body`, and update it when the selection changes.
 
 **Don't** exceed four segments or wrap them to two lines.
+
+Each segment is drawn 40px high but has a `touch-min` (48px) touch area.

@@ -25,10 +25,12 @@ class LevelsTest {
     }
 
     @Test
-    fun meadowFieldHasATwoWayRunwayAndAHelipad() {
+    fun meadowFieldHasAOneWayRunwayAndAHelipad() {
         val level = Levels.meadowField
         assertEquals(1, level.runways.size)
-        assertEquals(RunwayMode.TwoWay, level.runways.single().mode)
+        val runway = level.runways.single()
+        assertEquals(listOf(Angles.normalize(3 * kotlin.math.PI / 2)), runway.landingHeadings)
+        assertEquals("27", runway.numberFor(runway.landingHeadings.single()))
         assertEquals(1, level.helipads.size)
     }
 

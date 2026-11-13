@@ -20,6 +20,7 @@ import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.HelipadConfig
 import nl.hexmaster.finalapproach.domain.LevelScenery
 import nl.hexmaster.finalapproach.domain.RunwayConfig
+import nl.hexmaster.finalapproach.domain.RunwayMode
 import nl.hexmaster.finalapproach.domain.SceneryDefaults
 import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
@@ -32,6 +33,7 @@ import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import kotlin.math.PI
+import kotlin.math.cos
 
 /** Screen position of world point [world]. */
 internal fun WorldViewport.offsetOf(world: Vec2): Offset = toScreen(world).let { Offset(it.x.toFloat(), it.y.toFloat()) }
@@ -116,22 +118,49 @@ internal fun DrawScope.drawRunway(
         val patchLength = field.px(FaDimens.space8)
         val patchWidth = rect.width / 2f
         val numberRoom = field.px(FaDimens.space7)
-        // Touchdown patches past the numbers, then four threshold bars at each end.
-        listOf(rect.top + inset + barLength + numberRoom, rect.bottom - inset - barLength - numberRoom - patchLength)
-            .forEach { y -> drawRect(colors.asphalt700, Offset(rect.center.x - patchWidth / 2f, y), Size(patchWidth, patchLength)) }
+        // The ends airplanes land from: the top of the frame is the front of the runway, the bottom its back.
+        val landsAtTop = runway.landingHeadings.any { cos(it - runway.orientation) < 0.0 }
+        val landsAtBottom = runway.landingHeadings.any { cos(it - runway.orientation) >= 0.0 }
+        // Touchdown patches past the numbers, then four threshold bars, at each landing end.
         val barSpacing = (rect.width - inset * 2f) / THRESHOLD_BARS
+        fun patchAt(y: Float) =
+            drawRect(colors.asphalt700, Offset(rect.center.x - patchWidth / 2f, y), Size(patchWidth, patchLength))
+        if (landsAtTop) patchAt(rect.top + inset + barLength + numberRoom)
+        if (landsAtBottom) patchAt(rect.bottom - inset - barLength - numberRoom - patchLength)
         repeat(THRESHOLD_BARS) { i ->
             val x = rect.left + inset + barSpacing * (i + 0.5f) - barWidth / 2f
-            drawRect(colors.marking, Offset(x, rect.top + inset), Size(barWidth, barLength))
-            drawRect(colors.marking, Offset(x, rect.bottom - inset - barLength), Size(barWidth, barLength))
+            if (landsAtTop) drawRect(colors.marking, Offset(x, rect.top + inset), Size(barWidth, barLength))
+            if (landsAtBottom) drawRect(colors.marking, Offset(x, rect.bottom - inset - barLength), Size(barWidth, barLength))
         }
         val dash = field.px(FaDimens.space5)
         val gap = field.px(FaDimens.space4)
         val clear = inset + barLength + numberRoom
-        var y = rect.top + clear
-        while (y + dash < rect.bottom - clear) {
-            drawRect(colors.marking, Offset(rect.center.x - barWidth / 2f, y), Size(barWidth, dash))
-            y += dash + gap
+        when (val mode = runway.mode) {
+            is RunwayMode.OneWay -> {
+                // A row of chevrons along the centre line, pointing the way airplanes land.
+                val down = if (cos(mode.heading - runway.orientation) < 0.0) 1f else -1f
+                val half = dash / 2f
+                val chevron = Stroke(width = barWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
+                var y = rect.top + clear
+                while (y + dash < rect.bottom - clear) {
+                    val tipY = if (down > 0f) y + half else y
+                    val baseY = if (down > 0f) y else y + half
+                    val path = Path().apply {
+                        moveTo(rect.center.x - half, baseY)
+                        lineTo(rect.center.x, tipY)
+                        lineTo(rect.center.x + half, baseY)
+                    }
+                    drawPath(path, colors.marking, style = chevron)
+                    y += dash + gap
+                }
+            }
+            RunwayMode.TwoWay -> {
+                var y = rect.top + clear
+                while (y + dash < rect.bottom - clear) {
+                    drawRect(colors.marking, Offset(rect.center.x - barWidth / 2f, y), Size(barWidth, dash))
+                    y += dash + gap
+                }
+            }
         }
     }
     val numberInset = field.px(FaDimens.space4) + field.px(FaDimens.space5) + field.px(FaDimens.space7) / 2f

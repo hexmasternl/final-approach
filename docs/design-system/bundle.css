@@ -24,6 +24,7 @@
 .fa-p-asphalt { fill: var(--asphalt-500); }
 .fa-p-tyre { fill: var(--asphalt-700); stroke: none; opacity: .55; }
 .fa-p-mark { fill: var(--marking); stroke: none; }
+.fa-p-chev { fill: none; stroke: var(--marking); stroke-width: 6px; stroke-linecap: round; stroke-linejoin: round; }
 .fa-p-num { fill: var(--marking); font: 700 22px/1 var(--font-display); }
 .fa-p-ring { fill: none; stroke: var(--marking-warn); stroke-width: 6; }
 .fa-p-h { fill: none; stroke: var(--marking); stroke-width: 9; }
@@ -212,7 +213,7 @@ fa-silhouette { display: block; width: 100%; }
 .fa-levelcard--square .fa-levelcard__title { font: 600 18px/24px var(--font-display); text-align: center; }
 
 /* ---------- Coach mark ---------- */
-.fa-coach { position: relative; display: inline-flex; align-items: center; gap: var(--space-3); max-width: 300px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--outline); color: var(--on-outline); font: 500 16px/22px var(--font-text); box-shadow: 0 5px 0 rgba(10, 14, 36, .3); --fa-icon: var(--icon-lg); }
+.fa-coach { position: relative; display: inline-flex; align-items: center; gap: var(--space-3); max-width: var(--coach-max-width); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--outline); color: var(--on-outline); font: 500 16px/22px var(--font-text); box-shadow: 0 5px 0 rgba(10, 14, 36, .3); --fa-icon: var(--icon-lg); }
 .fa-coach::after { content: ""; position: absolute; left: 34px; top: 100%; border: 10px solid transparent; border-top-color: var(--outline); border-bottom: 0; }
 .fa-coach--up::after { top: auto; bottom: 100%; border-top: 0; border-bottom: 10px solid var(--outline); }
 .fa-coach b { display: block; font: 600 18px/22px var(--font-display); }
@@ -243,3 +244,15 @@ fa-silhouette { display: block; width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   .fa-stage *, .fa-stage *::before, .fa-stage *::after, fa-aircraft *, fa-side-aircraft *, fa-windsock *, fa-cloud, fa-burst { animation: none !important; transition: none !important; }
 }
+
+.fa-coach--explain { display: block; max-width: var(--coach-explain-max-width); }
+.fa-coach--explain .fa-btn { margin-top: var(--space-3); }
+.fa-coach--track[data-loop] { animation: none; }
+.fa-highlight { position: relative; display: inline-block; padding: var(--highlight-margin); border: var(--line-3) dashed var(--sun); border-radius: var(--radius-lg); outline: var(--line-4) dashed var(--outline); outline-offset: calc(var(--line-3) * -1 - 1px); animation: fa-march var(--dur-march) linear infinite; }
+.fa-highlight--round { border-radius: 50%; }
+.fa-demo { position: relative; width: 300px; height: 70px; }
+.fa-demo__path { position: absolute; left: 20px; right: 20px; top: 34px; border-top: var(--path-dot) dotted var(--on-outline); filter: drop-shadow(0 0 0 var(--outline)); }
+.fa-demo__finger { position: absolute; top: 14px; left: 20px; --fa-icon: var(--icon-lg); animation: fa-demo-drag var(--dur-demo-drag) var(--ease-out-soft) infinite; }
+@keyframes fa-demo-drag { from { transform: translateX(0); } 85%, to { transform: translateX(240px); } }
+@keyframes fa-march { to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .fa-highlight, .fa-demo__finger { animation: none; } .fa-demo__finger { transform: translateX(240px); } }

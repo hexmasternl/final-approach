@@ -409,6 +409,8 @@ ${styles.map(s => `            ${camel(s.name)} = TextStyle(fontFamily = ${s.fam
 // ---------- shadows (hard lips and the soft second lip)
 const sh = Object.fromEntries(t.shadow.tokens.map(k => [k.name, k.value]));
 const lip = n => { const m = /^0 (\d+)px 0 /.exec(sh[n].light); return `${m[1]}.dp`; };
+const wellCol = th => kColor(/rgba\([^)]+\)/.exec(sh['shadow-well'][th])[0]);
+const wellInset = /^inset 0 ([0-9]+)px 0 /.exec(sh['shadow-well'].light)[1] + '.dp';
 const softCol = th => kColor(/rgba\([^)]+\)/.exec(sh['shadow-soft'][th])[0]);
 w('theme/FaShadows.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 
@@ -425,6 +427,11 @@ object FaShadows {
     val softLip = ${lip('shadow-soft')}
     val softLipDay = ${softCol('light')}
     val softLipNight = ${softCol('dark')}
+
+    /** The inner top edge of sunken wells: toggle track, segmented trough. */
+    val wellInset = ${wellInset}
+    val wellDay = ${wellCol('light')}
+    val wellNight = ${wellCol('dark')}
 
     /** Ground shadow of airborne things: offset down-right. */
     val floatOffsetX = 6.dp

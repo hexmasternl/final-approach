@@ -24,7 +24,7 @@ import kotlin.test.assertTrue
 
 class AircraftMotionTest {
 
-    private val level = Levels.meadowField
+    private val level = twoWayMeadowField
     private val runway = level.runways.single()
     private val zones = LandingZones.of(level)
     private val specs = EffectiveAircraftSpecs.Defaults

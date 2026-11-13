@@ -130,6 +130,9 @@ object LevelConfigValidator {
         if (config.landing.helicopterLandingSeconds <= 0.0) add("The helicopter landing sequence must last longer than zero seconds")
         if (config.landing.landingSpeedFactor <= 0.0) add("The landing speed factor must be positive")
         if (config.spawn.edges.isEmpty()) add("At least one spawn edge must be permitted")
+        config.tutorial?.entries?.forEach { (type, entry) ->
+            if (world.viewport.contains(entry.position)) add("The tutorial entry of the $type must lie outside the viewport")
+        }
     }
 
     /** How far a one-way heading may lie off the runway axis, in radians. */

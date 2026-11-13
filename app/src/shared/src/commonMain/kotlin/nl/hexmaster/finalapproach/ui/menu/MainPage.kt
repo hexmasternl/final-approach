@@ -81,7 +81,7 @@ fun MainPage(
 
     // With reduced motion the backdrop is never advanced: stripes and clouds stand still and
     // the aircraft slot stays empty.
-    if (!host.reduceMotion) {
+    if (!FaTheme.reduceMotion) {
         LaunchedEffect(simulation) {
             var last = withFrameNanos { it }
             while (true) {

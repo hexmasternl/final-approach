@@ -32,11 +32,13 @@ import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.engine.BestScore
 import nl.hexmaster.finalapproach.engine.GameEngine
+import nl.hexmaster.finalapproach.engine.TutorialProgress
 import nl.hexmaster.finalapproach.engine.GameState
 import nl.hexmaster.finalapproach.engine.GameStatus
 import nl.hexmaster.finalapproach.input.PathGesture
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.platform.AppHost
+import nl.hexmaster.finalapproach.platform.SoundPlayer
 import nl.hexmaster.finalapproach.ui.BackHandler
 import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
 import nl.hexmaster.finalapproach.ui.sprites.alphaLayer
@@ -68,15 +70,28 @@ private const val MILLIS_PER_SECOND = 1000.0
  * options panel. Quit leaves through [onQuit].
  */
 @Composable
-fun GameScreen(host: AppHost, onQuit: () -> Unit, level: LevelConfig = Levels.meadowField) {
+fun GameScreen(
+    host: AppHost,
+    sounds: SoundPlayer,
+    keepScreenOnSetting: Boolean,
+    onQuit: () -> Unit,
+    level: LevelConfig = Levels.meadowField,
+) {
     FaTheme(dawn = level.theme == LevelTheme.Dawn, reduceMotion = FaTheme.reduceMotion) {
-        GameContent(host, onQuit, level)
+        GameContent(host, sounds, keepScreenOnSetting, onQuit, level)
     }
 }
 
 @Composable
-private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
-    val engine = remember(level) { GameEngine(level) }
+private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting: Boolean, onQuit: () -> Unit, level: LevelConfig) {
+    val tutorialProgress = remember(level, host) { TutorialProgress(host.tutorials, level.id) }
+    val engine = remember(level, host) {
+        GameEngine(
+            level,
+            tutorialActive = level.tutorial != null && !host.tutorials.isCompleted(level.id),
+            onTutorialCompleted = tutorialProgress::markCompleted,
+        )
+    }
     val state by engine.state.collectAsState()
     val bestScore = remember(level, host) { BestScore(host.highScores, level.id) }
     var optionsOpen by remember { mutableStateOf(false) }
@@ -93,6 +108,12 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
     DisposableEffect(host) {
         host.lockLandscape(true)
         onDispose { host.lockLandscape(false) }
+    }
+    // The screen stays on only while the level runs; leaving the screen always restores the timeout.
+    val keepScreenOn = shouldKeepScreenOn(keepScreenOnSetting, state)
+    DisposableEffect(host, keepScreenOn) {
+        host.keepScreenOn(keepScreenOn)
+        onDispose { host.keepScreenOn(false) }
     }
     fun openOptions() {
         engine.pause()
@@ -138,6 +159,8 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
             val delta = ((now - last) / GameScreenDefaults.NANOS_PER_SECOND).coerceAtMost(GameScreenDefaults.MAX_FRAME_SECONDS)
             last = now
             engine.update(delta)
+            SoundCues.of(engine.state.value.events).forEach(sounds::play)
+            tutorialProgress.onEvents(engine.state.value.events)
             if (!engine.state.value.paused) rings.update(engine.state.value, { engine.specs[it.type].shape.boundingRadius }, (delta * MILLIS_PER_SECOND).toFloat())
             if (!engine.state.value.paused) ambient.update(delta)
             if (!engine.state.value.paused) clock += delta
@@ -181,16 +204,24 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
             },
     ) {
         drawField(level, ambient, viewport, colors, measurer, numberStyle, letterStyle)
+        // Layers: zone glows (the tutorial highlight), paths (the drag demo's dots), aircraft, effects (its finger).
+        state.tutorial?.highlight?.let { drawTutorialHighlight(it, level, viewport, colors, clock, reduceMotion) }
         drawPaths(state, viewport, colors, reduceMotion)
+        state.tutorial?.demo?.let { drawTutorialDemoPath(it, viewport, colors) }
         drawAircraft(state, engine, viewport, colors, reduceMotion, ambient.lightOpacity.takeIf { level.theme == LevelTheme.Dawn })
         drawSelection(state, engine, viewport, colors)
         drawProximityRings(rings, proximityRingAngle(clock, reduceMotion), reduceMotion, viewport, colors)
+        state.tutorial?.demo?.let { drawTutorialDemoFinger(it, viewport, colors, clock, reduceMotion) }
     }
     Hud(
         best = bestScore.shown(state.score),
         score = state.score,
         onOptions = ::openOptions,
+        onSkipTutorial = if (state.tutorial != null) engine::skipTutorial else null,
     )
+    state.tutorial?.let { tutorial ->
+        TutorialOverlay(tutorial, level, state.aircraft, viewport, onGotIt = engine::acknowledgeTutorial)
+    }
     val over = state.status as? GameStatus.GameOver
     if (over != null) {
         GameEndedDialog(

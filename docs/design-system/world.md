@@ -42,8 +42,14 @@ Assign `path-1` to `path-6` in spawn order and free a colour when its aircraft l
 ## Landing zones
 
 - A runway is 64px wide at 1x. Its numbers follow real convention: heading divided by ten, the two ends 18 apart (`09/27`).
+- A one-way runway marks only its landing end (threshold bars, touchdown patch, number) and draws its centre line as chevrons pointing the landing way; see `components/Runway.md`.
 - A helipad is 112px across, with a `marking-warn` ring and a `marking` H.
 - Zone feedback appears only while an aircraft is selected and its path ends on the zone.
+
+## Tutorial overlays
+
+- **Zone highlight** (layer `z-zone`): a dashed outline `highlight-margin` (`space-3`) outside the runway rectangle or the helipad circle, `line-3` `sun` over a `line-4` `outline` casing, dashes from `path-dash` and `path-gap`, marching on `dur-march` (still with reduced motion). A chunky arrow in the same style stands outside the landing end and points along the landing direction. It never fills the zone.
+- **Drag demo**: a dotted path in `on-outline` with an `outline` casing (`path-dot`) from the aircraft to the landing end, and a `finger` icon at `icon-lg` travelling along it. See `motion-audio.md`.
 
 ## World zoom
 

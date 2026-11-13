@@ -45,7 +45,7 @@ set "LOG_FILE=%WORKTREE%.log"
 echo Log:      %LOG_FILE%
 echo.
 
-claude -p "You are the autocoder runner. Read and follow %PROMPT_FILE% exactly. Run id: %RUN_ID%. Branch: %BRANCH%. Worktree: %WORKTREE%." --model %MODEL% --dangerously-skip-permissions --output-format stream-json --verbose | powershell -NoProfile -ExecutionPolicy Bypass -File "%REPO%\autocoder\report-status.ps1" -LogFile "%LOG_FILE%"
+claude -p "You are the autocoder runner. Read and follow %PROMPT_FILE% exactly. Python is not installed on this machine: never run python, py or pip; use gh --jq, jq, pwsh or node instead. Run id: %RUN_ID%. Branch: %BRANCH%. Worktree: %WORKTREE%." --model %MODEL% --dangerously-skip-permissions --disallowedTools "Bash(python:*)" "Bash(python3:*)" "Bash(py:*)" "Bash(pip:*)" "PowerShell(python:*)" "PowerShell(python3:*)" "PowerShell(py:*)" "PowerShell(pip:*)" --output-format stream-json --verbose | powershell -NoProfile -ExecutionPolicy Bypass -File "%REPO%\autocoder\report-status.ps1" -LogFile "%LOG_FILE%"
 set "RESULT=%ERRORLEVEL%"
 
 echo.

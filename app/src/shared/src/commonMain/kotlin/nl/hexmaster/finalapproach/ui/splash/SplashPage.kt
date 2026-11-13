@@ -84,8 +84,9 @@ fun SplashPage(
 
     val screenWidthDp = screen.width / density.density
     val geometry = remember(config, screenWidthDp) { config.geometry(screenWidthDp.coerceAtLeast(1f)) }
-    val timeline = remember(config, geometry, host.reduceMotion) {
-        SplashTimeline(config, geometry, host.reduceMotion)
+    val reduceMotion = FaTheme.reduceMotion
+    val timeline = remember(config, geometry, reduceMotion) {
+        SplashTimeline(config, geometry, reduceMotion)
     }
     val frame = timeline.frameAt(elapsed)
     if (frame.isFinished && screen != IntSize.Zero) {

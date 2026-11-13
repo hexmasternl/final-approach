@@ -20,7 +20,7 @@ class RunwayLeadInTest {
     private val east = PI / 2
     private val landing = LandingConfig()
     private val spacing = EngineConfig().minPointSpacing
-    private val zone = LandingZones.of(Levels.meadowField).filterIsInstance<LandingZone.Runway>()
+    private val zone = LandingZones.of(twoWayMeadowField).filterIsInstance<LandingZone.Runway>()
         .first { abs(Angles.difference(it.direction, east)) < 1e-9 }
     private val halfWidth = zone.area.width / 2.0
 

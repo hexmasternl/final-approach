@@ -6,6 +6,16 @@ You are the autocoder runner for Final Approach. You run unattended: nobody answ
 
 Follow `CLAUDE.md` and the `git-workflow` and `openspec-apply-change` skills, with these exceptions for a runner: all changes of the run go on the one runner branch (not one `change/<name>` branch each), and the run ends in one pull request.
 
+## Tools on this machine
+
+**Python is not installed.** Never run `python`, `python3`, `py` or `pip`, not even inside a pipe or a one-liner: on this Windows machine they hit the Microsoft Store alias and fail with exit code 49 ("Python was not found"). Do not try to install Python either.
+
+Use these instead:
+
+- JSON from `gh`: its own `--jq '<filter>'` or `--template` flags first, for example `gh project item-list 5 --owner hexmasternl --format json --limit 500 --jq '.items[] | select(.status == "Ready")'`. `jq` is also on the PATH.
+- Other scripting: PowerShell (`pwsh`, with `ConvertFrom-Json`) or Node (`node -e`).
+- Reading and changing files: the Read, Edit, Write, Glob and Grep tools, not scripts.
+
 ## Status reports
 
 The person who started you watches the terminal. Every text message you write is shown there, and lines that start with `STATUS:` are highlighted. Report at least at each of these moments, as one short line each, in the form `STATUS: <phase> - <what>`:

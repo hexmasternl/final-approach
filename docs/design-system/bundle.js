@@ -153,6 +153,7 @@
     helicopter: { f: '<ellipse cx="12" cy="11.500" rx="3.800" ry="4.800"/>', s: 'M12 16v5M9.500 21h5M4 7.500l16 8M20 7.500l-16 8' },
     warning: { f: '<circle cx="12" cy="16.300" r="1.300"/>', s: 'M12 4l9 15.500H3zM12 10v3' },
     tap: { f: '<circle cx="12" cy="10" r="2.800"/>', s: 'M7.500 10a4.500 4.500 0 0 1 9 0M4 10a8 8 0 0 1 16 0M12 13v8' },
+    finger: { s: 'M10 13V5.500a2 2 0 0 1 4 0V12M14 12h2.500a3.500 3.500 0 0 1 3.500 3.500V17a4 4 0 0 1-4 4h-4.500a4 4 0 0 1-3.200-1.600L5.500 16.500a1.800 1.800 0 0 1 2.800-2.200L10 16' },
     wind: { s: 'M3 9h10a3 3 0 1 0-3-3M3 14.500h14a3 3 0 1 1-3 3' }
   };
 
@@ -545,15 +546,17 @@
   }
 
   /* Runway: drawn left to right, length x 64. numbers = "09/27". */
-  function runwaySvg(length, numbers) {
+  function runwaySvg(length, numbers, oneWay) {
     var L = Math.max(200, +length || 360), W = 64, n = String(numbers || '09/27').split('/'), s = '';
     s += '<rect class="fa-zone" x="5" y="5" width="' + (L + 6) + '" height="' + (W + 6) + '" rx="13"/>';
     s += '<rect {{asphalt}} x="8" y="8" width="' + L + '" height="' + W + '" rx="10"/>';
-    s += '<rect {{tyre}} x="74" y="26" width="46" height="28" rx="8"/><rect {{tyre}} x="' + (L - 104) + '" y="26" width="46" height="28" rx="8"/>';
-    for (var e = 0; e < 2; e++) for (var b = 0; b < 4; b++)
+    if (!oneWay) s += '<rect {{tyre}} x="74" y="26" width="46" height="28" rx="8"/>';
+    s += '<rect {{tyre}} x="' + (L - 104) + '" y="26" width="46" height="28" rx="8"/>';
+    for (var e = oneWay ? 1 : 0; e < 2; e++) for (var b = 0; b < 4; b++)
       s += '<rect {{mark}} x="' + (e ? L - 8 : 18) + '" y="' + (16 + b * 13) + '" width="6" height="9" rx="2"/>';
-    for (var x = 134; x < L - 132; x += 40) s += '<rect {{mark}} x="' + x + '" y="37" width="24" height="6" rx="3"/>';
-    s += '<text class="fa-p-num" transform="translate(48 40) rotate(90)" text-anchor="middle" dominant-baseline="central">' + (n[0] || '') + '</text>';
+    if (oneWay) for (var c = 134; c < L - 132; c += 40) s += '<path {{chev}} d="M' + (c + 22) + ' 31l-12 9l12 9"/>';
+    else for (var x = 134; x < L - 132; x += 40) s += '<rect {{mark}} x="' + x + '" y="37" width="24" height="6" rx="3"/>';
+    if (!oneWay) s += '<text class="fa-p-num" transform="translate(48 40) rotate(90)" text-anchor="middle" dominant-baseline="central">' + (n[0] || '') + '</text>';
     s += '<text class="fa-p-num" transform="translate(' + (L - 32) + ' 40) rotate(-90)" text-anchor="middle" dominant-baseline="central">' + (n[1] || '') + '</text>';
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (L + 16) + ' ' + (W + 16) + '" aria-hidden="true">' + paint(s, cls) + '</svg>';
   }
@@ -652,10 +655,10 @@
   });
   define('fa-silhouette', [], function (el) { el.innerHTML = silhouetteSvg(); });
   define('fa-icon', ['name'], function (el) { el.innerHTML = iconSvg(el.getAttribute('name')); });
-  define('fa-runway', ['length', 'numbers'], function (el) {
+  define('fa-runway', ['length', 'numbers', 'mode'], function (el) {
     var L = Math.max(200, parseFloat(el.getAttribute('length')) || 360);
     el.style.setProperty('--fa-length', (L + 16) + 'px');
-    el.innerHTML = runwaySvg(L, el.getAttribute('numbers'));
+    el.innerHTML = runwaySvg(L, el.getAttribute('numbers'), el.getAttribute('mode') === 'one-way');
   });
   define('fa-helipad', [], function (el) { el.innerHTML = helipadSvg(); });
   define('fa-cloud', [], function (el) { el.innerHTML = cloudSvg(); });

@@ -17,11 +17,29 @@ interface AppHost {
     /** Closes the app. */
     fun quit()
 
+    /** Opens [url] in the device's browser. Does nothing when no app can open it. */
+    fun openUrl(url: String)
+
     /** Where the personal best score of each level is kept. */
     val highScores: HighScoreStore
 
+    /** Where it is kept that the first-time tutorial of a level was completed. */
+    val tutorials: TutorialStore
+
+    /** Where the player's settings are kept. */
+    val settings: SettingsStore
+
     /** Ads; [NoOpAds] on a platform that has none. */
     val ads: Ads get() = NoOpAds
+
+    /** Sound effects; [SilentSoundPlayer] on a platform that has no player. */
+    val sounds: SoundPlayer get() = SilentSoundPlayer
+
+    /**
+     * Keeps the screen from timing out while [on] is true; false restores the normal timeout.
+     * Only the game screen calls it, while a level is running.
+     */
+    fun keepScreenOn(on: Boolean)
 
     /** Locks the app in landscape while [locked] is true; false releases the lock. */
     fun lockLandscape(locked: Boolean)
