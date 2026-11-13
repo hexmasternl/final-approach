@@ -11,13 +11,13 @@ A top-down, cartoon-style view of an airport. Aircraft enter the viewport from t
 ## Aircraft
 | Type | Kind | Speed (units/s) | Turn rate (lead-in length only) | Landing points | Lands on |
 |------|------|-----------------|-----------|----------------|----------|
-| Helicopter | Helicopter | 100 (slowest) | Very high | 10 | Helipad |
-| Light prop | Airplane | 137.5 | High | 20 | Runway |
-| Turboprop | Airplane | 187.5 | Medium | 30 | Runway |
-| Jet | Airplane | 250 | Low | 50 | Runway |
-| Jumbo | Airplane | 325 (fastest) | Very low | 80 | Runway |
+| Helicopter | Helicopter | 50 (slowest) | Very high | 10 | Helipad |
+| Light prop | Airplane | 91.67 | High | 20 | Runway |
+| Turboprop | Airplane | 125 | Medium | 30 | Runway |
+| Jet | Airplane | 166.67 | Low | 50 | Runway |
+| Jumbo | Airplane | 162.5 | Very low | 80 | Runway |
 
-Values are defaults in `DefaultAircraftSpecs` and are tunable. Each speed is its value in the former 1280 by 720 world (40, 55, 75, 100, 130) times the world zoom of 2.5 (see World size and zoom), so every type crosses the screen in the same time as before. Speed rises from helicopter to jumbo, each type at least 15% faster than the one before, so the gaps show in play. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings. The jumbo is the fastest.
+Values are defaults in `DefaultAircraftSpecs` and are tunable. The default flight speeds live in one parameter file, `domain/AircraftSpeeds.kt`, at zoom factor 1: helicopter 20, light prop 36.67, turboprop 50, jet 66.67 and jumbo 65. `DefaultAircraftSpecs` multiplies them by the world zoom of 2.5 (see World size and zoom). Speed rises from helicopter to jet, each type at least 15% faster than the one before, so the gaps show in play; the jumbo (half the former size and half the former speed) is about as fast as the jet and is not part of that ordering. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings.
 
 Every aircraft of a type flies at exactly the same speed, with no random variation, and its speed never changes during a run.
 
@@ -61,8 +61,8 @@ What belongs to an aircraft or to the player's finger is multiplied by the same 
 
 | Multiplied by the zoom | Base | Now |
 |---|---|---|
-| Aircraft speed | 40 to 130 | 100 to 325 |
-| Aircraft radius, and with it sprite size and collision shape | 24 to 44 | 60 to 110 |
+| Aircraft speed | 20 to 66.67 | 50 to 166.67 |
+| Aircraft radius, and with it sprite size and collision shape | 22 to 30 | 55 to 75 |
 | Warning distance | 150 | 375 |
 | Spawn separation | 160 | 400 |
 | Spawn margin and leave margin | 60 | 150 |

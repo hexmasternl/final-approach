@@ -6,6 +6,6 @@
 
 ## 2. Docs and checks
 
-- [ ] 2.1 Update the aircraft roster and speed table in `docs/game-design.md` (new speeds, smaller jumbo, parameter file); verify the table matches the code
-- [ ] 2.2 Check the rollout length and spawn separation still look right with the slower aircraft (landing speed follows the light prop); verify with the existing rollout tests
+- [x] 2.1 Update the aircraft roster and speed table in `docs/game-design.md` (new speeds, smaller jumbo, parameter file); verify the table matches the code
+- [x] 2.2 Check the rollout length and spawn separation still look right with the slower aircraft (landing speed follows the light prop); verify with the existing rollout tests
 - [ ] 2.3 Human check: play each level and confirm the speeds and the smaller jumbo feel right
