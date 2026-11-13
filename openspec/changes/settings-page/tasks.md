@@ -6,7 +6,7 @@
 - [x] 1.2 Add `platform/SettingsStore.kt` (interface plus `InMemorySettingsStore`) and `val settings: SettingsStore` on `AppHost`; update every `AppHost` test double; verify `./gradlew :shared:allTests` passes
 - [x] 1.3 Add `SettingsController` (loads once, `StateFlow<PlayerSettings>`, `update` writes through); test that an update is emitted and saved, and that a new controller on the same store loads the saved value (the restart case); verify `./gradlew :shared:allTests` passes
 - [x] 1.4 Implement the store in `AndroidAppHost` with a private `settings` preferences file, enum stored by name, unknown values falling back to defaults; verify `./gradlew :androidApp:assembleDebug` succeeds and `android:allowBackup="false"` is still in the manifest
-- [ ] 1.5 Describe the settings store and `SettingsController` in `docs/architecture.md`; verify the text names the new files and `AppHost` member
+- [x] 1.5 Describe the settings store and `SettingsController` in `docs/architecture.md`; verify the text names the new files and `AppHost` member
 
 ## 2. Effective reduced motion
 
