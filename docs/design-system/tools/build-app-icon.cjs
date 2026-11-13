@@ -20,9 +20,10 @@ const paint = {
 };
 const jet = FA.paint(FA.AIRCRAFT.jet.svg, k => paint[k]);
 const solid = FA.paint(FA.AIRCRAFT.jet.svg, k => k === 'shine' ? 'fill="none" stroke="none"' : `fill="${col('shadow-cast')}" stroke="${col('shadow-cast')}"`);
-// Close-up: the icon is centred between the cockpit and the wings, so the nose and the wing
+// Close-up: the icon is centred just behind the cockpit, so the nose tip (28 units from the focus,
+// 312px with its outline) and the wing
 // roots sit inside the central 66% that every launcher mask keeps; wing tips and tail bleed off.
-const SCALE = 10.4, HEADING = 45, FOCUS = [48, 40];
+const SCALE = 10.4, HEADING = 45, FOCUS = [48, 31];
 const place = (dx, dy) => `translate(${C + dx} ${C + dy}) rotate(${HEADING}) scale(${SCALE}) translate(${-FOCUS[0]} ${-FOCUS[1]})`;
 const jetLayer = `<g transform="${place(0, 0)}" stroke="${col('outline')}" stroke-width="${HERO}" stroke-linejoin="round" stroke-linecap="round">${jet}</g>`;
 // Airborne: the soft shadow, thrown down-right (W1).
@@ -83,8 +84,8 @@ const png = (svgFile, size, out, transparent) => {
   fs.writeFileSync(page, `<!doctype html><html><body style="margin:0;background:transparent"><img src="file:///${path.join(dir, svgFile).replace(/\\/g, '/')}" width="${size}" height="${size}" style="display:block"></body></html>`);
   execFileSync(chrome, ['--headless=new', '--disable-gpu', '--hide-scrollbars', `--window-size=${size},${size}`, ...(transparent ? ['--default-background-color=00000000'] : []), `--screenshot=${out}`, 'file:///' + page.replace(/\\/g, '/')], { stdio: 'ignore' });
 };
-png('app-icon.svg', 1024, path.join(dir, 'app-icon-1024.png'));
-png('app-icon.svg', 512, path.join(dir, 'app-icon-512.png'));
+png('app-icon.svg', 1024, path.join(dir, 'app-icon-1024.png'), true);
+png('app-icon.svg', 512, path.join(dir, 'app-icon-512.png'), true);
 // Android adaptive icon layers: 108dp at xxxhdpi is 432px.
 const res = path.join(repo, 'app', 'src', 'androidApp', 'src', 'main', 'res', 'mipmap-xxxhdpi');
 if (fs.existsSync(res)) {
