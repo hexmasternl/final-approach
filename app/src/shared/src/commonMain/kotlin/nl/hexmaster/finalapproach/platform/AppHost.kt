@@ -32,6 +32,12 @@ interface AppHost {
     /** Sound effects; [SilentSoundPlayer] on a platform that has no player. */
     val sounds: SoundPlayer get() = SilentSoundPlayer
 
+    /**
+     * Keeps the screen from timing out while [on] is true; false restores the normal timeout.
+     * Only the game screen calls it, while a level is running.
+     */
+    fun keepScreenOn(on: Boolean)
+
     /** Locks the app in landscape while [locked] is true; false releases the lock. */
     fun lockLandscape(locked: Boolean)
 }

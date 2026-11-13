@@ -26,6 +26,14 @@ class FakeAppHost(
         openedUrls += url
     }
 
+    /** The last value passed to [keepScreenOn]. */
+    var screenKeptOn = false
+        private set
+
+    override fun keepScreenOn(on: Boolean) {
+        screenKeptOn = on
+    }
+
     var landscapeLocked = false
         private set
 

@@ -24,6 +24,7 @@ private object SettingsPreviewData {
         override val highScores = InMemoryHighScoreStore()
         override val settings = InMemorySettingsStore()
         override fun quit() = Unit
+        override fun keepScreenOn(on: Boolean) = Unit
         override fun openUrl(url: String) = Unit
         override fun lockLandscape(locked: Boolean) = Unit
     }
