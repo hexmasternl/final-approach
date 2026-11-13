@@ -45,6 +45,42 @@ class LevelConfigValidatorTest {
         }
     }
 
+    private val goodRamp = DifficultyRamp(
+        intervalFloorSeconds = 2.0,
+        maxAircraftCap = 5,
+        weightCaps = listOf(WeightCap(AircraftType.Jet, 3)),
+    )
+
+    private fun withRamp(ramp: DifficultyRamp) = valid().copy(ramp = ramp)
+
+    @Test
+    fun aValidRampPasses() {
+        assertEquals(emptyList(), problems(withRamp(goodRamp)))
+        assertEquals(emptyList(), problems(withRamp(DifficultyRamp(2.0, 3, weightCaps = emptyList()))))
+    }
+
+    @Test
+    fun everyRampRuleIsChecked() {
+        val bad = listOf(
+            goodRamp.copy(stepSeconds = 0.0) to "step time",
+            goodRamp.copy(intervalDropSeconds = 0.0) to "interval drop",
+            goodRamp.copy(intervalFloorSeconds = 0.0) to "interval floor",
+            goodRamp.copy(intervalFloorSeconds = 4.5) to "floor",
+            goodRamp.copy(maxAircraftCap = 2) to "aircraft cap",
+            goodRamp.copy(aircraftEverySteps = 0) to "step count",
+            goodRamp.copy(weightCaps = listOf(WeightCap(AircraftType.Jumbo, 3))) to "does not allow",
+            goodRamp.copy(weightCaps = listOf(WeightCap(AircraftType.Jet, 3), WeightCap(AircraftType.Jet, 4))) to "more than once",
+            goodRamp.copy(weightCaps = listOf(WeightCap(AircraftType.Jet, 0))) to "below its weight",
+        )
+        bad.forEach { (ramp, word) ->
+            val found = problems(withRamp(ramp))
+            assertTrue(
+                found.any { it.startsWith("The difficulty ramp") && it.contains(word, ignoreCase = true) },
+                "Expected a ramp problem mentioning '$word', got $found",
+            )
+        }
+    }
+
     @Test
     fun noLandingZone() {
         val config = valid().copy(runways = emptyList(), helipads = emptyList())

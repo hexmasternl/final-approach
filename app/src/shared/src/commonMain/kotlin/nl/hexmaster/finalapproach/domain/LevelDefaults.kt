@@ -126,4 +126,16 @@ object LevelDefaults {
 
     /** The landing speed as a fraction of the reference type's flight speed. 1 keeps the full reference speed. */
     const val LANDING_SPEED_FACTOR = 0.5
+
+    /** Seconds between two difficulty ramp steps. */
+    const val RAMP_STEP_SECONDS = 60.0
+
+    /** Seconds both spawn intervals drop on every ramp step, down to the level's floor. */
+    const val RAMP_INTERVAL_DROP_SECONDS = 0.5
+
+    /** The maximum in the air goes up by one on every this many ramp steps. */
+    const val RAMP_AIRCRAFT_EVERY_STEPS = 2
+
+    /** The types a ramp makes more common, in rotation order, and the weight each stops at. */
+    val RAMP_WEIGHT_CAPS: List<WeightCap> = listOf(WeightCap(AircraftType.Jet, 4), WeightCap(AircraftType.Jumbo, 3))
 }

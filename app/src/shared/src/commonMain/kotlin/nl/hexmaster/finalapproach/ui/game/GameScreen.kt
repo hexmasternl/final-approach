@@ -4,8 +4,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +24,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -29,15 +34,18 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.LevelConfig
 import nl.hexmaster.finalapproach.domain.LevelTheme
+import nl.hexmaster.finalapproach.domain.isPickable
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.engine.BestScore
 import nl.hexmaster.finalapproach.engine.GameEngine
 import nl.hexmaster.finalapproach.engine.TutorialProgress
+import nl.hexmaster.finalapproach.engine.GameOverReason
 import nl.hexmaster.finalapproach.engine.GameState
 import nl.hexmaster.finalapproach.engine.GameStatus
 import nl.hexmaster.finalapproach.input.PathGesture
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.platform.AppHost
+import nl.hexmaster.finalapproach.platform.ScreenRect
 import nl.hexmaster.finalapproach.platform.SoundPlayer
 import nl.hexmaster.finalapproach.ui.BackHandler
 import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
@@ -98,9 +106,16 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     var screen by remember { mutableStateOf(IntSize.Zero) }
     val rings = remember(engine) { ProximityRings() }
     var clock by remember(engine) { mutableStateOf(0.0) }
+    var collision by remember(engine) { mutableStateOf<CollisionSequence?>(null) }
     val colors = FaTheme.colors
     val reduceMotion = FaTheme.reduceMotion
     val ambient = remember(engine, reduceMotion) { AmbientLife(level, seed = level.id.hashCode().toLong(), reduceMotion = reduceMotion) }
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val gestureInsets = WindowInsets.systemGestures
+    val leftStrip by rememberUpdatedState(gestureInsets.getLeft(density, layoutDirection))
+    val rightStrip by rememberUpdatedState(gestureInsets.getRight(density, layoutDirection))
+    val currentDensity by rememberUpdatedState(density)
     val measurer = rememberTextMeasurer()
     val numberStyle = FaTheme.type.titleMd
     val letterStyle = FaTheme.type.titleLg
@@ -114,6 +129,16 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     DisposableEffect(host, keepScreenOn) {
         host.keepScreenOn(keepScreenOn)
         onDispose { host.keepScreenOn(false) }
+    }
+    // The system bars hide only while the level runs; leaving the screen always shows them again.
+    // The collision sequence still counts as the level running until the dialog shows.
+    val running = isLevelRunning(state) || collision?.dialogVisible == false
+    LaunchedEffect(host, running) { host.setImmersive(running) }
+    DisposableEffect(host) {
+        onDispose {
+            host.setImmersive(false)
+            host.setGestureExclusion(emptyList())
+        }
     }
     fun openOptions() {
         engine.pause()
@@ -143,17 +168,26 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
         }
     }
     BackHandler(host) {
-        when {
-            state.status is GameStatus.GameOver -> onQuit()
-            optionsOpen -> closeOptions()
-            else -> openOptions()
+        when (backAction(state, optionsOpen)) {
+            BackAction.Quit -> onQuit()
+            BackAction.CloseOptions -> closeOptions()
+            BackAction.OpenOptions -> openOptions()
         }
     }
 
     LaunchedEffect(state.score) { bestScore.update(state.score) }
 
-    LaunchedEffect(engine) {
+    val viewport = WorldViewport(
+        level.world.width,
+        level.world.height,
+        screen.width.toDouble().coerceAtLeast(1.0),
+        screen.height.toDouble().coerceAtLeast(1.0),
+    )
+    val currentViewport by rememberUpdatedState(viewport)
+
+    LaunchedEffect(engine, host) {
         var last = withFrameNanos { it }
+        var zones = emptyList<ScreenRect>()
         while (true) {
             val now = withFrameNanos { it }
             val delta = ((now - last) / GameScreenDefaults.NANOS_PER_SECOND).coerceAtMost(GameScreenDefaults.MAX_FRAME_SECONDS)
@@ -164,16 +198,23 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
             if (!engine.state.value.paused) rings.update(engine.state.value, { engine.specs[it.type].shape.boundingRadius }, (delta * MILLIS_PER_SECOND).toFloat())
             if (!engine.state.value.paused) ambient.update(delta)
             if (!engine.state.value.paused) clock += delta
+            // Touches that start on an aircraft near a side edge must not become a back gesture; the zones
+            // are sent only when they change.
+            val planned = gestureZones(engine.state.value, isLevelRunning(engine.state.value), currentViewport, screen, leftStrip, rightStrip, currentDensity)
+            if (planned != zones) {
+                zones = planned
+                host.setGestureExclusion(planned)
+            }
+            // The collision sequence starts when the level ends by a collision, and goes when it restarts.
+            val ended = engine.state.value.status as? GameStatus.GameOver
+            val current = collision
+            collision = when {
+                ended == null || ended.reason != GameOverReason.Collision -> null
+                current == null -> CollisionSequence(ended.aircraftIds, proximityRingAngle(clock, reduceMotion), reduceMotion)
+                else -> current.also { it.advance((delta * MILLIS_PER_SECOND).toFloat()) }
+            }
         }
     }
-
-    val viewport = WorldViewport(
-        level.world.width,
-        level.world.height,
-        screen.width.toDouble().coerceAtLeast(1.0),
-        screen.height.toDouble().coerceAtLeast(1.0),
-    )
-    val currentViewport by rememberUpdatedState(viewport)
 
     Box(Modifier.fillMaxSize()) {
     Canvas(
@@ -210,7 +251,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
         state.tutorial?.demo?.let { drawTutorialDemoPath(it, viewport, colors) }
         drawAircraft(state, engine, viewport, colors, reduceMotion, ambient.lightOpacity.takeIf { level.theme == LevelTheme.Dawn })
         drawSelection(state, engine, viewport, colors)
-        drawProximityRings(rings, proximityRingAngle(clock, reduceMotion), reduceMotion, viewport, colors)
+        drawProximityRings(rings, proximityRingAngle(clock, reduceMotion), reduceMotion, viewport, colors, skip = collision?.aircraftIds.orEmpty())
         state.tutorial?.demo?.let { drawTutorialDemoFinger(it, viewport, colors, clock, reduceMotion) }
     }
     Hud(
@@ -222,7 +263,10 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     state.tutorial?.let { tutorial ->
         TutorialOverlay(tutorial, level, state.aircraft, viewport, onGotIt = engine::acknowledgeTutorial)
     }
-    val over = state.status as? GameStatus.GameOver
+    collision?.let {
+        CollisionOverlay(it, state, engine, viewport, reduceMotion, ambient.lightOpacity.takeIf { level.theme == LevelTheme.Dawn })
+    }
+    val over = (state.status as? GameStatus.GameOver)?.takeIf { it.reason != GameOverReason.Collision || collision?.dialogVisible == true }
     if (over != null) {
         GameEndedDialog(
             reason = over.reason,
@@ -244,6 +288,30 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     }
 }
 
+/** The side-edge zones for [state] while its level runs, none otherwise; see [planGestureExclusion]. */
+private fun gestureZones(
+    state: GameState,
+    running: Boolean,
+    viewport: WorldViewport,
+    screen: IntSize,
+    leftStrip: Int,
+    rightStrip: Int,
+    density: Density,
+    config: GestureExclusionConfig = GestureExclusionConfig(),
+): List<ScreenRect> {
+    if (!running || screen == IntSize.Zero) return emptyList()
+    val targets = state.aircraft.map {
+        val at = viewport.offsetOf(it.position)
+        GestureTarget(it.id, at.x, at.y, it.isPickable)
+    }
+    return with(density) {
+        planGestureExclusion(
+            targets, state.selectedId, screen.width, screen.height, leftStrip, rightStrip,
+            FaDimens.touchAircraft.toPx(), config.maxHeightPerEdge.roundToPx(), config.zoneHalfHeight.roundToPx(),
+        )
+    }
+}
+
 /** The effects layer: a warning ring around every aircraft that is too close to another. */
 private fun DrawScope.drawProximityRings(
     rings: ProximityRings,
@@ -251,9 +319,11 @@ private fun DrawScope.drawProximityRings(
     reduceMotion: Boolean,
     viewport: WorldViewport,
     colors: FaColors,
+    skip: List<Int>,
 ) {
     val margin = FaDimens.warnRingMargin.toPx()
     for (ring in rings.all) {
+        if (ring.id in skip) continue
         drawProximityRing(viewport.offsetOf(ring.position), viewport.px(ring.radius) + margin, angle, if (reduceMotion) 1f else ring.scale, ring.alpha, colors)
     }
 }
@@ -309,31 +379,42 @@ private fun DrawScope.drawAircraft(
             shadowOffset,
         )
     }
-    for (aircraft in state.aircraft) {
-        val status = aircraft.status
-        val alpha = if (status is AircraftStatus.RollingOut) {
-            (1.0 - status.fadeElapsed / engine.level.landing.fadeSeconds).coerceIn(0.0, 1.0).toFloat()
-        } else {
-            1f
-        }
-        alphaLayer(alpha) {
-            drawAircraftBody(
-                aircraft.type,
-                colors.livery(aircraft.livery),
+    for (aircraft in state.aircraft) drawOneAircraft(aircraft, engine, viewport, colors, reduceMotion, lightOpacity, time)
+}
+
+/** One aircraft without its ground shadow: the body, and its lights on a Dawn level. */
+internal fun DrawScope.drawOneAircraft(
+    aircraft: Aircraft,
+    engine: GameEngine,
+    viewport: WorldViewport,
+    colors: FaColors,
+    reduceMotion: Boolean,
+    lightOpacity: Float?,
+    time: Float,
+) {
+    val status = aircraft.status
+    val alpha = if (status is AircraftStatus.RollingOut) {
+        (1.0 - status.fadeElapsed / engine.level.landing.fadeSeconds).coerceIn(0.0, 1.0).toFloat()
+    } else {
+        1f
+    }
+    alphaLayer(alpha) {
+        drawAircraftBody(
+            aircraft.type,
+            colors.livery(aircraft.livery),
+            viewport.offsetOf(aircraft.position),
+            bodySizePx(aircraft, engine, viewport, reduceMotion),
+            degreesOf(aircraft.heading),
+            time,
+            colors,
+        )
+        if (lightOpacity != null) {
+            drawAircraftLights(
                 viewport.offsetOf(aircraft.position),
-                bodySizePx(aircraft, engine, viewport, reduceMotion),
-                degreesOf(aircraft.heading),
-                time,
-                colors,
+                aircraft.heading,
+                spriteSizePx(aircraft, engine, viewport),
+                lightOpacity,
             )
-            if (lightOpacity != null) {
-                drawAircraftLights(
-                    viewport.offsetOf(aircraft.position),
-                    aircraft.heading,
-                    spriteSizePx(aircraft, engine, viewport),
-                    lightOpacity,
-                )
-            }
         }
     }
 }

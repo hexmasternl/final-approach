@@ -60,6 +60,89 @@ class LevelConfigTest {
         assertEquals(phases[2], config.phaseAt(1000.0))
     }
 
+    private val rampBase = DifficultyPhase(
+        100.0, 4.0, 7.0,
+        mapOf(AircraftType.LightProp to 3, AircraftType.Jet to 2, AircraftType.Jumbo to 1),
+        3,
+    )
+
+    private fun rampLevel(ramp: DifficultyRamp?) = minimal().copy(
+        phases = listOf(DifficultyPhase(0.0, 6.0, 9.0, mapOf(AircraftType.LightProp to 1), 2), rampBase),
+        ramp = ramp,
+    )
+
+    private val ramp = DifficultyRamp(intervalFloorSeconds = 2.5, maxAircraftCap = 5)
+
+    @Test
+    fun aRampDefaultsToTheConfiguredValues() {
+        assertEquals(60.0, ramp.stepSeconds)
+        assertEquals(0.5, ramp.intervalDropSeconds)
+        assertEquals(2, ramp.aircraftEverySteps)
+        assertEquals(listOf(WeightCap(AircraftType.Jet, 4), WeightCap(AircraftType.Jumbo, 3)), ramp.weightCaps)
+    }
+
+    @Test
+    fun withoutARampTheLastPhaseStaysUnchanged() {
+        val level = rampLevel(null)
+        assertEquals(rampBase, level.phaseAt(100.0))
+        assertEquals(rampBase, level.phaseAt(100_000.0))
+    }
+
+    @Test
+    fun beforeTheFirstRampStepTheLastPhaseIsActive() {
+        val level = rampLevel(ramp)
+        assertEquals(rampBase, level.phaseAt(100.0))
+        assertEquals(rampBase, level.phaseAt(159.9))
+        assertEquals(1.0 * 60 + 100.0, level.phaseAt(160.0).startSeconds)
+    }
+
+    @Test
+    fun theIntervalDropsButNeverBelowTheFloorAndKeepsItsWidth() {
+        val level = rampLevel(ramp)
+        val step1 = level.phaseAt(160.0)
+        assertEquals(3.5, step1.spawnIntervalMin, 1e-9)
+        assertEquals(6.5, step1.spawnIntervalMax, 1e-9)
+        val step10 = level.phaseAt(100.0 + 10 * 60.0)
+        assertEquals(2.5, step10.spawnIntervalMin, 1e-9)
+        assertEquals(5.5, step10.spawnIntervalMax, 1e-9)
+    }
+
+    @Test
+    fun weightsAlternateToTheirCapsWithoutSkipping() {
+        val level = rampLevel(ramp)
+        fun weights(step: Int) = level.phaseAt(100.0 + step * 60.0).weights
+        assertEquals(3, weights(1)[AircraftType.Jet])
+        assertEquals(1, weights(1)[AircraftType.Jumbo])
+        assertEquals(3, weights(2)[AircraftType.Jet])
+        assertEquals(2, weights(2)[AircraftType.Jumbo])
+        assertEquals(4, weights(3)[AircraftType.Jet])
+        assertEquals(2, weights(3)[AircraftType.Jumbo])
+        assertEquals(4, weights(4)[AircraftType.Jet])
+        assertEquals(3, weights(4)[AircraftType.Jumbo])
+        assertEquals(weights(4), weights(9))
+        assertEquals(3, weights(9)[AircraftType.LightProp])
+    }
+
+    @Test
+    fun theMaximumInTheAirGrowsEveryAircraftStepUpToTheCap() {
+        val level = rampLevel(ramp)
+        fun most(step: Int) = level.phaseAt(100.0 + step * 60.0).maxAircraft
+        assertEquals(3, most(1))
+        assertEquals(4, most(2))
+        assertEquals(4, most(3))
+        assertEquals(5, most(4))
+        assertEquals(5, most(50))
+    }
+
+    @Test
+    fun thePhaseIsIdenticalFromTheFinalStepOn() {
+        val level = rampLevel(ramp)
+        val final = level.phaseAt(100.0 + 4 * 60.0)
+        assertEquals(final, level.phaseAt(100.0 + 5 * 60.0))
+        assertEquals(final, level.phaseAt(1_000_000.0))
+        assertEquals(rampBase.allowedTypes, final.allowedTypes)
+    }
+
     private val east = PI / 2
     private val tolerance = Angles.degrees(20.0)
 

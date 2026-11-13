@@ -1,6 +1,7 @@
 package nl.hexmaster.finalapproach.ui.game
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -70,8 +71,8 @@ internal fun proximityRingAngle(seconds: Double, reduceMotion: Boolean): Float {
 }
 
 /**
- * A dashed warning ring of [radius] pixels around [center]: an outline casing under a dash in the
- * `warning` colour, turned by [angleDegrees].
+ * A dashed ring of [radius] pixels around [center]: an outline casing under a dash in [dashColor]
+ * (`warning` for a proximity warning, `danger` for a collision), turned by [angleDegrees].
  */
 internal fun DrawScope.drawProximityRing(
     center: Offset,
@@ -80,6 +81,7 @@ internal fun DrawScope.drawProximityRing(
     scale: Float,
     alpha: Float,
     colors: FaColors,
+    dashColor: Color = colors.warning,
 ) {
     if (alpha <= 0f || scale <= 0f) return
     val dashes = PathEffect.dashPathEffect(floatArrayOf(FaDimens.warnRingDash.toPx(), FaDimens.warnRingGap.toPx()))
@@ -93,7 +95,7 @@ internal fun DrawScope.drawProximityRing(
             style = Stroke(width = FaDimens.line4.toPx(), cap = StrokeCap.Round, pathEffect = dashes),
         )
         drawCircle(
-            colors.warning,
+            dashColor,
             r,
             center,
             alpha = alpha,
