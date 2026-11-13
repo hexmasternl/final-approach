@@ -1,6 +1,7 @@
 package nl.hexmaster.finalapproach.input
 
 import nl.hexmaster.finalapproach.domain.Aircraft
+import nl.hexmaster.finalapproach.domain.AircraftSpeeds
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.AircraftTypeSpec
 import nl.hexmaster.finalapproach.domain.DefaultAircraftSpecs
@@ -53,7 +54,7 @@ class WorldViewportTest {
             AircraftType.LightProp to 24.0,
             AircraftType.Turboprop to 28.0,
             AircraftType.Jet to 30.0,
-            AircraftType.Jumbo to 44.0,
+            AircraftType.Jumbo to 22.0,
         )
         AircraftType.entries.forEach { type ->
             val before = phoneBeforeZoom.toScreenLength(formerRadius.getValue(type) * AircraftTypeSpec.SPRITE_SIZE_PER_RADIUS)
@@ -64,7 +65,7 @@ class WorldViewportTest {
 
     @Test
     fun onThePhoneAircraftMoveAndWarnAsBeforeTheZoom() {
-        assertEquals(phoneBeforeZoom.toScreenLength(55.0), phone.toScreenLength(DefaultAircraftSpecs.lightProp.speed), 1e-9)
+        assertEquals(phoneBeforeZoom.toScreenLength(AircraftSpeeds.LIGHT_PROP), phone.toScreenLength(DefaultAircraftSpecs.lightProp.speed), 1e-9)
         assertEquals(phoneBeforeZoom.toScreenLength(150.0), phone.toScreenLength(LevelDefaults.WARNING_DISTANCE), 1e-9)
         assertEquals(phoneBeforeZoom.toScreenLength(160.0), phone.toScreenLength(LevelDefaults.HUD_BAND), 1e-9)
         assertEquals(phoneBeforeZoom.toScreenLength(60.0), phone.toScreenLength(LevelDefaults.SPAWN_MARGIN), 1e-9)

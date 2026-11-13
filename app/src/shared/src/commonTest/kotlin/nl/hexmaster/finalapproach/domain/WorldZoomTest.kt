@@ -54,7 +54,7 @@ class WorldZoomTest {
         assertEquals(0.02, LevelDefaults.MAX_STEP_SECONDS)
         assertEquals(
             listOf(3.0, 1.6, 1.2, 0.9, 0.6),
-            DefaultAircraftSpecs.speedOrder.map { DefaultAircraftSpecs.all.getValue(it).turnRate },
+            (DefaultAircraftSpecs.speedOrder + AircraftType.Jumbo).map { DefaultAircraftSpecs.all.getValue(it).turnRate },
         )
     }
 }
