@@ -7,7 +7,7 @@
 - [x] 1.1 Add `fun keepScreenOn(on: Boolean)` to `AppHost` with a KDoc comment; record the last value in `FakeAppHost` (`commonTest`). Verify: `./gradlew :shared:allTests` compiles and passes.
 - [x] 1.2 Implement it in `AndroidAppHost` by adding or clearing `WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON` on `activity.window`. No `PowerManager`. Verify: `./gradlew :androidApp:assembleDebug`.
 - [x] 1.3 Add `<uses-permission android:name="android.permission.WAKE_LOCK" tools:node="remove" />` to `androidApp/src/main/AndroidManifest.xml`. Verify: build release and debug, then confirm neither `merged_manifest/*/AndroidManifest.xml` contains `android.permission.WAKE_LOCK`.
-- [ ] 1.4 Document `keepScreenOn` in the `AppHost` list in `docs/architecture.md`, including that it uses the window flag and needs no permission. Verify: read the section.
+- [x] 1.4 Document `keepScreenOn` in the `AppHost` list in `docs/architecture.md`, including that it uses the window flag and needs no permission. Verify: read the section.
 
 ## 2. Setting
 
