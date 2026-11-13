@@ -4,13 +4,19 @@ import android.content.Context
 import android.content.pm.ActivityInfo
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import nl.hexmaster.finalapproach.domain.PlayerSettings
+import nl.hexmaster.finalapproach.domain.ReduceMotionChoice
 import nl.hexmaster.finalapproach.platform.Ads
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.platform.BackDispatcher
 import nl.hexmaster.finalapproach.platform.HighScoreStore
+import nl.hexmaster.finalapproach.platform.SettingsStore
 import nl.hexmaster.finalapproach.platform.SoundPlayer
 
 private const val PREFERENCES_NAME = "best-scores"
+private const val SETTINGS_PREFERENCES_NAME = "settings"
+private const val KEY_SOUND_EFFECTS = "sound_effects"
+private const val KEY_REDUCE_MOTION = "reduce_motion"
 
 /** The Android side of [AppHost]. */
 class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
@@ -45,6 +51,28 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
     /** Frees what the host holds on to; call when the activity is destroyed. */
     fun release() {
         soundPlayer.release()
+    }
+
+    /** Settings live in their own private preferences file; the enum is stored by name and unknown values fall back to the default. */
+    override val settings = object : SettingsStore {
+        private val preferences = activity.getSharedPreferences(SETTINGS_PREFERENCES_NAME, Context.MODE_PRIVATE)
+
+        override fun load(): PlayerSettings {
+            val defaults = PlayerSettings()
+            return PlayerSettings(
+                soundEffects = preferences.getBoolean(KEY_SOUND_EFFECTS, defaults.soundEffects),
+                reduceMotion = ReduceMotionChoice.entries
+                    .firstOrNull { it.name == preferences.getString(KEY_REDUCE_MOTION, null) }
+                    ?: defaults.reduceMotion,
+            )
+        }
+
+        override fun save(settings: PlayerSettings) {
+            preferences.edit()
+                .putBoolean(KEY_SOUND_EFFECTS, settings.soundEffects)
+                .putString(KEY_REDUCE_MOTION, settings.reduceMotion.name)
+                .apply()
+        }
     }
 
     override fun quit() {
