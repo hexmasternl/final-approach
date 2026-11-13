@@ -78,6 +78,9 @@ class GameEngine(
     /** Level time when the tutorial ended; the difficulty curve and first spawn delay count from here. */
     private var handoverTime = 0.0
 
+    /** The time the difficulty curve and its ramp count: level time since the tutorial ended. */
+    internal val difficultyTime: Double get() = mutableState.value.levelTime - handoverTime
+
     /** Clearances made by input since the last update; the next update reports them. */
     private var pendingEvents: List<GameEvent> = emptyList()
 

@@ -253,6 +253,25 @@ class TutorialEngineTest {
     }
 
     @Test
+    fun theRampCountsFromTheEndOfTheTutorial() {
+        val engine = GameEngine(
+            level.copy(spawn = level.spawn.copy(firstSpawnDelay = 100_000.0)),
+            seed = 1,
+            tutorialActive = true,
+        )
+        engine.skipTutorial()
+        val last = level.phases.last()
+        engine.update(dt)
+        engine.update(179.0 - engine.difficultyTime)
+        assertTrue(engine.state.value.status == GameStatus.Playing, "level still running")
+        assertEquals(179.0, engine.difficultyTime, 1e-6)
+        assertEquals(last, level.phaseAt(engine.difficultyTime))
+        engine.update(1.0)
+        assertEquals(180.0, engine.difficultyTime, 1e-6)
+        assertEquals(last.startSeconds + 60.0, level.phaseAt(engine.difficultyTime).startSeconds)
+    }
+
+    @Test
     fun completionIsReportedToTheCallbackAtOnceEvenWithoutAnotherUpdate() {
         var completed = 0
         val engine = GameEngine(level, seed = 1, tutorialActive = true, onTutorialCompleted = { completed++ })
