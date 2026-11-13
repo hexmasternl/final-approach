@@ -5,7 +5,7 @@
 
 ## 2. Drawing
 
-- [ ] 2.1 Change the end dot outline in `ui/game/FlightPathDrawing.kt` from `line3` to `line2` and check no stroke, dash or timing literal is in the file; verify with a search and a Compose preview of a selected path
-- [ ] 2.2 Check the reduced-motion path still does not march and the cleared-to-land flash still reads on the thin line; verify in a preview
-- [ ] 2.3 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug`; verify both pass
+- [x] 2.1 Change the end dot outline in `ui/game/FlightPathDrawing.kt` from `line3` to `line2` and check no stroke, dash or timing literal is in the file; verify with a search and a Compose preview of a selected path
+- [x] 2.2 Check the reduced-motion path still does not march and the cleared-to-land flash still reads on the thin line; verify in a preview
+- [x] 2.3 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug`; verify both pass
 - [ ] 2.4 Human check: draw paths on a phone and confirm they are thin and fine, and that the march is half as fast
