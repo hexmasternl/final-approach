@@ -140,7 +140,7 @@ fa-silhouette { display: block; width: 100%; }
 .fa-rows { display: grid; gap: var(--space-4); margin: 0; padding: 0; list-style: none; }
 
 .fa-scrim { display: grid; place-items: center; padding: var(--space-5); background: var(--scrim); }
-.fa-dialog { width: min(100%, 400px); padding: var(--space-6); border: var(--line-4) solid var(--outline); border-radius: var(--radius-xl); background: var(--surface); color: var(--ink); text-align: center; box-shadow: var(--shadow-lip-lg), var(--shadow-soft); font: 500 16px/24px var(--font-text); }
+.fa-dialog { width: min(100%, var(--dialog-max-width)); padding: var(--space-6); border: var(--line-4) solid var(--outline); border-radius: var(--radius-xl); background: var(--surface); color: var(--ink); text-align: center; box-shadow: var(--shadow-lip-lg), var(--shadow-soft); font: 500 16px/24px var(--font-text); }
 .fa-dialog[data-loop] { animation: fa-drop var(--dur-dialog) var(--ease-bounce) both; }
 .fa-dialog__title { margin: 0; font: 700 48px/48px var(--font-display); text-wrap: balance; }
 .fa-dialog__body { margin: var(--space-3) 0 0; font: 500 18px/28px var(--font-text); color: var(--ink-muted); text-wrap: balance; }
@@ -149,6 +149,20 @@ fa-silhouette { display: block; width: 100%; }
 .fa-stat dt { font: 800 13px/16px var(--font-text); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted); }
 .fa-stat dd { margin: 2px 0 0; font: 700 32px/32px var(--font-display); font-variant-numeric: tabular-nums; }
 .fa-dialog__actions { display: grid; gap: var(--space-4); margin-top: var(--space-5); }
+/* Compact Dialog: on a short landscape screen. Same card, tighter, actions side by side; with stats, two panes. */
+.fa-dialog--compact { width: min(100%, var(--dialog-compact-max-width)); padding: var(--space-4); }
+.fa-dialog--compact .fa-dialog__title { font: 600 28px/32px var(--font-display); }
+.fa-dialog--compact .fa-dialog__body { margin: var(--space-1) 0 0; font: 500 16px/24px var(--font-text); }
+.fa-dialog--compact .fa-dialog__actions { grid-auto-flow: column; grid-auto-columns: 1fr; gap: var(--space-3); margin-top: var(--space-4); }
+.fa-dialog--compact:has(> .fa-dialog__stats) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-4); align-items: center; }
+.fa-dialog__lead { min-width: 0; }
+/* Stacked small buttons each keep a full touch-min row; the room under the face is their gap. */
+.fa-dialog--compact:has(> .fa-dialog__stats) .fa-dialog__actions { grid-auto-flow: row; grid-auto-rows: var(--touch-min); align-items: start; gap: 0; margin-top: var(--space-3); }
+.fa-dialog--compact .fa-dialog__stats { gap: var(--space-1) var(--space-2); margin: 0; }
+.fa-stat--compact { display: flex; align-items: center; gap: var(--space-2); padding: calc(var(--space-2) - var(--line-2)) var(--space-2); text-align: start; }
+.fa-stat--compact fa-aircraft { flex: none; }
+.fa-stat--compact dt { flex: 1; min-width: 0; }
+.fa-stat--compact dd { margin: 0; font: 600 18px/24px var(--font-display); }
 
 /* ---------- HUD ---------- */
 .fa-hud { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); padding: var(--space-4); }

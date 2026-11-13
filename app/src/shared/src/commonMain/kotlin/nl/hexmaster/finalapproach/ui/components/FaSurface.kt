@@ -51,7 +51,7 @@ internal fun Modifier.faBlock(
     outline: Color,
     border: Dp,
     radius: Dp,
-    lip: Dp,
+    lip: Dp = 0.dp,
     softLip: Dp = 0.dp,
     softLipColor: Color = Color.Transparent,
 ): Modifier = drawBehind {

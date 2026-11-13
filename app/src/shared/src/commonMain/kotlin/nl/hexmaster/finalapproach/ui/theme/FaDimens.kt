@@ -56,4 +56,7 @@ object FaDimens {
     val warnRingMargin = 10.dp
     val levelTile = 168.dp
     val levelTileArt = 120.dp
+    val dialogMaxWidth = 400.dp
+    val dialogCompactMaxWidth = 720.dp
+    val dialogCompactBreakpoint = 600.dp
 }
