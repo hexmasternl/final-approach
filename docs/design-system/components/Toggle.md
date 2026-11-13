@@ -7,3 +7,5 @@ Track 68 x 40px, `radius-pill`, `line-2` `outline`, `surface-sunken` with `shado
 Lay settings out as `fa-setting` rows: label left in `title-sm`, description under it in `body-sm` `ink-muted`, toggle right.
 
 **Don't** use a toggle for a choice among three or more: use SegmentedControl.
+
+The visual is 40px high but the touch area is `touch-min` (48px): pad the hit area, not the drawing.

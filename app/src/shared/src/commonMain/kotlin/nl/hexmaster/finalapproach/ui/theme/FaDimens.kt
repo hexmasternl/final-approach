@@ -43,6 +43,12 @@ object FaDimens {
     val buttonSm = 40.dp
     val buttonMd = 52.dp
     val buttonLg = 64.dp
+    val toggleWidth = 68.dp
+    val toggleHeight = 40.dp
+    val toggleKnob = 28.dp
+    val coachMaxWidth = 300.dp
+    val coachExplainMaxWidth = 360.dp
+    val highlightMargin = 12.dp
     val iconSm = 20.dp
     val iconMd = 28.dp
     val iconLg = 40.dp

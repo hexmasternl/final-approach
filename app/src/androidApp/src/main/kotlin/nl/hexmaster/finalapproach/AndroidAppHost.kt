@@ -1,15 +1,29 @@
 package nl.hexmaster.finalapproach
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.provider.Settings
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import nl.hexmaster.finalapproach.domain.PlayerSettings
+import nl.hexmaster.finalapproach.domain.ReduceMotionChoice
 import nl.hexmaster.finalapproach.platform.Ads
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.platform.BackDispatcher
 import nl.hexmaster.finalapproach.platform.HighScoreStore
+import nl.hexmaster.finalapproach.platform.SettingsStore
+import nl.hexmaster.finalapproach.platform.SoundPlayer
+import nl.hexmaster.finalapproach.platform.TutorialStore
 
 private const val PREFERENCES_NAME = "best-scores"
+private const val SETTINGS_PREFERENCES_NAME = "settings"
+private const val TUTORIAL_PREFERENCES_NAME = "tutorials"
+private const val KEY_SOUND_EFFECTS = "sound_effects"
+private const val KEY_REDUCE_MOTION = "reduce_motion"
+private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
 
 /** The Android side of [AppHost]. */
 class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
@@ -26,6 +40,10 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
 
     override val ads: Ads = AdMobAds(activity)
 
+    private val soundPlayer = AndroidSoundPlayer(activity)
+
+    override val sounds: SoundPlayer = soundPlayer
+
     /** Best scores live in a private preferences file, one integer per level. */
     override val highScores = object : HighScoreStore {
         private val preferences = activity.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -37,8 +55,65 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
         }
     }
 
+    /** Frees what the host holds on to; call when the activity is destroyed. */
+    fun release() {
+        soundPlayer.release()
+    }
+
+    /** Tutorial completion lives in a private preferences file, one boolean per tutorial id. */
+    override val tutorials = object : TutorialStore {
+        private val preferences = activity.getSharedPreferences(TUTORIAL_PREFERENCES_NAME, Context.MODE_PRIVATE)
+
+        override fun isCompleted(tutorialId: String): Boolean = preferences.getBoolean(tutorialId, false)
+
+        override fun markCompleted(tutorialId: String) {
+            preferences.edit().putBoolean(tutorialId, true).apply()
+        }
+    }
+
+    /** Settings live in their own private preferences file; the enum is stored by name and unknown values fall back to the default. */
+    override val settings = object : SettingsStore {
+        private val preferences = activity.getSharedPreferences(SETTINGS_PREFERENCES_NAME, Context.MODE_PRIVATE)
+
+        override fun load(): PlayerSettings {
+            val defaults = PlayerSettings()
+            return PlayerSettings(
+                soundEffects = preferences.getBoolean(KEY_SOUND_EFFECTS, defaults.soundEffects),
+                reduceMotion = ReduceMotionChoice.entries
+                    .firstOrNull { it.name == preferences.getString(KEY_REDUCE_MOTION, null) }
+                    ?: defaults.reduceMotion,
+                keepScreenOn = preferences.getBoolean(KEY_KEEP_SCREEN_ON, defaults.keepScreenOn),
+            )
+        }
+
+        override fun save(settings: PlayerSettings) {
+            preferences.edit()
+                .putBoolean(KEY_SOUND_EFFECTS, settings.soundEffects)
+                .putString(KEY_REDUCE_MOTION, settings.reduceMotion.name)
+                .putBoolean(KEY_KEEP_SCREEN_ON, settings.keepScreenOn)
+                .apply()
+        }
+    }
+
     override fun quit() {
         activity.finish()
+    }
+
+    override fun openUrl(url: String) {
+        try {
+            activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (_: ActivityNotFoundException) {
+            // No browser on this device: stay on the page.
+        }
+    }
+
+    override fun keepScreenOn(on: Boolean) {
+        val window = activity.window
+        if (on) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
     }
 
     override fun lockLandscape(locked: Boolean) {

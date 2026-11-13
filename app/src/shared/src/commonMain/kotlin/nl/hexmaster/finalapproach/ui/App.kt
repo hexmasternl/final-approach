@@ -2,30 +2,36 @@ package nl.hexmaster.finalapproach.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.platform.AppHost
+import nl.hexmaster.finalapproach.platform.GatedSoundPlayer
+import nl.hexmaster.finalapproach.platform.SettingsController
 import nl.hexmaster.finalapproach.ui.game.GameScreen
 import nl.hexmaster.finalapproach.ui.game.LevelSelectPage
 import nl.hexmaster.finalapproach.ui.menu.MainPage
+import nl.hexmaster.finalapproach.ui.settings.SettingsPage
 import nl.hexmaster.finalapproach.ui.splash.SplashPage
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** The screens of the app. It opens on the splash page; after that the main page is home. */
 enum class Screen { Splash, Main, LevelSelect, Game, Settings }
 
-private object AppText {
-    const val SETTINGS_TITLE = "Settings"
-    const val SETTINGS_BODY = "Sound and music switches will live here."
-}
-
 /** The whole app. The host supplies everything platform-specific through [host]. */
 @Composable
 fun App(host: AppHost) {
-    FaTheme(reduceMotion = host.reduceMotion) {
+    val settingsController = remember(host) { SettingsController(host.settings) }
+    val settings by settingsController.settings.collectAsState()
+    // Every sound effect passes this one gate; the game never reads the setting itself.
+    val sounds = remember(host, settingsController) {
+        GatedSoundPlayer(host.sounds) { settingsController.settings.value.soundEffects }
+    }
+    FaTheme(reduceMotion = settings.reduceMotion.resolve(host.reduceMotion)) {
         var screen by rememberSaveable { mutableStateOf(Screen.Splash) }
         var levelId by rememberSaveable { mutableStateOf(Levels.meadowField.id) }
         // Have an ad ready by the time the player starts a level.
@@ -51,17 +57,18 @@ fun App(host: AppHost) {
             // Quit, the game-ended "Main page" action and back on that dialog all lead to the main page.
             Screen.Game -> GameScreen(
                 host = host,
+                sounds = sounds,
+                keepScreenOnSetting = settings.keepScreenOn,
                 onQuit = { screen = Screen.Main },
                 level = Levels.byId(levelId) ?: Levels.meadowField,
             )
 
-            // The settings page has its own issue. Until it is built, a placeholder keeps the
-            // flow from and back to the main page working.
-            Screen.Settings -> PlaceholderPage(
+            Screen.Settings -> SettingsPage(
                 host = host,
-                title = AppText.SETTINGS_TITLE,
-                body = AppText.SETTINGS_BODY,
-                ground = PlaceholderGround.Sky,
+                settings = settings,
+                onSoundEffects = { on -> settingsController.update { it.copy(soundEffects = on) } },
+                onKeepScreenOn = { on -> settingsController.update { it.copy(keepScreenOn = on) } },
+                onReduceMotion = { choice -> settingsController.update { it.copy(reduceMotion = choice) } },
                 onBack = { screen = Screen.Main },
             )
         }

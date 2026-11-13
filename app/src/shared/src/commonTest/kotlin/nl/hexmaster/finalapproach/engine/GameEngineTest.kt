@@ -18,7 +18,7 @@ import kotlin.test.assertTrue
 
 class GameEngineTest {
 
-    private val level = Levels.meadowField
+    private val level = twoWayMeadowField
     private val dt = 0.05
 
     /** Meadow Field without spawns, for tests that place their own aircraft. */

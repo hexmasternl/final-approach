@@ -9,3 +9,5 @@ Draw order is `z-hud`, above clouds. Aircraft can fly under the HUD; the spawner
 Counter row: a level may add a second row under the score chips, `space-2` below them and left-aligned with them, holding one Spawn Counter chip per aircraft type the level spawns: at most five, one per type, in roster order: light prop, turboprop, jet, jumbo, helicopter. The row does not count towards the five items of the first row.
 
 **Don't** add more than five items to the first row, or more than five chips to the counter row. Anything else belongs in the pause dialog.
+
+While the first-time tutorial runs, a ghost small Button "Skip tutorial" sits in the first row, left of the cog. It is a sixth item only for as long as the tutorial runs; the five-item limit counts the permanent items.

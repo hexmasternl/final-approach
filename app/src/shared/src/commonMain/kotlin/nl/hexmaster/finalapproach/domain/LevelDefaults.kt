@@ -48,6 +48,9 @@ object LevelDefaults {
     /** How far outside the viewport aircraft appear, in world units. */
     const val SPAWN_MARGIN = 60.0 * WORLD_ZOOM
 
+    /** How far inside every viewport edge a tutorial aircraft must be to count as well in view. */
+    const val TUTORIAL_WELL_IN_VIEW_INSET = 160.0 * WORLD_ZOOM
+
     /** How far beyond the viewport an aircraft that was inside it may fly before it has left. */
     const val LEAVE_MARGIN = 60.0 * WORLD_ZOOM
 

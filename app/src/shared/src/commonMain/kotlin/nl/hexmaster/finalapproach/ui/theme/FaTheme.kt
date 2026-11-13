@@ -49,7 +49,7 @@ object FaTheme {
     val isNight: Boolean
         @Composable @ReadOnlyComposable get() = LocalFaNight.current
 
-    /** True when the device asks for reduced motion. */
+    /** True when animation should be reduced: the device asks for it, or the player turned it on. */
     val reduceMotion: Boolean
         @Composable @ReadOnlyComposable get() = LocalFaReduceMotion.current
 

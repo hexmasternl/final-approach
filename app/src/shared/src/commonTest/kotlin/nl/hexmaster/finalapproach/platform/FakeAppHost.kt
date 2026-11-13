@@ -9,6 +9,12 @@ class FakeAppHost(
 
     override val highScores = InMemoryHighScoreStore()
 
+    override val settings = InMemorySettingsStore()
+
+    override val tutorials = InMemoryTutorialStore()
+
+    override val sounds = RecordingSoundPlayer()
+
     var quitCalls = 0
         private set
 
@@ -16,10 +22,33 @@ class FakeAppHost(
         quitCalls++
     }
 
+    val openedUrls = mutableListOf<String>()
+
+    override fun openUrl(url: String) {
+        openedUrls += url
+    }
+
+    /** The last value passed to [keepScreenOn]. */
+    var screenKeptOn = false
+        private set
+
+    override fun keepScreenOn(on: Boolean) {
+        screenKeptOn = on
+    }
+
     var landscapeLocked = false
         private set
 
     override fun lockLandscape(locked: Boolean) {
         landscapeLocked = locked
+    }
+}
+
+/** A [SoundPlayer] that lists what was played. */
+class RecordingSoundPlayer : SoundPlayer {
+    val played = mutableListOf<SoundEffect>()
+
+    override fun play(effect: SoundEffect) {
+        played += effect
     }
 }
