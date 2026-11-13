@@ -24,6 +24,12 @@ class MainActivity : ComponentActivity() {
         setContent { App(host) }
     }
 
+    // The system can bring the bars back when another window (an ad, the drawer, Recents) took focus.
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) host.applyImmersive()
+    }
+
     override fun onDestroy() {
         host.release()
         super.onDestroy()
