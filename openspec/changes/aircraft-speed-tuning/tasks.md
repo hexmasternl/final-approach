@@ -1,6 +1,6 @@
 ## 1. Domain
 
-- [ ] 1.1 Add `domain/AircraftSpeeds.kt` with the five default speeds written as previous value times fraction, and make `DefaultAircraftSpecs` read them with no speed literal left; verify by search and a `commonTest` that reads 20, 36.67, 50, 66.67, 65
+- [x] 1.1 Add `domain/AircraftSpeeds.kt` with the five default speeds written as previous value times fraction, and make `DefaultAircraftSpecs` read them with no speed literal left; verify by search and a `commonTest` that reads 20, 36.67, 50, 66.67, 65
 - [ ] 1.2 Halve the jumbo radius to 22 and check its collision shape follows the sprite; verify with a test that the jumbo shape bounds are half the old ones and other radii are unchanged
 - [ ] 1.3 Narrow the speed ordering and gap tests to helicopter..jet, and fix any test that depended on the old speeds or the old jumbo size; verify `./gradlew :shared:allTests` passes
 
