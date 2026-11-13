@@ -7,8 +7,8 @@
 
 ## 2. Engine clearance event
 
-- [ ] 2.1 Add `GameEvent.ClearedToLand(aircraftId, zone)` and the pending-clearance queue in `GameEngine` (design decision 1): record on the `Flying` to `ClearedToLand` transition in `extendPath`, prepend and clear in `update`, clear on restart. Verify with `GameEngineTest` cases for each `game-engine` scenario: one event then none, no event for points after the cut-off, two aircraft before one update, re-route cleared again, and no event for open air, misaligned runway, wrong end of a one-way runway, airplane at a helipad, helicopter at a runway.
-- [ ] 2.2 Check that `Scoring.apply` and the `landings` count ignore the new event. Verify existing `ScoringTest` and `GameEngineTest` still pass and a test asserts a clearance adds no score.
+- [x] 2.1 Add `GameEvent.ClearedToLand(aircraftId, zone)` and the pending-clearance queue in `GameEngine` (design decision 1): record on the `Flying` to `ClearedToLand` transition in `extendPath`, prepend and clear in `update`, clear on restart. Verify with `GameEngineTest` cases for each `game-engine` scenario: one event then none, no event for points after the cut-off, two aircraft before one update, re-route cleared again, and no event for open air, misaligned runway, wrong end of a one-way runway, airplane at a helipad, helicopter at a runway.
+- [x] 2.2 Check that `Scoring.apply` and the `landings` count ignore the new event. Verify existing `ScoringTest` and `GameEngineTest` still pass and a test asserts a clearance adds no score.
 
 ## 3. Sound player behind AppHost
 

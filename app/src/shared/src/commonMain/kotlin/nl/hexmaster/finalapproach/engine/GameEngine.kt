@@ -63,6 +63,9 @@ class GameEngine(
     private val playArea = viewport.expandedBy(level.world.leaveMargin)
     private var nextId = 1
 
+    /** Clearances made by input since the last update; the next update reports them. */
+    private var pendingClearances: List<GameEvent.ClearedToLand> = emptyList()
+
     private val mutableState = MutableStateFlow(GameState())
     val state: StateFlow<GameState> = mutableState.asStateFlow()
 
@@ -77,6 +80,8 @@ class GameEngine(
         val steps = ceil(deltaSeconds / level.world.maxStepSeconds).toInt().coerceAtLeast(1)
         val stepSeconds = deltaSeconds / steps
         val events = mutableListOf<GameEvent>()
+        events += pendingClearances
+        pendingClearances = emptyList()
         var aircraft = current.aircraft
         var status: GameStatus = GameStatus.Playing
         for (step in 0 until steps) {
@@ -128,6 +133,7 @@ class GameEngine(
     fun restart(seed: Long = level.run.seed ?: Random.nextLong()) {
         spawner = Spawner(level, seed, specs::speedOf)
         nextId = 1
+        pendingClearances = emptyList()
         mutableState.value = GameState()
     }
 
@@ -171,6 +177,7 @@ class GameEngine(
     fun extendPath(id: Int, point: Vec2) {
         if (inputBlocked) return
         val time = mutableState.value.levelTime
+        val before = mutableState.value.aircraft.firstOrNull { it.id == id }?.status
         updateAircraft(id) { aircraft ->
             val last = aircraft.path.points.lastOrNull() ?: aircraft.position
             if (last.distanceTo(point) < config.minPointSpacing) {
@@ -178,6 +185,10 @@ class GameEngine(
             } else {
                 PathDrawing.extend(aircraft, point, zones, level.landing, time, specs, config)
             }
+        }
+        val after = mutableState.value.aircraft.firstOrNull { it.id == id }?.status
+        if (before !is AircraftStatus.ClearedToLand && after is AircraftStatus.ClearedToLand) {
+            pendingClearances = pendingClearances + GameEvent.ClearedToLand(id, after.zone)
         }
     }
 
