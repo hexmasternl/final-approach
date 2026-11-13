@@ -1,6 +1,9 @@
 package nl.hexmaster.finalapproach.engine
 
+import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.AircraftType
+import nl.hexmaster.finalapproach.domain.DifficultyRamp
+import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.DifficultyPhase
 import nl.hexmaster.finalapproach.domain.HelipadConfig
 import nl.hexmaster.finalapproach.domain.LevelConfig
@@ -183,6 +186,73 @@ class SpawnerTest {
         val spawner = Spawner(oneEdge, 5, speed)
         assertNull(spawner.update(oneEdge.spawn.firstSpawnDelay, 0.0, listOf(Vec2(-60.0, 300.0))))
         assertEquals(oneEdge.spawn.retryDelay, spawner.timeUntilNextSpawn)
+    }
+
+    /** The test level with a ramp: 1 s floor, cap 6 in the air, a step every 60 s; its final step is at 360 s after the last phase. */
+    private val rampLevel = level.copy(ramp = DifficultyRamp(intervalFloorSeconds = 1.0, maxAircraftCap = 6))
+    private val afterFinalStep = 120.0 + 6 * 60.0
+
+    @Test
+    fun theRampLiftsTheCapOnMeadowField() {
+        val meadow = Levels.meadowField
+        val far = listOf(Vec2(-5000.0, -5000.0), Vec2(-6000.0, -5000.0), Vec2(-7000.0, -5000.0))
+        for (seed in 0L until 10L) {
+            assertNull(Spawner(meadow, seed, speed).update(1000.0, 210.0, far), "seed $seed at 3:30")
+            assertNotNull(Spawner(meadow, seed, speed).update(1000.0, 270.0, far), "seed $seed at 4:30")
+        }
+    }
+
+    @Test
+    fun intervalsAfterARampStepLieInThatStepsRange() {
+        val step3 = rampLevel.phaseAt(120.0 + 3 * 60.0)
+        for (seed in 0L until 20L) {
+            val spawner = Spawner(rampLevel, seed, speed)
+            spawner.update(1000.0, 120.0 + 3 * 60.0, emptyList())
+            val wait = spawner.timeUntilNextSpawn
+            assertTrue(wait >= step3.spawnIntervalMin && wait <= step3.spawnIntervalMax, "seed $seed: $wait")
+        }
+    }
+
+    @Test
+    fun spawnsPerMinuteAfterTheFinalStepExceedTheLastConfiguredPhase() {
+        var before = 0
+        var after = 0
+        for (seed in 0L until 30L) {
+            run(rampLevel, seed, afterFinalStep + 120.0).forEach { (time, _) ->
+                if (time >= 120.0 && time < 180.0) before++
+                if (time >= afterFinalStep + 60.0) after++
+            }
+        }
+        assertTrue(after > before, "per minute before $before, after $after")
+    }
+
+    @Test
+    fun aRampedRunReplaysExactlyWithTheSameSeed() {
+        val seconds = afterFinalStep + 120.0
+        assertEquals(run(rampLevel, 9, seconds), run(rampLevel, 9, seconds))
+    }
+
+    @Test
+    fun everySpawnAfterTheFinalStepIsFairAndSeparated() {
+        val viewport = rampLevel.world.viewport
+        val separation = rampLevel.world.spawnSeparation
+        val waiting = listOf(Vec2(-rampLevel.world.spawnMargin, 300.0))
+        for (seed in 0L until 20L) {
+            val spawner = Spawner(rampLevel, seed, speed)
+            var time = 0.0
+            while (time < afterFinalStep + 60.0) {
+                val spawn = spawner.update(0.1, time, if (time >= afterFinalStep) waiting else emptyList())
+                if (spawn != null && time >= afterFinalStep) {
+                    val crossing = assertNotNull(
+                        viewport.rayCrossing(spawn.position, Angles.direction(spawn.heading)),
+                        "seed $seed: $spawn misses the viewport",
+                    )
+                    assertTrue(crossing.second - crossing.first >= 0.5 * 600.0, "seed $seed: short chord")
+                    assertTrue(spawn.position.distanceTo(waiting[0]) >= separation, "seed $seed: too close")
+                }
+                time += 0.1
+            }
+        }
     }
 
     @Test

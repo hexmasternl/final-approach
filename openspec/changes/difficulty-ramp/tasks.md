@@ -15,7 +15,7 @@
 
 ## 4. Spawner and engine
 
-- [ ] 4.1 `SpawnerTest`: on Meadow Field with 3 aircraft held, no spawn at 3:30 and a spawn possible at 4:30; spawn intervals after a ramp step lie in that step's range; over many seeds spawns per minute after the final step exceed the last configured phase; two runs with one seed past the final step produce identical spawns; every spawn after the final step is fair and separated. Verify: `./gradlew :shared:allTests` passes with no change to `Spawner.kt` (design decision 7).
+- [x] 4.1 `SpawnerTest`: on Meadow Field with 3 aircraft held, no spawn at 3:30 and a spawn possible at 4:30; spawn intervals after a ramp step lie in that step's range; over many seeds spawns per minute after the final step exceed the last configured phase; two runs with one seed past the final step produce identical spawns; every spawn after the final step is fair and separated. Verify: `./gradlew :shared:allTests` passes with no change to `Spawner.kt` (design decision 7).
 - [ ] 4.2 Add `internal val difficultyTime` to `GameEngine` and use it where the spawner gets `time - handoverTime` (design decision 8). `TutorialEngineTest`: skip the tutorial at level time T, then `level.phaseAt(engine.difficultyTime)` is the last configured phase at T + 179 s and ramp step 1 at T + 180 s. Verify: `./gradlew :shared:allTests` passes.
 
 ## 5. Docs and checks
