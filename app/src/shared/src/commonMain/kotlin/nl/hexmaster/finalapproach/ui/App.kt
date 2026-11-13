@@ -2,12 +2,15 @@ package nl.hexmaster.finalapproach.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.platform.AppHost
+import nl.hexmaster.finalapproach.platform.SettingsController
 import nl.hexmaster.finalapproach.ui.game.GameScreen
 import nl.hexmaster.finalapproach.ui.game.LevelSelectPage
 import nl.hexmaster.finalapproach.ui.menu.MainPage
@@ -25,7 +28,9 @@ private object AppText {
 /** The whole app. The host supplies everything platform-specific through [host]. */
 @Composable
 fun App(host: AppHost) {
-    FaTheme(reduceMotion = host.reduceMotion) {
+    val settingsController = remember(host) { SettingsController(host.settings) }
+    val settings by settingsController.settings.collectAsState()
+    FaTheme(reduceMotion = settings.reduceMotion.resolve(host.reduceMotion)) {
         var screen by rememberSaveable { mutableStateOf(Screen.Splash) }
         var levelId by rememberSaveable { mutableStateOf(Levels.meadowField.id) }
         // Have an ad ready by the time the player starts a level.
