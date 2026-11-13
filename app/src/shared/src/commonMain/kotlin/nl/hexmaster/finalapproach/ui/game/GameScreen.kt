@@ -4,8 +4,10 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +24,9 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -29,6 +34,7 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.LevelConfig
 import nl.hexmaster.finalapproach.domain.LevelTheme
+import nl.hexmaster.finalapproach.domain.isPickable
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.engine.BestScore
 import nl.hexmaster.finalapproach.engine.GameEngine
@@ -39,6 +45,7 @@ import nl.hexmaster.finalapproach.engine.GameStatus
 import nl.hexmaster.finalapproach.input.PathGesture
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.platform.AppHost
+import nl.hexmaster.finalapproach.platform.ScreenRect
 import nl.hexmaster.finalapproach.platform.SoundPlayer
 import nl.hexmaster.finalapproach.ui.BackHandler
 import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
@@ -103,6 +110,12 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     val colors = FaTheme.colors
     val reduceMotion = FaTheme.reduceMotion
     val ambient = remember(engine, reduceMotion) { AmbientLife(level, seed = level.id.hashCode().toLong(), reduceMotion = reduceMotion) }
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
+    val gestureInsets = WindowInsets.systemGestures
+    val leftStrip by rememberUpdatedState(gestureInsets.getLeft(density, layoutDirection))
+    val rightStrip by rememberUpdatedState(gestureInsets.getRight(density, layoutDirection))
+    val currentDensity by rememberUpdatedState(density)
     val measurer = rememberTextMeasurer()
     val numberStyle = FaTheme.type.titleMd
     val letterStyle = FaTheme.type.titleLg
@@ -116,6 +129,15 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     DisposableEffect(host, keepScreenOn) {
         host.keepScreenOn(keepScreenOn)
         onDispose { host.keepScreenOn(false) }
+    }
+    // The system bars hide only while the level runs; leaving the screen always shows them again.
+    val running = isLevelRunning(state)
+    LaunchedEffect(host, running) { host.setImmersive(running) }
+    DisposableEffect(host) {
+        onDispose {
+            host.setImmersive(false)
+            host.setGestureExclusion(emptyList())
+        }
     }
     fun openOptions() {
         engine.pause()
@@ -154,8 +176,17 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
 
     LaunchedEffect(state.score) { bestScore.update(state.score) }
 
-    LaunchedEffect(engine) {
+    val viewport = WorldViewport(
+        level.world.width,
+        level.world.height,
+        screen.width.toDouble().coerceAtLeast(1.0),
+        screen.height.toDouble().coerceAtLeast(1.0),
+    )
+    val currentViewport by rememberUpdatedState(viewport)
+
+    LaunchedEffect(engine, host) {
         var last = withFrameNanos { it }
+        var zones = emptyList<ScreenRect>()
         while (true) {
             val now = withFrameNanos { it }
             val delta = ((now - last) / GameScreenDefaults.NANOS_PER_SECOND).coerceAtMost(GameScreenDefaults.MAX_FRAME_SECONDS)
@@ -166,6 +197,13 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
             if (!engine.state.value.paused) rings.update(engine.state.value, { engine.specs[it.type].shape.boundingRadius }, (delta * MILLIS_PER_SECOND).toFloat())
             if (!engine.state.value.paused) ambient.update(delta)
             if (!engine.state.value.paused) clock += delta
+            // Touches that start on an aircraft near a side edge must not become a back gesture; the zones
+            // are sent only when they change.
+            val planned = gestureZones(engine.state.value, currentViewport, screen, leftStrip, rightStrip, currentDensity)
+            if (planned != zones) {
+                zones = planned
+                host.setGestureExclusion(planned)
+            }
             // The collision sequence starts when the level ends by a collision, and goes when it restarts.
             val ended = engine.state.value.status as? GameStatus.GameOver
             val current = collision
@@ -176,14 +214,6 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
             }
         }
     }
-
-    val viewport = WorldViewport(
-        level.world.width,
-        level.world.height,
-        screen.width.toDouble().coerceAtLeast(1.0),
-        screen.height.toDouble().coerceAtLeast(1.0),
-    )
-    val currentViewport by rememberUpdatedState(viewport)
 
     Box(Modifier.fillMaxSize()) {
     Canvas(
@@ -254,6 +284,29 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
             onQuit = onQuit,
         )
     }
+    }
+}
+
+/** The side-edge zones for [state] while its level runs, none otherwise; see [planGestureExclusion]. */
+private fun gestureZones(
+    state: GameState,
+    viewport: WorldViewport,
+    screen: IntSize,
+    leftStrip: Int,
+    rightStrip: Int,
+    density: Density,
+    config: GestureExclusionConfig = GestureExclusionConfig(),
+): List<ScreenRect> {
+    if (!isLevelRunning(state) || screen == IntSize.Zero) return emptyList()
+    val targets = state.aircraft.map {
+        val at = viewport.offsetOf(it.position)
+        GestureTarget(it.id, at.x, at.y, it.isPickable)
+    }
+    return with(density) {
+        planGestureExclusion(
+            targets, state.selectedId, screen.width, screen.height, leftStrip, rightStrip,
+            FaDimens.touchAircraft.toPx(), config.maxHeightPerEdge.roundToPx(), config.zoneHalfHeight.roundToPx(),
+        )
     }
 }
 
