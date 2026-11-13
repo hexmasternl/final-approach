@@ -213,7 +213,7 @@ fa-silhouette { display: block; width: 100%; }
 .fa-levelcard--square .fa-levelcard__title { font: 600 18px/24px var(--font-display); text-align: center; }
 
 /* ---------- Coach mark ---------- */
-.fa-coach { position: relative; display: inline-flex; align-items: center; gap: var(--space-3); max-width: 300px; padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--outline); color: var(--on-outline); font: 500 16px/22px var(--font-text); box-shadow: 0 5px 0 rgba(10, 14, 36, .3); --fa-icon: var(--icon-lg); }
+.fa-coach { position: relative; display: inline-flex; align-items: center; gap: var(--space-3); max-width: var(--coach-max-width); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--outline); color: var(--on-outline); font: 500 16px/22px var(--font-text); box-shadow: 0 5px 0 rgba(10, 14, 36, .3); --fa-icon: var(--icon-lg); }
 .fa-coach::after { content: ""; position: absolute; left: 34px; top: 100%; border: 10px solid transparent; border-top-color: var(--outline); border-bottom: 0; }
 .fa-coach--up::after { top: auto; bottom: 100%; border-top: 0; border-bottom: 10px solid var(--outline); }
 .fa-coach b { display: block; font: 600 18px/22px var(--font-display); }

@@ -29,5 +29,6 @@ enum class FaIcon(internal val def: IconDef) {
     Helicopter(IconDef(fills = listOf(IconFill("M 8.2 11.5 A 3.8 4.8 0 1 0 15.8 11.5 A 3.8 4.8 0 1 0 8.2 11.5 Z")), stroke = "M 12 16 v 5 M 9.5 21 h 5 M 4 7.5 l 16 8 M 20 7.5 l -16 8")),
     Warning(IconDef(fills = listOf(IconFill("M 10.7 16.3 A 1.3 1.3 0 1 0 13.3 16.3 A 1.3 1.3 0 1 0 10.7 16.3 Z")), stroke = "M 12 4 l 9 15.5 H 3 z M 12 10 v 3")),
     Tap(IconDef(fills = listOf(IconFill("M 9.2 10 A 2.8 2.8 0 1 0 14.8 10 A 2.8 2.8 0 1 0 9.2 10 Z")), stroke = "M 7.5 10 a 4.5 4.5 0 0 1 9 0 M 4 10 a 8 8 0 0 1 16 0 M 12 13 v 8")),
+    Finger(IconDef(stroke = "M 10 13 V 5.5 a 2 2 0 0 1 4 0 V 12 M 14 12 h 2.5 a 3.5 3.5 0 0 1 3.5 3.5 V 17 a 4 4 0 0 1 -4 4 h -4.5 a 4 4 0 0 1 -3.2 -1.6 L 5.5 16.5 a 1.8 1.8 0 0 1 2.8 -2.2 L 10 16")),
     Wind(IconDef(stroke = "M 3 9 h 10 a 3 3 0 1 0 -3 -3 M 3 14.5 h 14 a 3 3 0 1 1 -3 3")),
 }
