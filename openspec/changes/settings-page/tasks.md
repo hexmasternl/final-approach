@@ -16,8 +16,10 @@
 
 ## 3. Sound gate
 
-- [ ] 3.1 Add the shared sound gate that checks `soundEffects` at play time before calling the platform player (around a no-op player if #63 has not landed, around #63's player if it has); test in `commonTest` that a play request with sound off reaches no player and with sound on reaches it once; verify `./gradlew :shared:allTests` passes
-- [ ] 3.2 Note in `docs/architecture.md` that every sound effect must go through the gate; verify the text is there
+- [ ] 3.1 If `path-cleared-sound` (#63) has not landed, add `SoundEffect`, `SoundPlayer`, `SilentSoundPlayer` and `AppHost.sounds` (silent default) exactly as its design specifies; verify `./gradlew :shared:allTests` passes
+- [ ] 3.2 Add `platform/GatedSoundPlayer.kt` wrapping a `SoundPlayer` with an `enabled` check at play time; test in `commonTest` with a recording player that `play` with sound off records nothing, with sound on records once, and that switching back on lets later plays through; verify `./gradlew :shared:allTests` passes
+- [ ] 3.3 In `ui/App.kt`, build one `GatedSoundPlayer(host.sounds)` reading `soundEffects` from the controller and pass it to the game screen; if #63 has landed, make its cue loop play through it instead of `host.sounds`; verify by grep that no call site outside `App.kt` uses `host.sounds` directly
+- [ ] 3.4 Note in `docs/architecture.md` that sound effects play through the gated player and never read the setting themselves; verify the text is there
 
 ## 4. Platform URL opening
 

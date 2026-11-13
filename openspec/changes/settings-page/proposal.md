@@ -15,13 +15,13 @@ The main page has a Settings button that opens a placeholder. #63 adds the first
 - Changes apply at once; there is no Save button. Back and the back icon button return to the main page.
 - Settings are stored on the device, survive restarts and are not backed up.
 - One effective reduced-motion value combines the device setting with the player's choice. Every reduced-motion behaviour already in the specs (splash, main page, paths, proximity ring, scenery, HUD, dialogs, landing) follows it.
-- When Sound effects is off, no sound effect plays. This gates the sound player that #63 adds.
-- Shared code gets two new platform members behind `AppHost`: a settings store and a way to open a URL.
+- When Sound effects is off, no sound effect plays. The toggle gates `AppHost.sounds`, the sound player that `path-cleared-sound` (#63) adds, through a wrapper; whichever change lands second wires the two.
+- Shared code gets two new platform members behind `AppHost`: a settings store and a way to open a URL, plus a `GatedSoundPlayer` wrapper around `AppHost.sounds`.
 - New design-system components in Compose: Toggle and Segmented control, plus the `fa-setting` row.
 
 Out of scope: Help / Replay tutorial (#62), Music, ad privacy choices (none exist while #64 treats every player as under the age of consent), Keep screen on (a separate issue that builds on this one), a parental gate in front of the policy link.
 
-Depends on: `update-privacy-policy` (#64) for the policy URL and the policy text about on-device settings. Works best after #63; if this change lands first, the setting is stored and the row is shown, and #63 must route its sound through the gate this change adds.
+Depends on: `update-privacy-policy` (#64) for the policy URL and the policy text about on-device settings. Related: `path-cleared-sound` (#63) owns `SoundPlayer` and `AppHost.sounds`; either change may land first, and whichever lands second wires the toggle to that player (if this lands first, it adds those types exactly as `path-cleared-sound` designs them).
 
 ## Capabilities
 

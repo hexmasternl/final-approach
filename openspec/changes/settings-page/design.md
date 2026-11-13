@@ -13,7 +13,7 @@
 **Goals:**
 - One source of truth for the player's settings and for the effective reduced-motion value, testable in `commonTest`.
 - Platform storage and URL opening behind `AppHost`, nothing Android in `commonMain`.
-- A single gate that every sound effect passes, so muting cannot be forgotten by a future sound.
+- One gated wrapper around `AppHost.sounds` that every sound effect passes, so muting cannot be forgotten by a future sound.
 
 **Non-Goals:**
 - Reacting live to the device's reduced-motion setting changing while the app runs. `AppHost.reduceMotion` stays a value read at start, as today.
@@ -38,10 +38,14 @@
 
 *Alternative:* add the override inside `AndroidAppHost.reduceMotion`. Rejected: the combination is a game rule, belongs in shared code and must be unit-tested; the host should only report the device.
 
-### 4. A sound gate in shared code
-All sound effects go through one shared function that checks `soundEffects` before calling the platform player. If #63 has landed, its player call is wrapped by this gate; if this change lands first, it adds the gate around a no-op and #63 plugs its player in behind it. The gate reads the current `StateFlow` value at play time, so a sound already playing is not cut off, but nothing new starts.
+### 4. The toggle gates `AppHost.sounds` through a wrapper
+`path-cleared-sound` (#63) defines `SoundEffect`, `interface SoundPlayer { fun play(effect: SoundEffect) }` and `SilentSoundPlayer` in `platform/`, exposed as `AppHost.sounds` (silent by default), and its game screen plays cues through that player. This change adds `platform/GatedSoundPlayer.kt`: `class GatedSoundPlayer(private val inner: SoundPlayer, private val enabled: () -> Boolean) : SoundPlayer`, which forwards `play` only while `enabled()` is true. `App` builds one `GatedSoundPlayer(host.sounds) { controller.settings.value.soundEffects }` and the game plays through it instead of `host.sounds`, so the game never reads the setting itself. The check happens at play time: a sound already playing is not cut off, but nothing new starts.
+
+Whichever change lands second wires the two. If this change lands first, it adds `SoundEffect`, `SoundPlayer`, `SilentSoundPlayer` and `AppHost.sounds` exactly as `path-cleared-sound` designs them, so that change only adds the Android player and the cue mapping and plays through the gated player.
 
 *Alternative:* tell the platform player to mute. Rejected: the rule would live in each platform host.
+
+*Alternative:* the game screen checks `soundEffects` before each `play`. Rejected: every future sound call site would have to remember it.
 
 ### 5. `AppHost.openUrl(url: String)`
 Android starts an `Intent.ACTION_VIEW` for the URL and swallows `ActivityNotFoundException`, so a device without a browser stays on the page. The URL is a constant in a shared `AppLinks` object (`PRIVACY_POLICY_URL`), the one fixed by `update-privacy-policy`.
@@ -70,7 +74,7 @@ Page strings live in a private `SettingsText` object: "Settings", "Sound", "Soun
 ## Assumptions
 
 - The page keeps the placeholder's sky background and a single panel, scrolling when it does not fit.
-- The Sound effects row is shown even if #63 has not landed yet; the recommended order is #63 first.
+- The Sound effects row is shown even if #63 (`path-cleared-sound`) has not landed yet; either order works, and whichever lands second wires the gated player.
 - Tapping Privacy policy with no browser does nothing visible.
 - The settings page is not locked to landscape; it follows the device orientation like the main page.
 - Group labels use the existing `label` style and the version line the existing `caption` style; no new type token.
@@ -78,7 +82,7 @@ Page strings live in a private `SettingsText` object: "Settings", "Sound", "Soun
 
 ## Risks / Trade-offs
 
-- [This lands before #63, so the toggle has nothing to mute] → The setting is stored and the gate exists; #63's tasks must route its player through the gate. Recommend implementing #63 first.
+- [This lands before #63, so the toggle has nothing to mute] → The setting is stored and `GatedSoundPlayer` wraps the silent player; `path-cleared-sound` then only adds the Android player and plays through the gated one.
 - [A link out of a mixed-audience app] → Linking to the privacy policy is expected by Play; the play-policy-critic should still review it. A parental gate is out of scope.
 - [Reduced motion changes mid-animation in components remembered with the old value] → `remember` keys that capture reduced motion (as `GameScreen` already does for `AmbientLife`) must include it; checked in the device task.
 
