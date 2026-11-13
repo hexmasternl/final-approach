@@ -10,6 +10,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.platform.AppHost
+import nl.hexmaster.finalapproach.platform.GatedSoundPlayer
 import nl.hexmaster.finalapproach.platform.SettingsController
 import nl.hexmaster.finalapproach.ui.game.GameScreen
 import nl.hexmaster.finalapproach.ui.game.LevelSelectPage
@@ -30,6 +31,10 @@ private object AppText {
 fun App(host: AppHost) {
     val settingsController = remember(host) { SettingsController(host.settings) }
     val settings by settingsController.settings.collectAsState()
+    // Every sound effect passes this one gate; the game never reads the setting itself.
+    val sounds = remember(host, settingsController) {
+        GatedSoundPlayer(host.sounds) { settingsController.settings.value.soundEffects }
+    }
     FaTheme(reduceMotion = settings.reduceMotion.resolve(host.reduceMotion)) {
         var screen by rememberSaveable { mutableStateOf(Screen.Splash) }
         var levelId by rememberSaveable { mutableStateOf(Levels.meadowField.id) }
@@ -56,6 +61,7 @@ fun App(host: AppHost) {
             // Quit, the game-ended "Main page" action and back on that dialog all lead to the main page.
             Screen.Game -> GameScreen(
                 host = host,
+                sounds = sounds,
                 onQuit = { screen = Screen.Main },
                 level = Levels.byId(levelId) ?: Levels.meadowField,
             )

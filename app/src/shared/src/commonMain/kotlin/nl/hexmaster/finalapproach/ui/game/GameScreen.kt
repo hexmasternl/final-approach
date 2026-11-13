@@ -37,6 +37,7 @@ import nl.hexmaster.finalapproach.engine.GameStatus
 import nl.hexmaster.finalapproach.input.PathGesture
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.platform.AppHost
+import nl.hexmaster.finalapproach.platform.SoundPlayer
 import nl.hexmaster.finalapproach.ui.BackHandler
 import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
 import nl.hexmaster.finalapproach.ui.sprites.alphaLayer
@@ -68,14 +69,14 @@ private const val MILLIS_PER_SECOND = 1000.0
  * options panel. Quit leaves through [onQuit].
  */
 @Composable
-fun GameScreen(host: AppHost, onQuit: () -> Unit, level: LevelConfig = Levels.meadowField) {
+fun GameScreen(host: AppHost, sounds: SoundPlayer, onQuit: () -> Unit, level: LevelConfig = Levels.meadowField) {
     FaTheme(dawn = level.theme == LevelTheme.Dawn, reduceMotion = FaTheme.reduceMotion) {
-        GameContent(host, onQuit, level)
+        GameContent(host, sounds, onQuit, level)
     }
 }
 
 @Composable
-private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
+private fun GameContent(host: AppHost, sounds: SoundPlayer, onQuit: () -> Unit, level: LevelConfig) {
     val engine = remember(level) { GameEngine(level) }
     val state by engine.state.collectAsState()
     val bestScore = remember(level, host) { BestScore(host.highScores, level.id) }
@@ -138,7 +139,7 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
             val delta = ((now - last) / GameScreenDefaults.NANOS_PER_SECOND).coerceAtMost(GameScreenDefaults.MAX_FRAME_SECONDS)
             last = now
             engine.update(delta)
-            SoundCues.of(engine.state.value.events).forEach(host.sounds::play)
+            SoundCues.of(engine.state.value.events).forEach(sounds::play)
             if (!engine.state.value.paused) rings.update(engine.state.value, { engine.specs[it.type].shape.boundingRadius }, (delta * MILLIS_PER_SECOND).toFloat())
             if (!engine.state.value.paused) ambient.update(delta)
             if (!engine.state.value.paused) clock += delta
