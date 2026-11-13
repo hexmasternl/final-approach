@@ -59,6 +59,7 @@ final-approach/
 - `reduceMotion`: true when the device asks apps to reduce animation. On Android this is the animator duration scale set to 0.
 - `back`: a `BackDispatcher`. The host forwards every system back press to `back.dispatch()`; screens register with the `BackHandler` composable. The most recently composed handler wins. A back press nobody handles leaves the app.
 - `quit()`: closes the app.
+- `sounds`: a `SoundPlayer` (`platform/SoundPlayer.kt`) with `play(SoundEffect)`; it defaults to `SilentSoundPlayer` on a platform without a player (iOS until its host has one). `GameScreen` plays `SoundCues.of(events)` through it after each `engine.update`; the engine reports a `GameEvent.ClearedToLand` for each clearance and knows nothing about audio. The sound-effects toggle of the settings page (#66) gates this one player, so the game never checks the setting itself. On Android, `AndroidAppHost` plays through a `SoundPool`.
 - `lockLandscape(locked)`: locks the app in landscape, or releases the lock. The game screen locks it while shown. On Android this sets the activity's requested orientation; the activity handles orientation changes itself, so it is not recreated.
 
 `AndroidAppHost` in `androidApp` is the Android implementation. Tests use `FakeAppHost` from `commonTest`.
