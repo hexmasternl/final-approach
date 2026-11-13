@@ -3,10 +3,13 @@ package nl.hexmaster.finalapproach.ui.game
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,6 +43,7 @@ internal object HudText {
  * score (compact, with a star) and the current score at the top left, the cog wheel at the top
  * right. It only reads what it is given.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun Hud(
     best: Int,
@@ -51,7 +55,8 @@ fun Hud(
     Box(
         modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.safeDrawing)
+            // Ignoring bar visibility: the chips keep their place when the bars hide or show briefly.
+            .windowInsetsPadding(WindowInsets.systemBarsIgnoringVisibility.union(WindowInsets.displayCutout))
             .padding(FaDimens.space4),
     ) {
         Row(
