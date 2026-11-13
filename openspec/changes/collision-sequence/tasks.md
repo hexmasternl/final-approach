@@ -2,9 +2,9 @@
 
 ## 1. Design system
 
-- [ ] 1.1 Add `blackout` (`#03050f`, same in Day and Night), `dur-collision-fade` (1000ms) and `dur-collision-hold` (1000ms) with usage text to `docs/design-system/tokens.json`. Verify: the file parses and the tokens appear in the showcase token tables.
+- [x] 1.1 Add `blackout` (`#03050f`, same in Day and Night), `dur-collision-fade` (1000ms) and `dur-collision-hold` (1000ms) with usage text to `docs/design-system/tokens.json`. Verify: the file parses and the tokens appear in the showcase token tables.
 - [ ] 1.2 Add a collision variant to the Proximity ring card in `docs/design-system/showcase.html`: red (`danger`) dashed ring, not spinning, with a `danger` chip pairing the warning icon and a word. Regenerate `showcase.pdf` if the tooling allows. Verify: open the showcase and see both variants.
-- [ ] 1.3 Regenerate `ui/theme` with `docs/design-system/tools/gen-kotlin.cjs` so `FaColors.blackout`, `FaMotion.durCollisionFadeMs` and `FaMotion.durCollisionHoldMs` exist. Verify: `./gradlew :shared:allTests` builds.
+- [x] 1.3 Regenerate `ui/theme` with `docs/design-system/tools/gen-kotlin.cjs` so `FaColors.blackout`, `FaMotion.durCollisionFadeMs` and `FaMotion.durCollisionHoldMs` exist. Verify: `./gradlew :shared:allTests` builds.
 
 ## 2. Timeline
 

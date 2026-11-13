@@ -72,6 +72,7 @@ data class FaColors(
     val poof: Color,
     val poofShade: Color,
     val scrim: Color,
+    val blackout: Color,
 ) {
     /** Flight path and livery colour for index 1 to 6. */
     fun path(index: Int): Color = when (index) {
@@ -150,6 +151,7 @@ val DayColors = FaColors(
     poof = Color(0xFFF7F8FC),
     poofShade = Color(0xFFC8D1E6),
     scrim = Color(17, 24, 58, 140),
+    blackout = Color(0xFF03050F),
 )
 
 val NightColors = FaColors(
@@ -218,6 +220,7 @@ val NightColors = FaColors(
     poof = Color(0xFFDFE4F2),
     poofShade = Color(0xFF9AA5C4),
     scrim = Color(3, 5, 16, 179),
+    blackout = Color(0xFF03050F),
 )
 
 /**
@@ -291,4 +294,5 @@ val DawnColors = FaColors(
     poof = Color(0xFFF7F8FC),
     poofShade = Color(0xFFC8D1E6),
     scrim = Color(17, 24, 58, 140),
+    blackout = Color(0xFF03050F),
 )
