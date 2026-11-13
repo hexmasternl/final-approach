@@ -1,8 +1,8 @@
 ## 1. Engine
 
-- [ ] 1.1 Rewrite `PathFollower` to move along the path by arc length with the heading along the segment, no turn limit and no lookahead; verify with a `commonTest` that an aircraft of every type stays within tolerance of a path with a 150 degree corner and flies straight on after the end
-- [ ] 1.2 Strip the turn-radius flight from `PathSmoother` and the unused fields from `PathSmoothingConfig`, resample at a configured fixed spacing; verify with `commonTest` that a gentle path stays within tolerance and a sharp corner is rounded without a wide loop
-- [ ] 1.3 Update `PathDrawing` and `RunwayLeadIn` callers; verify existing landing and lead-in tests still pass and a runway landing after a sharp turn still ends on the centre line
+- [x] 1.1 Rewrite `PathFollower` to move along the path by arc length with the heading along the segment, no turn limit and no lookahead; verify with a `commonTest` that an aircraft of every type stays within tolerance of a path with a 150 degree corner and flies straight on after the end
+- [x] 1.2 Strip the turn-radius flight from `PathSmoother` and the unused fields from `PathSmoothingConfig`, resample at a configured fixed spacing; verify with `commonTest` that a gentle path stays within tolerance and a sharp corner is rounded without a wide loop
+- [x] 1.3 Update `PathDrawing` and `RunwayLeadIn` callers; verify existing landing and lead-in tests still pass and a runway landing after a sharp turn still ends on the centre line
 
 ## 2. Docs
 
