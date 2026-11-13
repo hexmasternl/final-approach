@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.provider.Settings
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import nl.hexmaster.finalapproach.domain.PlayerSettings
 import nl.hexmaster.finalapproach.domain.ReduceMotionChoice
@@ -87,6 +88,15 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
             activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (_: ActivityNotFoundException) {
             // No browser on this device: stay on the page.
+        }
+    }
+
+    override fun keepScreenOn(on: Boolean) {
+        val window = activity.window
+        if (on) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
     }
 
