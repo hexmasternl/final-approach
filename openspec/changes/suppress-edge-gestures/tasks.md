@@ -7,7 +7,7 @@
 
 - [x] 2.1 Add `ScreenRect`, `setImmersive(enabled)` and `setGestureExclusion(rects)` with no-op defaults to `platform/AppHost.kt`; override both in `FakeAppHost`, recording the last values. Verify: `./gradlew :shared:allTests`.
 - [x] 2.2 Implement both in `AndroidAppHost` (insets controller with `BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE`; `decorView.systemGestureExclusionRects` guarded by API 29) and re-apply the remembered immersive value in `MainActivity.onWindowFocusChanged`. Verify: `./gradlew :androidApp:assembleDebug`.
-- [ ] 2.3 Document both methods in `docs/architecture.md` (Platform boundary). Verify: read the section back.
+- [x] 2.3 Document both methods in `docs/architecture.md` (Platform boundary). Verify: read the section back.
 
 ## 3. Exclusion planner
 
