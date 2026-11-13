@@ -12,7 +12,7 @@ object FaMotion {
     const val durBurstMs = 600
     const val durDialogMs = 360
     const val durRotorMs = 240
-    const val durMarchMs = 900
+    const val durMarchMs = 1800
     const val durSwayMs = 2400
     const val durDriftMs = 48000
     const val durRingSpinMs = 4000

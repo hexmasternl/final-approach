@@ -1,7 +1,7 @@
 ## 1. Design system first
 
-- [ ] 1.1 Set `path-stroke` 3px, `path-casing` 7px, `path-dash` 10px, `path-gap` 8px, `path-dot` 12px and `dur-march` 1800ms in `docs/design-system/tokens.json`, and update `components/FlightPath.md` and the Flight Path section of `showcase.html` (and `showcase.pdf`); verify the doc, showcase and tokens show the same numbers
-- [ ] 1.2 Regenerate the theme (`FaDimens`, `FaMotion`) with the design-system tool; verify the generated values and that the build passes
+- [x] 1.1 Set `path-stroke` 3px, `path-casing` 7px, `path-dash` 10px, `path-gap` 8px, `path-dot` 12px and `dur-march` 1800ms in `docs/design-system/tokens.json`, and update `components/FlightPath.md` and the Flight Path section of `showcase.html` (and `showcase.pdf`); verify the doc, showcase and tokens show the same numbers
+- [x] 1.2 Regenerate the theme (`FaDimens`, `FaMotion`) with the design-system tool; verify the generated values and that the build passes
 
 ## 2. Drawing
 
