@@ -9,7 +9,7 @@
 ## 2. Docs
 
 - [x] 2.1 Update `docs/game-design.md` (the miss rule under the rules and the "Left the area" failure) to say an aircraft is lost when it is beyond the leave margin with no path, including when its path ends there. Verify: read the two passages against the spec delta.
-- [ ] 2.2 Update the failure rule in `CLAUDE.md` and `.github/copilot-instructions.md` to the same wording ("an aircraft outside the level with no path"). Verify: both files state the same rule as `docs/game-design.md`.
+- [x] 2.2 Update the failure rule in `CLAUDE.md` and `.github/copilot-instructions.md` to the same wording ("an aircraft outside the level with no path"). Verify: both files state the same rule as `docs/game-design.md`.
 
 ## 3. Check
 
