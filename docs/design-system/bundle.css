@@ -24,6 +24,7 @@
 .fa-p-asphalt { fill: var(--asphalt-500); }
 .fa-p-tyre { fill: var(--asphalt-700); stroke: none; opacity: .55; }
 .fa-p-mark { fill: var(--marking); stroke: none; }
+.fa-p-chev { fill: none; stroke: var(--marking); stroke-width: 6px; stroke-linecap: round; stroke-linejoin: round; }
 .fa-p-num { fill: var(--marking); font: 700 22px/1 var(--font-display); }
 .fa-p-ring { fill: none; stroke: var(--marking-warn); stroke-width: 6; }
 .fa-p-h { fill: none; stroke: var(--marking); stroke-width: 9; }

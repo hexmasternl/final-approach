@@ -10,8 +10,8 @@
 
 ## 2. Design system: one-way runway marking
 
-- [ ] 2.1 Add the one-way variant to `docs/design-system/components/Runway.md` (a `mode` input: markings only at the landing end, chevron centre line in `marking`, `line-4` stroke, round joins, arm `space-5`, spacing `space-4`) and a line under Landing zones in `docs/design-system/world.md`. Verify both files describe the same construction as design decision 3.
-- [ ] 2.2 Add a one-way runway example next to the existing runway in `docs/design-system/showcase.html` (and its CSS/JS in `bundle.css`/`bundle.js` if the runway is drawn there). Verify by opening the showcase that the one-way runway shows one marked end and chevrons, and still reads in a greyscale screenshot. Human task: regenerate `showcase.pdf` if the project keeps it in step.
+- [x] 2.1 Add the one-way variant to `docs/design-system/components/Runway.md` (a `mode` input: markings only at the landing end, chevron centre line in `marking`, `line-4` stroke, round joins, arm `space-5`, spacing `space-4`) and a line under Landing zones in `docs/design-system/world.md`. Verify both files describe the same construction as design decision 3.
+- [x] 2.2 Add a one-way runway example next to the existing runway in `docs/design-system/showcase.html` (and its CSS/JS in `bundle.css`/`bundle.js` if the runway is drawn there). Verify by opening the showcase that the one-way runway shows one marked end and chevrons, and still reads in a greyscale screenshot. Human task: regenerate `showcase.pdf` if the project keeps it in step.
 
 ## 3. Runway drawing
 

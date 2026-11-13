@@ -42,6 +42,7 @@ Assign `path-1` to `path-6` in spawn order and free a colour when its aircraft l
 ## Landing zones
 
 - A runway is 64px wide at 1x. Its numbers follow real convention: heading divided by ten, the two ends 18 apart (`09/27`).
+- A one-way runway marks only its landing end (threshold bars, touchdown patch, number) and draws its centre line as chevrons pointing the landing way; see `components/Runway.md`.
 - A helipad is 112px across, with a `marking-warn` ring and a `marking` H.
 - Zone feedback appears only while an aircraft is selected and its path ends on the zone.
 
