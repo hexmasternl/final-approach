@@ -29,10 +29,8 @@ class PathSmootherTest {
     private val config = EngineConfig()
     private val east = PI / 2
 
-    private fun radiusOf(type: AircraftType) = specs[type].speed / specs[type].turnRate
-
     private fun smooth(type: AircraftType, start: Vec2, heading: Double, points: List<Vec2>) =
-        PathSmoother.smooth(start, heading, points, specs[type].speed, specs[type].turnRate, config)
+        PathSmoother.smooth(start, points, config)
 
     /**
      * A drawn path east from the origin, then a 150 degree turn back, as dense drag points. Its
@@ -45,22 +43,23 @@ class PathSmootherTest {
         return (1..40).map { Vec2(it * step, 300.0) } + (1..40).map { corner + back * (it * step) }
     }
 
-    /** Tightest corner along [line], ignoring the final point that is pinned where it was drawn. */
-    private fun tightest(line: List<Vec2>): Double =
-        line.dropLast(1).windowed(3).minOf { (a, b, c) -> PathSmoother.circumradius(a, b, c) }
-
     private fun distanceToLine(point: Vec2, line: List<Vec2>): Double =
         line.zipWithNext().minOf { (a, b) -> Overlap.closestPointOnSegment(a, b, point).distanceTo(point) }
 
     @Test
-    fun aSharpCornerBecomesACurveEveryTypeCanFly() {
-        AircraftType.entries.forEach { type ->
-            val start = Vec2(0.0, 300.0)
-            val smoothed = smooth(type, start, east, hairpin())
-            val tightest = tightest(listOf(start) + smoothed)
-            assertTrue(tightest >= radiusOf(type), "$type: tightest corner $tightest < ${radiusOf(type)}")
+    fun aSharpCornerIsRoundedWithoutAWideLoop() {
+        val start = Vec2(0.0, 300.0)
+        val drawn = hairpin()
+        val smoothed = smooth(AircraftType.Jumbo, start, east, drawn)
+        smoothed.forEach { point ->
+            val off = distanceToLine(point, listOf(start) + drawn)
+            assertTrue(off <= 2 * config.minPointSpacing, "$off off the drawn line")
         }
+        val sharpest = (listOf(start) + smoothed).zipWithNext { a, b -> Angles.heading(b - a) }
+            .zipWithNext { a, b -> abs(Angles.difference(a, b)) }.max()
+        assertTrue(sharpest < Angles.degrees(120.0), "sharpest turn $sharpest rad")
     }
+
 
     @Test
     fun aGentlePathStaysCloseToTheDrawnLine() {
@@ -97,7 +96,6 @@ class PathSmootherTest {
         val stored = engine.state.value.aircraft.single().path.points
         assertNotEquals(zigZag, stored)
         assertEquals(zigZag.last(), stored.last())
-        assertTrue(tightest(listOf(start) + stored) >= radiusOf(AircraftType.Jet))
     }
 
     @Test

@@ -18,6 +18,8 @@ The five flying toys, drawn top-down with the nose pointing up at heading 0.
 
 **Motion.** Propellers flick (`dur-rotor`), rotors spin (`dur-rotor`, linear). While turning, bank by squeezing the sprite to 86% across its wingspan. On touchdown, squash and stretch for `dur-land`, then remove.
 
+**Landing sequence (helicopter).** After the path ends on the helipad the helicopter stands still and descends for the landing duration set by the game rules (3 seconds by default; the duration is not a design token). The sprite shrinks from full size to `descent-scale-end` of it with `ease-out-soft`, and its shadow stays at full size and is not offset further, so the body settles onto the shadow. The sprite stays fully opaque and is removed when the sequence ends. With reduced motion, draw one still pose at `descent-scale-end` for the whole sequence. A helicopter in this sequence has no proximity ring and cannot be picked.
+
 **Don't** recolour the fuselage, mirror a sprite, or scale the jumbo down to match the others: the size difference is the point.
 
 **Compose.** Port each sprite as an `ImageVector` or draw it in a `DrawScope` at 96 units, then `rotate(heading)` and `scale` at the render boundary. SVG sources are in the Aircraft asset group.

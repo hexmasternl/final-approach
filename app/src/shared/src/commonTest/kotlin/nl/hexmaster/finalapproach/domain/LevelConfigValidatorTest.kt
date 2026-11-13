@@ -202,4 +202,10 @@ class LevelConfigValidatorTest {
         val taxiway = apron.copy(kind = SceneryKind.Taxiway)
         assertProblem(valid().copy(scenery = listOf(taxiway, parked(200.0, 500.0))), "apron")
     }
+
+    @Test
+    fun theHelicopterLandingSequenceMustHaveALength() {
+        assertEquals(3.0, LandingConfig().helicopterLandingSeconds)
+        assertProblem(valid().copy(landing = LandingConfig(helicopterLandingSeconds = 0.0)), "helicopter", "landing")
+    }
 }

@@ -10,7 +10,8 @@ import kotlin.math.abs
 /**
  * Finds aircraft whose collision shapes touched. Only aircraft with the same altitude state can
  * collide: a flying aircraft passes over one that has landed. Two airplanes rolling out on the
- * same runway in the same direction never collide with each other. Every aircraft in the list counts, rolling ones
+ * same runway in the same direction never collide with each other. A helicopter in its landing
+ * sequence collides with nothing. Every aircraft in the list counts, rolling ones
  * included; aircraft removed after landing are simply not in it. Distance alone is never a
  * collision.
  *
@@ -34,6 +35,7 @@ object Collisions {
             val a = aircraft[i]
             val b = aircraft[j]
             if (a.altitude != b.altitude) continue
+            if (a.status is AircraftStatus.Landing || b.status is AircraftStatus.Landing) continue
             if (rollingTogether(a, b)) continue
             if (touched(a, previous[a.id] ?: a.position, b, previous[b.id] ?: b.position, specs)) {
                 add(minOf(a.id, b.id) to maxOf(a.id, b.id))

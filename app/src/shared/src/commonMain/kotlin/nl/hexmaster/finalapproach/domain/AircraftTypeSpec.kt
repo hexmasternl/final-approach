@@ -4,7 +4,8 @@ import nl.hexmaster.finalapproach.domain.CollisionShape.Companion.mirrored
 
 /**
  * What every aircraft of one type shares. [speed] is in world units per second, [turnRate] in
- * radians per second, [radius] in world units (the sprite is drawn [spriteSize] wide).
+ * radians per second, [radius] in world units (the sprite is drawn [spriteSize] wide). [turnRate]
+ * only sets the length of the runway lead-in; it does not limit any turn.
  * [shape] is what the aircraft collides with.
  */
 data class AircraftTypeSpec(
