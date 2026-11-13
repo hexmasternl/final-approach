@@ -33,6 +33,7 @@ import nl.hexmaster.finalapproach.ui.components.FaButton
 import nl.hexmaster.finalapproach.ui.components.FaButtonSize
 import nl.hexmaster.finalapproach.ui.components.FaButtonVariant
 import nl.hexmaster.finalapproach.ui.components.FaDialog
+import nl.hexmaster.finalapproach.ui.components.FaDialogAction
 import nl.hexmaster.finalapproach.ui.components.FaWordmark
 import nl.hexmaster.finalapproach.ui.components.FaWordmarkSize
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
@@ -137,20 +138,11 @@ fun MainPage(
             FaDialog(
                 title = MainPageText.QUIT_TITLE,
                 body = MainPageText.QUIT_BODY,
-            ) {
-                FaButton(
-                    text = MainPageText.QUIT,
-                    onClick = host::quit,
-                    modifier = Modifier.fillMaxWidth(),
-                    variant = FaButtonVariant.Danger,
-                )
-                FaButton(
-                    text = MainPageText.CANCEL,
-                    onClick = { quitOpen = false },
-                    modifier = Modifier.fillMaxWidth(),
-                    variant = FaButtonVariant.Ghost,
-                )
-            }
+                actions = listOf(
+                    FaDialogAction(MainPageText.QUIT, host::quit, FaButtonVariant.Danger),
+                    FaDialogAction(MainPageText.CANCEL, { quitOpen = false }, FaButtonVariant.Ghost),
+                ),
+            )
         }
     }
 }
