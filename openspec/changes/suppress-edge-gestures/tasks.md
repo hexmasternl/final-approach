@@ -20,7 +20,7 @@
 - [x] 4.2 Plan the zones each frame while running (from `WindowInsets.systemGestures`, the viewport and the pick radius), send them only when they changed, send an empty list when not running and on dispose. Verify: `./gradlew :androidApp:assembleDebug`.
 - [x] 4.3 Add a test that pins down the back rule during play (running level or ad wait opens the options panel and pauses; it never calls `onQuit`), extracting the `BackHandler` decision into a small function if needed. Verify: `./gradlew :shared:allTests`.
 - [x] 4.4 Pad `Hud` with insets that ignore bar visibility (design decision 7) so it keeps its place. Verify: Android Studio preview and 5.1.
-- [ ] 4.5 Add one line on edge gestures to `docs/game-design.md` (near the HUD/back rule): bars hidden and side edges protected while a level runs; back pauses. Verify: read it back.
+- [x] 4.5 Add one line on edge gestures to `docs/game-design.md` (near the HUD/back rule): bars hidden and side edges protected while a level runs; back pauses. Verify: read it back.
 
 ## 5. Device checks (human)
 
