@@ -47,9 +47,9 @@ Assign `path-1` to `path-6` in spawn order and free a colour when its aircraft l
 
 ## World zoom
 
-A level's world is 1600 by 900 world units: the 1280 by 720 playfield times one zoom factor of 1.25, the same for every level. Runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a smaller share of the screen and its surroundings show on every side. Everything that belongs to an aircraft or to the player's finger is multiplied by the same factor, so it is unchanged on screen: aircraft size and speed, the proximity warning, spawn spacing and margins, the path reach and point spacing, and the HUD band. Path strokes, the pick area and all UI are in dp and do not change.
+A level's world is 1920 by 1080 world units: the 1280 by 720 playfield times one zoom factor of 1.5 (the middle of 1 and 2), the same for every level. Runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a smaller share of the screen in the middle, with open surroundings on every side. Runway and helipad markings (threshold bars, centre line, touchdown patches, numbers, the helipad ring and H) shrink with the airfield: each is drawn as its token's value in world units, the proportions of the 64px runway and 112px helipad here. Everything that belongs to an aircraft or to the player's finger is multiplied by the same factor, so it is unchanged on screen: aircraft size and speed, the proximity warning, spawn spacing and margins, the path reach and point spacing, the HUD band, and the touchdown point the runway lead-in ends at. Path strokes, the pick area and all UI are in dp and do not change.
 
-On the reference phone (800 by 360dp, landscape) one world unit is 0.4dp: a runway is 25.6dp wide and a helipad 44.8dp across.
+On the reference phone (800 by 360dp, landscape) one world unit is 0.333dp: a runway is 21.3dp wide and a helipad 37.3dp across.
 
 ## Scenery
 
@@ -58,7 +58,7 @@ Scenery is everything on the ground that is not a landing zone: buildings, vehic
 ### How detailed scenery may be
 
 - **Lighter than aircraft.** Scenery is outlined in `line-2`; an aircraft keeps `line-3`. Inner details (patches, windows, roof ribs, crop rows, leaf clusters) are strokes in `line-fine`, the thinnest stroke in the system, used nowhere else.
-- **Strokes shrink with the airfield.** Scenery strokes are measured in world units at the scale before the world zoom, so they scale with the field like the sprite itself and are never wider on screen than their token. On the reference phone the outline is about 1dp, against 1.2dp for an aircraft.
+- **Strokes shrink with the airfield.** Scenery strokes are measured in world units, 0.8 units per dp of their token, so they scale with the field like the sprite itself and are never wider on screen than their token. On the reference phone the outline is about 0.5dp, against 1.2dp for an aircraft.
 - **No busier than an aircraft.** A scenery sprite uses at most four fill colours, counting `outline` used as a fill. That is what the light prop uses.
 - **Water is `sky-500`** everywhere: the sea, a pond and a waterhole, so it reads as water in Day, Night and Dawn.
 - **Its own colours.** Scenery never uses `path-1` to `path-6`, `sun` or the `fuselage` white, so nothing on the ground looks like an aircraft or its path. Two older parts keep an accent: the tower cab is `cherry` and the windsock is `tangerine`. Sand, soil, roofs, foam and stone have their own tokens: `sand-300`, `soil-500`, `soil-700`, `roof-500`, `foam`, `stone-300`.
@@ -67,13 +67,13 @@ Scenery is everything on the ground that is not a landing zone: buildings, vehic
 
 ### Minimum sizes
 
-Measured on the reference phone (800 by 360dp), where one world unit is 0.4dp:
+Measured on the reference phone (800 by 360dp), where one world unit is 0.333dp:
 
 | What | At least | In world units |
 |---|---|---|
-| Animals, people and vehicles, longest side | 20dp | 50 |
-| A bird, wing tip to wing tip | 16dp | 40 |
-| Any inner detail (ear, leg, window, crop row) | 3dp | 7.5 |
+| Animals, people and vehicles, longest side | 10dp | 30 |
+| A bird, wing tip to wing tip | 8dp | 24 |
+| Any inner detail (ear, leg, window, crop row) | 1.5dp | 4.5 |
 
 Sizes are level data or ambient configuration in world units, never numbers in drawing code.
 
@@ -85,7 +85,7 @@ Sizes are level data or ambient configuration in world units, never numbers in d
 
 ### Parked aircraft
 
-One generic sprite, on aprons only. It is three quarters of the light prop's size, painted `fuselage-shade` with a `glass` window, has no livery colour and no shadow, squared wing tips and a propeller that stands still. It is scenery: it cannot be picked and no rule reads it.
+One generic sprite, on aprons only. It is airfield scenery, 67.5 world units square, and shrinks with the airfield, so it is far smaller than any aircraft in play; painted `fuselage-shade` with a `glass` window, has no livery colour and no shadow, squared wing tips and a propeller that stands still. It is scenery: it cannot be picked and no rule reads it.
 
 ### Where scenery may go
 

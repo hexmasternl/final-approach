@@ -4,7 +4,8 @@ import nl.hexmaster.finalapproach.domain.CollisionShape.Companion.mirrored
 
 /**
  * What every aircraft of one type shares. [speed] is in world units per second, [turnRate] in
- * radians per second, [radius] in world units (the sprite is drawn [spriteSize] wide).
+ * radians per second, [radius] in world units (the sprite is drawn [spriteSize] wide). [turnRate]
+ * only sets the length of the runway lead-in; it does not limit any turn.
  * [shape] is what the aircraft collides with.
  */
 data class AircraftTypeSpec(
@@ -29,29 +30,29 @@ data class AircraftTypeSpec(
  * as fast on screen as before. Turn rates stay, so turning circles grow with the zoom too.
  */
 object DefaultAircraftSpecs {
-    val helicopter = spec(baseSpeed = 40.0, turnRate = 3.0, landingPoints = 10, baseRadius = 26.0) {
+    val helicopter = spec(baseSpeed = AircraftSpeeds.HELICOPTER, turnRate = 3.0, landingPoints = 10, baseRadius = 26.0) {
         // Rotor disc and tail rotor.
         mirrored(0.0, -4.0, 42.0) + mirrored(0.0, 38.0, 6.0)
     }
-    val lightProp = spec(baseSpeed = 55.0, turnRate = 1.6, landingPoints = 20, baseRadius = 24.0) {
+    val lightProp = spec(baseSpeed = AircraftSpeeds.LIGHT_PROP, turnRate = 1.6, landingPoints = 20, baseRadius = 24.0) {
         // Propeller, fuselage, straight wing, tailplane.
         mirrored(0.0, -38.0, 5.0) + mirrored(0.0, -22.0, 11.0) + mirrored(0.0, 0.0, 11.0) +
             mirrored(0.0, 22.0, 9.0) + mirrored(18.0, -6.5, 8.5) + mirrored(33.5, -6.5, 8.5) +
             mirrored(12.0, 29.5, 5.5)
     }
-    val turboprop = spec(baseSpeed = 75.0, turnRate = 1.2, landingPoints = 30, baseRadius = 28.0) {
+    val turboprop = spec(baseSpeed = AircraftSpeeds.TURBOPROP, turnRate = 1.2, landingPoints = 30, baseRadius = 28.0) {
         // Fuselage, long straight wing with engines, tailplane.
         mirrored(0.0, -30.0, 9.5) + mirrored(0.0, -10.0, 9.5) + mirrored(0.0, 10.0, 9.0) +
             mirrored(0.0, 30.0, 8.0) + mirrored(18.0, -2.5, 7.5) + mirrored(32.0, -2.5, 7.5) +
             mirrored(41.0, -2.5, 5.0) + mirrored(11.0, 33.0, 5.0)
     }
-    val jet = spec(baseSpeed = 100.0, turnRate = 0.9, landingPoints = 50, baseRadius = 30.0) {
+    val jet = spec(baseSpeed = AircraftSpeeds.JET, turnRate = 0.9, landingPoints = 50, baseRadius = 30.0) {
         // Fuselage, swept wing, tailplane.
         mirrored(0.0, -32.0, 9.0) + mirrored(0.0, -14.0, 9.0) + mirrored(0.0, 4.0, 9.0) +
             mirrored(0.0, 22.0, 8.0) + mirrored(0.0, 38.0, 7.0) + mirrored(18.0, 6.0, 8.0) +
             mirrored(32.0, 13.0, 6.0) + mirrored(12.0, 38.0, 5.0)
     }
-    val jumbo = spec(baseSpeed = 130.0, turnRate = 0.6, landingPoints = 80, baseRadius = 44.0) {
+    val jumbo = spec(baseSpeed = AircraftSpeeds.JUMBO, turnRate = 0.6, landingPoints = 80, baseRadius = 22.0) {
         // Wide fuselage, swept wing with four engines, tailplane.
         mirrored(0.0, -32.0, 12.0) + mirrored(0.0, -10.0, 12.0) + mirrored(0.0, 12.0, 12.0) +
             mirrored(0.0, 32.0, 10.0) + mirrored(20.0, 4.0, 10.0) + mirrored(36.0, 12.0, 7.0) +
@@ -66,13 +67,12 @@ object DefaultAircraftSpecs {
         AircraftType.Jumbo to jumbo,
     )
 
-    /** Types from slowest to fastest, the order the defaults keep. */
+    /** Types from slowest to fastest, the order the defaults keep. The jumbo is not part of it. */
     val speedOrder: List<AircraftType> = listOf(
         AircraftType.Helicopter,
         AircraftType.LightProp,
         AircraftType.Turboprop,
         AircraftType.Jet,
-        AircraftType.Jumbo,
     )
 
     /**

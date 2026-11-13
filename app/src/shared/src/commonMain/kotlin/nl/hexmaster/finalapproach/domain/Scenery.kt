@@ -57,16 +57,14 @@ data class SceneryItem(
     val isGround: Boolean get() = kind.ground
 }
 
-/**
- * Sizes of scenery, in world units. Scenery belongs to the airfield, so none of these follow the
- * world zoom, except the parked aircraft, which is measured against a flying one.
- */
+/** Sizes of scenery, in world units. Scenery belongs to the airfield, so none of these follow the world zoom. */
 object SceneryDefaults {
-    /** A parked aircraft is this fraction of the flying light prop, so it is never taken for one in play. */
-    const val PARKED_AIRCRAFT_SCALE = 0.75
-
-    /** Width and height of a parked aircraft. */
-    val PARKED_AIRCRAFT_SIZE: Double = DefaultAircraftSpecs.lightProp.spriteSize * PARKED_AIRCRAFT_SCALE
+    /**
+     * Width and height of a parked aircraft. It belongs to the airfield and shrinks with it, so it
+     * fits its apron and is always much smaller than any aircraft in play, which is never taken
+     * for one of them.
+     */
+    const val PARKED_AIRCRAFT_SIZE = 67.5
 
     /** Distance between two crop rows of a field. */
     const val FIELD_ROW_SPACING = 12.0

@@ -24,6 +24,13 @@ sealed interface AircraftStatus {
     data class ClearedToLand(val zone: LandingZone) : AircraftStatus
 
     /**
+     * A helicopter that reached the end of its path on the helipad, descending for [elapsed]
+     * seconds so far. It stands still, cannot collide, be picked or be re-routed, and is removed
+     * (and counted as landed) when the sequence ends.
+     */
+    data class Landing(val elapsed: Double = 0.0) : AircraftStatus
+
+    /**
      * An airplane on runway [runwayId] after touchdown, rolling along [direction] for [remaining]
      * more world units, then fading out for [fadeElapsed] seconds so far. [elapsed] is the time
      * since touchdown, in seconds.

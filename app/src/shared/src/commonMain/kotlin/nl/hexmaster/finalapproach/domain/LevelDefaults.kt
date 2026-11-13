@@ -13,9 +13,10 @@ object LevelDefaults {
      * [BASE_WORLD_HEIGHT] times this. Runways, helipads, landing zones and scenery keep their
      * world sizes, so the airfield takes a smaller share of the screen. Every world-unit value
      * that belongs to an aircraft or to the player's finger is multiplied by it, so aircraft
-     * look, move, warn and spawn on screen as they did before the zoom-out.
+     * look, move, warn and spawn on screen as they did before the zoom-out. At 1.5, the midpoint of
+     * the original world (1) and a doubled world (2), the world is 1920 by 1080.
      */
-    const val WORLD_ZOOM = 1.25
+    const val WORLD_ZOOM = 1.5
 
     /** Size of the world before the zoom-out, in world units. */
     const val BASE_WORLD_WIDTH = 1280.0
@@ -99,8 +100,14 @@ object LevelDefaults {
     /** How long a rolled-out airplane takes to fade away, in seconds. */
     const val LANDED_FADE_SECONDS = 0.5
 
-    /** Distance from the threshold to the touchdown point on the centre line, in world units. */
-    const val TOUCHDOWN_DISTANCE = 40.0
+    /** How long a helicopter takes to descend and land on its helipad, in seconds. */
+    const val HELICOPTER_LANDING_SECONDS = 3.0
+
+    /**
+     * Distance from the threshold to the touchdown point on the centre line, in world units. The
+     * lead-in to it is flown on the aircraft's turning circle, so it follows the zoom.
+     */
+    const val TOUCHDOWN_DISTANCE = 32.0 * WORLD_ZOOM
 
     /** How far back along the drawn path the runway lead-in starts, in turning radii. */
     const val LEAD_IN_TURNING_RADII = 2.0
@@ -111,6 +118,9 @@ object LevelDefaults {
     /** Seconds an airplane takes after touchdown to change from its flight speed to the landing speed. */
     const val ROLLOUT_DECELERATION_SECONDS = 1.0
 
-    /** The aircraft type whose flight speed is the landing speed every airplane rolls out at. */
+    /** The aircraft type whose flight speed, times [LANDING_SPEED_FACTOR], is the landing speed every airplane rolls out at. */
     val LANDING_SPEED_REFERENCE = AircraftType.LightProp
+
+    /** The landing speed as a fraction of the reference type's flight speed. 1 keeps the full reference speed. */
+    const val LANDING_SPEED_FACTOR = 0.5
 }

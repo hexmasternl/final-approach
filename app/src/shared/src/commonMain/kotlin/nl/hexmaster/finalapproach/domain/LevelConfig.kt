@@ -106,8 +106,9 @@ data class HelipadConfig(
  * [touchdownDistance] past the threshold, through a lead-in that starts [leadInTurningRadii]
  * turning radii back along the drawn path, with Bezier handles of [leadInHandleFraction] of the
  * lead-in's chord. Every airplane rolls out at the landing speed, the flight speed of
- * [landingSpeedReference]; it changes steadily from its own flight speed to that over
- * [rolloutDecelerationSeconds] after touchdown.
+ * [landingSpeedReference] times [landingSpeedFactor]; it changes steadily from its own flight speed to that over
+ * [rolloutDecelerationSeconds] after touchdown. A helicopter that reaches the end of its path lands
+ * through a descent of [helicopterLandingSeconds].
  */
 data class LandingConfig(
     val helipadZoneRadius: Double = LevelDefaults.HELIPAD_ZONE_RADIUS,
@@ -121,6 +122,8 @@ data class LandingConfig(
     val leadInHandleFraction: Double = LevelDefaults.LEAD_IN_HANDLE_FRACTION,
     val rolloutDecelerationSeconds: Double = LevelDefaults.ROLLOUT_DECELERATION_SECONDS,
     val landingSpeedReference: AircraftType = LevelDefaults.LANDING_SPEED_REFERENCE,
+    val landingSpeedFactor: Double = LevelDefaults.LANDING_SPEED_FACTOR,
+    val helicopterLandingSeconds: Double = LevelDefaults.HELICOPTER_LANDING_SECONDS,
 )
 
 /**

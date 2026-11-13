@@ -151,8 +151,7 @@ class LevelLayoutsTest {
 
     @Test
     fun parkedAircraftAreSmallerThanAnyAircraftInPlay() {
-        val lightProp = DefaultAircraftSpecs.lightProp.spriteSize
-        assertEquals(0.75 * lightProp, SceneryDefaults.PARKED_AIRCRAFT_SIZE, 1e-9)
+        assertEquals(67.5, SceneryDefaults.PARKED_AIRCRAFT_SIZE)
         val smallestInPlay = DefaultAircraftSpecs.all.values.minOf { it.spriteSize }
         Levels.all.forEach { level ->
             level.scenery.filter { it.kind == SceneryKind.ParkedAircraft }.forEach {
@@ -178,7 +177,7 @@ class LevelLayoutsTest {
 
     @Test
     fun animalsPeopleAndVehiclesAreLargeEnoughToReadOnAPhone() {
-        // 20dp on the 800 by 360dp reference phone, where a world unit is 0.4dp.
+        // 10dp on the 800 by 360dp reference phone, where a world unit is 0.2dp.
         val minimum = 50.0
         val kinds = setOf(
             SceneryKind.Car, SceneryKind.FuelTruck, SceneryKind.BaggageCart, SceneryKind.ParkedAircraft,

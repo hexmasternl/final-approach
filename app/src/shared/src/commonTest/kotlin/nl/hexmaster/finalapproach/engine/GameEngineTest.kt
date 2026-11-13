@@ -4,6 +4,7 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.AltitudeState
+import nl.hexmaster.finalapproach.domain.LevelDefaults
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.domain.meadow
@@ -166,7 +167,7 @@ class GameEngineTest {
     @Test
     fun closeAircraftAreWarnedUntilTheySeparate() {
         val engine = GameEngine(quiet, seed = 1)
-        engine.place(listOf(jet(1, Vec2(560.0, 200.0), -PI / 2), jet(2, Vec2(660.0, 200.0), PI / 2)))
+        engine.place(listOf(jet(1, Vec2(560.0, 200.0), -PI / 2), jet(2, Vec2(560.0 + 80.0 * zoom, 200.0), PI / 2)))
         assertEquals(setOf(1, 2), engine.state.value.warnedAircraft)
         engine.update(0.02)
         assertEquals(setOf(1, 2), engine.state.value.warnedAircraft)
@@ -181,9 +182,9 @@ class GameEngineTest {
         engine.place(
             listOf(
                 jet(1, Vec2(500.0, 200.0), 0.0),
-                jet(2, Vec2(600.0, 200.0), 0.0),
-                jet(3, Vec2(550.0, 280.0), 0.0),
-                jet(4, Vec2(900.0, 200.0), 0.0),
+                jet(2, Vec2(500.0 + 80.0 * zoom, 200.0), 0.0),
+                jet(3, Vec2(500.0 + 40.0 * zoom, 200.0 + 64.0 * zoom), 0.0),
+                jet(4, Vec2(500.0 + 320.0 * zoom, 200.0), 0.0),
             ),
         )
         assertEquals(setOf(1, 2, 3), engine.state.value.warnedAircraft)
@@ -341,7 +342,11 @@ class GameEngineTest {
         engine.extendPath(1, pad)
         val cleared = engine.aircraft(1)
         assertIs<AircraftStatus.ClearedToLand>(cleared.status)
-        val touchingDown = cleared.copy(position = pad, path = cleared.path.copy(points = emptyList()))
+        val touchingDown = cleared.copy(
+            position = pad,
+            path = cleared.path.copy(points = emptyList()),
+            status = AircraftStatus.Landing(level.landing.helicopterLandingSeconds - 0.001),
+        )
         engine.place(listOf(touchingDown, jet(2, Vec2(300.0, 300.0)), jet(3, Vec2(300.0, 300.0))))
         engine.update(dt)
         val state = engine.state.value
@@ -352,5 +357,100 @@ class GameEngineTest {
 
     private fun jet(id: Int, position: Vec2, heading: Double = 0.0) = Aircraft(id, AircraftType.Jet, position, heading)
 
+    /** Gaps between aircraft are written in units before the world zoom-out and follow it. */
+    private val zoom = LevelDefaults.WORLD_ZOOM
+
     private fun GameEngine.aircraft(id: Int) = assertNotNull(state.value.aircraft.firstOrNull { it.id == id })
+
+    @Test
+    fun aTapOnAClearedAirplaneCancelsTheLandingAndItFliesStraightOn() {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(listOf(jet(1, meadow(150.0, 400.0), PI / 2).copy(hasEnteredViewport = true)))
+        engine.beginPath(1)
+        engine.extendPath(1, meadow(250.0, 400.0))
+        engine.extendPath(1, meadow(400.0, 400.0))
+        assertIs<AircraftStatus.ClearedToLand>(engine.aircraft(1).status)
+        engine.clearPath(1)
+        assertEquals(AircraftStatus.Flying, engine.aircraft(1).status)
+        assertTrue(engine.aircraft(1).path.isEmpty)
+        val heading = engine.aircraft(1).heading
+        engine.run(1.0)
+        assertEquals(heading, engine.aircraft(1).heading)
+        assertEquals(0, engine.state.value.landings)
+    }
+
+    @Test
+    fun aClearedHelicopterReRoutedAwayDoesNotLandAndOneReRoutedBackDoes() {
+        val engine = GameEngine(quiet, seed = 1)
+        val helipad = level.helipads.single().position
+        engine.place(listOf(Aircraft(1, AircraftType.Helicopter, helipad + Vec2(0.0, -200.0), PI).copy(hasEnteredViewport = true)))
+        engine.beginPath(1)
+        engine.extendPath(1, helipad)
+        assertIs<AircraftStatus.ClearedToLand>(engine.aircraft(1).status)
+        engine.beginPath(1)
+        assertEquals(AircraftStatus.Flying, engine.aircraft(1).status)
+        engine.extendPath(1, helipad + Vec2(-300.0, -200.0))
+        engine.endPath(1)
+        engine.run(1.0)
+        assertEquals(0, engine.state.value.landings)
+        val position = engine.aircraft(1).position
+        engine.beginPath(1)
+        engine.extendPath(1, helipad)
+        assertIs<AircraftStatus.ClearedToLand>(engine.aircraft(1).status)
+        assertEquals(position, engine.aircraft(1).position)
+    }
+
+    @Test
+    fun aHelicopterLandsThroughATimedSequenceAndIsCountedOnceAtTheEnd() {
+        val seconds = quiet.landing.helicopterLandingSeconds
+        val engine = GameEngine(quiet, seed = 1)
+        val pad = level.helipads.single().position
+        engine.place(listOf(Aircraft(1, AircraftType.Helicopter, pad + Vec2(0.0, -100.0), PI, hasEnteredViewport = true)))
+        engine.beginPath(1)
+        engine.extendPath(1, pad)
+        var sequenceStart: Double? = null
+        var landedAt: Double? = null
+        engine.run(30.0) { state ->
+            val heli = state.aircraft.firstOrNull { it.id == 1 }
+            if (heli?.status is AircraftStatus.Landing && sequenceStart == null) sequenceStart = state.levelTime
+            if (heli == null && landedAt == null) landedAt = state.levelTime
+            if (landedAt == null) assertEquals(0, state.landings)
+        }
+        val start = assertNotNull(sequenceStart)
+        val end = assertNotNull(landedAt)
+        assertTrue(end - start >= seconds - dt && end - start <= seconds + 2 * dt, "sequence took ${end - start}")
+        assertEquals(1, engine.state.value.landings)
+    }
+
+    @Test
+    fun anAircraftOverAHelipadDoesNotCollideWithALandingHelicopterButOthersStillDo() {
+        val engine = GameEngine(quiet, seed = 1)
+        val pad = level.helipads.single().position
+        val landing = Aircraft(1, AircraftType.Helicopter, pad, PI, hasEnteredViewport = true)
+            .copy(status = AircraftStatus.Landing(0.0))
+        engine.place(listOf(landing, jet(2, pad), jet(3, Vec2(300.0, 300.0)), jet(4, Vec2(300.0, 300.0))))
+        assertEquals(listOf(3 to 4), Collisions.find(engine.state.value.aircraft, engine.specs))
+        assertTrue(1 !in engine.state.value.warnedAircraft)
+    }
+
+    @Test
+    fun aLandingHelicopterCannotBePickedOrReRouted() {
+        val engine = GameEngine(quiet, seed = 1)
+        val pad = level.helipads.single().position
+        val landing = Aircraft(1, AircraftType.Helicopter, pad, PI, hasEnteredViewport = true)
+            .copy(status = AircraftStatus.Landing(0.5))
+        engine.place(listOf(landing))
+        assertEquals(null, engine.select(pad, 100.0))
+        engine.beginPath(1)
+        assertEquals(landing, engine.aircraft(1))
+    }
+
+    @Test
+    fun aHelicopterBeforeTheSequenceStillCollides() {
+        val engine = GameEngine(quiet, seed = 1)
+        val pad = level.helipads.single().position
+        val heli = Aircraft(1, AircraftType.Helicopter, pad + Vec2(0.0, -100.0), PI, hasEnteredViewport = true)
+        engine.place(listOf(heli, jet(2, pad + Vec2(0.0, -100.0))))
+        assertEquals(listOf(1 to 2), Collisions.find(engine.state.value.aircraft, engine.specs))
+    }
 }

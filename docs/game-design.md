@@ -9,15 +9,15 @@ A top-down, cartoon-style view of an airport. Aircraft enter the viewport from t
 - Layouts are defined per level as data (positions, orientation, size).
 
 ## Aircraft
-| Type | Kind | Speed (units/s) | Turn rate | Landing points | Lands on |
+| Type | Kind | Speed (units/s) | Turn rate (lead-in length only) | Landing points | Lands on |
 |------|------|-----------------|-----------|----------------|----------|
-| Helicopter | Helicopter | 50 (slowest) | Very high | 10 | Helipad |
-| Light prop | Airplane | 68.75 | High | 20 | Runway |
-| Turboprop | Airplane | 93.75 | Medium | 30 | Runway |
-| Jet | Airplane | 125 | Low | 50 | Runway |
-| Jumbo | Airplane | 162.5 (fastest) | Very low | 80 | Runway |
+| Helicopter | Helicopter | 30 (slowest) | Very high | 10 | Helipad |
+| Light prop | Airplane | 55 | High | 20 | Runway |
+| Turboprop | Airplane | 75 | Medium | 30 | Runway |
+| Jet | Airplane | 100 | Low | 50 | Runway |
+| Jumbo | Airplane | 97.5 | Very low | 80 | Runway |
 
-Values are defaults in `DefaultAircraftSpecs` and are tunable. Each speed is its value in the former 1280 by 720 world (40, 55, 75, 100, 130) times the world zoom of 1.25 (see World size and zoom), so every type crosses the screen in the same time as before. Speed rises from helicopter to jumbo, each type at least 15% faster than the one before, so the gaps show in play. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings. The jumbo is the fastest, balanced by its very low turn rate.
+Values are defaults in `DefaultAircraftSpecs` and are tunable. The default flight speeds live in one parameter file, `domain/AircraftSpeeds.kt`, at zoom factor 1: helicopter 20, light prop 36.67, turboprop 50, jet 66.67 and jumbo 65. `DefaultAircraftSpecs` multiplies them by the world zoom of 1.5 (see World size and zoom). Speed rises from helicopter to jet, each type at least 15% faster than the one before, so the gaps show in play; the jumbo (half the former size and half the former speed) is about as fast as the jet and is not part of that ordering. Differing speeds are the core challenge: faster planes catch up with slower ones, so the player must sequence landings.
 
 Every aircraft of a type flies at exactly the same speed, with no random variation, and its speed never changes during a run.
 
@@ -28,11 +28,11 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 1. **Tap** an aircraft to select it. The pick area is at least 72dp, and the nearest aircraft wins.
 2. **Drag** to draw a path; the path is shown as a dashed cartoon line.
 3. The aircraft follows the path at its own speed.
-4. Touching an aircraft removes its old path at once. A tap without a drag leaves it without a path, so it flies straight on in its current heading (cancel); a drag draws the replacement (redraw). An aircraft already cleared to land keeps its locked path.
+4. Touching an aircraft removes its old path at once. A tap without a drag leaves it without a path, so it flies straight on in its current heading (cancel); a drag draws the replacement (redraw). This holds for an aircraft cleared to land too: touching it cancels the clearance, and it can be re-routed until it has landed (an airplane at touchdown, a helicopter when its landing sequence starts).
 
 ## Flight behaviour
-- When the player lifts their finger (or the path enters a landing zone), the drawn path is smoothed for that aircraft's type: finger jitter is removed, corners are cut, and no corner is left tighter than a little more than the type's turning radius (speed / turn rate). A gentle path stays within a few world units of what was drawn; a sharp corner becomes a curve the aircraft can fly. The end of the path stays exactly where it was drawn, so a path ending on a landing zone still lands.
-- The aircraft follows its path strictly: it turns towards a point a short lookahead further along the path, no faster than its turn rate. Progress along the path only moves forward, so it never turns back to a point it has passed and never circles.
+- When the player lifts their finger (or the path enters a landing zone), the drawn path is smoothed: finger jitter is removed and corners are rounded. There is no turn limit. A gentle path stays within a few world units of what was drawn; a sharp corner becomes a short curve. The end of the path stays exactly where it was drawn, so a path ending on a landing zone still lands.
+- The aircraft follows its path exactly: it moves along it at its type's speed with its heading always along the path, so it stays on the line through every corner. Progress along the path only moves forward. When the path ends it flies straight on in its last heading.
 - On path end the aircraft flies straight on in its last heading (no auto-landing, no auto-turn).
 - A path that enters a valid landing zone (runway threshold for airplanes, helipad for helicopters) clears the aircraft to land: the path is cut off where it entered the zone, flashes white once, and takes no more drag points. At a helipad the path ends at that entry point. At a runway the end of the path is snapped onto the runway centre line: a smooth lead-in leaves the drawn path about two turning radii before the zone, without a corner, and joins the centre line in the landing direction, so an entry near a side edge still lands in the middle of the runway. The shown path is the snapped path. Score is awarded at touchdown.
 - A path over the wrong zone type, or over the middle of a runway, does nothing; the path continues as drawn.
@@ -41,12 +41,12 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 ## Landing rules
 - Landing zones are invisible. A helipad's zone is a circle on the pad (radius configurable per helipad). A runway has a zone at each threshold it can be landed from: one for a one-way runway, two for a two-way runway, with opposite landing directions.
 - Airplane: the path must enter a runway threshold zone with its direction within the alignment tolerance (default 30 degrees) of that zone's landing direction. A steep crossing or the wrong direction on a one-way runway does nothing.
-- Helicopter: the path enters the helipad zone; no alignment is needed. It lands at the end of its path and is removed.
-- Airplane touchdown and rollout: the airplane touches down at the end of its snapped path, on the centre line a short distance (default 40 world units) past the threshold, or level with the point where the path entered the zone when that is farther in. It then rolls on along the centre line in the zone's landing direction for two thirds of the runway length, then fades out and is removed. Every airplane rolls out at the same landing speed, the flight speed of the light prop: it touches down at its own flight speed and slows to the landing speed within 1 second, so a faster airplane landing behind a slower one does not catch up with it on the runway. On a two-way runway, the zone that was entered decides the direction. Airplanes rolling out on one runway in the same direction never collide with each other; rolling airplanes can still collide with anything else on the ground.
+- Helicopter: the path enters the helipad zone; no alignment is needed. At the end of its path it stands on the pad and lands through a landing sequence of 3 seconds (`helicopterLandingSeconds`, configurable), descending onto its shadow. During the sequence it cannot collide with any other aircraft, has no proximity ring, and cannot be picked or re-routed. When the sequence ends the landing is counted and scored once, and the helicopter is removed.
+- Airplane touchdown and rollout: the airplane touches down at the end of its snapped path, on the centre line a short distance (default 32 times the world zoom, 48 world units) past the threshold, or level with the point where the path entered the zone when that is farther in. It then rolls on along the centre line in the zone's landing direction for two thirds of the runway length, then fades out and is removed. Every airplane rolls out at the same landing speed, half the flight speed of the light prop (the landing speed factor, 0.5): the light prop slows down too; every airplane touches down at its own flight speed and slows to the landing speed within 1 second, so a faster airplane landing behind a slower one does not catch up with it on the runway. On a two-way runway, the zone that was entered decides the direction. Airplanes rolling out on one runway in the same direction never collide with each other; rolling airplanes can still collide with anything else on the ground.
 - With reduced motion the path does not flash; it turns solid white until the aircraft lands.
 
 ## Failure and scoring
-- **Collision**: two aircraft collide when their shapes touch: each type has a collision shape traced from its sprite (a few circles along fuselage and wings), turned with the aircraft. Flying close is allowed; touching ends the level. The test is swept over each simulation step, so fast aircraft cannot pass through each other. Every aircraft is either In Flight or Landed (a state, no numeric altitude). It spawns In Flight and becomes Landed at touchdown, just after the start of the runway or on the pad; it stays Landed during rollout. Only aircraft with the same state collide: a flying aircraft passes over one that has landed, and two airplanes rolling out on one runway in the same direction (fading ones included) never collide, because all airplanes roll out at the light prop's speed. Rollouts in opposite directions, or on different runways, still collide. Removed aircraft never collide.
+- **Collision**: two aircraft collide when their shapes touch: each type has a collision shape traced from its sprite (a few circles along fuselage and wings), turned with the aircraft. Flying close is allowed; touching ends the level. The test is swept over each simulation step, so fast aircraft cannot pass through each other. Every aircraft is either In Flight or Landed (a state, no numeric altitude). It spawns In Flight and becomes Landed at touchdown, just after the start of the runway or on the pad; it stays Landed during rollout. Only aircraft with the same state collide: a flying aircraft passes over one that has landed, and two airplanes rolling out on one runway in the same direction (fading ones included) never collide, because all airplanes reach one shared landing speed (half the light prop's flight speed). Rollouts in opposite directions, or on different runways, still collide. Removed aircraft never collide.
 - **Left the area**: an aircraft that has been on screen and leaves it, beyond the leave margin, without landing ends the level.
 - **Game over**: the first collision or departure ends the level at once. The game freezes on that frame and remembers why and which aircraft; input and spawning stop. A game-ended dialog then shows what happened, how many aircraft of each type landed, the total and the points, with Try again and Main page. A full-width ad banner sits directly under the dialog.
 - **HUD**: one compact row along the top edge, as the design system's Hud Bar. Top left the best score for the level (compact, with a star) and the current score; scores of 1000 or more group thousands with a thin space (`12 450`). The HUD stays inside the top band of the world that no landing zone enters. Top right a cog wheel pauses the game (no movement, spawning or input) and opens the options panel: Continue, Restart, Quit. Back opens the same panel. The best score is stored per level on the device.
@@ -55,25 +55,26 @@ A level can set a speed multiplier and per-type speeds, and a points multiplier 
 - Difficulty rises over time: spawn rate and aircraft variety increase.
 
 ## World size and zoom
-Every level is played in a world of 1600 by 900 world units: the former 1280 by 720 world times one zoom factor, `LevelDefaults.WORLD_ZOOM` = 1.25, the same for all levels. The camera is pulled back: runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a smaller share of the screen and its surroundings show on every side.
+Every level is played in a world of 1920 by 1080 world units: the former 1280 by 720 world times one zoom factor, `LevelDefaults.WORLD_ZOOM` = 1.5, the same for all levels. The factor is the middle between the original size (1) and a doubled world (2), which was too far out. The camera is pulled back: runways, helipads, landing zones and scenery keep their world sizes, so the airfield takes a smaller share of the screen in the middle, with open surroundings on every side for aircraft to fly and line up in. Each level's layout sits in the middle of the world, and its scenery reaches out to the edges.
 
 What belongs to an aircraft or to the player's finger is multiplied by the same factor, so it is unchanged on screen:
 
-| Multiplied by the zoom | Before | Now |
+| Multiplied by the zoom | Base | Now |
 |---|---|---|
-| Aircraft speed | 40 to 130 | 50 to 162.5 |
-| Aircraft radius, and with it sprite size and collision shape | 24 to 44 | 30 to 55 |
-| Warning distance | 150 | 187.5 |
-| Spawn separation | 160 | 200 |
-| Spawn margin and leave margin | 60 | 75 |
-| HUD band at the top of the world | 160 | 200 |
-| Path reach radius, minimum point spacing, smoothing tolerance | 6, 12, 4 | 7.5, 15, 5 |
+| Aircraft speed | 20 to 66.67 | 30 to 100 |
+| Aircraft radius, and with it sprite size and collision shape | 22 to 30 | 33 to 45 |
+| Warning distance | 150 | 225 |
+| Spawn separation | 160 | 240 |
+| Spawn margin and leave margin | 60 | 90 |
+| HUD band at the top of the world | 160 | 240 |
+| Path reach radius, minimum point spacing, smoothing tolerance | 6, 12, 4 | 9, 18, 6 |
+| Touchdown distance past the threshold | 32 | 48 |
 
-Turn rates, all timings, the landing tolerance and every fraction stay; turning circles (speed divided by turn rate) therefore grow with the zoom and look the same on screen. Runway width (64), helipad radius (56), the landing zone sizes and the touchdown distance stay too, so on screen they are a fifth smaller: on an 800 by 360dp phone a runway is 25.6dp wide and a helipad 44.8dp across. The pick area and the path strokes are in dp and do not change. Any new world-unit distance that describes an aircraft or the finger must be written as its base value times `WORLD_ZOOM`.
+The turn rate (it only sets the runway lead-in length), all timings, the landing tolerance and every fraction stay; the lead-in length (speed divided by turn rate) therefore grows with the zoom and looks the same on screen. So the touchdown point it ends at follows the zoom too. Runway width (64), helipad radius (56), runway lengths, the landing zone sizes and all scenery, the parked aircraft included, stay, so on screen they are smaller than in the 1280 by 720 world: on an 800 by 360dp phone a world unit is 0.333dp, a runway is 21.3dp wide and a helipad 37.3dp across. Runway and helipad markings (bars, numbers, the helipad ring and H) shrink with them. The pick area and the path strokes are in dp and do not change. Any new world-unit distance that describes an aircraft or the finger must be written as its base value times `WORLD_ZOOM`.
 
 ## Levels
 A level is a `LevelConfig` in code (`domain/Levels.kt`), validated before it is played. It holds:
-- **World:** the viewport size in world units (1600 by 900 for every level), the spawn margin, the leave margin, the spawn separation, the warning distance and the longest simulation step.
+- **World:** the viewport size in world units (1920 by 1080 for every level), the spawn margin, the leave margin, the spawn separation, the warning distance and the longest simulation step.
 - **Zones:** runways (position, axis orientation, length, width, mode) and helipads (position, radius). Zones lie inside the viewport and never overlap.
 - **Runway mode:** *one-way* accepts landings on one heading only; *two-way* accepts both ends, and the approach picks the end. Approaches within the landing tolerance (default 30 degrees) of a landing heading count as aligned. The runway number is the landing heading in tens of degrees (`09`, `27`).
 - **Difficulty curve:** a list of phases. Each phase starts at a level time and sets the spawn interval range, the weight of each allowed aircraft type and the maximum number of aircraft in the air. The active phase is the last one that has started; phases step, they do not blend.
@@ -91,7 +92,7 @@ Levels 2 and 3 are set on an island (a beach with waves, palms and a jetty, and 
 Scenery is decoration only: no game rule reads it, and a seeded run plays out the same with a level's scenery removed. It is level data (`SceneryItem`: a kind, a centre, a size and a rotation, in world units) and is validated with the level:
 - No scenery covers a runway, a helipad or a landing zone.
 - Only flat ground (taxiways, aprons, fields, roads, ponds, waterholes, jetties) may lie under the HUD band; buildings, plants, vehicles, animals and people stay below it, and so do the ambient birds and boats.
-- A parked aircraft stands on an apron. It is three quarters of the light prop's size, has no livery and no shadow, and cannot be selected.
+- A parked aircraft stands on an apron. It is airfield scenery and shrinks with the airfield (67.5 world units square, less than half the flying light prop), has no livery and no shadow, and cannot be selected.
 
 Ambient life is decoration too: cows wander inside the paddock beside a farmer, a flock of three birds with flapping wings crosses now and then, a boat with a wake sails past the island, and at dawn the tower beacon and the aircraft lights glow. With reduced motion no bird or boat appears, wings and cows hold still, and the lights are steady. How scenery looks is set by the design system (`docs/design-system/world.md`).
 

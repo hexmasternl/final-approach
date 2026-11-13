@@ -25,6 +25,7 @@ object AircraftMotion {
         AircraftStatus.Flying -> MotionResult(PathFollower.step(aircraft, specs, deltaSeconds))
         is AircraftStatus.ClearedToLand -> approach(aircraft, status.zone, specs, deltaSeconds)
         is AircraftStatus.RollingOut -> rollOut(aircraft, status, specs, landing, deltaSeconds)
+        is AircraftStatus.Landing -> descend(aircraft, status, landing, deltaSeconds)
     }
 
     private fun approach(
@@ -38,7 +39,7 @@ object AircraftMotion {
         val touchdown = aircraft.path.points.lastOrNull() ?: moved.position
         val landed = GameEvent.Landed(aircraft.id, aircraft.type)
         if (aircraft.type.kind == AircraftKind.Helicopter || zone !is LandingZone.Runway) {
-            return MotionResult(null, listOf(landed))
+            return MotionResult(moved.copy(position = touchdown, status = AircraftStatus.Landing()))
         }
         val rolling = moved.copy(
             position = touchdown,
@@ -47,6 +48,20 @@ object AircraftMotion {
             status = AircraftStatus.RollingOut(zone.direction, zone.rolloutDistance, zone.runwayId),
         )
         return MotionResult(rolling, listOf(landed))
+    }
+
+    /** A helicopter stands on its pad for [LandingConfig.helicopterLandingSeconds], then has landed. */
+    private fun descend(
+        aircraft: Aircraft,
+        status: AircraftStatus.Landing,
+        landing: LandingConfig,
+        deltaSeconds: Double,
+    ): MotionResult {
+        val elapsed = status.elapsed + deltaSeconds
+        if (elapsed >= landing.helicopterLandingSeconds) {
+            return MotionResult(null, listOf(GameEvent.Landed(aircraft.id, aircraft.type)))
+        }
+        return MotionResult(aircraft.copy(status = status.copy(elapsed = elapsed)))
     }
 
     private fun rollOut(
@@ -75,7 +90,7 @@ object AircraftMotion {
     /**
      * The distance rolled between [from] and [to] seconds after touchdown. The speed changes
      * linearly from the airplane's flight speed to the landing speed (the flight speed of
-     * [LandingConfig.landingSpeedReference]) over [LandingConfig.rolloutDecelerationSeconds], then
+     * [LandingConfig.landingSpeedReference] times [LandingConfig.landingSpeedFactor]) over [LandingConfig.rolloutDecelerationSeconds], then
      * stays there. The distance is the exact integral, so it does not depend on the step size.
      */
     private fun rolloutDistance(
@@ -86,7 +101,7 @@ object AircraftMotion {
         to: Double,
     ): Double {
         val flight = specs[aircraft.type].speed
-        val landed = specs[landing.landingSpeedReference].speed
+        val landed = specs[landing.landingSpeedReference].speed * landing.landingSpeedFactor
         val decel = landing.rolloutDecelerationSeconds
         fun travelled(t: Double): Double =
             if (decel <= 0.0) {

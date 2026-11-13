@@ -89,7 +89,7 @@ fa-silhouette { display: block; width: 100%; }
 .fa-path-casing { stroke: var(--outline); stroke-width: var(--path-casing); }
 .fa-path-dash { stroke: var(--fa-livery, var(--path-1)); stroke-width: var(--path-stroke); }
 .fa-path-ghost { stroke: var(--outline); stroke-width: 4; stroke-dasharray: 2 12; opacity: var(--opacity-ghost); }
-.fa-path-dot { fill: var(--fa-livery, var(--path-1)); stroke: var(--outline); stroke-width: 4; }
+.fa-path-dot { fill: var(--fa-livery, var(--path-1)); stroke: var(--outline); stroke-width: 3; }
 .fa-path--idle { opacity: var(--opacity-path-idle); }
 .fa-path--march .fa-path-casing, .fa-path--march .fa-path-dash { animation: fa-march var(--dur-march) linear infinite; }
 

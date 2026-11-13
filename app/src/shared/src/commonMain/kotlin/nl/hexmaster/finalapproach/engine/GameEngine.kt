@@ -133,12 +133,13 @@ class GameEngine(
 
     /**
      * Selects the aircraft nearest to [point] within [pickRadius] world units, or nothing when
-     * none is that close. Aircraft rolling out on the runway cannot be picked. Returns its id.
+     * none is that close. Aircraft rolling out on the runway, and helicopters landing, cannot be
+     * picked. Returns its id.
      */
     fun select(point: Vec2, pickRadius: Double): Int? {
         if (inputBlocked) return null
         val picked = mutableState.value.aircraft
-            .filter { it.status !is AircraftStatus.RollingOut }
+            .filter { it.status !is AircraftStatus.RollingOut && it.status !is AircraftStatus.Landing }
             .map { it to it.position.distanceTo(point) }
             .filter { (_, distance) -> distance <= pickRadius }
             .minByOrNull { (_, distance) -> distance }
@@ -149,7 +150,7 @@ class GameEngine(
 
     /**
      * Removes the path of aircraft [id]; it flies straight on in its current heading. An aircraft
-     * already cleared to land keeps its locked path.
+     * cleared to land has its clearance cancelled too. A rolling-out airplane is left alone.
      */
     fun clearPath(id: Int) {
         if (inputBlocked) return
@@ -228,12 +229,13 @@ class GameEngine(
         return GameStatus.Playing
     }
 
-    /** Ids of aircraft whose centre is closer than the warning distance to another one. */
+    /** Ids of aircraft whose centre is closer than the warning distance to another one; a landing helicopter is ignored. */
     private fun warned(aircraft: List<Aircraft>): Set<Int> = buildSet {
-        for (i in aircraft.indices) for (j in i + 1 until aircraft.size) {
-            if (aircraft[i].position.distanceTo(aircraft[j].position) < level.world.warningDistance) {
-                add(aircraft[i].id)
-                add(aircraft[j].id)
+        val candidates = aircraft.filter { it.status !is AircraftStatus.Landing }
+        for (i in candidates.indices) for (j in i + 1 until candidates.size) {
+            if (candidates[i].position.distanceTo(candidates[j].position) < level.world.warningDistance) {
+                add(candidates[i].id)
+                add(candidates[j].id)
             }
         }
     }

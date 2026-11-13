@@ -2,6 +2,7 @@ package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
+import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.FlightPath
 import nl.hexmaster.finalapproach.domain.LandingConfig
@@ -11,9 +12,17 @@ import nl.hexmaster.finalapproach.domain.Vec2
 /** Builds an aircraft's path from drag input, and cuts it off where it enters a landing zone. */
 object PathDrawing {
 
-    /** Starts a fresh path, replacing the old one, unless the aircraft is already cleared to land. */
+    /**
+     * Starts a fresh path, replacing the old one. An aircraft cleared to land has its clearance
+     * cancelled: its locked path is removed and it flies freely again, keeping position and heading.
+     * An airplane that has touched down (rolling out) cannot be re-routed.
+     */
     fun begin(aircraft: Aircraft): Aircraft =
-        if (aircraft.status == AircraftStatus.Flying) aircraft.copy(path = FlightPath()) else aircraft
+        when (aircraft.status) {
+            AircraftStatus.Flying, is AircraftStatus.ClearedToLand ->
+                aircraft.copy(path = FlightPath(), status = AircraftStatus.Flying)
+            else -> aircraft
+        }
 
     /**
      * Adds [point] to the path. When the new segment validly enters a zone, the path ends at the
@@ -36,7 +45,7 @@ object PathDrawing {
         val from = points.lastOrNull() ?: aircraft.position
         val hit = LandingRules.check(from, point, aircraft.type.kind, zones, landing.alignmentTolerance)
             ?: return aircraft.copy(path = aircraft.path.copy(points = points + point))
-        val smoothed = smooth(aircraft, points + hit.entryPoint, specs, config)
+        val smoothed = smooth(aircraft, points + hit.entryPoint, config)
         val zone = hit.zone
         val final = if (zone is LandingZone.Runway) {
             val spec = specs[aircraft.type]
@@ -56,11 +65,18 @@ object PathDrawing {
     /** Replaces the path of a freely flying aircraft by its smoothed version; a locked path stays. */
     fun finish(aircraft: Aircraft, specs: EffectiveAircraftSpecs, config: EngineConfig): Aircraft {
         if (aircraft.path.locked || aircraft.status != AircraftStatus.Flying) return aircraft
-        return aircraft.copy(path = aircraft.path.copy(points = smooth(aircraft, aircraft.path.points, specs, config)))
+        return aircraft.copy(path = aircraft.path.copy(points = smooth(aircraft, aircraft.path.points, config)))
     }
 
-    private fun smooth(aircraft: Aircraft, points: List<Vec2>, specs: EffectiveAircraftSpecs, config: EngineConfig): List<Vec2> {
-        val spec = specs[aircraft.type]
-        return PathSmoother.smooth(aircraft.position, aircraft.heading, points, spec.speed, spec.turnRate, config)
+    /**
+     * Smooths [points] from the aircraft. Leading points the aircraft is already level with or past
+     * (for example where the finger first touched, behind the nose) are dropped so the path never
+     * hooks back; the last point is always kept.
+     */
+    private fun smooth(aircraft: Aircraft, points: List<Vec2>, config: EngineConfig): List<Vec2> {
+        val forward = Angles.direction(aircraft.heading)
+        var first = 0
+        while (first < points.lastIndex && ((points[first] - aircraft.position) dot forward) <= 0.0) first++
+        return PathSmoother.smooth(aircraft.position, points.drop(first), config)
     }
 }
