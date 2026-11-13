@@ -118,6 +118,9 @@ object LevelDefaults {
     /** Seconds an airplane takes after touchdown to change from its flight speed to the landing speed. */
     const val ROLLOUT_DECELERATION_SECONDS = 1.0
 
-    /** The aircraft type whose flight speed is the landing speed every airplane rolls out at. */
+    /** The aircraft type whose flight speed, times [LANDING_SPEED_FACTOR], is the landing speed every airplane rolls out at. */
     val LANDING_SPEED_REFERENCE = AircraftType.LightProp
+
+    /** The landing speed as a fraction of the reference type's flight speed. 1 keeps the full reference speed. */
+    const val LANDING_SPEED_FACTOR = 0.5
 }

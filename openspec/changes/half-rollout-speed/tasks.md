@@ -1,6 +1,6 @@
 ## 1. Landing speed factor
 
-- [ ] 1.1 Add `LANDING_SPEED_FACTOR = 0.5` to `LevelDefaults` and `landingSpeedFactor` to `LandingConfig` (KDoc: the landing speed is the reference type's flight speed times this factor); verify the shared module compiles
+- [x] 1.1 Add `LANDING_SPEED_FACTOR = 0.5` to `LevelDefaults` and `landingSpeedFactor` to `LandingConfig` (KDoc: the landing speed is the reference type's flight speed times this factor); verify the shared module compiles
 - [ ] 1.2 Use the factor in `AircraftMotion.rolloutDistance` and update its KDoc; verify with `commonTest` in `AircraftMotionTest`: replace `theLightPropRollsOutAtItsFlightSpeed` with a test that the light prop starts at its flight speed and reaches half of it after the deceleration time; change the faster-airplanes and reference-type tests to expect half the reference speed; add a test that a factor of 1 gives the full reference speed; keep the step-size and slowdown-ends tests passing
 - [ ] 1.3 Add a test that the rolled distance before the fade is still two thirds of the runway with the default configuration; verify `./gradlew :shared:allTests` passes, including the same-direction rollout collision tests
 
