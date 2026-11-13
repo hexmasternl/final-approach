@@ -4,6 +4,7 @@ import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftStatus
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.AltitudeState
+import nl.hexmaster.finalapproach.domain.LevelDefaults
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.domain.meadow
@@ -166,7 +167,7 @@ class GameEngineTest {
     @Test
     fun closeAircraftAreWarnedUntilTheySeparate() {
         val engine = GameEngine(quiet, seed = 1)
-        engine.place(listOf(jet(1, Vec2(560.0, 200.0), -PI / 2), jet(2, Vec2(660.0, 200.0), PI / 2)))
+        engine.place(listOf(jet(1, Vec2(560.0, 200.0), -PI / 2), jet(2, Vec2(560.0 + 80.0 * zoom, 200.0), PI / 2)))
         assertEquals(setOf(1, 2), engine.state.value.warnedAircraft)
         engine.update(0.02)
         assertEquals(setOf(1, 2), engine.state.value.warnedAircraft)
@@ -181,9 +182,9 @@ class GameEngineTest {
         engine.place(
             listOf(
                 jet(1, Vec2(500.0, 200.0), 0.0),
-                jet(2, Vec2(600.0, 200.0), 0.0),
-                jet(3, Vec2(550.0, 280.0), 0.0),
-                jet(4, Vec2(900.0, 200.0), 0.0),
+                jet(2, Vec2(500.0 + 80.0 * zoom, 200.0), 0.0),
+                jet(3, Vec2(500.0 + 40.0 * zoom, 200.0 + 64.0 * zoom), 0.0),
+                jet(4, Vec2(500.0 + 320.0 * zoom, 200.0), 0.0),
             ),
         )
         assertEquals(setOf(1, 2, 3), engine.state.value.warnedAircraft)
@@ -351,6 +352,9 @@ class GameEngineTest {
     }
 
     private fun jet(id: Int, position: Vec2, heading: Double = 0.0) = Aircraft(id, AircraftType.Jet, position, heading)
+
+    /** Gaps between aircraft are written in units before the world zoom-out and follow it. */
+    private val zoom = LevelDefaults.WORLD_ZOOM
 
     private fun GameEngine.aircraft(id: Int) = assertNotNull(state.value.aircraft.firstOrNull { it.id == id })
 }

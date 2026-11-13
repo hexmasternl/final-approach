@@ -152,7 +152,7 @@ class AmbientLifeTest {
 
     @Test
     fun ambientSizesMeetTheMinimumDrawnSizes() {
-        // On the 800 by 360dp reference phone a world unit is 0.4dp: 20dp is 50 units, 16dp is 40.
+        // On the 800 by 360dp reference phone a world unit is 0.2dp: 10dp is 50 units, 8dp is 40.
         assertTrue(config.cowLength >= 50.0)
         assertTrue(maxOf(config.farmerWidth, config.farmerLength) >= 50.0)
         assertTrue(config.birdSpan >= 40.0)

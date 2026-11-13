@@ -81,8 +81,9 @@ class CollisionsTest {
     @Test
     fun parallelFlightInOneStepIsNoCollision() {
         val a = jet(1, 400.0, heading = PI / 2)
-        val b = jet(2, 400.0, y = 400.0, heading = PI / 2)
-        val previous = mapOf(1 to Vec2(200.0, 300.0), 2 to Vec2(200.0, 400.0))
+        val y = 300.0 + 80.0 * LevelDefaults.WORLD_ZOOM
+        val b = jet(2, 400.0, y = y, heading = PI / 2)
+        val previous = mapOf(1 to Vec2(200.0, 300.0), 2 to Vec2(200.0, y))
         assertTrue(Collisions.find(listOf(a, b), specs, previous).isEmpty())
     }
 

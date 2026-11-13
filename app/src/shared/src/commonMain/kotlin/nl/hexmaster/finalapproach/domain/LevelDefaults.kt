@@ -13,9 +13,10 @@ object LevelDefaults {
      * [BASE_WORLD_HEIGHT] times this. Runways, helipads, landing zones and scenery keep their
      * world sizes, so the airfield takes a smaller share of the screen. Every world-unit value
      * that belongs to an aircraft or to the player's finger is multiplied by it, so aircraft
-     * look, move, warn and spawn on screen as they did before the zoom-out.
+     * look, move, warn and spawn on screen as they did before the zoom-out. At 2.5 the airfield
+     * is half as large on screen as it was at the former zoom of 1.25.
      */
-    const val WORLD_ZOOM = 1.25
+    const val WORLD_ZOOM = 2.5
 
     /** Size of the world before the zoom-out, in world units. */
     const val BASE_WORLD_WIDTH = 1280.0
@@ -99,8 +100,11 @@ object LevelDefaults {
     /** How long a rolled-out airplane takes to fade away, in seconds. */
     const val LANDED_FADE_SECONDS = 0.5
 
-    /** Distance from the threshold to the touchdown point on the centre line, in world units. */
-    const val TOUCHDOWN_DISTANCE = 40.0
+    /**
+     * Distance from the threshold to the touchdown point on the centre line, in world units. The
+     * lead-in to it is flown on the aircraft's turning circle, so it follows the zoom.
+     */
+    const val TOUCHDOWN_DISTANCE = 32.0 * WORLD_ZOOM
 
     /** How far back along the drawn path the runway lead-in starts, in turning radii. */
     const val LEAD_IN_TURNING_RADII = 2.0

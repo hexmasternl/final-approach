@@ -47,7 +47,7 @@ class WorldViewportTest {
 
     @Test
     fun onThePhoneEveryAircraftIsDrawnAsLargeAsBeforeTheZoom() {
-        assertEquals(0.4, phone.scale, 1e-12)
+        assertEquals(0.2, phone.scale, 1e-12)
         val formerRadius = mapOf(
             AircraftType.Helicopter to 26.0,
             AircraftType.LightProp to 24.0,
@@ -78,21 +78,24 @@ class WorldViewportTest {
         val at = Vec2(400.0, 300.0)
         val engine = GameEngine(level, seed = 1).apply { place(listOf(Aircraft(1, smallest, at, 0.0))) }
         val tap = phone.toWorld(phone.toScreen(at) + Vec2(36.0, 0.0))
-        assertEquals(180.0, phone.toWorldLength(pickRadiusDp), 1e-9)
+        assertEquals(360.0, phone.toWorldLength(pickRadiusDp), 1e-9)
         assertEquals(1, engine.select(tap, phone.toWorldLength(pickRadiusDp)))
     }
 
     @Test
-    fun onThePhoneRunwaysAndHelipadsStayReadable() {
+    fun onThePhoneTheAirfieldIsHalfAsLargeAsBeforeThisZoomOut() {
+        // The world zoom was 1.25 before; airfield sizes stay in world units, so on screen they halve.
+        val before = WorldViewport(LevelDefaults.BASE_WORLD_WIDTH * 1.25, LevelDefaults.BASE_WORLD_HEIGHT * 1.25, phoneWidth, phoneHeight)
         Levels.all.forEach { level ->
             level.runways.forEach {
-                assertTrue(phone.toScreenLength(it.width) >= 24.0, "${level.id}/${it.id} is ${phone.toScreenLength(it.width)}dp wide")
+                assertEquals(before.toScreenLength(it.width) / 2, phone.toScreenLength(it.width), 1e-9, "${level.id}/${it.id}")
+                assertEquals(before.toScreenLength(it.length) / 2, phone.toScreenLength(it.length), 1e-9, "${level.id}/${it.id}")
             }
             level.helipads.forEach {
-                assertTrue(phone.toScreenLength(it.radius * 2) >= 40.0, "${level.id}/${it.id} is ${phone.toScreenLength(it.radius * 2)}dp across")
+                assertEquals(before.toScreenLength(it.radius) / 2, phone.toScreenLength(it.radius), 1e-9, "${level.id}/${it.id}")
             }
         }
-        assertEquals(25.6, phone.toScreenLength(LevelDefaults.RUNWAY_WIDTH), 1e-9)
-        assertEquals(44.8, phone.toScreenLength(LevelDefaults.HELIPAD_RADIUS * 2), 1e-9)
+        assertEquals(12.8, phone.toScreenLength(LevelDefaults.RUNWAY_WIDTH), 1e-9)
+        assertEquals(22.4, phone.toScreenLength(LevelDefaults.HELIPAD_RADIUS * 2), 1e-9)
     }
 }
