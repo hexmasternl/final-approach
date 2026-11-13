@@ -125,7 +125,7 @@ dep('color', 'sun-deep', 'sun-700'); dep('color', 'tangerine-deep', 'tangerine-7
 for (const [n, by] of [['shadow-lip-sm', 'lip-sm'], ['shadow-lip', 'lip-md'], ['shadow-lip-lg', 'lip-panel'], ['shadow-soft', 'contact-overlay'], ['shadow-well', 'well-inset']]) dep('shadow', n, by);
 for (const [n, by] of [['line-fine', 'line-detail'], ['line-1', 'line-detail'], ['line-2', 'line-ui-sm'], ['line-3', 'line-ui'], ['line-4', 'line-ui']]) dep('line', n, by);
 for (const [n, by] of [['radius-sm', 'radius-chip'], ['radius-md', 'radius-control'], ['radius-lg', 'radius-panel'], ['radius-xl', 'radius-dialog']]) dep('radius', n, by);
-dep('size', 'hud-chip', 'strip-height'); dep('opacity', 'opacity-disabled', 'the flat disabled state (U7)');
+dep('size', 'hud-chip', 'strip-height'); dep('size', 'toggle-width', 'toggle-width-v2'); dep('size', 'toggle-height', 'toggle-height-v2'); dep('size', 'toggle-knob', 'toggle-knob-v2'); dep('opacity', 'opacity-disabled', 'the flat disabled state (U7)');
 
 // ---- lines, radii, sizes, opacity
 const push = (fam, name, value, usage, after) => { const a = t[fam].tokens; if (a.find(x => x.name === name)) return; const i = after ? a.findIndex(x => x.name === after) : -1; const k = { name, value, usage }; if (i >= 0) a.splice(i + 1, 0, k); else a.push(k); };

@@ -112,7 +112,7 @@ ${t.easing.tokens.map(k => { const m = /cubic-bezier\(([^)]+)\)/.exec(k.value)[1
 
 /** Opacity tokens. */
 object FaOpacity {
-${t.opacity.tokens.filter(k => !isLight(k.name)).map(k => `    const val ${camel(k.name.replace(/^opacity-/, ''))} = ${k.value}f`).join('\n')}
+${t.opacity.tokens.filter(k => !isLight(k.name)).map(k => `${dep(k, '    ')}    const val ${camel(k.name.replace(/^opacity-/, ''))} = ${k.value}f`).join('\n')}
 }
 `);
 
@@ -473,18 +473,26 @@ w('theme/FaShadows.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-/** Depth tokens. A lip is a hard, unblurred offset straight down in the outline colour. */
+/**
+ * Depth tokens of v1: a lip was a hard offset straight down in the outline colour. v2 draws a
+ * lip in the control's own colour, from the lip and contact tokens in [FaDimens] and [FaColors].
+ * Only the float offsets below are still current; everything else here is v1 and is kept until
+ * the app's world is ported.
+ */
 object FaShadows {
+    /** v1. Use [FaDimens.lipSm] in new code. */
     val lipSm = ${lip('shadow-lip-sm')}
+    /** v1. Use [FaDimens.lipMd] in new code. */
     val lip = ${lip('shadow-lip')}
+    /** v1. Use [FaDimens.lipPanel] in new code. */
     val lipLg = ${lip('shadow-lip-lg')}
 
-    /** The translucent second lip that grounds a dialog on the scrim. */
+    /** v1: the translucent second lip under a dialog. Use [FaColors.contactOverlay] in new code. */
     val softLip = ${lip('shadow-soft')}
     val softLipDay = ${softCol('light')}
     val softLipNight = ${softCol('dark')}
 
-    /** The inner top edge of sunken wells: toggle track, segmented trough. */
+    /** v1: the inner top edge of a well. Use [FaDimens.wellInset] in new code. */
     val wellInset = ${wellInset}
     val wellDay = ${wellCol('light')}
     val wellNight = ${wellCol('dark')}

@@ -65,8 +65,11 @@ object FaDimens {
     val buttonSm = 40.dp
     val buttonMd = 52.dp
     val buttonLg = 64.dp
+    /** v1. Use [toggleWidthV2] in new code. */
     val toggleWidth = 68.dp
+    /** v1. Use [toggleHeightV2] in new code. */
     val toggleHeight = 40.dp
+    /** v1. Use [toggleKnobV2] in new code. */
     val toggleKnob = 28.dp
     val coachMaxWidth = 300.dp
     val coachExplainMaxWidth = 360.dp
