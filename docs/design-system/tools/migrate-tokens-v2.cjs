@@ -118,6 +118,18 @@ add('scrim', 'contact', { light: 'rgba(29, 37, 69, 0.2)', dark: 'rgba(4, 7, 18, 
 add('contact', 'contact-field', { light: 'rgba(18, 48, 31, 0.28)', dark: 'rgba(3, 5, 15, 0.45)' }, 'The flat contact shadow under anything in the HUD: flight strips, stickers, the pause button, coach marks.');
 add('contact-field', 'contact-overlay', { light: 'rgba(10, 14, 36, 0.3)', dark: 'rgba(3, 5, 16, 0.5)' }, 'The flat contact shadow under a dialog on the scrim.');
 
+// ---- usage notes of kept tokens that still described v1
+const note = (name, usage) => { const c = byName(name); if (c) c.usage = usage; };
+note('outline', 'The outer edge of every drawn shape: aircraft at line-hero, landing zones at line-zone, controls, panels, flight strips and scenery silhouettes at line-ui. Never pure black. Lines inside a shape are a darker tone of that shape, not outline.');
+note('ink', 'Primary text and icons on paper. The same in every theme: paper stays light at night.');
+note('ink-muted', 'Secondary text, captions and hints on paper; the label of an unselected segment.');
+note('sky-700', 'Lip of a secondary button; links and emphasised text on paper.');
+note('success-ink', 'Success text on paper. The same colour as mint-900.');
+note('danger-ink', 'Danger text on paper.');
+note('focus', 'Inner band of the two-tone focus ring: a line-ui band of focus, then a line-ui band of outline outside it. One of the two always holds 3:1 against whatever the ring lands on.');
+note('on-accent', 'Text and icons on any bright fill: sun, tangerine, cherry, mint, sky-500, star and every path colour. Dark in every theme because the fills stay bright.');
+note('on-outline', 'Text and icons on an outline-coloured fill: coach marks and the callsign tag.');
+
 // ---- deprecations: v1 tokens v2 no longer uses, each with its replacement
 const dep = (fam, name, by) => { const k = (fam === 'color' ? colors : t[fam].tokens).find(x => x.name === name); if (k) k.deprecated = by; };
 dep('color', 'surface', 'paper-100'); dep('color', 'surface-raised', 'paper-0'); dep('color', 'surface-sunken', 'paper-300');

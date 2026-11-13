@@ -22,9 +22,9 @@ Motion is bouncy and short. Things arrive with one overshoot, controls snap, and
 | Valid landing zone | Halo pulses | 1s, alternating | none |
 | Touchdown | Squash and stretch, then the sprite is removed | `dur-land` | Ding |
 | Safe landing | Star burst, score popup rises | `dur-burst`, popup 1.8s | Ding, higher on a streak |
-| Collision | Poof replaces both aircraft, lives chip shakes | `dur-burst`, shake `dur-pop` | Boing |
+| Collision | Poof replaces both aircraft, lives strip shakes | `dur-burst`, shake `dur-pop` | Boing |
 | Miss | Danger popup at the exit edge | 1.8s | Low whoosh |
-| Button press | Face drops 2px onto its lip | `dur-press` | Tick |
+| Button press | Face drops onto its lip until `lip-pressed` is left | `dur-press` | Tick |
 | Dialog opens | Drops 40px and settles | `dur-dialog` | none |
 | Ambient | Clouds drift, windsock waves | `dur-drift`, `dur-sway` | Light upbeat music |
 

@@ -3,10 +3,10 @@ A thin, fine dashed line a player draws from an aircraft to where it should go.
 **You provide:** the polyline (smoothed), the livery index of its aircraft, and whether that aircraft is selected.
 
 **Construction.** Two strokes on the same geometry, round caps and joins:
-1. Casing: `outline`, width `path-casing` (7px: the dash plus a `line-1` border of 2px on each side).
+1. Casing: `outline`, width `path-casing` (7px: the dash plus a 2px border on each side).
 2. Dash: the livery colour (`path-1` to `path-6`), width `path-stroke` (3px).
 
-Both use dash `path-dash` (10px) and gap `path-gap` (8px). The path ends in a dot of `path-dot` diameter (12px) in the livery colour with a `line-2` outline. Paths render on `z-path`: over the runway, under every aircraft.
+Both use dash `path-dash` (10px) and gap `path-gap` (8px). The path ends in a dot of `path-dot` diameter (12px) in the livery colour with a 3px `outline` edge. Paths render on `z-path`: over the runway, under every aircraft.
 
 **States.**
 - Selected: full opacity, dashes march towards the end dot, one dash length per `dur-march`.

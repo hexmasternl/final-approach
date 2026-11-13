@@ -1,36 +1,50 @@
-Decoration that makes a level read as a place: the airfield's buildings and vehicles, and the fields, water, plants and animals around it. It has no effect on play.
+Decoration that makes a level read as a place: the airfield's buildings and vehicles, and the plants, animals, people and boats around it. It has no effect on play.
 
-**You provide:** level data. Each item is a `SceneryItem` with a kind, a centre, a width and a height in world units, and a rotation. Items scale with the world, like runways and helipads. Cows, the farmer, birds and boats are ambient life: the level only says where the paddock and the island are.
+**You provide:** a sprite name and a size. The element is `fa-scenery` (`name`, `size`): one sprite with its cast shadow. In a level, each item has a kind, a centre, a size in world units and, where its kind allows, a rotation. Flat ground (roads, fields, water, aprons) is described in `Ground.md`.
 
-**Construction.** Every sprite comes from `assets/scenery/` (shown in the Scenery section of the showcase), drawn top-down with its front up. Flat fills, a `line-2` `outline`, details in `line-fine`, round joins, at most four fill colours. No shadows: scenery is on the ground. The full rules are in World and rendering.
+**Construction.** Every sprite follows W1 to W9; the full rules are in `world.md`.
 
-| Kind | Look |
-|---|---|
-| Taxiway | `asphalt-500` strip. Flat. |
-| Apron | `asphalt-300` slab with a fine `marking` edge line. Flat. |
-| Field | `soil-500` with `soil-700` furrows and `grass-300` crop rows along its length. Flat. |
-| Road | `asphalt-300` with a dashed `marking` centre line; on the savanna a `sand-300` dirt road with `soil-700` ruts. Flat. |
-| Pond, Waterhole | `sky-500` water, like the sea, with `foam` ripples; the waterhole has a `sand-300` bank. Flat. |
-| Jetty | `soil-500` planks on `soil-700` posts, reaching into the sea. Flat. |
-| Terminal | `surface-raised` block with a roof edge and roof units, a `sky-300` glass front and two jet bridges. |
-| Tower | `surface-raised` base, an eight-sided `sky-300` window ring and a `cherry` cab roof. |
-| Hangar | `fuselage-shade` vaulted roof with curved ribs; a dark door mouth with `surface-raised` doors at the front. |
-| Windsock | `tangerine` and `surface-raised` stripes on a pole (see Windsock). |
-| Car, FuelTruck, BaggageCart | Parked on an apron: body, windows and wheels, at least 50 world units long. |
-| ParkedAircraft | A small generic airplane in `fuselage-shade`, on an apron only. |
-| Tree, ForestEdge | `grass-300` canopy of leaf clusters on a `grass-900` shade; a forest edge is a staggered row of trees. |
-| Hedge, Fence | One piece repeated along the item's length: `grass-700` shrubs, `soil-500` posts and rail. |
-| Farmhouse, Barn | `roof-500` roofs with a ridge; the farmhouse has a hipped roof, a chimney and a doorstep, the barn doors and a round `stone-300` silo. |
-| Palm | `grass-300` and `grass-700` fronds around `soil-500` coconuts. |
-| Acacia, Bush, Rock | A wide, flat-topped `grass-900` canopy with its trunk and branches showing; a low `grass-300` shrub; `stone-300` boulders. |
-| Zebra, Elephant | Seen from above, standing still: stripes and a mane; ears, trunk and tusks. |
+- Lit from the top-left, in flat tones of at most three main materials (W1, W2).
+- An `outline` silhouette at `line-ui`; inner lines in a darker step of their own material at `line-detail` (W3, W4).
+- A height tier that sets its shadow, and a flag that says whether it may rotate (W5).
+- A hard shadow down-right, drawn in the one shared shadow layer in `shadow-cast` at `opacity-shadow-cast` (W1).
+- No `fuselage`, no path colour, no `sun-500`. Whites are `wall-100` or `hide-100` (W9).
 
-**Layering.** Flat kinds lie under the runway, in the order they are listed in the level. All other kinds are drawn after the runway and helipad, then the ambient life, and all of it before flight paths. Aircraft always fly over scenery.
+| Sprite | Tier | Rotates | Look |
+|---|---|---|---|
+| `tree`, `tree-small`, `tree-oak` | L | No | A lobed `leaf` canopy over a `wood` trunk. |
+| `pine`, `pine-small` | L | No | Three star-shaped tiers in `pine` tones. |
+| `acacia` | L | No | A wide, flat `leaf` crown on a bare `wood` trunk. |
+| `palm` | L | No | Seven `leaf` fronds around the head of a leaning `wood` trunk. |
+| `bush`, `hedge` | S | Yes | A low `leaf` shrub; the hedge is one piece of a row. |
+| `rock` | S | Yes | A faceted `stone` boulder with a pebble. |
+| `hay-bale` | S | Yes | A round `straw` bale with its spiral. |
+| `fence` | S | Yes | One piece of a row: a `wood-300` rail between two posts. |
+| `farmhouse` | M | No | A tiled `roof` over a cream `wall` with a door, shutters and windows; a `stone` chimney and doorstep. |
+| `barn` | M | No | A curved `tin` roof over a `roof`-red wall with a cross-braced door. |
+| `silo` | L | No | A round `tin` drum seen from above. |
+| `tower` | L | No | A `wall` base, a `tin` block, a `wall` shaft and an eight-sided `glass` cab under a `cherry` roof with a `beacon`. |
+| `terminal` | M | No | A `tin` roof with a skylight over a glazed front in `window`, with an awning. |
+| `hangar` | M | No | A vaulted `tin` roof over an open door with a nose showing. |
+| `windsock` | L | No | See `Windsock.md`. |
+| `car`, `fuel-truck`, `baggage-cart` | S | Yes | Top-down, front up: a `denim` car, a `tin` tanker behind a `roof`-red cab, a tug with two carts. |
+| `parked-aircraft` | S | Yes | A small generic airplane in `tin` tones, on an apron only. No livery. |
+| `cow`, `zebra`, `elephant` | S | Yes | Top-down, front up: `hide` coats with patches or stripes; the elephant is `stone`. |
+| `farmer` | S | Yes | A `straw` hat over `pine`-green shoulders, with a fork. |
+| `bird-up`, `bird-down` | S | Yes | The two wing frames of one bird. |
+| `sailboat`, `yacht`, `container-vessel`, `jetty` | S | Yes | Cream hulls with `wood` decks; the vessel carries containers; the jetty is `wood` planks on posts. |
+| `wave`, `wake` | flat | Yes | `foam` strokes on water. No outline, no shadow. |
+| `crop-field`, `crop-wheat`, `crop-plough` | flat | Yes | One tile of a field. See `Ground.md`. |
+
+**Layering.** Flat sprites lie with the ground. All others stand above the shadow layer, drawn from north to south so a nearer thing overlaps a further one, then the ambient life, and all of it before flight paths. Aircraft always fly over scenery.
 
 **Rules.**
 - Scenery never covers a runway, a helipad or a landing zone; the level validator rejects a level where it does.
-- Only flat kinds may lie under the HUD band at the top of the world; the validator rejects anything else there.
+- Only flat ground may lie under the HUD band at the top of the world; the validator rejects anything else there.
 - A parked aircraft lies entirely on an apron; the validator rejects one that does not.
 - Keep the field clear: put buildings beside the runway, never on its extended centre line.
+- A standing sprite (tier M or L) is never rotated.
 
-**Don't** use scenery to carry meaning. It never marks a landing zone, a hazard or a state. **Don't** give it a path colour, a livery or a shadow, and **don't** draw it heavier than an aircraft.
+**Do** let trees overlap in a wood, and scale a sprite a little to vary a row. **Don't** use scenery to carry meaning: it never marks a landing zone, a hazard or a state. **Don't** give it a path colour, a livery or a soft shadow, and **don't** draw it heavier than an aircraft.
+
+**Compose.** In the app each item is a `SceneryItem` of a `SceneryKind`. The app's sprites (`ui/sprites/ScenerySprites.kt`) are still generated from the version 1 sprites in `tools/scenery-v1.js`; they move to these sprites when the app's world is ported.

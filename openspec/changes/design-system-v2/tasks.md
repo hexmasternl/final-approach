@@ -12,9 +12,9 @@ The visual reference for every task is `reference/final-approach-v2.html` in thi
 
 ## 2. Principles and rules
 
-- [ ] 2.1 Rewrite the principles in `brand-book.md`: three general principles, W1 to W9, U1 to U7, each with its identifier; rewrite the Colour, Edges, depth and shape, States and Type sections for ramps, line ranks, moulded controls and Nunito; verify by grep that "Outline everything", "Flat and bright" and "four fill" no longer occur in `docs/design-system`
-- [ ] 2.2 Rewrite the Scenery, Landing zones and layer sections of `world.md`: height tiers with wall and shadow sizes, the single ground-shadow layer, which kinds rotate, flat-ground edging, the transition bands with their widths, mown airfield versus countryside, minimum sizes; verify every rule cites its W identifier
-- [ ] 2.3 Update `docs/art-style.md`, `compose.md` and the design-system sections of `CLAUDE.md` and `.github/copilot-instructions.md` for v2, including one line that the app still renders v1 until the port; verify the two instruction files say the same
+- [x] 2.1 Rewrite the principles in `brand-book.md`: three general principles, W1 to W9, U1 to U7, each with its identifier; rewrite the Colour, Edges, depth and shape, States and Type sections for ramps, line ranks, moulded controls and Nunito; verify by grep that "Outline everything", "Flat and bright" and "four fill" no longer occur in `docs/design-system`
+- [x] 2.2 Rewrite the Scenery, Landing zones and layer sections of `world.md`: height tiers with wall and shadow sizes, the single ground-shadow layer, which kinds rotate, flat-ground edging, the transition bands with their widths, mown airfield versus countryside, minimum sizes; verify every rule cites its W identifier
+- [x] 2.3 Update `docs/art-style.md`, `compose.md` and the design-system sections of `CLAUDE.md` and `.github/copilot-instructions.md` for v2, including one line that the app still renders v1 until the port; verify the two instruction files say the same
 
 ## 3. Scenery sprites
 
@@ -27,15 +27,15 @@ The visual reference for every task is `reference/final-approach-v2.html` in thi
 
 ## 4. Ground and landing zones
 
-- [ ] 4.1 Rebuild `fa-runway` (two-way and one-way) and `fa-helipad` in `bundle.js` from the reference: shoulder, fringe, markings, lights, same footprint; update `components/Runway.md` and `components/Helipad.md`; verify the asphalt rectangle and helipad circle measure the same as v1
-- [ ] 4.2 Add ground pieces to `bundle.js` with their transition bands: mown airfield lawn, meadow patches, tufts and flowers, road, dirt track, taxiway, apron, car park, pond, field; document them in a new `components/Ground.md`; verify no ground piece is stroked in `outline`
+- [x] 4.1 Rebuild `fa-runway` (two-way and one-way) and `fa-helipad` in `bundle.js` from the reference: shoulder, fringe, markings, lights, same footprint; update `components/Runway.md` and `components/Helipad.md`; verify the asphalt rectangle and helipad circle measure the same as v1
+- [x] 4.2 Add ground pieces to `bundle.js` with their transition bands: mown airfield lawn, meadow patches, tufts and flowers, road, dirt track, taxiway, apron, car park, pond, field; document them in a new `components/Ground.md`; verify no ground piece is stroked in `outline`
 
 ## 5. Components
 
-- [ ] 5.1 Rebuild Button, IconButton, Toggle and SegmentedControl in `bundle.css` from `reference/build.cjs` under `fa-` class names reading token variables only, with pressed, focus and disabled states; rewrite their guideline files; verify by grep that `bundle.css` holds no colour literal and takes every outline, radius, lip and control height from a token
-- [ ] 5.2 Rebuild Chip as the flat tag; add FlightStrip and Sticker; rewrite HudBar, ScoreCounter, SpawnCounter, LivesMeter, NextAircraftHint, StreakBadge and ScorePopup guidelines on them, noting the old names; verify the HUD reference row is 40dp high and only the pause button has a lip
-- [ ] 5.3 Rebuild Panel, Dialog (portrait and landscape boarding pass, with the stamp) and CoachMark; rewrite their guidelines; verify the landscape game-over dialog fits 800 by 450dp and 640 by 360dp with system bars and a 50dp banner
-- [ ] 5.4 Rebuild LevelCard with a level miniature drawn from the level's own ground pieces, a best-score chip and the locked state; rewrite its guideline; verify the three levels' cards in Day and Night
+- [x] 5.1 Rebuild Button, IconButton, Toggle and SegmentedControl in `bundle.css` from `reference/build.cjs` under `fa-` class names reading token variables only, with pressed, focus and disabled states; rewrite their guideline files; verify by grep that `bundle.css` holds no colour literal and takes every outline, radius, lip and control height from a token
+- [x] 5.2 Rebuild Chip as the flat tag; add FlightStrip and Sticker; rewrite HudBar, ScoreCounter, SpawnCounter, LivesMeter, NextAircraftHint, StreakBadge and ScorePopup guidelines on them, noting the old names; verify the HUD reference row is 40dp high and only the pause button has a lip
+- [x] 5.3 Rebuild Panel, Dialog (portrait and landscape boarding pass, with the stamp) and CoachMark; rewrite their guidelines; verify the landscape game-over dialog fits 800 by 450dp and 640 by 360dp with system bars and a 50dp banner
+- [x] 5.4 Rebuild LevelCard with a level miniature drawn from the level's own ground pieces, a best-score chip and the locked state; rewrite its guideline; verify the three levels' cards in Day and Night
 
 ## 6. Showcase
 

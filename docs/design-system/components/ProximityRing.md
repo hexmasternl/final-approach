@@ -7,8 +7,8 @@ A slowly spinning dashed red ring around every aircraft that is too close to ano
 | Part | Token |
 |---|---|
 | Radius | the aircraft's collision bounding radius plus `warn-ring-margin` |
-| Casing | `outline`, `line-4` |
-| Dash | `warning`, `line-2`, `warn-ring-dash` on, `warn-ring-gap` off |
+| Casing | `outline`, 6px |
+| Dash | `warning`, 3px, `warn-ring-dash` on, `warn-ring-gap` off |
 | Spin | one turn per `dur-ring-spin`, linear, endless |
 | Appear | scale and fade in over `dur-pop` with `ease-bounce` |
 | Disappear | fade out over `dur-quick` with `ease-out-soft` |
