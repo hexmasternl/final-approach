@@ -22,5 +22,5 @@
 
 - [x] 5.1 Update `docs/game-design.md`: replace "Difficulty rises over time: spawn rate and aircraft variety increase." with the ramp rule; add the ramp to the Difficulty curve bullet under Levels and to Build-up; add a short per-level table (ramp start, step, floor, cap, all limits reached at 6:00, 5:00, 4:45); state that times count from the end of the tutorial and the values are for playtesting. Verify: the doc matches the specs and `Levels.kt`.
 - [x] 5.2 Add `DifficultyRamp` to the `domain/LevelConfig.kt` line in `docs/architecture.md`. Verify: read it back.
-- [ ] 5.3 Run `./gradlew :androidApp:assembleDebug` and `./gradlew :shared:allTests`. Verify: both succeed.
+- [x] 5.3 Run `./gradlew :androidApp:assembleDebug` and `./gradlew :shared:allTests`. Verify: both succeed.
 - [ ] 5.4 Human check (playtest): play each level past its final ramp step and judge whether the final pressure is hard but readable; note especially whether five aircraft on Meadow Field is too many. Record any changed floors or caps in the issue.
