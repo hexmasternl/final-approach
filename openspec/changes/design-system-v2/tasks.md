@@ -8,7 +8,7 @@ The visual reference for every task is `reference/final-approach-v2.html` in thi
 - [x] 1.2 Add Dawn values for the ramps that differ at dawn, the single tokens `window`, `beacon`, `muzzle`, `shadow`, `shadow-opacity`, and the line ranks `line-hero`, `line-zone`, `line-ui`, `line-ui-sm`, `line-detail`; verify each has a usage note
 - [x] 1.3 Add Nunito to the fonts and add the body, caption and row styles in Nunito; move `label`, `readout` and `callsign` to weight 700 or heavier; verify no text style in Inconsolata is lighter than 700 and none in Nunito lighter than 600
 - [x] 1.4 Add the v2 size, radius and elevation tokens (strip height 40, lip heights, contact shadow, nested radii for small, medium, large and dialog) and mark the v1-only tokens `"deprecated": "<replacement>"`; verify every deprecated token names an existing replacement
-- [ ] 1.5 Teach `tools/gen-kotlin.cjs` to read ramps, line ranks and the deprecated marker (emit `@Deprecated` with the replacement); run it and verify `./gradlew :shared:allTests` and `:androidApp:assembleDebug` pass with no hand-written app code changed
+- [x] 1.5 Teach `tools/gen-kotlin.cjs` to read ramps, line ranks and the deprecated marker (emit a KDoc note that names the replacement; not `@Deprecated`, because the v1 world still reads these on purpose); run it and verify `./gradlew :shared:allTests` and `:androidApp:assembleDebug` pass with no hand-written app code changed
 
 ## 2. Principles and rules
 
@@ -48,7 +48,7 @@ The visual reference for every task is `reference/final-approach-v2.html` in thi
 
 ## 7. App UI components
 
-- [ ] 7.1 Bundle Nunito (600, 700, 800) in `composeResources`, move the body, caption and row text styles to it in `FaTypography`, and expose the v2 elevation values (lip heights, contact shadow, nested radii) through the theme; verify no text style in Nunito is lighter than 600 and `:shared:allTests` passes
+- [x] 7.1 Bundle Nunito (600, 700, 800) in `composeResources`, move the body, caption and row text styles to it in `FaTypography`, and expose the v2 elevation values (lip heights, contact shadow, nested radii) through the theme; verify no text style in Nunito is lighter than 600 and `:shared:allTests` passes
 - [ ] 7.2 Add the moulded-surface and flat-surface primitives of design Decision 8 in `ui/components`, with pressed, focused and disabled states and reduced-motion handling; rebuild `FaButton` (primary, secondary, ghost, danger; small, medium, large; icon) on them; verify in previews against the reference page and by grep that the files hold no colour, size or duration literal
 - [ ] 7.3 Rebuild `FaToggle` and `FaSegmentedControl` on the primitives, keeping their semantics (role, state description, 48dp touch target); verify in the settings previews in Day and Night
 - [ ] 7.4 Rebuild the HUD parts as flight strips and stickers (score, best, spawn counter, lives, next aircraft, streak, score popup, pause button); verify `HudFitTest` passes with the 40dp strip height and that only the pause button draws a lip

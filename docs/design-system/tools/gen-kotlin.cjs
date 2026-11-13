@@ -11,6 +11,10 @@ const base = path.join(repo, 'app', 'src', 'shared', 'src', 'commonMain', 'kotli
 const w = (rel, s) => { const f = path.join(base, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, s); };
 const camel = n => n.replace(/[-.](\w)/g, (_, c) => c.toUpperCase());
 const HEAD = '// Generated from the design system (docs/design-system/tokens.json). Do not edit by hand.\n';
+// A v1 token that v2 no longer uses keeps its name and value until the app's world is ported; its
+// KDoc names the replacement. (Not @Deprecated: the v1 world still reads these on purpose.)
+const dep = (k, indent) => k.deprecated ? `${indent}/** v1. Use ${/^[a-z0-9-]+$/.test(k.deprecated) ? '[' + camel(k.deprecated) + ']' : k.deprecated} in new code. */\n` : '';
+const ctok = Object.fromEntries(t.color.tokens.map(c => [c.name, c]));
 
 // ---------- colours
 const cmap = Object.fromEntries(t.color.tokens.map(c => [c.name, c.value]));
@@ -36,7 +40,7 @@ import androidx.compose.ui.graphics.Color
 /** One property per colour token of the design system. */
 @Immutable
 data class FaColors(
-${names.map(n => `    val ${camel(n)}: Color,`).join('\n')}
+${names.map(n => `${dep(ctok[n], '    ')}    val ${camel(n)}: Color,`).join('\n')}
 ) {
     /** Flight path and livery colour for index 1 to 6. */
     fun path(index: Int): Color = when (index) {
@@ -77,7 +81,7 @@ ${sunsetNames.map(n => `    ${camel(n)} = ${kColor(resolve(n, 'light'))},`).join
 
 // ---------- dimensions, motion, opacity
 const dp = v => { const m = /^([\d.]+)px$/.exec(v); if (!m) throw new Error('dp ' + v); return `${m[1]}.dp`; };
-const group = (fam, comment) => `    // ${comment}\n` + t[fam].tokens.map(k => `    val ${camel(k.name)} = ${dp(k.value)}`).join('\n');
+const group = (fam, comment) => `    // ${comment}\n` + t[fam].tokens.map(k => `${dep(k, '    ')}    val ${camel(k.name)} = ${dp(k.value)}`).join('\n');
 w('theme/FaDimens.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 
 import androidx.compose.ui.unit.dp
@@ -360,6 +364,10 @@ console.log('generated: theme/SunsetColors.kt, sprites/AirportSilhouette.kt, the
 // ---------- typography
 const styles = t.type.groups.flatMap(g => g.styles.map(s => ({ ...s, family: s.family || g.family })));
 const sp = v => `${parseFloat(v)}.sp`;
+for (const s of styles) {
+  if (s.family === 'body' && s.fontWeight < 600) throw new Error(`type ${s.name}: Nunito is never lighter than 600`);
+  if (s.family === 'text' && s.fontWeight < 700) throw new Error(`type ${s.name}: Inconsolata is never lighter than 700`);
+}
 w('theme/FaTypography.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 
 import androidx.compose.runtime.Composable
@@ -374,7 +382,9 @@ import nl.hexmaster.finalapproach.resources.Res
 import nl.hexmaster.finalapproach.resources.dynapuff_bold
 import nl.hexmaster.finalapproach.resources.dynapuff_semibold
 import nl.hexmaster.finalapproach.resources.inconsolata_extrabold
-import nl.hexmaster.finalapproach.resources.inconsolata_medium
+import nl.hexmaster.finalapproach.resources.nunito_bold
+import nl.hexmaster.finalapproach.resources.nunito_extrabold
+import nl.hexmaster.finalapproach.resources.nunito_semibold
 import org.jetbrains.compose.resources.Font
 
 /** One text style per type style of the design system. */
@@ -384,9 +394,9 @@ ${styles.map(s => `    val ${camel(s.name)}: TextStyle,`).join('\n')}
 )
 
 /**
- * DynaPuff for headers, titles, button labels and the score; Inconsolata for regular text,
- * labels and readouts. Only the weights the app ships are bundled: other weights resolve to
- * the nearest one.
+ * DynaPuff for headers, titles, button labels and the score; Nunito for running text;
+ * Inconsolata for labels, readouts and callsigns. Only the weights the app ships are bundled:
+ * other weights resolve to the nearest one.
  */
 @Composable
 fun rememberFaTypography(): FaTypography {
@@ -394,11 +404,15 @@ fun rememberFaTypography(): FaTypography {
         Font(Res.font.dynapuff_semibold, FontWeight.SemiBold),
         Font(Res.font.dynapuff_bold, FontWeight.Bold),
     )
+    val body = FontFamily(
+        Font(Res.font.nunito_semibold, FontWeight.SemiBold),
+        Font(Res.font.nunito_bold, FontWeight.Bold),
+        Font(Res.font.nunito_extrabold, FontWeight.ExtraBold),
+    )
     val text = FontFamily(
-        Font(Res.font.inconsolata_medium, FontWeight.Medium),
         Font(Res.font.inconsolata_extrabold, FontWeight.ExtraBold),
     )
-    return remember(display, text) {
+    return remember(display, body, text) {
         FaTypography(
 ${styles.map(s => `            ${camel(s.name)} = TextStyle(fontFamily = ${s.family}, fontWeight = FontWeight(${s.fontWeight}), fontSize = ${sp(s.fontSize)}, lineHeight = ${sp(s.lineHeight)}${s.letterSpacing ? `, letterSpacing = ${parseFloat(s.letterSpacing)}.em` : ''}${s.fontVariantNumeric === 'tabular-nums' ? ', fontFeatureSettings = "tnum"' : ''}),`).join('\n')}
         )

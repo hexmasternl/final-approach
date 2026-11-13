@@ -36,4 +36,7 @@ object FaOpacity {
     const val pathIdle = 0.7f
     const val ghost = 0.5f
     const val descentScaleEnd = 0.6f
+    const val shadowCast = 0.32f
+    const val shine = 0.6f
+    const val eyebrow = 0.75f
 }
