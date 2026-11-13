@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -22,7 +25,9 @@ import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.engine.GameEngine
+import nl.hexmaster.finalapproach.engine.GameOverReason
 import nl.hexmaster.finalapproach.input.WorldViewport
+import nl.hexmaster.finalapproach.ui.PreviewAppHost
 import nl.hexmaster.finalapproach.ui.components.FaScoreCounter
 import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
@@ -44,6 +49,19 @@ private object PreviewData {
     const val PHONE_WIDTH = 800
     const val PHONE_HEIGHT = 380
     const val SHEET_HEIGHT = 520
+    const val SMALL_PHONE_WIDTH = 640
+    const val SMALL_PHONE_HEIGHT = 360
+    const val PORTRAIT_WIDTH = 360
+    const val PORTRAIT_HEIGHT = 760
+    const val BANNER_HEIGHT = 50
+    const val TOTAL_LANDED = 37
+    val landed = mapOf(
+        AircraftType.LightProp to 12,
+        AircraftType.Turboprop to 9,
+        AircraftType.Jet to 8,
+        AircraftType.Jumbo to 3,
+        AircraftType.Helicopter to 5,
+    )
     const val COLLISION_X = 900.0
     const val COLLISION_Y = 420.0
     const val COLLISION_HEADING = 1.2
@@ -165,37 +183,121 @@ private fun MeadowHudPreview() = HudPreview(Levels.meadowField)
 @Composable
 private fun SavannaHudPreview() = HudPreview(Levels.savannaDawn)
 
-/** The score chips; switch to interactive mode and change the score to see the pop. */
+/** The HUD while the tutorial runs, in Night: the strips, Skip tutorial and the cog wheel. */
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun MeadowHudNightPreview() {
+    Box(Modifier.fillMaxSize()) {
+        FieldPreview(Levels.meadowField, LevelTheme.Night)
+        FaTheme(night = true) {
+            Hud(best = PreviewData.BEST_LARGE, score = PreviewData.SCORE_LARGE, onOptions = {}, onSkipTutorial = {})
+        }
+    }
+}
+
+/** The score strips; switch to interactive mode and change the score to see the pop. */
 @Preview
 @Composable
-private fun ScoreChipPreview() {
+private fun ScoreStripPreview() {
     FaTheme {
         Row(Modifier.padding(FaDimens.space4), horizontalArrangement = Arrangement.spacedBy(FaDimens.space3)) {
-            FaScoreCounter(HudText.BEST, PreviewData.BEST_LARGE, compact = true, icon = FaIcon.Star, iconColor = FaTheme.colors.sunDeep)
-            FaScoreCounter(HudText.SCORE, PreviewData.SCORE_LARGE, popOnRise = true)
+            FaScoreCounter(HudText.BEST, PreviewData.BEST_LARGE, icon = FaIcon.Star)
+            FaScoreCounter(HudText.SCORE, PreviewData.SCORE_LARGE, accent = true, popOnRise = true)
         }
+    }
+}
+
+/** The pause dialog over the field. */
+@Composable
+private fun OptionsPanelPreview(night: Boolean) {
+    Box(Modifier.fillMaxSize()) {
+        FieldPreview(Levels.meadowField, if (night) LevelTheme.Night else LevelTheme.Day)
+        FaTheme(night = night, reduceMotion = true) { OptionsPanel(onContinue = {}, onRestart = {}, onQuit = {}) }
     }
 }
 
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
 @Composable
-private fun OptionsPanelPreview() {
+private fun OptionsPanelDayPreview() = OptionsPanelPreview(night = false)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun OptionsPanelNightPreview() = OptionsPanelPreview(night = true)
+
+@Preview(widthDp = PreviewData.PORTRAIT_WIDTH, heightDp = PreviewData.PORTRAIT_HEIGHT)
+@Composable
+private fun OptionsPanelPortraitPreview() = OptionsPanelPreview(night = false)
+
+/**
+ * The game-ended dialog over the field with every aircraft type landed, above a placeholder as
+ * high as the ad banner. On the small phone it must show whole.
+ */
+@Composable
+private fun GameEndedPreview(night: Boolean, reason: GameOverReason = GameOverReason.Collision) {
     Box(Modifier.fillMaxSize()) {
-        FieldPreview(Levels.meadowField)
-        FaTheme { OptionsPanel(onContinue = {}, onRestart = {}, onQuit = {}) }
+        FieldPreview(Levels.meadowField, if (night) LevelTheme.Night else LevelTheme.Day)
+        FaTheme(night = night, reduceMotion = true) {
+            GameEndedDialog(
+                reason = reason,
+                types = AircraftType.entries,
+                landed = PreviewData.landed,
+                total = PreviewData.TOTAL_LANDED,
+                points = PreviewData.SCORE_LARGE,
+                onTryAgain = {},
+                onMainPage = {},
+                below = { Spacer(Modifier.fillMaxWidth().height(PreviewData.BANNER_HEIGHT.dp)) },
+            )
+        }
     }
 }
 
-/** The three level tiles, to compare each miniature with its level. */
-@Preview
+@Preview(widthDp = PreviewData.SMALL_PHONE_WIDTH, heightDp = PreviewData.SMALL_PHONE_HEIGHT)
 @Composable
-private fun LevelTilesPreview() {
-    FaTheme {
+private fun GameEndedSmallPhoneDayPreview() = GameEndedPreview(night = false)
+
+@Preview(widthDp = PreviewData.SMALL_PHONE_WIDTH, heightDp = PreviewData.SMALL_PHONE_HEIGHT)
+@Composable
+private fun GameEndedSmallPhoneNightPreview() = GameEndedPreview(night = true)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun GameEndedLeftAreaPreview() = GameEndedPreview(night = false, reason = GameOverReason.LeftArea)
+
+@Preview(widthDp = PreviewData.PORTRAIT_WIDTH, heightDp = PreviewData.PORTRAIT_HEIGHT)
+@Composable
+private fun GameEndedPortraitPreview() = GameEndedPreview(night = false)
+
+/** The level tiles, to compare each miniature with its level. */
+@Composable
+private fun LevelTilesPreview(night: Boolean) {
+    FaTheme(night = night) {
         Row(Modifier.padding(FaDimens.space4), horizontalArrangement = Arrangement.spacedBy(FaDimens.space4)) {
             Levels.all.forEach { LevelTile(it, onClick = {}) }
         }
     }
 }
+
+@Preview
+@Composable
+private fun LevelTilesDayPreview() = LevelTilesPreview(night = false)
+
+@Preview
+@Composable
+private fun LevelTilesNightPreview() = LevelTilesPreview(night = true)
+
+/** The level select page as the player sees it. */
+@Composable
+private fun LevelSelectPreview(night: Boolean) {
+    FaTheme(night = night, reduceMotion = true) { LevelSelectPage(PreviewAppHost, onStart = {}, onBack = {}) }
+}
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun LevelSelectDayPreview() = LevelSelectPreview(night = false)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun LevelSelectNightPreview() = LevelSelectPreview(night = true)
 
 /** The collision view: two aircraft on the field when they touch, [elapsedMs] after the collision. */
 @Composable

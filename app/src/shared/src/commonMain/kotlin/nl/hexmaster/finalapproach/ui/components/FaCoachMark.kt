@@ -11,9 +11,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -33,9 +34,10 @@ private object FaCoachMarkDefaults {
 }
 
 /**
- * A dark speech bubble that teaches. Without [onGotIt] it is a gesture or tracking mark (max
- * width `coach-max-width`); with it, an explanation mark (`coach-explain-max-width`) that ends
- * only with its button. The step line is in `label`, the title in `title-sm`, the body in `body`.
+ * A dark speech bubble that teaches: a flat surface in the outline colour on the field's contact
+ * shadow, without a lip. Without [onGotIt] it is a gesture or tracking mark (max width
+ * `coach-max-width`); with it, an explanation mark (`coach-explain-max-width`) that ends only
+ * with its button. The step line is in `label-sm`, the title in `title-sm`, the body in `row`.
  *
  * @param tailOffset distance of the tail's tip from the bubble's left edge; the centre when null
  * @param onGotIt shows the Got it button when not null
@@ -64,14 +66,15 @@ fun FaCoachMark(
                 val tailPx = tailLength.toPx()
                 val top = if (tail == FaCoachTail.Up) tailPx else 0f
                 val bodyHeight = size.height - tailPx
-                val radius = FaDimens.radiusMd.toPx()
-                drawRoundRect(colors.outline, Offset(0f, top), Size(size.width, bodyHeight), CornerRadius(radius, radius))
+                val radius = FaDimens.radiusControl.toPx()
                 val tipX = (tailOffset?.toPx() ?: (size.width / 2f)).coerceIn(radius + tailPx, size.width - radius - tailPx)
-                val path = Path().apply {
+                // Bubble and tail are one shape, so the shadow under them has one even tone.
+                val bubble = Path().apply {
+                    addRoundRect(RoundRect(Rect(0f, top, size.width, top + bodyHeight), CornerRadius(radius)))
                     if (tail == FaCoachTail.Down) {
                         moveTo(tipX - tailPx, bodyHeight)
-                        lineTo(tipX + tailPx, bodyHeight)
                         lineTo(tipX, bodyHeight + tailPx)
+                        lineTo(tipX + tailPx, bodyHeight)
                     } else {
                         moveTo(tipX - tailPx, top)
                         lineTo(tipX + tailPx, top)
@@ -79,22 +82,23 @@ fun FaCoachMark(
                     }
                     close()
                 }
-                drawPath(path, colors.outline)
+                translate(top = FaDimens.contactOffsetField.toPx()) { drawPath(bubble, colors.contactField) }
+                drawPath(bubble, colors.outline)
             }
             .padding(
                 start = FaDimens.space4,
                 end = FaDimens.space4,
-                top = FaDimens.space3 + if (tail == FaCoachTail.Up) tailLength else 0.dp,
-                bottom = FaDimens.space3 + if (tail == FaCoachTail.Down) tailLength else 0.dp,
+                top = FaDimens.space3 + if (tail == FaCoachTail.Up) tailLength else ZeroDp,
+                bottom = FaDimens.space3 + if (tail == FaCoachTail.Down) tailLength else ZeroDp,
             ),
         verticalArrangement = Arrangement.spacedBy(FaDimens.space3),
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(FaDimens.space3), verticalAlignment = Alignment.CenterVertically) {
             if (icon != null) FaIconImage(icon, colors.onOutline, FaDimens.iconLg)
             Column {
-                BasicText(stepLine.uppercase(), style = type.label.copy(color = colors.onOutline))
+                BasicText(stepLine.uppercase(), style = type.labelSm.copy(color = colors.onOutline))
                 BasicText(title, style = type.titleSm.copy(color = colors.onOutline))
-                BasicText(body, style = type.body.copy(color = colors.onOutline))
+                BasicText(body, style = type.row.copy(color = colors.onOutline))
             }
         }
         if (onGotIt != null) {

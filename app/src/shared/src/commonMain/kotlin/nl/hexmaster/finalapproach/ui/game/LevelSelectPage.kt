@@ -1,7 +1,6 @@
 package nl.hexmaster.finalapproach.ui.game
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,7 +22,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import nl.hexmaster.finalapproach.domain.LevelConfig
 import nl.hexmaster.finalapproach.domain.LevelScenery
@@ -31,11 +29,11 @@ import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.ui.BackHandler
-import nl.hexmaster.finalapproach.ui.components.faBlock
+import nl.hexmaster.finalapproach.ui.components.FaMoulded
+import nl.hexmaster.finalapproach.ui.components.tonePaper
 import nl.hexmaster.finalapproach.ui.sprites.drawSunburst
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
-import nl.hexmaster.finalapproach.ui.theme.FaShadows
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 private object LevelSelectText {
@@ -80,21 +78,29 @@ fun LevelSelectPage(
     }
 }
 
+/**
+ * One level as a moulded card: a `level-tile` square, lip included, with the miniature and the
+ * name on its paper face. It is pressed like a button.
+ */
 @Composable
 internal fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
     val colors = FaTheme.colors
     val type = FaTheme.type
-    Column(
-        Modifier
-            .size(FaDimens.levelTile)
-            .faBlock(colors.surface, colors.outline, FaDimens.line3, FaDimens.radiusLg, FaShadows.lipLg)
-            .clickable(role = Role.Button, onClick = onClick)
-            .padding(FaDimens.space3),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    FaMoulded(
+        onClick = onClick,
+        tone = colors.tonePaper,
+        radius = FaDimens.radiusPanel,
+        lip = FaDimens.lipPanel,
+        modifier = Modifier.size(FaDimens.levelTile),
     ) {
-        Canvas(Modifier.size(FaDimens.levelTileArt)) { drawLevelMiniature(level, colors) }
-        BasicText(level.name, style = type.titleSm.copy(color = colors.ink, textAlign = TextAlign.Center))
+        Column(
+            Modifier.fillMaxSize().padding(start = FaDimens.space2, top = FaDimens.space2, end = FaDimens.space2, bottom = FaDimens.space1),
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Canvas(Modifier.size(FaDimens.levelTileArt)) { drawLevelMiniature(level, colors) }
+            BasicText(level.name, style = type.titleSm.copy(color = colors.ink, textAlign = TextAlign.Center))
+        }
     }
 }
 

@@ -26,13 +26,12 @@ import nl.hexmaster.finalapproach.ui.BackHandler
 import nl.hexmaster.finalapproach.ui.components.FaButton
 import nl.hexmaster.finalapproach.ui.components.FaButtonVariant
 import nl.hexmaster.finalapproach.ui.components.FaIconButton
+import nl.hexmaster.finalapproach.ui.components.FaPanel
 import nl.hexmaster.finalapproach.ui.components.FaSegmentedControl
 import nl.hexmaster.finalapproach.ui.components.FaToggle
-import nl.hexmaster.finalapproach.ui.components.faBlock
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.sprites.drawSunburst
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
-import nl.hexmaster.finalapproach.ui.theme.FaShadows
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** Every string of the settings page. */
@@ -92,24 +91,14 @@ fun SettingsPage(
                 .padding(FaDimens.space5),
             contentAlignment = Alignment.TopCenter,
         ) {
-            Column(
-                Modifier
-                    .widthIn(max = FaDimens.dialogMaxWidth)
-                    .fillMaxWidth()
-                    .faBlock(colors.surface, colors.outline, FaDimens.line3, FaDimens.radiusLg, FaShadows.lipLg)
-                    .padding(
-                        start = FaDimens.space5,
-                        top = FaDimens.space5,
-                        end = FaDimens.space5,
-                        bottom = FaDimens.space5 + FaShadows.lipLg,
-                    ),
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(FaDimens.space4)) {
+            FaPanel(
+                Modifier.widthIn(max = FaDimens.dialogMaxWidth).fillMaxWidth(),
+                header = {
                     FaIconButton(FaIcon.ArrowLeft, SettingsText.BACK, onBack)
                     BasicText(SettingsText.TITLE, style = type.titleLg.copy(color = colors.ink))
-                }
-
-                GroupLabel(SettingsText.SOUND)
+                },
+            ) {
+                GroupLabel(SettingsText.SOUND, first = true)
                 SettingRow(SettingsText.SOUND_EFFECTS, SettingsText.SOUND_EFFECTS_BODY) {
                     FaToggle(settings.soundEffects, onSoundEffects)
                 }
@@ -146,17 +135,17 @@ fun SettingsPage(
     }
 }
 
-/** The small uppercase label above a group of settings. */
+/** The small uppercase label above a group of settings; the [first] one stands directly under the header. */
 @Composable
-private fun GroupLabel(text: String) {
+private fun GroupLabel(text: String, first: Boolean = false) {
     BasicText(
         text.uppercase(),
-        modifier = Modifier.padding(top = FaDimens.space5, bottom = FaDimens.space2),
-        style = FaTheme.type.label.copy(color = FaTheme.colors.inkMuted),
+        modifier = if (first) Modifier.padding(bottom = FaDimens.space2) else Modifier.padding(top = FaDimens.space5, bottom = FaDimens.space2),
+        style = FaTheme.type.labelSm.copy(color = FaTheme.colors.inkMuted),
     )
 }
 
-/** One `fa-setting` row: label and optional description on the left, the control on the right. */
+/** One setting: label in `row` and optional description in `body-sm` on the left, the control on the right. */
 @Composable
 private fun SettingRow(title: String, description: String?, control: @Composable () -> Unit) {
     val colors = FaTheme.colors
@@ -167,7 +156,7 @@ private fun SettingRow(title: String, description: String?, control: @Composable
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(Modifier.weight(1f)) {
-            BasicText(title, style = type.titleSm.copy(color = colors.ink))
+            BasicText(title, style = type.row.copy(color = colors.ink))
             if (description != null) BasicText(description, style = type.bodySm.copy(color = colors.inkMuted))
         }
         control()

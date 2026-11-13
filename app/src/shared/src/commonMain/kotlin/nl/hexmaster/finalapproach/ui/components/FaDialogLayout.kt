@@ -18,5 +18,15 @@ fun dialogLayoutFor(availableWidth: Dp, availableHeight: Dp): FaDialogLayout =
         FaDialogLayout.Portrait
     }
 
+/** How the buttons of a [FaDialog] are placed on its stub. */
+enum class FaDialogActionFlow { Stacked, SideBySide }
+
+/**
+ * The buttons stand side by side only where height is short and the stub also holds stats: the
+ * compact layout with stats. Everywhere else they are stacked, primary on top.
+ */
+fun dialogActionFlowFor(layout: FaDialogLayout, hasStats: Boolean): FaDialogActionFlow =
+    if (layout == FaDialogLayout.Compact && hasStats) FaDialogActionFlow.SideBySide else FaDialogActionFlow.Stacked
+
 /** The layout of the [FaDialog] around this content, so the content can follow it without measuring. */
 val LocalFaDialogLayout = staticCompositionLocalOf { FaDialogLayout.Portrait }

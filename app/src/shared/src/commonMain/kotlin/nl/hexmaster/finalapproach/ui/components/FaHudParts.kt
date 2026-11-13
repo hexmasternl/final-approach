@@ -2,15 +2,14 @@ package nl.hexmaster.finalapproach.ui.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,16 +19,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaMotion
-import nl.hexmaster.finalapproach.ui.theme.FaShadows
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** Tunables of the HUD that are not design tokens. */
@@ -41,35 +41,80 @@ object HudConfig {
     const val SCORE_POP_RISE_SHARE = 0.5f
 }
 
-/** The outlined chip face every HUD item stands on. */
+/**
+ * The flight strip: the flat readout every HUD value sits in. `strip-height` high, on the field's
+ * contact shadow, without a lip: it shows something and cannot be pressed.
+ *
+ * @param label the name of the value, shown in capitals in a cell on the left; none when null
+ * @param accent gives the label cell the sun tint, for the score
+ * @param icon optional icon before the label
+ * @param value the readout itself, in `strip-value`
+ */
 @Composable
-private fun Modifier.hudChipFace(): Modifier {
+fun FaFlightStrip(
+    modifier: Modifier = Modifier,
+    label: String? = null,
+    accent: Boolean = false,
+    icon: FaIcon? = null,
+    value: @Composable RowScope.() -> Unit,
+) {
     val colors = FaTheme.colors
-    return this
-        .heightIn(min = FaDimens.hudChip + FaShadows.lip)
-        .faBlock(
-            fill = colors.surface,
-            outline = colors.outline,
-            border = FaDimens.line3,
-            radius = FaDimens.radiusMd,
-            lip = FaShadows.lip,
+    val type = FaTheme.type
+    val cellFill = if (accent) colors.sun200 else colors.paper200
+    val cellRule = if (accent) colors.sun700 else colors.paper400
+    val cellInk = if (accent) colors.ink else colors.inkMuted
+    Row(
+        modifier
+            .height(FaDimens.stripHeight)
+            .faFlatSurface(
+                fill = colors.paper100,
+                outline = colors.outline,
+                radius = FaDimens.radiusStrip,
+                contact = colors.contactField,
+                contactOffset = FaDimens.contactOffsetField,
+            )
+            .padding(FaDimens.lineUi)
+            .clip(RoundedCornerShape(FaDimens.radiusStrip - FaDimens.lineUi)),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (label != null) {
+            Row(
+                Modifier
+                    .fillMaxHeight()
+                    .background(cellFill)
+                    .drawBehind {
+                        val rule = FaDimens.lineDetail.toPx()
+                        drawRect(cellRule, Offset(size.width - rule, 0f), Size(rule, size.height))
+                    }
+                    .padding(horizontal = FaDimens.space2),
+                horizontalArrangement = Arrangement.spacedBy(FaDimens.space1),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (icon != null) FaIconImage(icon, cellInk, FaDimens.iconXs)
+                BasicText(label.uppercase(), style = type.labelSm.copy(color = cellInk), maxLines = 1)
+            }
+        }
+        Row(
+            Modifier.padding(horizontal = FaDimens.space3),
+            horizontalArrangement = Arrangement.spacedBy(FaDimens.space1),
+            verticalAlignment = Alignment.CenterVertically,
+            content = value,
         )
-        .padding(start = FaDimens.space4, end = FaDimens.space4, bottom = FaShadows.lip)
+    }
 }
 
 /**
- * The Score Counter: a HUD chip with an optional leading [icon] and the [label] above the
- * [value]. [compact] shows the value in the smaller `score-compact` style, as for Best. The value
- * pops when it rises if [popOnRise] is set, unless the device asks for reduced motion.
+ * The Score Counter: a flight strip with the [label] in its cell, an optional [icon] before it,
+ * and the [value]. [accent] tints the label cell, as for the current score. The value pops when it
+ * rises if [popOnRise] is set, unless the device asks for reduced motion.
  */
 @Composable
 fun FaScoreCounter(
     label: String,
     value: Int,
     modifier: Modifier = Modifier,
-    compact: Boolean = false,
+    accent: Boolean = false,
     icon: FaIcon? = null,
-    iconColor: Color = FaTheme.colors.ink,
     popOnRise: Boolean = false,
 ) {
     val colors = FaTheme.colors
@@ -87,25 +132,21 @@ fun FaScoreCounter(
         }
         shown = value
     }
-    Row(
-        modifier
-            .hudChipFace()
-            .semantics(mergeDescendants = true) { contentDescription = "$label $value" },
-        horizontalArrangement = Arrangement.spacedBy(FaDimens.space3),
-        verticalAlignment = Alignment.CenterVertically,
+    FaFlightStrip(
+        modifier = modifier.semantics(mergeDescendants = true) { contentDescription = "$label $value" },
+        label = label,
+        accent = accent,
+        icon = icon,
     ) {
-        if (icon != null) FaIconImage(icon, iconColor, FaDimens.iconMd)
-        Column {
-            BasicText(label.uppercase(), style = type.label.copy(color = colors.inkMuted))
-            BasicText(
-                formatScore(value),
-                modifier = Modifier.graphicsLayer {
-                    scaleX = scale.value
-                    scaleY = scale.value
-                },
-                style = (if (compact) type.scoreCompact else type.score).copy(color = colors.ink),
-            )
-        }
+        BasicText(
+            formatScore(value),
+            modifier = Modifier.graphicsLayer {
+                scaleX = scale.value
+                scaleY = scale.value
+            },
+            style = type.stripValue.copy(color = colors.ink),
+            maxLines = 1,
+        )
     }
 }
 
@@ -118,27 +159,3 @@ val AircraftType.displayName: String
         AircraftType.Jumbo -> "Jumbo"
         AircraftType.Helicopter -> "Helicopter"
     }
-
-/** A square chip button with an icon, at least a full touch target. */
-@Composable
-fun FaIconButton(icon: FaIcon, description: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    val colors = FaTheme.colors
-    Box(
-        modifier
-            .width(FaDimens.hudChip)
-            .height(FaDimens.hudChip + FaShadows.lip)
-            .faBlock(
-                fill = colors.surface,
-                outline = colors.outline,
-                border = FaDimens.line3,
-                radius = FaDimens.radiusMd,
-                lip = FaShadows.lip,
-            )
-            .clickable(role = Role.Button, onClick = onClick)
-            .semantics { contentDescription = description }
-            .padding(bottom = FaShadows.lip),
-        contentAlignment = Alignment.Center,
-    ) {
-        FaIconImage(icon, colors.ink, FaDimens.iconMd)
-    }
-}
