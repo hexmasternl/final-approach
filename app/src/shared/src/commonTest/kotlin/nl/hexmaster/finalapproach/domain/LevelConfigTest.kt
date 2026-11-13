@@ -24,7 +24,7 @@ class LevelConfigTest {
         assertEquals(1.0, config.speedMultiplier)
         assertNull(config.wind)
         assertFalse(config.emergencyAircraft)
-        assertTrue(config.hints.isEmpty())
+        assertNull(config.tutorial)
         assertEquals(LevelTheme.Day, config.theme)
         assertEquals(Ambience(), config.ambience)
         assertEquals(LevelDefaults.SPAWN_SEPARATION, config.world.spawnSeparation)

@@ -10,7 +10,7 @@
 
 ## 2. Domain and storage
 
-- [ ] 2.1 Add `domain/Tutorial.kt` (`TutorialScript`, `ScriptedEntry`), `LevelDefaults.TUTORIAL_WELL_IN_VIEW_INSET`, replace `hints`/`TutorialHint` in `LevelConfig` with `tutorial: TutorialScript? = null`, and update the defaults test so no tutorial is the default. Verify `./gradlew :shared:allTests` passes and `grep -rn TutorialHint app/src` finds nothing.
+- [x] 2.1 Add `domain/Tutorial.kt` (`TutorialScript`, `ScriptedEntry`), `LevelDefaults.TUTORIAL_WELL_IN_VIEW_INSET`, replace `hints`/`TutorialHint` in `LevelConfig` with `tutorial: TutorialScript? = null`, and update the defaults test so no tutorial is the default. Verify `./gradlew :shared:allTests` passes and `grep -rn TutorialHint app/src` finds nothing.
 - [ ] 2.2 Give Meadow Field a script (decision 5) and extend `LevelConfigValidator`: tutorial entries lie outside the viewport. Add tests: only Meadow Field has a script; each airplane entry has an aligned westbound approach into runway 27's zone that fits in the viewport; the helicopter line reaches the helipad. Verify the tests pass.
 - [ ] 2.3 Add `platform/TutorialStore.kt` with `InMemoryTutorialStore`, `AppHost.tutorials`, and `engine/TutorialProgress.kt` that marks completion on `GameEvent.TutorialCompleted`, with a test that it writes once. Implement the store in `AndroidAppHost` with a private `tutorials` preferences file. Verify `allTests` and `:androidApp:assembleDebug` pass and `commonMain` has no `android.` import.
 

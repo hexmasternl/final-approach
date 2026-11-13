@@ -194,9 +194,6 @@ data class ScoringConfig(
 /** Wind blowing towards [direction] (radians) with [strength] in world units per second. */
 data class Wind(val direction: Double, val strength: Double)
 
-/** A coach mark shown at [atSeconds] into the level. */
-data class TutorialHint(val atSeconds: Double, val text: String)
-
 /** Everything the engine, the spawner and the UI need to run one level. */
 data class LevelConfig(
     val id: String,
@@ -222,7 +219,7 @@ data class LevelConfig(
     val landing: LandingConfig = LandingConfig(),
     val wind: Wind? = null,
     val emergencyAircraft: Boolean = false,
-    val hints: List<TutorialHint> = emptyList(),
+    val tutorial: TutorialScript? = null,
 ) {
     /** The phase active at [levelTime] seconds: the last one that has started. */
     fun phaseAt(levelTime: Double): DifficultyPhase =
