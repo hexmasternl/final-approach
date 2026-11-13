@@ -24,6 +24,7 @@ import nl.hexmaster.finalapproach.ui.components.FaDialogAction
 import nl.hexmaster.finalapproach.ui.components.FaDialogTone
 import nl.hexmaster.finalapproach.ui.components.FaIconButton
 import nl.hexmaster.finalapproach.ui.components.FaScoreCounter
+import nl.hexmaster.finalapproach.ui.components.touchInset
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 
@@ -43,7 +44,13 @@ internal object HudText {
  * How far the touch target of a HUD control reaches beyond what is drawn of it: the controls are
  * drawn `strip-height` high in the middle of a full touch target.
  */
-private val hudTouchOverhang: Dp = (FaDimens.touchMin - FaDimens.stripHeight) / 2
+private val hudTouchOverhang: Dp = touchInset(FaDimens.stripHeight)
+
+/** Distance from the top inset to the top of the HUD rows: what is drawn stands `space-4` from the edge. */
+internal val hudRowTopPadding: Dp = FaDimens.space4 - hudTouchOverhang
+
+/** Height of the HUD rows: a full touch target, with the strips and the controls in its middle. */
+internal val hudRowHeight: Dp = FaDimens.touchMin
 
 /**
  * The overlay of a running level, laid out as the design system's Hud Bar: one row with the best
@@ -68,12 +75,12 @@ fun Hud(
             // What is drawn stands `space-4` from the edges; the touch targets reach a little further out.
             .padding(
                 start = FaDimens.space4,
-                top = FaDimens.space4 - hudTouchOverhang,
+                top = hudRowTopPadding,
                 end = FaDimens.space4 - hudTouchOverhang,
             ),
     ) {
         Row(
-            Modifier.align(Alignment.TopStart).height(FaDimens.touchMin),
+            Modifier.align(Alignment.TopStart).height(hudRowHeight),
             horizontalArrangement = Arrangement.spacedBy(FaDimens.space3),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -81,7 +88,7 @@ fun Hud(
             FaScoreCounter(HudText.SCORE, score, accent = true, popOnRise = true)
         }
         Row(
-            Modifier.align(Alignment.TopEnd).height(FaDimens.touchMin),
+            Modifier.align(Alignment.TopEnd).height(hudRowHeight),
             horizontalArrangement = Arrangement.spacedBy(FaDimens.space3 - hudTouchOverhang),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -95,11 +102,14 @@ fun Hud(
 }
 
 /**
- * Distance from the top of the screen to the bottom of the HUD, contact shadow included, when the
- * system keeps [topInset] clear at the top: `space-4` inset, then one `strip-height` tall row and
- * the shadow under it.
+ * Distance from the top of the screen to the bottom of the HUD when the system keeps [topInset]
+ * clear at the top: `space-4` inset, one `strip-height` tall row, and under it the larger of the
+ * contact shadow and the touch overhang of the compact icon button. The touch target reaches
+ * further down than the shadow, so this covers everything the HUD draws and everything of it that
+ * takes a touch.
  */
-fun hudBottom(topInset: Dp): Dp = topInset + FaDimens.space4 + FaDimens.stripHeight + FaDimens.contactOffsetField
+fun hudBottom(topInset: Dp): Dp =
+    topInset + FaDimens.space4 + FaDimens.stripHeight + maxOf(FaDimens.contactOffsetField, hudTouchOverhang)
 
 /** The options panel: Continue, Restart and Quit over a frozen game. */
 @Composable

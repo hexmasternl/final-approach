@@ -65,9 +65,14 @@ fun FaButton(
             FaDimens.buttonLg, FaDimens.space6, FaDimens.radiusControlLg, FaDimens.lipLg, FaDimens.iconMd, type.buttonLabelLg,
         )
     }
-    val content = if (enabled) colors.ink else colors.ink3
+    // Ink on the paper face of a ghost button; the on-accent colour on every coloured face.
+    val content = when {
+        !enabled -> colors.ink3
+        variant == FaButtonVariant.Ghost -> colors.ink
+        else -> colors.onAccent
+    }
     // A button lower than a touch target is drawn in the middle of one.
-    val touchInsetY = ((FaDimens.touchMin - spec.height) / 2).coerceAtLeast(ZeroDp)
+    val touchInsetY = touchInset(spec.height)
     FaMoulded(
         onClick = onClick,
         tone = tone,
@@ -116,7 +121,7 @@ fun FaIconButton(
 ) {
     val colors = FaTheme.colors
     val drawn = if (compact) FaDimens.stripHeight else FaDimens.buttonMd
-    val touchInset = ((FaDimens.touchMin - drawn) / 2).coerceAtLeast(ZeroDp)
+    val touchInset = touchInset(drawn)
     FaMoulded(
         onClick = onClick,
         tone = colors.toneGhost,

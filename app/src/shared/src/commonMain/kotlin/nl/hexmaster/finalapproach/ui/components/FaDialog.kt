@@ -32,7 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -206,12 +206,15 @@ private fun PortraitPass(
     PassHeader(eyebrow, title, tone)
     PassBody(body, stamp)
     Box(
-        Modifier.fillMaxWidth().height(FaDimens.lineUiSm).drawBehind {
-            val y = size.height / 2f
-            val margin = FaDimens.perforationDot.toPx()
-            drawDashedRule(colors.paper500, Offset(margin, y), Offset(size.width - margin, y), size.height)
-            drawPunch(Offset(0f, y), colors)
-            drawPunch(Offset(size.width, y), colors)
+        Modifier.fillMaxWidth().height(FaDimens.lineUiSm).drawWithCache {
+            val clip = Path()
+            onDrawBehind {
+                val y = size.height / 2f
+                val margin = FaDimens.perforationDot.toPx()
+                drawDashedRule(colors.paper500, Offset(margin, y), Offset(size.width - margin, y), size.height)
+                drawPunch(Offset(0f, y), colors, clip)
+                drawPunch(Offset(size.width, y), colors, clip)
+            }
         },
     )
     PassStub(actions, content)
@@ -234,14 +237,17 @@ private fun CompactPass(
             Modifier
                 .weight(FaDialogDefaults.COMPACT_LEAD_WEIGHT)
                 .fillMaxHeight()
-                .drawWithContent {
-                    drawContent()
-                    val line = FaDimens.lineUiSm.toPx()
-                    val x = size.width - line / 2f
-                    val margin = FaDimens.perforationDot.toPx()
-                    drawDashedRule(colors.paper500, Offset(x, margin), Offset(x, size.height - margin), line)
-                    drawPunch(Offset(x, 0f), colors)
-                    drawPunch(Offset(x, size.height), colors)
+                .drawWithCache {
+                    val clip = Path()
+                    onDrawWithContent {
+                        drawContent()
+                        val line = FaDimens.lineUiSm.toPx()
+                        val x = size.width - line / 2f
+                        val margin = FaDimens.perforationDot.toPx()
+                        drawDashedRule(colors.paper500, Offset(x, margin), Offset(x, size.height - margin), line)
+                        drawPunch(Offset(x, 0f), colors, clip)
+                        drawPunch(Offset(x, size.height), colors, clip)
+                    }
                 },
         ) {
             PassHeader(eyebrow, title, tone)
@@ -332,11 +338,16 @@ private fun DialogButton(action: FaDialogAction, modifier: Modifier, size: FaBut
     FaButton(action.text, action.onClick, modifier, action.variant, size, action.icon)
 }
 
-/** A half-hole punched out of the pass where the perforation meets its edge; the face clips the other half. */
-private fun DrawScope.drawPunch(center: Offset, colors: FaColors) {
+/**
+ * A half-hole punched out of the pass where the perforation meets its edge; the face clips the
+ * other half. [clip] is a reused path; its content is replaced.
+ */
+private fun DrawScope.drawPunch(center: Offset, colors: FaColors, clip: Path) {
     val radius = FaDimens.perforationDot.toPx() / 2f
     drawCircle(colors.paper500, radius, center)
-    clipPath(Path().apply { addOval(Rect(center, radius)) }) {
+    clip.rewind()
+    clip.addOval(Rect(center, radius))
+    clipPath(clip) {
         drawCircle(colors.paper400, radius, center + Offset(0f, FaDimens.lineUi.toPx()))
     }
 }

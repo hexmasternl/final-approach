@@ -16,12 +16,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -71,7 +70,7 @@ internal fun FaMoulded(
     val outline = if (enabled) colors.outline else colors.ink3
     val focus = colors.focus
     val ringOutline = colors.outline
-    val shineColor = colors.paper0.copy(alpha = FaOpacity.shine)
+    val shineColor = colors.glassShine.copy(alpha = FaOpacity.shine)
     val border = FaDimens.lineUi
 
     Box(
@@ -83,44 +82,45 @@ internal fun FaMoulded(
                 role = Role.Button,
                 onClick = onClick,
             )
-            .drawBehind {
-                val inset = Offset(touchInsetX.toPx(), touchInsetY.toPx())
-                val drawn = Size(size.width - 2f * inset.x, size.height - 2f * inset.y)
-                val travel = (restLip - currentLip.value).toPx()
-                val radiusPx = radius.toPx()
-                if (focused) {
-                    val band = border.toPx()
-                    // Two-tone ring: focus colour next to the control, outline colour outside it.
-                    for ((color, distance) in listOf(ringOutline to band * 1.5f, focus to band * 0.5f)) {
-                        drawRoundRect(
-                            color,
-                            Offset(inset.x - distance, inset.y + travel - distance),
-                            Size(drawn.width + 2f * distance, drawn.height - travel + 2f * distance),
-                            CornerRadius(radiusPx + distance),
-                            style = Stroke(band),
+            .drawWithCache {
+                val paths = MouldedPaths()
+                onDrawBehind {
+                    val inset = Offset(touchInsetX.toPx(), touchInsetY.toPx())
+                    val drawn = Size(size.width - 2f * inset.x, size.height - 2f * inset.y)
+                    val travel = (restLip - currentLip.value).toPx()
+                    val radiusPx = radius.toPx()
+                    if (focused) {
+                        drawFocusRing(
+                            focus = focus,
+                            outline = ringOutline,
+                            radius = radiusPx,
+                            topLeft = inset + Offset(0f, travel),
+                            size = Size(drawn.width, drawn.height - travel),
+                            band = border.toPx(),
                         )
                     }
-                }
-                drawMoulded(
-                    tone = shownTone,
-                    outline = outline,
-                    border = border.toPx(),
-                    radius = radiusPx,
-                    lip = currentLip.value.toPx(),
-                    restLip = restLip.toPx(),
-                    topLeft = inset,
-                    size = drawn,
-                    contact = contact,
-                    contactOffset = if (enabled) contactOffset.toPx() else 0f,
-                )
-                if (shine && enabled) {
-                    val height = FaDimens.shineHeight.toPx()
-                    drawRoundRect(
-                        shineColor,
-                        inset + Offset(border.toPx() + FaDimens.shineInsetX.toPx(), travel + border.toPx() + FaDimens.shineInsetY.toPx()),
-                        Size(FaDimens.shineWidth.toPx(), height),
-                        CornerRadius(height / 2f),
+                    drawMoulded(
+                        tone = shownTone,
+                        paths = paths,
+                        outline = outline,
+                        border = border.toPx(),
+                        radius = radiusPx,
+                        lip = currentLip.value.toPx(),
+                        restLip = restLip.toPx(),
+                        topLeft = inset,
+                        size = drawn,
+                        contact = contact,
+                        contactOffset = if (enabled) contactOffset.toPx() else 0f,
                     )
+                    if (shine && enabled) {
+                        val height = FaDimens.shineHeight.toPx()
+                        drawRoundRect(
+                            shineColor,
+                            inset + Offset(border.toPx() + FaDimens.shineInsetX.toPx(), travel + border.toPx() + FaDimens.shineInsetY.toPx()),
+                            Size(FaDimens.shineWidth.toPx(), height),
+                            CornerRadius(height / 2f),
+                        )
+                    }
                 }
             }
             .padding(

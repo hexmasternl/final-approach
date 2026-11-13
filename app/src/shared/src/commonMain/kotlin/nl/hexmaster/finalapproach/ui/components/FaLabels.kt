@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -88,9 +89,9 @@ fun FaSticker(
 ) {
     val colors = FaTheme.colors
     val type = FaTheme.type
-    val (light, base, deep) = when (tone) {
-        FaStickerTone.Tangerine -> Triple(colors.tangerine200, colors.tangerine500, colors.tangerine700)
-        FaStickerTone.Sun -> Triple(colors.sun200, colors.sun500, colors.sun700)
+    val surface = when (tone) {
+        FaStickerTone.Tangerine -> FaTone(colors.tangerine200, colors.tangerine500, colors.tangerine700, colors.tangerine700)
+        FaStickerTone.Sun -> FaTone(colors.sun200, colors.sun500, colors.sun700, colors.sun700)
     }
     val tilt = if (tone == FaStickerTone.Sun) FaLabelDefaults.TILT_BACK_DEGREES else FaLabelDefaults.TILT_DEGREES
     Row(
@@ -98,29 +99,33 @@ fun FaSticker(
             // The rim and the shadow lie outside the sticker's own bounds; a layer does not clip them.
             .graphicsLayer { rotationZ = tilt }
             .height(FaDimens.stickerHeight)
-            .drawBehind {
-                val rim = FaDimens.stickerRim.toPx()
-                val rimmed = Size(size.width + 2f * rim, size.height + 2f * rim)
-                val pill = CornerRadius(rimmed.height / 2f)
-                drawRoundRect(colors.contactField, Offset(-rim, -rim + FaDimens.contactOffsetField.toPx()), rimmed, pill)
-                drawRoundRect(colors.paper0, Offset(-rim, -rim), rimmed, pill)
-                drawMoulded(
-                    tone = FaTone(light, base, deep, deep),
-                    outline = colors.outline,
-                    border = FaDimens.lineUi.toPx(),
-                    radius = size.height / 2f,
-                    lip = FaDimens.lipInset.toPx(),
-                    insetLip = true,
-                    lipEdge = 0f,
-                )
+            .drawWithCache {
+                val paths = MouldedPaths()
+                onDrawBehind {
+                    val rim = FaDimens.stickerRim.toPx()
+                    val rimmed = Size(size.width + 2f * rim, size.height + 2f * rim)
+                    val pill = CornerRadius(rimmed.height / 2f)
+                    drawRoundRect(colors.contactField, Offset(-rim, -rim + FaDimens.contactOffsetField.toPx()), rimmed, pill)
+                    drawRoundRect(colors.paper0, Offset(-rim, -rim), rimmed, pill)
+                    drawMoulded(
+                        tone = surface,
+                        paths = paths,
+                        outline = colors.outline,
+                        border = FaDimens.lineUi.toPx(),
+                        radius = size.height / 2f,
+                        lip = FaDimens.lipInset.toPx(),
+                        insetLip = true,
+                        lipEdge = 0f,
+                    )
+                }
             }
             .padding(horizontal = FaDimens.space3),
         horizontalArrangement = Arrangement.spacedBy(FaDimens.space1),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (icon != null) FaIconImage(icon, colors.ink, FaDimens.iconXs)
-        BasicText(text, style = type.buttonLabel.copy(color = colors.ink), maxLines = 1)
-        if (caption != null) BasicText(caption.uppercase(), style = type.labelSm.copy(color = colors.ink), maxLines = 1)
+        if (icon != null) FaIconImage(icon, colors.onAccent, FaDimens.iconXs)
+        BasicText(text, style = type.buttonLabel.copy(color = colors.onAccent), maxLines = 1)
+        if (caption != null) BasicText(caption.uppercase(), style = type.labelSm.copy(color = colors.onAccent), maxLines = 1)
     }
 }
 

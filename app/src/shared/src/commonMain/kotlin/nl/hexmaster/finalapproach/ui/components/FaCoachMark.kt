@@ -9,7 +9,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
@@ -62,28 +62,30 @@ fun FaCoachMark(
         modifier
             .widthIn(max = maxWidth)
             .semantics { liveRegion = LiveRegionMode.Polite }
-            .drawBehind {
-                val tailPx = tailLength.toPx()
-                val top = if (tail == FaCoachTail.Up) tailPx else 0f
-                val bodyHeight = size.height - tailPx
-                val radius = FaDimens.radiusControl.toPx()
-                val tipX = (tailOffset?.toPx() ?: (size.width / 2f)).coerceIn(radius + tailPx, size.width - radius - tailPx)
-                // Bubble and tail are one shape, so the shadow under them has one even tone.
-                val bubble = Path().apply {
-                    addRoundRect(RoundRect(Rect(0f, top, size.width, top + bodyHeight), CornerRadius(radius)))
+            .drawWithCache {
+                val bubble = Path()
+                onDrawBehind {
+                    val tailPx = tailLength.toPx()
+                    val top = if (tail == FaCoachTail.Up) tailPx else 0f
+                    val bodyHeight = size.height - tailPx
+                    val radius = FaDimens.radiusControl.toPx()
+                    val tipX = (tailOffset?.toPx() ?: (size.width / 2f)).coerceIn(radius + tailPx, size.width - radius - tailPx)
+                    // Bubble and tail are one shape, so the shadow under them has one even tone.
+                    bubble.rewind()
+                    bubble.addRoundRect(RoundRect(Rect(0f, top, size.width, top + bodyHeight), CornerRadius(radius)))
                     if (tail == FaCoachTail.Down) {
-                        moveTo(tipX - tailPx, bodyHeight)
-                        lineTo(tipX, bodyHeight + tailPx)
-                        lineTo(tipX + tailPx, bodyHeight)
+                        bubble.moveTo(tipX - tailPx, bodyHeight)
+                        bubble.lineTo(tipX, bodyHeight + tailPx)
+                        bubble.lineTo(tipX + tailPx, bodyHeight)
                     } else {
-                        moveTo(tipX - tailPx, top)
-                        lineTo(tipX + tailPx, top)
-                        lineTo(tipX, 0f)
+                        bubble.moveTo(tipX - tailPx, top)
+                        bubble.lineTo(tipX + tailPx, top)
+                        bubble.lineTo(tipX, 0f)
                     }
-                    close()
+                    bubble.close()
+                    translate(top = FaDimens.contactOffsetField.toPx()) { drawPath(bubble, colors.contactField) }
+                    drawPath(bubble, colors.outline)
                 }
-                translate(top = FaDimens.contactOffsetField.toPx()) { drawPath(bubble, colors.contactField) }
-                drawPath(bubble, colors.outline)
             }
             .padding(
                 start = FaDimens.space4,
