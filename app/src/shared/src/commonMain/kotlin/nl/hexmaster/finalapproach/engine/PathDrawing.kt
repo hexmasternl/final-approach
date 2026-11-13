@@ -36,7 +36,7 @@ object PathDrawing {
         val from = points.lastOrNull() ?: aircraft.position
         val hit = LandingRules.check(from, point, aircraft.type.kind, zones, landing.alignmentTolerance)
             ?: return aircraft.copy(path = aircraft.path.copy(points = points + point))
-        val smoothed = smooth(aircraft, points + hit.entryPoint, specs, config)
+        val smoothed = smooth(aircraft, points + hit.entryPoint, config)
         val zone = hit.zone
         val final = if (zone is LandingZone.Runway) {
             val spec = specs[aircraft.type]
@@ -56,11 +56,10 @@ object PathDrawing {
     /** Replaces the path of a freely flying aircraft by its smoothed version; a locked path stays. */
     fun finish(aircraft: Aircraft, specs: EffectiveAircraftSpecs, config: EngineConfig): Aircraft {
         if (aircraft.path.locked || aircraft.status != AircraftStatus.Flying) return aircraft
-        return aircraft.copy(path = aircraft.path.copy(points = smooth(aircraft, aircraft.path.points, specs, config)))
+        return aircraft.copy(path = aircraft.path.copy(points = smooth(aircraft, aircraft.path.points, config)))
     }
 
-    private fun smooth(aircraft: Aircraft, points: List<Vec2>, specs: EffectiveAircraftSpecs, config: EngineConfig): List<Vec2> {
-        val spec = specs[aircraft.type]
-        return PathSmoother.smooth(aircraft.position, aircraft.heading, points, spec.speed, spec.turnRate, config)
+    private fun smooth(aircraft: Aircraft, points: List<Vec2>, config: EngineConfig): List<Vec2> {
+        return PathSmoother.smooth(aircraft.position, points, config)
     }
 }
