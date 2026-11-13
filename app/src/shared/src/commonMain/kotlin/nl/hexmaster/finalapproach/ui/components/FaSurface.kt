@@ -23,15 +23,6 @@ import nl.hexmaster.finalapproach.ui.theme.FaDimens
 /** No distance at all. Not a design value, so it is not a token. */
 internal val ZeroDp = Dp(0f)
 
-/** Geometry shared by the surfaces that is not a token of its own. */
-internal object FaSurfaceDefaults {
-    /** Length of one dash of a dashed rule: a panel's header rule, a dialog's perforation. */
-    val ruleDash = Dp(6f)
-
-    /** Gap between two dashes of a dashed rule. */
-    val ruleGap = Dp(4f)
-}
-
 /**
  * The four tones of one moulded surface: the highlight along the top of the face, the face, the
  * lip under it and the line along the bottom of the lip.
@@ -211,7 +202,7 @@ internal fun DrawScope.drawDashedRule(color: Color, from: Offset, to: Offset, wi
         strokeWidth = width,
         cap = StrokeCap.Butt,
         pathEffect = PathEffect.dashPathEffect(
-            floatArrayOf(FaSurfaceDefaults.ruleDash.toPx(), FaSurfaceDefaults.ruleGap.toPx()),
+            floatArrayOf(FaDimens.ruleDash.toPx(), FaDimens.ruleGap.toPx()),
         ),
     )
 }
