@@ -132,4 +132,17 @@ class ClearanceEventTest {
         engine.update(dt)
         assertEquals(emptyList(), engine.cleared())
     }
+
+    @Test
+    fun aReportedClearanceIsNotRepeatedByUpdatesThatDoNothing() {
+        val engine = engine()
+        engine.place(listOf(engine.plane(1, Vec2(1800.0, 700.0), west)))
+        engine.draw(1, *approachFromEast)
+        engine.update(dt)
+        assertEquals(1, engine.cleared().size)
+        engine.pause()
+        assertEquals(emptyList(), engine.cleared())
+        engine.update(dt)
+        assertEquals(emptyList(), engine.cleared())
+    }
 }

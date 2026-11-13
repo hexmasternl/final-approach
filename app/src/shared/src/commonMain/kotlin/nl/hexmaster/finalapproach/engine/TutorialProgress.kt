@@ -13,9 +13,13 @@ class TutorialProgress(private val store: TutorialStore, private val tutorialId:
     val completed: Boolean get() = written
 
     fun onEvents(events: List<GameEvent>) {
-        if (!written && events.any { it is GameEvent.TutorialCompleted }) {
-            written = true
-            store.markCompleted(tutorialId)
-        }
+        if (events.any { it is GameEvent.TutorialCompleted }) markCompleted()
+    }
+
+    /** Writes completion now, once. */
+    fun markCompleted() {
+        if (written) return
+        written = true
+        store.markCompleted(tutorialId)
     }
 }

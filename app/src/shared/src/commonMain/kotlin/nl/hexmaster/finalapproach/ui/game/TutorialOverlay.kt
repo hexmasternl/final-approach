@@ -109,7 +109,8 @@ internal fun TutorialOverlay(
     val following = tracked != null && !explaining
     val density = LocalDensity.current
 
-    BoxWithConstraints(modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+    // Unpadded, so positions share the canvas origin; only the standing coach mark keeps clear of the system bars.
+    BoxWithConstraints(modifier.fillMaxSize()) {
         val screenHeight = with(density) { maxHeight.toPx() }
         if (following && tracked != null) {
             val anchor = viewport.offsetOf(tracked.position)
@@ -141,7 +142,7 @@ internal fun TutorialOverlay(
                 zoneY > screenHeight / 2f -> Alignment.TopCenter
                 else -> Alignment.BottomCenter
             }
-            Box(Modifier.fillMaxSize().padding(FaDimens.space4), contentAlignment = alignment) {
+            Box(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing).padding(FaDimens.space4), contentAlignment = alignment) {
                 FaCoachMark(
                     stepLine = stepLine,
                     title = copy.title,

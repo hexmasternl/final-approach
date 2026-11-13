@@ -84,10 +84,14 @@ fun GameScreen(
 
 @Composable
 private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting: Boolean, onQuit: () -> Unit, level: LevelConfig) {
-    val engine = remember(level, host) {
-        GameEngine(level, tutorialActive = level.tutorial != null && !host.tutorials.isCompleted(level.id))
-    }
     val tutorialProgress = remember(level, host) { TutorialProgress(host.tutorials, level.id) }
+    val engine = remember(level, host) {
+        GameEngine(
+            level,
+            tutorialActive = level.tutorial != null && !host.tutorials.isCompleted(level.id),
+            onTutorialCompleted = tutorialProgress::markCompleted,
+        )
+    }
     val state by engine.state.collectAsState()
     val bestScore = remember(level, host) { BestScore(host.highScores, level.id) }
     var optionsOpen by remember { mutableStateOf(false) }
@@ -107,8 +111,10 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     }
     // The screen stays on only while the level runs; leaving the screen always restores the timeout.
     val keepScreenOn = shouldKeepScreenOn(keepScreenOnSetting, state)
-    LaunchedEffect(host, keepScreenOn) { host.keepScreenOn(keepScreenOn) }
-    DisposableEffect(host) { onDispose { host.keepScreenOn(false) } }
+    DisposableEffect(host, keepScreenOn) {
+        host.keepScreenOn(keepScreenOn)
+        onDispose { host.keepScreenOn(false) }
+    }
     fun openOptions() {
         engine.pause()
         optionsOpen = true

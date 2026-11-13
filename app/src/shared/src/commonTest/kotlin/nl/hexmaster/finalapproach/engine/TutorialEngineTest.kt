@@ -253,6 +253,15 @@ class TutorialEngineTest {
     }
 
     @Test
+    fun completionIsReportedToTheCallbackAtOnceEvenWithoutAnotherUpdate() {
+        var completed = 0
+        val engine = GameEngine(level, seed = 1, tutorialActive = true, onTutorialCompleted = { completed++ })
+        engine.skipTutorial()
+        engine.restart(seed = 2)
+        assertEquals(1, completed)
+    }
+
+    @Test
     fun skippingKeepsTheAircraftInTheAir() {
         val engine = engine()
         engine.pastTheExplanations()

@@ -58,6 +58,7 @@ class GameEngine(
     val specs: EffectiveAircraftSpecs = level.aircraftTuning.resolve(),
     val config: EngineConfig = EngineConfig(),
     tutorialActive: Boolean = false,
+    private val onTutorialCompleted: () -> Unit = {},
 ) {
     val zones: List<LandingZone> = LandingZones.of(level)
 
@@ -78,7 +79,7 @@ class GameEngine(
     private var handoverTime = 0.0
 
     /** Clearances made by input since the last update; the next update reports them. */
-    private var pendingClearances: List<GameEvent> = emptyList()
+    private var pendingEvents: List<GameEvent> = emptyList()
 
     private val mutableState = MutableStateFlow(GameState())
 
@@ -94,13 +95,16 @@ class GameEngine(
      */
     fun update(deltaSeconds: Double) {
         val current = mutableState.value
-        if (deltaSeconds <= 0.0 || current.paused || current.status is GameStatus.GameOver) return
-        if (current.tutorial?.holding == true) return
+        if (deltaSeconds <= 0.0 || current.paused || current.status is GameStatus.GameOver || current.tutorial?.holding == true) {
+            // An update that does nothing reports nothing, so a sound cue is never played twice.
+            if (current.events.isNotEmpty()) mutableState.value = current.copy(events = emptyList())
+            return
+        }
         val steps = ceil(deltaSeconds / level.world.maxStepSeconds).toInt().coerceAtLeast(1)
         val stepSeconds = deltaSeconds / steps
         val events = mutableListOf<GameEvent>()
-        events += pendingClearances
-        pendingClearances = emptyList()
+        events += pendingEvents
+        pendingEvents = emptyList()
         var aircraft = current.aircraft
         var status: GameStatus = GameStatus.Playing
         for (step in 0 until steps) {
@@ -146,7 +150,7 @@ class GameEngine(
 
     /** Freezes the level: nothing moves, spawns or scores, and input is ignored, until [resume]. */
     fun pause() {
-        mutableState.value = mutableState.value.copy(paused = true)
+        mutableState.value = mutableState.value.copy(paused = true, events = emptyList())
     }
 
     /** Carries on from exactly where [pause] stopped. */
@@ -158,7 +162,7 @@ class GameEngine(
     fun restart(seed: Long = level.run.seed ?: Random.nextLong()) {
         spawner = Spawner(level, seed, specs::speedOf)
         nextId = 1
-        pendingClearances = emptyList()
+        pendingEvents = emptyList()
         handoverTime = 0.0
         snapshot = null
         mutableState.value = GameState()
@@ -216,7 +220,7 @@ class GameEngine(
         }
         val after = mutableState.value.aircraft.firstOrNull { it.id == id }?.status
         if (before !is AircraftStatus.ClearedToLand && after is AircraftStatus.ClearedToLand) {
-            pendingClearances = pendingClearances + GameEvent.ClearedToLand(id, after.zone)
+            pendingEvents = pendingEvents + GameEvent.ClearedToLand(id, after.zone)
         }
         mutableState.value = advanceTutorial(mutableState.value)
     }
@@ -234,35 +238,36 @@ class GameEngine(
         if (current.paused || current.status is GameStatus.GameOver) return
         val tutorial = current.tutorial ?: return
         val transition = director?.acknowledge(tutorial) ?: return
-        mutableState.value = advanceTutorial(apply(current, transition))
+        mutableState.value = advanceTutorial(applyTransition(current, transition))
     }
 
     /** Ends the tutorial at once: aircraft stay, the normal spawner starts, normal failures apply. */
     fun skipTutorial() {
         val current = mutableState.value
         if (current.tutorial == null || current.paused || current.status is GameStatus.GameOver) return
-        mutableState.value = apply(current, TutorialTransition(state = null, completed = true))
+        mutableState.value = applyTransition(current, TutorialTransition(state = null, completed = true))
     }
 
     private fun beginTutorial() {
         val start = director?.start() ?: return
-        mutableState.value = apply(mutableState.value, start)
+        mutableState.value = applyTransition(mutableState.value, start)
     }
 
     /** Moves the tutorial on for as long as the aircraft as they are now ask for it. */
     private fun advanceTutorial(state: GameState): GameState {
         val tutorial = state.tutorial ?: return state
         val next = director?.advance(tutorial, state.aircraft) ?: return state
-        return advanceTutorial(apply(state, next))
+        return advanceTutorial(applyTransition(state, next))
     }
 
     /** Does what [transition] says: snapshot, send in an aircraft, show the new state, or hand over. */
-    private fun apply(state: GameState, transition: TutorialTransition): GameState {
+    private fun applyTransition(state: GameState, transition: TutorialTransition): GameState {
         if (transition.completed) {
             tutorialRunning = false
             snapshot = null
             handoverTime = state.levelTime
-            pendingClearances = pendingClearances + GameEvent.TutorialCompleted
+            pendingEvents = pendingEvents + GameEvent.TutorialCompleted
+            onTutorialCompleted()
             return state.copy(tutorial = null)
         }
         if (transition.snapshot) {
@@ -285,9 +290,9 @@ class GameEngine(
 
     /** After a failure during the tutorial: back to the game as it was when the step began, and the step again. */
     private fun restartStep(state: GameState, reason: GameOverReason): GameState {
-        val step = state.tutorial?.step ?: return state
-        val saved = snapshot ?: return state
-        val transition = director?.retry(step, reason) ?: return state
+        val step = checkNotNull(state.tutorial) { "restartStep without a tutorial" }.step
+        val saved = checkNotNull(snapshot) { "tutorial step without a snapshot" }
+        val transition = checkNotNull(director) { "tutorial without a director" }.retry(step, reason)
         nextId = saved.nextId
         val restored = state.copy(
             aircraft = saved.aircraft,
@@ -298,7 +303,7 @@ class GameEngine(
             selectedId = null,
             status = GameStatus.Playing,
         )
-        return apply(restored, transition)
+        return applyTransition(restored, transition)
     }
 
     /** The part of the game a tutorial step restarts from. */

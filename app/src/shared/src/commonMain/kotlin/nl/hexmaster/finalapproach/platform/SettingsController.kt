@@ -3,6 +3,7 @@ package nl.hexmaster.finalapproach.platform
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.updateAndGet
 import nl.hexmaster.finalapproach.domain.PlayerSettings
 
 /**
@@ -16,8 +17,6 @@ class SettingsController(private val store: SettingsStore) {
 
     /** Applies [transform] to the current settings, saves the result and publishes it. */
     fun update(transform: (PlayerSettings) -> PlayerSettings) {
-        val next = transform(mutableSettings.value)
-        store.save(next)
-        mutableSettings.value = next
+        store.save(mutableSettings.updateAndGet(transform))
     }
 }
