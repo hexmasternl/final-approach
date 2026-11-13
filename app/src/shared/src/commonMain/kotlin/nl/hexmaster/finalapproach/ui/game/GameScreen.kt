@@ -309,31 +309,42 @@ private fun DrawScope.drawAircraft(
             shadowOffset,
         )
     }
-    for (aircraft in state.aircraft) {
-        val status = aircraft.status
-        val alpha = if (status is AircraftStatus.RollingOut) {
-            (1.0 - status.fadeElapsed / engine.level.landing.fadeSeconds).coerceIn(0.0, 1.0).toFloat()
-        } else {
-            1f
-        }
-        alphaLayer(alpha) {
-            drawAircraftBody(
-                aircraft.type,
-                colors.livery(aircraft.livery),
+    for (aircraft in state.aircraft) drawOneAircraft(aircraft, engine, viewport, colors, reduceMotion, lightOpacity, time)
+}
+
+/** One aircraft without its ground shadow: the body, and its lights on a Dawn level. */
+internal fun DrawScope.drawOneAircraft(
+    aircraft: Aircraft,
+    engine: GameEngine,
+    viewport: WorldViewport,
+    colors: FaColors,
+    reduceMotion: Boolean,
+    lightOpacity: Float?,
+    time: Float,
+) {
+    val status = aircraft.status
+    val alpha = if (status is AircraftStatus.RollingOut) {
+        (1.0 - status.fadeElapsed / engine.level.landing.fadeSeconds).coerceIn(0.0, 1.0).toFloat()
+    } else {
+        1f
+    }
+    alphaLayer(alpha) {
+        drawAircraftBody(
+            aircraft.type,
+            colors.livery(aircraft.livery),
+            viewport.offsetOf(aircraft.position),
+            bodySizePx(aircraft, engine, viewport, reduceMotion),
+            degreesOf(aircraft.heading),
+            time,
+            colors,
+        )
+        if (lightOpacity != null) {
+            drawAircraftLights(
                 viewport.offsetOf(aircraft.position),
-                bodySizePx(aircraft, engine, viewport, reduceMotion),
-                degreesOf(aircraft.heading),
-                time,
-                colors,
+                aircraft.heading,
+                spriteSizePx(aircraft, engine, viewport),
+                lightOpacity,
             )
-            if (lightOpacity != null) {
-                drawAircraftLights(
-                    viewport.offsetOf(aircraft.position),
-                    aircraft.heading,
-                    spriteSizePx(aircraft, engine, viewport),
-                    lightOpacity,
-                )
-            }
         }
     }
 }

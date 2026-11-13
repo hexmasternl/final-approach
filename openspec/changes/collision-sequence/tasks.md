@@ -13,7 +13,7 @@
 
 ## 3. Rendering and wiring
 
-- [ ] 3.1 Give `drawProximityRing` a dash colour parameter and factor single-aircraft body drawing out of `drawAircraft` in `GameScreen.kt`. Verify: game looks unchanged with yellow warning rings.
+- [x] 3.1 Give `drawProximityRing` a dash colour parameter and factor single-aircraft body drawing out of `drawAircraft` in `GameScreen.kt`. Verify: game looks unchanged with yellow warning rings.
 - [ ] 3.2 In `GameScreen`, create a `CollisionSequence` when the status becomes `GameOver(Collision, …)`, advance it from the frame loop, and drop it when the status leaves game over. Skip the colliding ids in the normal ring layer. Verify: Try again after a collision shows a normal field.
 - [ ] 3.3 Add `CollisionOverlay` between `Hud` and the dialog: blackout rect, the two aircraft bodies, red rings at full size with the frozen angle; consumes all pointer input. Show `GameEndedDialog` only when `dialogVisible` for collisions, at once for `LeftArea`. Verify: a `GamePreviews` preview of the overlay at mid-fade and at the end state.
 - [ ] 3.4 Update Game over in `docs/game-design.md` with the collision sequence (red rings, 1 s fade to black isolating the two aircraft, 1 s hold, then the dialog; reduced motion; leaving the viewport unchanged). Verify: the doc matches the specs.
