@@ -12,9 +12,9 @@
 
 ## 3. Sound player behind AppHost
 
-- [ ] 3.1 Add `SoundEffect`, `SoundPlayer` and `SilentSoundPlayer` in `platform/`, and `AppHost.sounds` defaulting to `SilentSoundPlayer` (design decision 2). Add a `RecordingSoundPlayer` to `FakeAppHost`. Verify `./gradlew :shared:allTests` passes and `commonMain` has no `android.*` import.
-- [ ] 3.2 Add `SoundCues.of(events)` in `ui/game` (design decision 3) with a `commonTest` test: one `Success` per `ClearedToLand`, nothing for `Landed`, `Collided`, `LeftArea`, two cues for two clearances. Verify the tests pass.
-- [ ] 3.3 In `GameScreen.kt`, after each `engine.update`, play every cue from `SoundCues.of(state.events)` through `host.sounds`. Verify no other game logic is added to the composable.
+- [x] 3.1 Add `SoundEffect`, `SoundPlayer` and `SilentSoundPlayer` in `platform/`, and `AppHost.sounds` defaulting to `SilentSoundPlayer` (design decision 2). Add a `RecordingSoundPlayer` to `FakeAppHost`. Verify `./gradlew :shared:allTests` passes and `commonMain` has no `android.*` import.
+- [x] 3.2 Add `SoundCues.of(events)` in `ui/game` (design decision 3) with a `commonTest` test: one `Success` per `ClearedToLand`, nothing for `Landed`, `Collided`, `LeftArea`, two cues for two clearances. Verify the tests pass.
+- [x] 3.3 In `GameScreen.kt`, after each `engine.update`, play every cue from `SoundCues.of(state.events)` through `host.sounds`. Verify no other game logic is added to the composable.
 - [ ] 3.4 Document `sounds` in the platform boundary list of `docs/architecture.md`, including the silent default on platforms without a player and that #66's toggle gates it. Verify it matches the code from 3.1 to 3.3.
 
 ## 4. The MP3

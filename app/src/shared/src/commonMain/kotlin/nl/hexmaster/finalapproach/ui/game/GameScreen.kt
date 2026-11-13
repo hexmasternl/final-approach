@@ -138,6 +138,7 @@ private fun GameContent(host: AppHost, onQuit: () -> Unit, level: LevelConfig) {
             val delta = ((now - last) / GameScreenDefaults.NANOS_PER_SECOND).coerceAtMost(GameScreenDefaults.MAX_FRAME_SECONDS)
             last = now
             engine.update(delta)
+            SoundCues.of(engine.state.value.events).forEach(host.sounds::play)
             if (!engine.state.value.paused) rings.update(engine.state.value, { engine.specs[it.type].shape.boundingRadius }, (delta * MILLIS_PER_SECOND).toFloat())
             if (!engine.state.value.paused) ambient.update(delta)
             if (!engine.state.value.paused) clock += delta
