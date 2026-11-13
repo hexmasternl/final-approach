@@ -2,7 +2,7 @@
 
 ## 1. Settings model and storage
 
-- [ ] 1.1 Add `domain/PlayerSettings.kt` with `PlayerSettings` (defaults: sound effects on, reduce motion Device), `ReduceMotionChoice` and `resolve(device)`; add `commonTest` tests for the defaults and all six choice/device combinations, and verify `./gradlew :shared:allTests` passes
+- [x] 1.1 Add `domain/PlayerSettings.kt` with `PlayerSettings` (defaults: sound effects on, reduce motion Device), `ReduceMotionChoice` and `resolve(device)`; add `commonTest` tests for the defaults and all six choice/device combinations, and verify `./gradlew :shared:allTests` passes
 - [ ] 1.2 Add `platform/SettingsStore.kt` (interface plus `InMemorySettingsStore`) and `val settings: SettingsStore` on `AppHost`; update every `AppHost` test double; verify `./gradlew :shared:allTests` passes
 - [ ] 1.3 Add `SettingsController` (loads once, `StateFlow<PlayerSettings>`, `update` writes through); test that an update is emitted and saved, and that a new controller on the same store loads the saved value (the restart case); verify `./gradlew :shared:allTests` passes
 - [ ] 1.4 Implement the store in `AndroidAppHost` with a private `settings` preferences file, enum stored by name, unknown values falling back to defaults; verify `./gradlew :androidApp:assembleDebug` succeeds and `android:allowBackup="false"` is still in the manifest
