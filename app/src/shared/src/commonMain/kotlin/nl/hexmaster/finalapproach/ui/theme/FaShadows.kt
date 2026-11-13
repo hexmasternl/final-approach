@@ -15,6 +15,11 @@ object FaShadows {
     val softLipDay = Color(29, 37, 69, 41)
     val softLipNight = Color(4, 7, 18, 102)
 
+    /** The inner top edge of sunken wells: toggle track, segmented trough. */
+    val wellInset = 3.dp
+    val wellDay = Color(29, 37, 69, 36)
+    val wellNight = Color(4, 7, 18, 115)
+
     /** Ground shadow of airborne things: offset down-right. */
     val floatOffsetX = 6.dp
     val floatOffsetY = 10.dp

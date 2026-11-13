@@ -28,7 +28,7 @@
 
 ## 5. Design-system components
 
-- [ ] 5.1 Add the missing tokens (toggle track and knob sizes in `FaDimens`, `shadow-well` in `FaShadows`, and in `tokens.json` where new); verify no literal is introduced by grepping the new files for `.dp` and `Color(` outside `ui/theme`
+- [x] 5.1 Add the missing tokens (toggle track and knob sizes in `FaDimens`, `shadow-well` in `FaShadows`, and in `tokens.json` where new); verify no literal is introduced by grepping the new files for `.dp` and `Color(` outside `ui/theme`
 - [ ] 5.2 Add `FaToggle` to `ui/components` per `Toggle.md`, drawn 68 x 40 with a 48dp touch area, Switch semantics, bounce slide that snaps with reduced motion; add a debug preview; verify it in the preview in both states, Day and Night
 - [ ] 5.3 Add `FaSegmentedControl` to `ui/components` per `SegmentedControl.md`, segments drawn 40 high with a 48dp touch area, one selected, RadioButton semantics; add a debug preview; verify it in the preview with each option selected
 - [ ] 5.4 Add a line on the 48dp touch area to `docs/design-system/components/Toggle.md` and `SegmentedControl.md`; verify both mention `touch-min`
