@@ -15,16 +15,12 @@ import nl.hexmaster.finalapproach.platform.SettingsController
 import nl.hexmaster.finalapproach.ui.game.GameScreen
 import nl.hexmaster.finalapproach.ui.game.LevelSelectPage
 import nl.hexmaster.finalapproach.ui.menu.MainPage
+import nl.hexmaster.finalapproach.ui.settings.SettingsPage
 import nl.hexmaster.finalapproach.ui.splash.SplashPage
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** The screens of the app. It opens on the splash page; after that the main page is home. */
 enum class Screen { Splash, Main, LevelSelect, Game, Settings }
-
-private object AppText {
-    const val SETTINGS_TITLE = "Settings"
-    const val SETTINGS_BODY = "Sound and music switches will live here."
-}
 
 /** The whole app. The host supplies everything platform-specific through [host]. */
 @Composable
@@ -66,13 +62,11 @@ fun App(host: AppHost) {
                 level = Levels.byId(levelId) ?: Levels.meadowField,
             )
 
-            // The settings page has its own issue. Until it is built, a placeholder keeps the
-            // flow from and back to the main page working.
-            Screen.Settings -> PlaceholderPage(
+            Screen.Settings -> SettingsPage(
                 host = host,
-                title = AppText.SETTINGS_TITLE,
-                body = AppText.SETTINGS_BODY,
-                ground = PlaceholderGround.Sky,
+                settings = settings,
+                onSoundEffects = { on -> settingsController.update { it.copy(soundEffects = on) } },
+                onReduceMotion = { choice -> settingsController.update { it.copy(reduceMotion = choice) } },
                 onBack = { screen = Screen.Main },
             )
         }
