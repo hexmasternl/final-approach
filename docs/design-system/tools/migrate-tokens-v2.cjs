@@ -141,6 +141,7 @@ note('success-ink', 'Success text on paper. The same colour as mint-900.');
 note('danger-ink', 'Danger text on paper.');
 note('focus', 'Inner band of the two-tone focus ring: a line-ui band of focus, then a line-ui band of outline outside it. One of the two always holds 3:1 against whatever the ring lands on.');
 note('on-accent', 'Text and icons on any bright fill: sun, tangerine, cherry, mint, sky-500, star and every path colour. Dark in every theme because the fills stay bright.');
+note('sky-900', 'The bottom edge of a sky lip, and text on sky-tint. sky-700 is the lip of a secondary button; sky-band is its highlight.');
 note('on-outline', 'Text and icons on an outline-coloured fill: coach marks and the callsign tag.');
 
 // ---- deprecations: v1 tokens v2 no longer uses, each with its replacement

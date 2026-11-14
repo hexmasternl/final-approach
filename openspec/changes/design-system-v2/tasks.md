@@ -55,7 +55,7 @@ The visual reference for every task is `reference/final-approach-v2.html` in thi
 - [x] 7.5 Rebuild `FaDialog` as the boarding pass (header band with eyebrow and title, body, perforation, stub with stats and actions; vertical perforation in the compact landscape layout) and the panel surface; verify `FaDialogLayoutTest` passes and the dialog previews fit 640 by 360dp with system bars and a 50dp banner
 - [x] 7.6 Move the pause dialog and the game-ended dialog onto the new `FaDialog` with their header tone, eyebrow and, for game ended, the reason stamp; verify every button, label, stat and back behaviour named in the `pause-menu` and `game-ended-dialog` specs is still present and behaves the same
 - [x] 7.7 Port the remaining users: level tiles (moulded card, chips, locked state), coach marks, the settings page and the main page; verify each screen's preview in Day and Night and that `level-selection`, `settings-page`, `main-page` and `tutorial-overlays` scenarios still hold
-- [ ] 7.8 Run `./gradlew :shared:allTests :androidApp:assembleDebug`; then have the design-critic, android-critic and play-policy-critic agents review the branch and fix what they find; verify each agent's final report names no open finding
+- [x] 7.8 Run `./gradlew :shared:allTests :androidApp:assembleDebug`; then have the design-critic, android-critic and play-policy-critic agents review the branch and fix what they find; verify each agent's final report names no open finding
 - [ ] 7.9 Human check: play one level on a phone in portrait and landscape and confirm the HUD, pause dialog, game-ended dialog, level select and settings read well over the field
 
 ## 8. App icon
