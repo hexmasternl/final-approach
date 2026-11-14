@@ -38,11 +38,17 @@ let colors = `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
-/** One property per colour token of the design system. */
+/**
+ * One property per colour token of the design system.
+ *
+ * A palette is built from a [FaColorTokens], not through a constructor with a parameter per
+ * token: a method takes at most 255 argument slots and a [Color] takes two, so such a constructor
+ * stops loading, on Android and on the JVM, once there are more than 126 tokens.
+ */
 @Immutable
-data class FaColors(
-${names.map(n => `${dep(ctok[n], '    ')}    val ${camel(n)}: Color,`).join('\n')}
-) {
+class FaColors internal constructor(tokens: FaColorTokens) {
+${names.map(n => `${dep(ctok[n], '    ')}    val ${camel(n)}: Color = tokens.${camel(n)}`).join('\n')}
+
     /** Flight path and livery colour for index 1 to 6. */
     fun path(index: Int): Color = when (index) {
         1 -> path1
@@ -54,12 +60,17 @@ ${names.map(n => `${dep(ctok[n], '    ')}    val ${camel(n)}: Color,`).join('\n'
     }
 }
 
+/** The colours of one palette while it is being put together; [FaColors] is the fixed result. */
+internal class FaColorTokens {
+${names.map(n => `    var ${camel(n)}: Color = Color.Unspecified`).join('\n')}
+}
+
 `;
 const themeDoc = {
   DawnColors: '/**\n * The Dawn palette, for levels set before sunrise: the ground and strips are dim and warm, while\n * panels, chips, text and aircraft stay light as in Night. It is not an inverted UI. Tokens\n * without a Dawn value take their Day value.\n */',
 };
 for (const [th, k] of [['light', 'DayColors'], ['dark', 'NightColors'], ['dawn', 'DawnColors']])
-  colors += `${themeDoc[k] ? themeDoc[k] + '\n' : ''}val ${k} = FaColors(\n${names.map(n => `    ${camel(n)} = ${kColor(resolve(n, th))},`).join('\n')}\n)\n\n`;
+  colors += `${themeDoc[k] ? themeDoc[k] + '\n' : ''}val ${k} = FaColors(\n    FaColorTokens().apply {\n${names.map(n => `        ${camel(n)} = ${kColor(resolve(n, th))}`).join('\n')}\n    },\n)\n\n`;
 w('theme/FaColors.kt', colors.trimEnd() + '\n');
 w('theme/SunsetColors.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 

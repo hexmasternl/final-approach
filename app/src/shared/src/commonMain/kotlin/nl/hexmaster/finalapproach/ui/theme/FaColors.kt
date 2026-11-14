@@ -4,161 +4,167 @@ package nl.hexmaster.finalapproach.ui.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
-/** One property per colour token of the design system. */
+/**
+ * One property per colour token of the design system.
+ *
+ * A palette is built from a [FaColorTokens], not through a constructor with a parameter per
+ * token: a method takes at most 255 argument slots and a [Color] takes two, so such a constructor
+ * stops loading, on Android and on the JVM, once there are more than 126 tokens.
+ */
 @Immutable
-data class FaColors(
-    val outline: Color,
-    val ink: Color,
-    val inkMuted: Color,
-    val ink3: Color,
-    val onSky: Color,
-    val onSkyMuted: Color,
-    val onAccent: Color,
-    val onOutline: Color,
-    val bgSky: Color,
-    val bgField: Color,
+class FaColors internal constructor(tokens: FaColorTokens) {
+    val outline: Color = tokens.outline
+    val ink: Color = tokens.ink
+    val inkMuted: Color = tokens.inkMuted
+    val ink3: Color = tokens.ink3
+    val onSky: Color = tokens.onSky
+    val onSkyMuted: Color = tokens.onSkyMuted
+    val onAccent: Color = tokens.onAccent
+    val onOutline: Color = tokens.onOutline
+    val bgSky: Color = tokens.bgSky
+    val bgField: Color = tokens.bgField
     /** v1. Use [paper100] in new code. */
-    val surface: Color,
+    val surface: Color = tokens.surface
     /** v1. Use [paper0] in new code. */
-    val surfaceRaised: Color,
+    val surfaceRaised: Color = tokens.surfaceRaised
     /** v1. Use [paper300] in new code. */
-    val surfaceSunken: Color,
-    val paper0: Color,
-    val paper100: Color,
-    val paper200: Color,
-    val paper300: Color,
-    val paper400: Color,
-    val paper500: Color,
-    val sky100: Color,
-    val sky300: Color,
-    val sky500: Color,
-    val sky700: Color,
-    val sky900: Color,
-    val skyTint: Color,
-    val skyBand: Color,
-    val grass300: Color,
-    val grass400: Color,
-    val grass500: Color,
-    val grass600: Color,
-    val grass700: Color,
-    val grass900: Color,
-    val asphalt300: Color,
-    val asphalt500: Color,
-    val asphalt700: Color,
-    val asphalt900: Color,
-    val marking: Color,
-    val markingWarn: Color,
-    val sand300: Color,
-    val sand500: Color,
-    val soil500: Color,
-    val soil700: Color,
-    val roof500: Color,
-    val roof300: Color,
-    val roof700: Color,
-    val roof900: Color,
-    val foam: Color,
-    val stone300: Color,
-    val stone500: Color,
-    val stone700: Color,
-    val leaf300: Color,
-    val leaf500: Color,
-    val leaf700: Color,
-    val leaf900: Color,
-    val pine300: Color,
-    val pine500: Color,
-    val pine700: Color,
-    val pine900: Color,
-    val wood300: Color,
-    val wood500: Color,
-    val wood700: Color,
-    val wood900: Color,
-    val straw300: Color,
-    val straw500: Color,
-    val straw700: Color,
-    val wall100: Color,
-    val wall300: Color,
-    val wall500: Color,
-    val tin100: Color,
-    val tin300: Color,
-    val tin500: Color,
-    val tin700: Color,
-    val tin900: Color,
-    val concrete300: Color,
-    val concrete500: Color,
-    val concrete700: Color,
-    val road500: Color,
-    val road700: Color,
-    val water300: Color,
-    val water500: Color,
-    val water700: Color,
-    val hide100: Color,
-    val hide300: Color,
-    val hide900: Color,
-    val denim300: Color,
-    val denim500: Color,
-    val sun: Color,
+    val surfaceSunken: Color = tokens.surfaceSunken
+    val paper0: Color = tokens.paper0
+    val paper100: Color = tokens.paper100
+    val paper200: Color = tokens.paper200
+    val paper300: Color = tokens.paper300
+    val paper400: Color = tokens.paper400
+    val paper500: Color = tokens.paper500
+    val sky100: Color = tokens.sky100
+    val sky300: Color = tokens.sky300
+    val sky500: Color = tokens.sky500
+    val sky700: Color = tokens.sky700
+    val sky900: Color = tokens.sky900
+    val skyTint: Color = tokens.skyTint
+    val skyBand: Color = tokens.skyBand
+    val grass300: Color = tokens.grass300
+    val grass400: Color = tokens.grass400
+    val grass500: Color = tokens.grass500
+    val grass600: Color = tokens.grass600
+    val grass700: Color = tokens.grass700
+    val grass900: Color = tokens.grass900
+    val asphalt300: Color = tokens.asphalt300
+    val asphalt500: Color = tokens.asphalt500
+    val asphalt700: Color = tokens.asphalt700
+    val asphalt900: Color = tokens.asphalt900
+    val marking: Color = tokens.marking
+    val markingWarn: Color = tokens.markingWarn
+    val sand300: Color = tokens.sand300
+    val sand500: Color = tokens.sand500
+    val soil500: Color = tokens.soil500
+    val soil700: Color = tokens.soil700
+    val roof500: Color = tokens.roof500
+    val roof300: Color = tokens.roof300
+    val roof700: Color = tokens.roof700
+    val roof900: Color = tokens.roof900
+    val foam: Color = tokens.foam
+    val stone300: Color = tokens.stone300
+    val stone500: Color = tokens.stone500
+    val stone700: Color = tokens.stone700
+    val leaf300: Color = tokens.leaf300
+    val leaf500: Color = tokens.leaf500
+    val leaf700: Color = tokens.leaf700
+    val leaf900: Color = tokens.leaf900
+    val pine300: Color = tokens.pine300
+    val pine500: Color = tokens.pine500
+    val pine700: Color = tokens.pine700
+    val pine900: Color = tokens.pine900
+    val wood300: Color = tokens.wood300
+    val wood500: Color = tokens.wood500
+    val wood700: Color = tokens.wood700
+    val wood900: Color = tokens.wood900
+    val straw300: Color = tokens.straw300
+    val straw500: Color = tokens.straw500
+    val straw700: Color = tokens.straw700
+    val wall100: Color = tokens.wall100
+    val wall300: Color = tokens.wall300
+    val wall500: Color = tokens.wall500
+    val tin100: Color = tokens.tin100
+    val tin300: Color = tokens.tin300
+    val tin500: Color = tokens.tin500
+    val tin700: Color = tokens.tin700
+    val tin900: Color = tokens.tin900
+    val concrete300: Color = tokens.concrete300
+    val concrete500: Color = tokens.concrete500
+    val concrete700: Color = tokens.concrete700
+    val road500: Color = tokens.road500
+    val road700: Color = tokens.road700
+    val water300: Color = tokens.water300
+    val water500: Color = tokens.water500
+    val water700: Color = tokens.water700
+    val hide100: Color = tokens.hide100
+    val hide300: Color = tokens.hide300
+    val hide900: Color = tokens.hide900
+    val denim300: Color = tokens.denim300
+    val denim500: Color = tokens.denim500
+    val sun: Color = tokens.sun
     /** v1. Use [sun700] in new code. */
-    val sunDeep: Color,
-    val sun200: Color,
-    val sun500: Color,
-    val sun700: Color,
-    val sun900: Color,
-    val tangerine: Color,
+    val sunDeep: Color = tokens.sunDeep
+    val sun200: Color = tokens.sun200
+    val sun500: Color = tokens.sun500
+    val sun700: Color = tokens.sun700
+    val sun900: Color = tokens.sun900
+    val tangerine: Color = tokens.tangerine
     /** v1. Use [tangerine700] in new code. */
-    val tangerineDeep: Color,
-    val tangerine200: Color,
-    val tangerine500: Color,
-    val tangerine700: Color,
-    val tangerine900: Color,
-    val cherry: Color,
+    val tangerineDeep: Color = tokens.tangerineDeep
+    val tangerine200: Color = tokens.tangerine200
+    val tangerine500: Color = tokens.tangerine500
+    val tangerine700: Color = tokens.tangerine700
+    val tangerine900: Color = tokens.tangerine900
+    val cherry: Color = tokens.cherry
     /** v1. Use [cherry700] in new code. */
-    val cherryDeep: Color,
-    val cherry200: Color,
-    val cherry500: Color,
-    val cherry700: Color,
-    val cherry900: Color,
-    val success: Color,
-    val successInk: Color,
-    val mint200: Color,
-    val mint500: Color,
-    val mint700: Color,
-    val mint900: Color,
-    val danger: Color,
-    val dangerInk: Color,
-    val warning: Color,
-    val info: Color,
-    val focus: Color,
-    val path1: Color,
-    val path2: Color,
-    val path3: Color,
-    val path4: Color,
-    val path5: Color,
-    val path6: Color,
-    val fuselage: Color,
-    val fuselageShade: Color,
-    val glass: Color,
-    val glass700: Color,
-    val window: Color,
-    val beacon: Color,
-    val muzzle: Color,
-    val glassShine: Color,
-    val propBlur: Color,
-    val cloud: Color,
-    val cloudShade: Color,
-    val shadowGround: Color,
-    val shadowCast: Color,
-    val selectRing: Color,
-    val zoneOk: Color,
-    val zoneNo: Color,
-    val star: Color,
-    val poof: Color,
-    val poofShade: Color,
-    val scrim: Color,
-    val contact: Color,
-    val contactField: Color,
-    val contactOverlay: Color,
-    val blackout: Color,
-) {
+    val cherryDeep: Color = tokens.cherryDeep
+    val cherry200: Color = tokens.cherry200
+    val cherry500: Color = tokens.cherry500
+    val cherry700: Color = tokens.cherry700
+    val cherry900: Color = tokens.cherry900
+    val success: Color = tokens.success
+    val successInk: Color = tokens.successInk
+    val mint200: Color = tokens.mint200
+    val mint500: Color = tokens.mint500
+    val mint700: Color = tokens.mint700
+    val mint900: Color = tokens.mint900
+    val danger: Color = tokens.danger
+    val dangerInk: Color = tokens.dangerInk
+    val warning: Color = tokens.warning
+    val info: Color = tokens.info
+    val focus: Color = tokens.focus
+    val path1: Color = tokens.path1
+    val path2: Color = tokens.path2
+    val path3: Color = tokens.path3
+    val path4: Color = tokens.path4
+    val path5: Color = tokens.path5
+    val path6: Color = tokens.path6
+    val fuselage: Color = tokens.fuselage
+    val fuselageShade: Color = tokens.fuselageShade
+    val glass: Color = tokens.glass
+    val glass700: Color = tokens.glass700
+    val window: Color = tokens.window
+    val beacon: Color = tokens.beacon
+    val muzzle: Color = tokens.muzzle
+    val glassShine: Color = tokens.glassShine
+    val propBlur: Color = tokens.propBlur
+    val cloud: Color = tokens.cloud
+    val cloudShade: Color = tokens.cloudShade
+    val shadowGround: Color = tokens.shadowGround
+    val shadowCast: Color = tokens.shadowCast
+    val selectRing: Color = tokens.selectRing
+    val zoneOk: Color = tokens.zoneOk
+    val zoneNo: Color = tokens.zoneNo
+    val star: Color = tokens.star
+    val poof: Color = tokens.poof
+    val poofShade: Color = tokens.poofShade
+    val scrim: Color = tokens.scrim
+    val contact: Color = tokens.contact
+    val contactField: Color = tokens.contactField
+    val contactOverlay: Color = tokens.contactOverlay
+    val blackout: Color = tokens.blackout
+
     /** Flight path and livery colour for index 1 to 6. */
     fun path(index: Int): Color = when (index) {
         1 -> path1
@@ -170,300 +176,453 @@ data class FaColors(
     }
 }
 
+/** The colours of one palette while it is being put together; [FaColors] is the fixed result. */
+internal class FaColorTokens {
+    var outline: Color = Color.Unspecified
+    var ink: Color = Color.Unspecified
+    var inkMuted: Color = Color.Unspecified
+    var ink3: Color = Color.Unspecified
+    var onSky: Color = Color.Unspecified
+    var onSkyMuted: Color = Color.Unspecified
+    var onAccent: Color = Color.Unspecified
+    var onOutline: Color = Color.Unspecified
+    var bgSky: Color = Color.Unspecified
+    var bgField: Color = Color.Unspecified
+    var surface: Color = Color.Unspecified
+    var surfaceRaised: Color = Color.Unspecified
+    var surfaceSunken: Color = Color.Unspecified
+    var paper0: Color = Color.Unspecified
+    var paper100: Color = Color.Unspecified
+    var paper200: Color = Color.Unspecified
+    var paper300: Color = Color.Unspecified
+    var paper400: Color = Color.Unspecified
+    var paper500: Color = Color.Unspecified
+    var sky100: Color = Color.Unspecified
+    var sky300: Color = Color.Unspecified
+    var sky500: Color = Color.Unspecified
+    var sky700: Color = Color.Unspecified
+    var sky900: Color = Color.Unspecified
+    var skyTint: Color = Color.Unspecified
+    var skyBand: Color = Color.Unspecified
+    var grass300: Color = Color.Unspecified
+    var grass400: Color = Color.Unspecified
+    var grass500: Color = Color.Unspecified
+    var grass600: Color = Color.Unspecified
+    var grass700: Color = Color.Unspecified
+    var grass900: Color = Color.Unspecified
+    var asphalt300: Color = Color.Unspecified
+    var asphalt500: Color = Color.Unspecified
+    var asphalt700: Color = Color.Unspecified
+    var asphalt900: Color = Color.Unspecified
+    var marking: Color = Color.Unspecified
+    var markingWarn: Color = Color.Unspecified
+    var sand300: Color = Color.Unspecified
+    var sand500: Color = Color.Unspecified
+    var soil500: Color = Color.Unspecified
+    var soil700: Color = Color.Unspecified
+    var roof500: Color = Color.Unspecified
+    var roof300: Color = Color.Unspecified
+    var roof700: Color = Color.Unspecified
+    var roof900: Color = Color.Unspecified
+    var foam: Color = Color.Unspecified
+    var stone300: Color = Color.Unspecified
+    var stone500: Color = Color.Unspecified
+    var stone700: Color = Color.Unspecified
+    var leaf300: Color = Color.Unspecified
+    var leaf500: Color = Color.Unspecified
+    var leaf700: Color = Color.Unspecified
+    var leaf900: Color = Color.Unspecified
+    var pine300: Color = Color.Unspecified
+    var pine500: Color = Color.Unspecified
+    var pine700: Color = Color.Unspecified
+    var pine900: Color = Color.Unspecified
+    var wood300: Color = Color.Unspecified
+    var wood500: Color = Color.Unspecified
+    var wood700: Color = Color.Unspecified
+    var wood900: Color = Color.Unspecified
+    var straw300: Color = Color.Unspecified
+    var straw500: Color = Color.Unspecified
+    var straw700: Color = Color.Unspecified
+    var wall100: Color = Color.Unspecified
+    var wall300: Color = Color.Unspecified
+    var wall500: Color = Color.Unspecified
+    var tin100: Color = Color.Unspecified
+    var tin300: Color = Color.Unspecified
+    var tin500: Color = Color.Unspecified
+    var tin700: Color = Color.Unspecified
+    var tin900: Color = Color.Unspecified
+    var concrete300: Color = Color.Unspecified
+    var concrete500: Color = Color.Unspecified
+    var concrete700: Color = Color.Unspecified
+    var road500: Color = Color.Unspecified
+    var road700: Color = Color.Unspecified
+    var water300: Color = Color.Unspecified
+    var water500: Color = Color.Unspecified
+    var water700: Color = Color.Unspecified
+    var hide100: Color = Color.Unspecified
+    var hide300: Color = Color.Unspecified
+    var hide900: Color = Color.Unspecified
+    var denim300: Color = Color.Unspecified
+    var denim500: Color = Color.Unspecified
+    var sun: Color = Color.Unspecified
+    var sunDeep: Color = Color.Unspecified
+    var sun200: Color = Color.Unspecified
+    var sun500: Color = Color.Unspecified
+    var sun700: Color = Color.Unspecified
+    var sun900: Color = Color.Unspecified
+    var tangerine: Color = Color.Unspecified
+    var tangerineDeep: Color = Color.Unspecified
+    var tangerine200: Color = Color.Unspecified
+    var tangerine500: Color = Color.Unspecified
+    var tangerine700: Color = Color.Unspecified
+    var tangerine900: Color = Color.Unspecified
+    var cherry: Color = Color.Unspecified
+    var cherryDeep: Color = Color.Unspecified
+    var cherry200: Color = Color.Unspecified
+    var cherry500: Color = Color.Unspecified
+    var cherry700: Color = Color.Unspecified
+    var cherry900: Color = Color.Unspecified
+    var success: Color = Color.Unspecified
+    var successInk: Color = Color.Unspecified
+    var mint200: Color = Color.Unspecified
+    var mint500: Color = Color.Unspecified
+    var mint700: Color = Color.Unspecified
+    var mint900: Color = Color.Unspecified
+    var danger: Color = Color.Unspecified
+    var dangerInk: Color = Color.Unspecified
+    var warning: Color = Color.Unspecified
+    var info: Color = Color.Unspecified
+    var focus: Color = Color.Unspecified
+    var path1: Color = Color.Unspecified
+    var path2: Color = Color.Unspecified
+    var path3: Color = Color.Unspecified
+    var path4: Color = Color.Unspecified
+    var path5: Color = Color.Unspecified
+    var path6: Color = Color.Unspecified
+    var fuselage: Color = Color.Unspecified
+    var fuselageShade: Color = Color.Unspecified
+    var glass: Color = Color.Unspecified
+    var glass700: Color = Color.Unspecified
+    var window: Color = Color.Unspecified
+    var beacon: Color = Color.Unspecified
+    var muzzle: Color = Color.Unspecified
+    var glassShine: Color = Color.Unspecified
+    var propBlur: Color = Color.Unspecified
+    var cloud: Color = Color.Unspecified
+    var cloudShade: Color = Color.Unspecified
+    var shadowGround: Color = Color.Unspecified
+    var shadowCast: Color = Color.Unspecified
+    var selectRing: Color = Color.Unspecified
+    var zoneOk: Color = Color.Unspecified
+    var zoneNo: Color = Color.Unspecified
+    var star: Color = Color.Unspecified
+    var poof: Color = Color.Unspecified
+    var poofShade: Color = Color.Unspecified
+    var scrim: Color = Color.Unspecified
+    var contact: Color = Color.Unspecified
+    var contactField: Color = Color.Unspecified
+    var contactOverlay: Color = Color.Unspecified
+    var blackout: Color = Color.Unspecified
+}
+
 val DayColors = FaColors(
-    outline = Color(0xFF1D2545),
-    ink = Color(0xFF1D2545),
-    inkMuted = Color(0xFF4F5A7C),
-    ink3 = Color(0xFF7C86A6),
-    onSky = Color(0xFF1D2545),
-    onSkyMuted = Color(0xFF2F3B63),
-    onAccent = Color(0xFF1D2545),
-    onOutline = Color(0xFFFFFAF0),
-    bgSky = Color(0xFF8FD3FB),
-    bgField = Color(0xFF7FCF4B),
-    surface = Color(0xFFFFFAF0),
-    surfaceRaised = Color(0xFFFFFFFF),
-    surfaceSunken = Color(0xFFE2EEFA),
-    paper0 = Color(0xFFFFFDF8),
-    paper100 = Color(0xFFFFFAF0),
-    paper200 = Color(0xFFF8EED8),
-    paper300 = Color(0xFFEDDFC2),
-    paper400 = Color(0xFFDFCDA9),
-    paper500 = Color(0xFFC9B48A),
-    sky100 = Color(0xFFE6F6FF),
-    sky300 = Color(0xFFA9DEFC),
-    sky500 = Color(0xFF4DB8F5),
-    sky700 = Color(0xFF1668AD),
-    sky900 = Color(0xFF0F4C80),
-    skyTint = Color(0xFFE6F6FF),
-    skyBand = Color(0xFFA9DEFC),
-    grass300 = Color(0xFFB4E36A),
-    grass400 = Color(0xFF97D858),
-    grass500 = Color(0xFF7FCF4B),
-    grass600 = Color(0xFF71C544),
-    grass700 = Color(0xFF5CB337),
-    grass900 = Color(0xFF3B8A2A),
-    asphalt300 = Color(0xFF939CB0),
-    asphalt500 = Color(0xFF6A7389),
-    asphalt700 = Color(0xFF474F63),
-    asphalt900 = Color(0xFF343B4F),
-    marking = Color(0xFFFFFFFF),
-    markingWarn = Color(0xFFFFD23F),
-    sand300 = Color(0xFFF2D79B),
-    sand500 = Color(0xFFD9B56F),
-    soil500 = Color(0xFFA8713F),
-    soil700 = Color(0xFF7D4F2A),
-    roof500 = Color(0xFFCF6A4B),
-    roof300 = Color(0xFFEC8F6C),
-    roof700 = Color(0xFFA84D35),
-    roof900 = Color(0xFF7A3424),
-    foam = Color(0xFFF2FBFF),
-    stone300 = Color(0xFFB9B3A8),
-    stone500 = Color(0xFF9C968B),
-    stone700 = Color(0xFF7D776D),
-    leaf300 = Color(0xFF8ED35C),
-    leaf500 = Color(0xFF55B04A),
-    leaf700 = Color(0xFF38923F),
-    leaf900 = Color(0xFF236E38),
-    pine300 = Color(0xFF62C092),
-    pine500 = Color(0xFF3DA079),
-    pine700 = Color(0xFF2A8067),
-    pine900 = Color(0xFF1B5F52),
-    wood300 = Color(0xFFCF9F69),
-    wood500 = Color(0xFFA8713F),
-    wood700 = Color(0xFF7D4F2A),
-    wood900 = Color(0xFF59341A),
-    straw300 = Color(0xFFF1DE98),
-    straw500 = Color(0xFFDCC163),
-    straw700 = Color(0xFFB3923A),
-    wall100 = Color(0xFFFFF4DC),
-    wall300 = Color(0xFFECD9B4),
-    wall500 = Color(0xFFD2BA8E),
-    tin100 = Color(0xFFF0F4F9),
-    tin300 = Color(0xFFDBE2EE),
-    tin500 = Color(0xFFBCC6D8),
-    tin700 = Color(0xFF98A4BC),
-    tin900 = Color(0xFF6D7994),
-    concrete300 = Color(0xFFD7DBE4),
-    concrete500 = Color(0xFFC1C7D3),
-    concrete700 = Color(0xFFA2A9BA),
-    road500 = Color(0xFF8892A8),
-    road700 = Color(0xFF6D778E),
-    water300 = Color(0xFF93DFF8),
-    water500 = Color(0xFF4DB8F5),
-    water700 = Color(0xFF2B97DE),
-    hide100 = Color(0xFFFFF6E6),
-    hide300 = Color(0xFFEAD9BC),
-    hide900 = Color(0xFF4A3528),
-    denim300 = Color(0xFF8DB4E6),
-    denim500 = Color(0xFF5F8FCF),
-    sun = Color(0xFFFFCB3D),
-    sunDeep = Color(0xFFE39A12),
-    sun200 = Color(0xFFFFE693),
-    sun500 = Color(0xFFFFCB3D),
-    sun700 = Color(0xFFE39A12),
-    sun900 = Color(0xFFB87407),
-    tangerine = Color(0xFFFF8F33),
-    tangerineDeep = Color(0xFFD9641A),
-    tangerine200 = Color(0xFFFFC998),
-    tangerine500 = Color(0xFFFF8F33),
-    tangerine700 = Color(0xFFD9641A),
-    tangerine900 = Color(0xFFA94B08),
-    cherry = Color(0xFFFF5D52),
-    cherryDeep = Color(0xFFC9302C),
-    cherry200 = Color(0xFFFFB5AE),
-    cherry500 = Color(0xFFFF5D52),
-    cherry700 = Color(0xFFC9302C),
-    cherry900 = Color(0xFF9A2320),
-    success = Color(0xFF35D6B0),
-    successInk = Color(0xFF0B6B59),
-    mint200 = Color(0xFFAAF1DF),
-    mint500 = Color(0xFF35D6B0),
-    mint700 = Color(0xFF17B08D),
-    mint900 = Color(0xFF0B6B59),
-    danger = Color(0xFFFF5D52),
-    dangerInk = Color(0xFFB3221F),
-    warning = Color(0xFFFFCB3D),
-    info = Color(0xFF4DB8F5),
-    focus = Color(0xFFFFFFFF),
-    path1 = Color(0xFFFFCB3D),
-    path2 = Color(0xFFFF8F33),
-    path3 = Color(0xFFFF5D52),
-    path4 = Color(0xFFFF7AC8),
-    path5 = Color(0xFFB48CFF),
-    path6 = Color(0xFF4FE0E6),
-    fuselage = Color(0xFFFDFCF5),
-    fuselageShade = Color(0xFFD5DBE8),
-    glass = Color(0xFF9FE0FF),
-    glass700 = Color(0xFF5FB2DC),
-    window = Color(0xFF9FE0FF),
-    beacon = Color(0xFFFFF3B0),
-    muzzle = Color(0xFFF4B3A8),
-    glassShine = Color(0xFFFFFFFF),
-    propBlur = Color(29, 37, 69, 77),
-    cloud = Color(0xFFFFFFFF),
-    cloudShade = Color(0xFFD6EBFA),
-    shadowGround = Color(24, 40, 30, 71),
-    shadowCast = Color(0xFF12301F),
-    selectRing = Color(0xFFFFFFFF),
-    zoneOk = Color(0xFF35D6B0),
-    zoneNo = Color(0xFFFF5D52),
-    star = Color(0xFFFFE066),
-    poof = Color(0xFFF7F8FC),
-    poofShade = Color(0xFFC8D1E6),
-    scrim = Color(17, 24, 58, 140),
-    contact = Color(29, 37, 69, 51),
-    contactField = Color(18, 48, 31, 71),
-    contactOverlay = Color(10, 14, 36, 77),
-    blackout = Color(0xFF03050F),
+    FaColorTokens().apply {
+        outline = Color(0xFF1D2545)
+        ink = Color(0xFF1D2545)
+        inkMuted = Color(0xFF4F5A7C)
+        ink3 = Color(0xFF7C86A6)
+        onSky = Color(0xFF1D2545)
+        onSkyMuted = Color(0xFF2F3B63)
+        onAccent = Color(0xFF1D2545)
+        onOutline = Color(0xFFFFFAF0)
+        bgSky = Color(0xFF8FD3FB)
+        bgField = Color(0xFF7FCF4B)
+        surface = Color(0xFFFFFAF0)
+        surfaceRaised = Color(0xFFFFFFFF)
+        surfaceSunken = Color(0xFFE2EEFA)
+        paper0 = Color(0xFFFFFDF8)
+        paper100 = Color(0xFFFFFAF0)
+        paper200 = Color(0xFFF8EED8)
+        paper300 = Color(0xFFEDDFC2)
+        paper400 = Color(0xFFDFCDA9)
+        paper500 = Color(0xFFC9B48A)
+        sky100 = Color(0xFFE6F6FF)
+        sky300 = Color(0xFFA9DEFC)
+        sky500 = Color(0xFF4DB8F5)
+        sky700 = Color(0xFF1668AD)
+        sky900 = Color(0xFF0F4C80)
+        skyTint = Color(0xFFE6F6FF)
+        skyBand = Color(0xFFA9DEFC)
+        grass300 = Color(0xFFB4E36A)
+        grass400 = Color(0xFF97D858)
+        grass500 = Color(0xFF7FCF4B)
+        grass600 = Color(0xFF71C544)
+        grass700 = Color(0xFF5CB337)
+        grass900 = Color(0xFF3B8A2A)
+        asphalt300 = Color(0xFF939CB0)
+        asphalt500 = Color(0xFF6A7389)
+        asphalt700 = Color(0xFF474F63)
+        asphalt900 = Color(0xFF343B4F)
+        marking = Color(0xFFFFFFFF)
+        markingWarn = Color(0xFFFFD23F)
+        sand300 = Color(0xFFF2D79B)
+        sand500 = Color(0xFFD9B56F)
+        soil500 = Color(0xFFA8713F)
+        soil700 = Color(0xFF7D4F2A)
+        roof500 = Color(0xFFCF6A4B)
+        roof300 = Color(0xFFEC8F6C)
+        roof700 = Color(0xFFA84D35)
+        roof900 = Color(0xFF7A3424)
+        foam = Color(0xFFF2FBFF)
+        stone300 = Color(0xFFB9B3A8)
+        stone500 = Color(0xFF9C968B)
+        stone700 = Color(0xFF7D776D)
+        leaf300 = Color(0xFF8ED35C)
+        leaf500 = Color(0xFF55B04A)
+        leaf700 = Color(0xFF38923F)
+        leaf900 = Color(0xFF236E38)
+        pine300 = Color(0xFF62C092)
+        pine500 = Color(0xFF3DA079)
+        pine700 = Color(0xFF2A8067)
+        pine900 = Color(0xFF1B5F52)
+        wood300 = Color(0xFFCF9F69)
+        wood500 = Color(0xFFA8713F)
+        wood700 = Color(0xFF7D4F2A)
+        wood900 = Color(0xFF59341A)
+        straw300 = Color(0xFFF1DE98)
+        straw500 = Color(0xFFDCC163)
+        straw700 = Color(0xFFB3923A)
+        wall100 = Color(0xFFFFF4DC)
+        wall300 = Color(0xFFECD9B4)
+        wall500 = Color(0xFFD2BA8E)
+        tin100 = Color(0xFFF0F4F9)
+        tin300 = Color(0xFFDBE2EE)
+        tin500 = Color(0xFFBCC6D8)
+        tin700 = Color(0xFF98A4BC)
+        tin900 = Color(0xFF6D7994)
+        concrete300 = Color(0xFFD7DBE4)
+        concrete500 = Color(0xFFC1C7D3)
+        concrete700 = Color(0xFFA2A9BA)
+        road500 = Color(0xFF8892A8)
+        road700 = Color(0xFF6D778E)
+        water300 = Color(0xFF93DFF8)
+        water500 = Color(0xFF4DB8F5)
+        water700 = Color(0xFF2B97DE)
+        hide100 = Color(0xFFFFF6E6)
+        hide300 = Color(0xFFEAD9BC)
+        hide900 = Color(0xFF4A3528)
+        denim300 = Color(0xFF8DB4E6)
+        denim500 = Color(0xFF5F8FCF)
+        sun = Color(0xFFFFCB3D)
+        sunDeep = Color(0xFFE39A12)
+        sun200 = Color(0xFFFFE693)
+        sun500 = Color(0xFFFFCB3D)
+        sun700 = Color(0xFFE39A12)
+        sun900 = Color(0xFFB87407)
+        tangerine = Color(0xFFFF8F33)
+        tangerineDeep = Color(0xFFD9641A)
+        tangerine200 = Color(0xFFFFC998)
+        tangerine500 = Color(0xFFFF8F33)
+        tangerine700 = Color(0xFFD9641A)
+        tangerine900 = Color(0xFFA94B08)
+        cherry = Color(0xFFFF5D52)
+        cherryDeep = Color(0xFFC9302C)
+        cherry200 = Color(0xFFFFB5AE)
+        cherry500 = Color(0xFFFF5D52)
+        cherry700 = Color(0xFFC9302C)
+        cherry900 = Color(0xFF9A2320)
+        success = Color(0xFF35D6B0)
+        successInk = Color(0xFF0B6B59)
+        mint200 = Color(0xFFAAF1DF)
+        mint500 = Color(0xFF35D6B0)
+        mint700 = Color(0xFF17B08D)
+        mint900 = Color(0xFF0B6B59)
+        danger = Color(0xFFFF5D52)
+        dangerInk = Color(0xFFB3221F)
+        warning = Color(0xFFFFCB3D)
+        info = Color(0xFF4DB8F5)
+        focus = Color(0xFFFFFFFF)
+        path1 = Color(0xFFFFCB3D)
+        path2 = Color(0xFFFF8F33)
+        path3 = Color(0xFFFF5D52)
+        path4 = Color(0xFFFF7AC8)
+        path5 = Color(0xFFB48CFF)
+        path6 = Color(0xFF4FE0E6)
+        fuselage = Color(0xFFFDFCF5)
+        fuselageShade = Color(0xFFD5DBE8)
+        glass = Color(0xFF9FE0FF)
+        glass700 = Color(0xFF5FB2DC)
+        window = Color(0xFF9FE0FF)
+        beacon = Color(0xFFFFF3B0)
+        muzzle = Color(0xFFF4B3A8)
+        glassShine = Color(0xFFFFFFFF)
+        propBlur = Color(29, 37, 69, 77)
+        cloud = Color(0xFFFFFFFF)
+        cloudShade = Color(0xFFD6EBFA)
+        shadowGround = Color(24, 40, 30, 71)
+        shadowCast = Color(0xFF12301F)
+        selectRing = Color(0xFFFFFFFF)
+        zoneOk = Color(0xFF35D6B0)
+        zoneNo = Color(0xFFFF5D52)
+        star = Color(0xFFFFE066)
+        poof = Color(0xFFF7F8FC)
+        poofShade = Color(0xFFC8D1E6)
+        scrim = Color(17, 24, 58, 140)
+        contact = Color(29, 37, 69, 51)
+        contactField = Color(18, 48, 31, 71)
+        contactOverlay = Color(10, 14, 36, 77)
+        blackout = Color(0xFF03050F)
+    },
 )
 
 val NightColors = FaColors(
-    outline = Color(0xFF0A0E24),
-    ink = Color(0xFF1D2545),
-    inkMuted = Color(0xFF4F5A7C),
-    ink3 = Color(0xFF7C86A6),
-    onSky = Color(0xFFF6F2E4),
-    onSkyMuted = Color(0xFFB5BFDD),
-    onAccent = Color(0xFF1D2545),
-    onOutline = Color(0xFFFFFAF0),
-    bgSky = Color(0xFF151C40),
-    bgField = Color(0xFF3F8A66),
-    surface = Color(0xFFEFE9D8),
-    surfaceRaised = Color(0xFFFFFAF0),
-    surfaceSunken = Color(0xFFCFD6EA),
-    paper0 = Color(0xFFFFFAF0),
-    paper100 = Color(0xFFEFE9D8),
-    paper200 = Color(0xFFE2DBC8),
-    paper300 = Color(0xFFD5CDB8),
-    paper400 = Color(0xFFC4BB9F),
-    paper500 = Color(0xFFA89F84),
-    sky100 = Color(0xFF1C2654),
-    sky300 = Color(0xFF2B3A82),
-    sky500 = Color(0xFF5AA8F0),
-    sky700 = Color(0xFF1668AD),
-    sky900 = Color(0xFF0F4C80),
-    skyTint = Color(0xFFE6F6FF),
-    skyBand = Color(0xFFA9DEFC),
-    grass300 = Color(0xFF5AA57C),
-    grass400 = Color(0xFF4A9571),
-    grass500 = Color(0xFF3F8A66),
-    grass600 = Color(0xFF398060),
-    grass700 = Color(0xFF327559),
-    grass900 = Color(0xFF1F5443),
-    asphalt300 = Color(0xFF7A84A6),
-    asphalt500 = Color(0xFF5E6788),
-    asphalt700 = Color(0xFF454D6B),
-    asphalt900 = Color(0xFF30364F),
-    marking = Color(0xFFEEF2FB),
-    markingWarn = Color(0xFFFFD23F),
-    sand300 = Color(0xFF9C9580),
-    sand500 = Color(0xFF7F7A6C),
-    soil500 = Color(0xFF6E5C52),
-    soil700 = Color(0xFF4D403C),
-    roof500 = Color(0xFF8C5863),
-    roof300 = Color(0xFFA96F76),
-    roof700 = Color(0xFF6D4350),
-    roof900 = Color(0xFF4E2E3C),
-    foam = Color(0xFFB9C8EA),
-    stone300 = Color(0xFF8D8FA3),
-    stone500 = Color(0xFF74778C),
-    stone700 = Color(0xFF5A5D73),
-    leaf300 = Color(0xFF4D9C7C),
-    leaf500 = Color(0xFF357F68),
-    leaf700 = Color(0xFF276657),
-    leaf900 = Color(0xFF184A45),
-    pine300 = Color(0xFF3F8F86),
-    pine500 = Color(0xFF2C7473),
-    pine700 = Color(0xFF215C63),
-    pine900 = Color(0xFF154451),
-    wood300 = Color(0xFF8F7A70),
-    wood500 = Color(0xFF6E5C52),
-    wood700 = Color(0xFF4D403C),
-    wood900 = Color(0xFF33292B),
-    straw300 = Color(0xFFA39F78),
-    straw500 = Color(0xFF8A8762),
-    straw700 = Color(0xFF6C6A4C),
-    wall100 = Color(0xFFC9C7CF),
-    wall300 = Color(0xFFA5A4B3),
-    wall500 = Color(0xFF878799),
-    tin100 = Color(0xFFB9C1D6),
-    tin300 = Color(0xFFA1AAC4),
-    tin500 = Color(0xFF8791AF),
-    tin700 = Color(0xFF6B7595),
-    tin900 = Color(0xFF4B5474),
-    concrete300 = Color(0xFF8F97B3),
-    concrete500 = Color(0xFF7D85A2),
-    concrete700 = Color(0xFF666E8C),
-    road500 = Color(0xFF6F7999),
-    road700 = Color(0xFF586180),
-    water300 = Color(0xFF3F7AC4),
-    water500 = Color(0xFF2F62AD),
-    water700 = Color(0xFF214A8C),
-    hide100 = Color(0xFFCFCBD0),
-    hide300 = Color(0xFFA9A6B3),
-    hide900 = Color(0xFF3A2F36),
-    denim300 = Color(0xFF6F8FC0),
-    denim500 = Color(0xFF4A6FA8),
-    sun = Color(0xFFFFCB3D),
-    sunDeep = Color(0xFFE39A12),
-    sun200 = Color(0xFFFFE693),
-    sun500 = Color(0xFFFFCB3D),
-    sun700 = Color(0xFFE39A12),
-    sun900 = Color(0xFFB87407),
-    tangerine = Color(0xFFFF8F33),
-    tangerineDeep = Color(0xFFD9641A),
-    tangerine200 = Color(0xFFFFC998),
-    tangerine500 = Color(0xFFFF8F33),
-    tangerine700 = Color(0xFFD9641A),
-    tangerine900 = Color(0xFFA94B08),
-    cherry = Color(0xFFFF5D52),
-    cherryDeep = Color(0xFFC9302C),
-    cherry200 = Color(0xFFFFB5AE),
-    cherry500 = Color(0xFFFF5D52),
-    cherry700 = Color(0xFFC9302C),
-    cherry900 = Color(0xFF9A2320),
-    success = Color(0xFF35D6B0),
-    successInk = Color(0xFF0B6B59),
-    mint200 = Color(0xFFAAF1DF),
-    mint500 = Color(0xFF35D6B0),
-    mint700 = Color(0xFF17B08D),
-    mint900 = Color(0xFF0B6B59),
-    danger = Color(0xFFFF5D52),
-    dangerInk = Color(0xFFB3221F),
-    warning = Color(0xFFFFCB3D),
-    info = Color(0xFF5AA8F0),
-    focus = Color(0xFFFFFFFF),
-    path1 = Color(0xFFFFCB3D),
-    path2 = Color(0xFFFF8F33),
-    path3 = Color(0xFFFF5D52),
-    path4 = Color(0xFFFF7AC8),
-    path5 = Color(0xFFB48CFF),
-    path6 = Color(0xFF4FE0E6),
-    fuselage = Color(0xFFF1F3FA),
-    fuselageShade = Color(0xFFB4BCD2),
-    glass = Color(0xFF8FD0FF),
-    glass700 = Color(0xFF4D8FC4),
-    window = Color(0xFFFFE9A8),
-    beacon = Color(0xFFFFF3B0),
-    muzzle = Color(0xFFB98F96),
-    glassShine = Color(0xFFFFFFFF),
-    propBlur = Color(223, 230, 245, 77),
-    cloud = Color(0xFFA9B5D6),
-    cloudShade = Color(0xFF7F8CB3),
-    shadowGround = Color(4, 7, 18, 128),
-    shadowCast = Color(0xFF03050F),
-    selectRing = Color(0xFFFFE98A),
-    zoneOk = Color(0xFF35D6B0),
-    zoneNo = Color(0xFFFF5D52),
-    star = Color(0xFFFFE066),
-    poof = Color(0xFFDFE4F2),
-    poofShade = Color(0xFF9AA5C4),
-    scrim = Color(3, 5, 16, 179),
-    contact = Color(4, 7, 18, 102),
-    contactField = Color(3, 5, 15, 115),
-    contactOverlay = Color(3, 5, 16, 128),
-    blackout = Color(0xFF03050F),
+    FaColorTokens().apply {
+        outline = Color(0xFF0A0E24)
+        ink = Color(0xFF1D2545)
+        inkMuted = Color(0xFF4F5A7C)
+        ink3 = Color(0xFF7C86A6)
+        onSky = Color(0xFFF6F2E4)
+        onSkyMuted = Color(0xFFB5BFDD)
+        onAccent = Color(0xFF1D2545)
+        onOutline = Color(0xFFFFFAF0)
+        bgSky = Color(0xFF151C40)
+        bgField = Color(0xFF3F8A66)
+        surface = Color(0xFFEFE9D8)
+        surfaceRaised = Color(0xFFFFFAF0)
+        surfaceSunken = Color(0xFFCFD6EA)
+        paper0 = Color(0xFFFFFAF0)
+        paper100 = Color(0xFFEFE9D8)
+        paper200 = Color(0xFFE2DBC8)
+        paper300 = Color(0xFFD5CDB8)
+        paper400 = Color(0xFFC4BB9F)
+        paper500 = Color(0xFFA89F84)
+        sky100 = Color(0xFF1C2654)
+        sky300 = Color(0xFF2B3A82)
+        sky500 = Color(0xFF5AA8F0)
+        sky700 = Color(0xFF1668AD)
+        sky900 = Color(0xFF0F4C80)
+        skyTint = Color(0xFFE6F6FF)
+        skyBand = Color(0xFFA9DEFC)
+        grass300 = Color(0xFF5AA57C)
+        grass400 = Color(0xFF4A9571)
+        grass500 = Color(0xFF3F8A66)
+        grass600 = Color(0xFF398060)
+        grass700 = Color(0xFF327559)
+        grass900 = Color(0xFF1F5443)
+        asphalt300 = Color(0xFF7A84A6)
+        asphalt500 = Color(0xFF5E6788)
+        asphalt700 = Color(0xFF454D6B)
+        asphalt900 = Color(0xFF30364F)
+        marking = Color(0xFFEEF2FB)
+        markingWarn = Color(0xFFFFD23F)
+        sand300 = Color(0xFF9C9580)
+        sand500 = Color(0xFF7F7A6C)
+        soil500 = Color(0xFF6E5C52)
+        soil700 = Color(0xFF4D403C)
+        roof500 = Color(0xFF8C5863)
+        roof300 = Color(0xFFA96F76)
+        roof700 = Color(0xFF6D4350)
+        roof900 = Color(0xFF4E2E3C)
+        foam = Color(0xFFB9C8EA)
+        stone300 = Color(0xFF8D8FA3)
+        stone500 = Color(0xFF74778C)
+        stone700 = Color(0xFF5A5D73)
+        leaf300 = Color(0xFF4D9C7C)
+        leaf500 = Color(0xFF357F68)
+        leaf700 = Color(0xFF276657)
+        leaf900 = Color(0xFF184A45)
+        pine300 = Color(0xFF3F8F86)
+        pine500 = Color(0xFF2C7473)
+        pine700 = Color(0xFF215C63)
+        pine900 = Color(0xFF154451)
+        wood300 = Color(0xFF8F7A70)
+        wood500 = Color(0xFF6E5C52)
+        wood700 = Color(0xFF4D403C)
+        wood900 = Color(0xFF33292B)
+        straw300 = Color(0xFFA39F78)
+        straw500 = Color(0xFF8A8762)
+        straw700 = Color(0xFF6C6A4C)
+        wall100 = Color(0xFFC9C7CF)
+        wall300 = Color(0xFFA5A4B3)
+        wall500 = Color(0xFF878799)
+        tin100 = Color(0xFFB9C1D6)
+        tin300 = Color(0xFFA1AAC4)
+        tin500 = Color(0xFF8791AF)
+        tin700 = Color(0xFF6B7595)
+        tin900 = Color(0xFF4B5474)
+        concrete300 = Color(0xFF8F97B3)
+        concrete500 = Color(0xFF7D85A2)
+        concrete700 = Color(0xFF666E8C)
+        road500 = Color(0xFF6F7999)
+        road700 = Color(0xFF586180)
+        water300 = Color(0xFF3F7AC4)
+        water500 = Color(0xFF2F62AD)
+        water700 = Color(0xFF214A8C)
+        hide100 = Color(0xFFCFCBD0)
+        hide300 = Color(0xFFA9A6B3)
+        hide900 = Color(0xFF3A2F36)
+        denim300 = Color(0xFF6F8FC0)
+        denim500 = Color(0xFF4A6FA8)
+        sun = Color(0xFFFFCB3D)
+        sunDeep = Color(0xFFE39A12)
+        sun200 = Color(0xFFFFE693)
+        sun500 = Color(0xFFFFCB3D)
+        sun700 = Color(0xFFE39A12)
+        sun900 = Color(0xFFB87407)
+        tangerine = Color(0xFFFF8F33)
+        tangerineDeep = Color(0xFFD9641A)
+        tangerine200 = Color(0xFFFFC998)
+        tangerine500 = Color(0xFFFF8F33)
+        tangerine700 = Color(0xFFD9641A)
+        tangerine900 = Color(0xFFA94B08)
+        cherry = Color(0xFFFF5D52)
+        cherryDeep = Color(0xFFC9302C)
+        cherry200 = Color(0xFFFFB5AE)
+        cherry500 = Color(0xFFFF5D52)
+        cherry700 = Color(0xFFC9302C)
+        cherry900 = Color(0xFF9A2320)
+        success = Color(0xFF35D6B0)
+        successInk = Color(0xFF0B6B59)
+        mint200 = Color(0xFFAAF1DF)
+        mint500 = Color(0xFF35D6B0)
+        mint700 = Color(0xFF17B08D)
+        mint900 = Color(0xFF0B6B59)
+        danger = Color(0xFFFF5D52)
+        dangerInk = Color(0xFFB3221F)
+        warning = Color(0xFFFFCB3D)
+        info = Color(0xFF5AA8F0)
+        focus = Color(0xFFFFFFFF)
+        path1 = Color(0xFFFFCB3D)
+        path2 = Color(0xFFFF8F33)
+        path3 = Color(0xFFFF5D52)
+        path4 = Color(0xFFFF7AC8)
+        path5 = Color(0xFFB48CFF)
+        path6 = Color(0xFF4FE0E6)
+        fuselage = Color(0xFFF1F3FA)
+        fuselageShade = Color(0xFFB4BCD2)
+        glass = Color(0xFF8FD0FF)
+        glass700 = Color(0xFF4D8FC4)
+        window = Color(0xFFFFE9A8)
+        beacon = Color(0xFFFFF3B0)
+        muzzle = Color(0xFFB98F96)
+        glassShine = Color(0xFFFFFFFF)
+        propBlur = Color(223, 230, 245, 77)
+        cloud = Color(0xFFA9B5D6)
+        cloudShade = Color(0xFF7F8CB3)
+        shadowGround = Color(4, 7, 18, 128)
+        shadowCast = Color(0xFF03050F)
+        selectRing = Color(0xFFFFE98A)
+        zoneOk = Color(0xFF35D6B0)
+        zoneNo = Color(0xFFFF5D52)
+        star = Color(0xFFFFE066)
+        poof = Color(0xFFDFE4F2)
+        poofShade = Color(0xFF9AA5C4)
+        scrim = Color(3, 5, 16, 179)
+        contact = Color(4, 7, 18, 102)
+        contactField = Color(3, 5, 15, 115)
+        contactOverlay = Color(3, 5, 16, 128)
+        blackout = Color(0xFF03050F)
+    },
 )
 
 /**
@@ -472,149 +631,151 @@ val NightColors = FaColors(
  * without a Dawn value take their Day value.
  */
 val DawnColors = FaColors(
-    outline = Color(0xFF1D2545),
-    ink = Color(0xFF1D2545),
-    inkMuted = Color(0xFF4F5A7C),
-    ink3 = Color(0xFF7C86A6),
-    onSky = Color(0xFF1D2545),
-    onSkyMuted = Color(0xFF2F3B63),
-    onAccent = Color(0xFF1D2545),
-    onOutline = Color(0xFFFFFAF0),
-    bgSky = Color(0xFF6C6A92),
-    bgField = Color(0xFF8A8650),
-    surface = Color(0xFFF4EBD8),
-    surfaceRaised = Color(0xFFFFFFFF),
-    surfaceSunken = Color(0xFFE2EEFA),
-    paper0 = Color(0xFFFBF5E6),
-    paper100 = Color(0xFFF4EBD8),
-    paper200 = Color(0xFFEBE0C8),
-    paper300 = Color(0xFFE0D3B6),
-    paper400 = Color(0xFFD0C09D),
-    paper500 = Color(0xFFB8A67F),
-    sky100 = Color(0xFF3A3D6B),
-    sky300 = Color(0xFF55578A),
-    sky500 = Color(0xFF4DB8F5),
-    sky700 = Color(0xFF1668AD),
-    sky900 = Color(0xFF0F4C80),
-    skyTint = Color(0xFFE6F6FF),
-    skyBand = Color(0xFFA9DEFC),
-    grass300 = Color(0xFFA29C5F),
-    grass400 = Color(0xFF969158),
-    grass500 = Color(0xFF8A8650),
-    grass600 = Color(0xFF7E7B49),
-    grass700 = Color(0xFF726F42),
-    grass900 = Color(0xFF4F4D30),
-    asphalt300 = Color(0xFF7C8298),
-    asphalt500 = Color(0xFF585E73),
-    asphalt700 = Color(0xFF3B4156),
-    asphalt900 = Color(0xFF2B3042),
-    marking = Color(0xFFE9E6E2),
-    markingWarn = Color(0xFFFFD23F),
-    sand300 = Color(0xFFC4AD85),
-    sand500 = Color(0xFFA8935F),
-    soil500 = Color(0xFF86603F),
-    soil700 = Color(0xFF5F432C),
-    roof500 = Color(0xFFA85F4C),
-    roof300 = Color(0xFFC27F62),
-    roof700 = Color(0xFF874A39),
-    roof900 = Color(0xFF633228),
-    foam = Color(0xFFDCD9E6),
-    stone300 = Color(0xFFA39C96),
-    stone500 = Color(0xFF8B857F),
-    stone700 = Color(0xFF6F6A66),
-    leaf300 = Color(0xFF88934D),
-    leaf500 = Color(0xFF708546),
-    leaf700 = Color(0xFF637942),
-    leaf900 = Color(0xFF5A6B3F),
-    pine300 = Color(0xFF758B61),
-    pine500 = Color(0xFF657F57),
-    pine700 = Color(0xFF5D7251),
-    pine900 = Color(0xFF576549),
-    wood300 = Color(0xFFA47E51),
-    wood500 = Color(0xFF936C42),
-    wood700 = Color(0xFF815E3A),
-    wood900 = Color(0xFF715334),
-    straw300 = Color(0xFFB39763),
-    straw500 = Color(0xFFAA8C4F),
-    straw700 = Color(0xFF987940),
-    wall100 = Color(0xFFB9A07C),
-    wall300 = Color(0xFFB0956D),
-    wall500 = Color(0xFFA5895F),
-    tin100 = Color(0xFFB2A087),
-    tin300 = Color(0xFFA99983),
-    tin500 = Color(0xFF9C8E7A),
-    tin700 = Color(0xFF8C8070),
-    tin900 = Color(0xFF7A6F61),
-    concrete300 = Color(0xFFA7967F),
-    concrete500 = Color(0xFF9E8E79),
-    concrete700 = Color(0xFF91826F),
-    road500 = Color(0xFF857969),
-    road700 = Color(0xFF7A6E5F),
-    water300 = Color(0xFF8A9886),
-    water500 = Color(0xFF6C8885),
-    water700 = Color(0xFF5D7B7D),
-    hide100 = Color(0xFFB9A180),
-    hide300 = Color(0xFFB09570),
-    hide900 = Color(0xFF6B5439),
-    denim300 = Color(0xFF888780),
-    denim500 = Color(0xFF747877),
-    sun = Color(0xFFFFCB3D),
-    sunDeep = Color(0xFFE39A12),
-    sun200 = Color(0xFFFFE693),
-    sun500 = Color(0xFFFFCB3D),
-    sun700 = Color(0xFFE39A12),
-    sun900 = Color(0xFFB87407),
-    tangerine = Color(0xFFFF8F33),
-    tangerineDeep = Color(0xFFD9641A),
-    tangerine200 = Color(0xFFFFC998),
-    tangerine500 = Color(0xFFFF8F33),
-    tangerine700 = Color(0xFFD9641A),
-    tangerine900 = Color(0xFFA94B08),
-    cherry = Color(0xFFFF5D52),
-    cherryDeep = Color(0xFFC9302C),
-    cherry200 = Color(0xFFFFB5AE),
-    cherry500 = Color(0xFFFF5D52),
-    cherry700 = Color(0xFFC9302C),
-    cherry900 = Color(0xFF9A2320),
-    success = Color(0xFF35D6B0),
-    successInk = Color(0xFF0B6B59),
-    mint200 = Color(0xFFAAF1DF),
-    mint500 = Color(0xFF35D6B0),
-    mint700 = Color(0xFF17B08D),
-    mint900 = Color(0xFF0B6B59),
-    danger = Color(0xFFFF5D52),
-    dangerInk = Color(0xFFB3221F),
-    warning = Color(0xFFFFCB3D),
-    info = Color(0xFF4DB8F5),
-    focus = Color(0xFFFFFFFF),
-    path1 = Color(0xFFFFCB3D),
-    path2 = Color(0xFFFF8F33),
-    path3 = Color(0xFFFF5D52),
-    path4 = Color(0xFFFF7AC8),
-    path5 = Color(0xFFB48CFF),
-    path6 = Color(0xFF4FE0E6),
-    fuselage = Color(0xFFFDFCF5),
-    fuselageShade = Color(0xFFD5DBE8),
-    glass = Color(0xFF9FE0FF),
-    glass700 = Color(0xFF5FB2DC),
-    window = Color(0xFFFFE9A8),
-    beacon = Color(0xFFFFF3B0),
-    muzzle = Color(0xFFD6A093),
-    glassShine = Color(0xFFFFFFFF),
-    propBlur = Color(29, 37, 69, 77),
-    cloud = Color(0xFFD9B8C4),
-    cloudShade = Color(0xFFA98CA8),
-    shadowGround = Color(20, 22, 30, 90),
-    shadowCast = Color(0xFF14161E),
-    selectRing = Color(0xFFFFFFFF),
-    zoneOk = Color(0xFF35D6B0),
-    zoneNo = Color(0xFFFF5D52),
-    star = Color(0xFFFFE066),
-    poof = Color(0xFFF7F8FC),
-    poofShade = Color(0xFFC8D1E6),
-    scrim = Color(17, 24, 58, 140),
-    contact = Color(29, 37, 69, 51),
-    contactField = Color(18, 48, 31, 71),
-    contactOverlay = Color(10, 14, 36, 77),
-    blackout = Color(0xFF03050F),
+    FaColorTokens().apply {
+        outline = Color(0xFF1D2545)
+        ink = Color(0xFF1D2545)
+        inkMuted = Color(0xFF4F5A7C)
+        ink3 = Color(0xFF7C86A6)
+        onSky = Color(0xFF1D2545)
+        onSkyMuted = Color(0xFF2F3B63)
+        onAccent = Color(0xFF1D2545)
+        onOutline = Color(0xFFFFFAF0)
+        bgSky = Color(0xFF6C6A92)
+        bgField = Color(0xFF8A8650)
+        surface = Color(0xFFF4EBD8)
+        surfaceRaised = Color(0xFFFFFFFF)
+        surfaceSunken = Color(0xFFE2EEFA)
+        paper0 = Color(0xFFFBF5E6)
+        paper100 = Color(0xFFF4EBD8)
+        paper200 = Color(0xFFEBE0C8)
+        paper300 = Color(0xFFE0D3B6)
+        paper400 = Color(0xFFD0C09D)
+        paper500 = Color(0xFFB8A67F)
+        sky100 = Color(0xFF3A3D6B)
+        sky300 = Color(0xFF55578A)
+        sky500 = Color(0xFF4DB8F5)
+        sky700 = Color(0xFF1668AD)
+        sky900 = Color(0xFF0F4C80)
+        skyTint = Color(0xFFE6F6FF)
+        skyBand = Color(0xFFA9DEFC)
+        grass300 = Color(0xFFA29C5F)
+        grass400 = Color(0xFF969158)
+        grass500 = Color(0xFF8A8650)
+        grass600 = Color(0xFF7E7B49)
+        grass700 = Color(0xFF726F42)
+        grass900 = Color(0xFF4F4D30)
+        asphalt300 = Color(0xFF7C8298)
+        asphalt500 = Color(0xFF585E73)
+        asphalt700 = Color(0xFF3B4156)
+        asphalt900 = Color(0xFF2B3042)
+        marking = Color(0xFFE9E6E2)
+        markingWarn = Color(0xFFFFD23F)
+        sand300 = Color(0xFFC4AD85)
+        sand500 = Color(0xFFA8935F)
+        soil500 = Color(0xFF86603F)
+        soil700 = Color(0xFF5F432C)
+        roof500 = Color(0xFFA85F4C)
+        roof300 = Color(0xFFC27F62)
+        roof700 = Color(0xFF874A39)
+        roof900 = Color(0xFF633228)
+        foam = Color(0xFFDCD9E6)
+        stone300 = Color(0xFFA39C96)
+        stone500 = Color(0xFF8B857F)
+        stone700 = Color(0xFF6F6A66)
+        leaf300 = Color(0xFF88934D)
+        leaf500 = Color(0xFF708546)
+        leaf700 = Color(0xFF637942)
+        leaf900 = Color(0xFF5A6B3F)
+        pine300 = Color(0xFF758B61)
+        pine500 = Color(0xFF657F57)
+        pine700 = Color(0xFF5D7251)
+        pine900 = Color(0xFF576549)
+        wood300 = Color(0xFFA47E51)
+        wood500 = Color(0xFF936C42)
+        wood700 = Color(0xFF815E3A)
+        wood900 = Color(0xFF715334)
+        straw300 = Color(0xFFB39763)
+        straw500 = Color(0xFFAA8C4F)
+        straw700 = Color(0xFF987940)
+        wall100 = Color(0xFFB9A07C)
+        wall300 = Color(0xFFB0956D)
+        wall500 = Color(0xFFA5895F)
+        tin100 = Color(0xFFB2A087)
+        tin300 = Color(0xFFA99983)
+        tin500 = Color(0xFF9C8E7A)
+        tin700 = Color(0xFF8C8070)
+        tin900 = Color(0xFF7A6F61)
+        concrete300 = Color(0xFFA7967F)
+        concrete500 = Color(0xFF9E8E79)
+        concrete700 = Color(0xFF91826F)
+        road500 = Color(0xFF857969)
+        road700 = Color(0xFF7A6E5F)
+        water300 = Color(0xFF8A9886)
+        water500 = Color(0xFF6C8885)
+        water700 = Color(0xFF5D7B7D)
+        hide100 = Color(0xFFB9A180)
+        hide300 = Color(0xFFB09570)
+        hide900 = Color(0xFF6B5439)
+        denim300 = Color(0xFF888780)
+        denim500 = Color(0xFF747877)
+        sun = Color(0xFFFFCB3D)
+        sunDeep = Color(0xFFE39A12)
+        sun200 = Color(0xFFFFE693)
+        sun500 = Color(0xFFFFCB3D)
+        sun700 = Color(0xFFE39A12)
+        sun900 = Color(0xFFB87407)
+        tangerine = Color(0xFFFF8F33)
+        tangerineDeep = Color(0xFFD9641A)
+        tangerine200 = Color(0xFFFFC998)
+        tangerine500 = Color(0xFFFF8F33)
+        tangerine700 = Color(0xFFD9641A)
+        tangerine900 = Color(0xFFA94B08)
+        cherry = Color(0xFFFF5D52)
+        cherryDeep = Color(0xFFC9302C)
+        cherry200 = Color(0xFFFFB5AE)
+        cherry500 = Color(0xFFFF5D52)
+        cherry700 = Color(0xFFC9302C)
+        cherry900 = Color(0xFF9A2320)
+        success = Color(0xFF35D6B0)
+        successInk = Color(0xFF0B6B59)
+        mint200 = Color(0xFFAAF1DF)
+        mint500 = Color(0xFF35D6B0)
+        mint700 = Color(0xFF17B08D)
+        mint900 = Color(0xFF0B6B59)
+        danger = Color(0xFFFF5D52)
+        dangerInk = Color(0xFFB3221F)
+        warning = Color(0xFFFFCB3D)
+        info = Color(0xFF4DB8F5)
+        focus = Color(0xFFFFFFFF)
+        path1 = Color(0xFFFFCB3D)
+        path2 = Color(0xFFFF8F33)
+        path3 = Color(0xFFFF5D52)
+        path4 = Color(0xFFFF7AC8)
+        path5 = Color(0xFFB48CFF)
+        path6 = Color(0xFF4FE0E6)
+        fuselage = Color(0xFFFDFCF5)
+        fuselageShade = Color(0xFFD5DBE8)
+        glass = Color(0xFF9FE0FF)
+        glass700 = Color(0xFF5FB2DC)
+        window = Color(0xFFFFE9A8)
+        beacon = Color(0xFFFFF3B0)
+        muzzle = Color(0xFFD6A093)
+        glassShine = Color(0xFFFFFFFF)
+        propBlur = Color(29, 37, 69, 77)
+        cloud = Color(0xFFD9B8C4)
+        cloudShade = Color(0xFFA98CA8)
+        shadowGround = Color(20, 22, 30, 90)
+        shadowCast = Color(0xFF14161E)
+        selectRing = Color(0xFFFFFFFF)
+        zoneOk = Color(0xFF35D6B0)
+        zoneNo = Color(0xFFFF5D52)
+        star = Color(0xFFFFE066)
+        poof = Color(0xFFF7F8FC)
+        poofShade = Color(0xFFC8D1E6)
+        scrim = Color(17, 24, 58, 140)
+        contact = Color(29, 37, 69, 51)
+        contactField = Color(18, 48, 31, 71)
+        contactOverlay = Color(10, 14, 36, 77)
+        blackout = Color(0xFF03050F)
+    },
 )
