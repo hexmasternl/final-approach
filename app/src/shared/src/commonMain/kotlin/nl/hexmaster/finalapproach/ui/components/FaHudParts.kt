@@ -96,7 +96,7 @@ fun FaFlightStrip(
         }
         Row(
             Modifier.padding(horizontal = FaDimens.space3),
-            horizontalArrangement = Arrangement.spacedBy(FaDimens.space1),
+            horizontalArrangement = Arrangement.spacedBy(FaDimens.space2),
             verticalAlignment = Alignment.CenterVertically,
             content = value,
         )

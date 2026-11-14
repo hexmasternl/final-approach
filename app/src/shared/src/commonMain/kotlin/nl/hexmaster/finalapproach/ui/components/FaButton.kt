@@ -33,6 +33,7 @@ enum class FaButtonSize { Small, Medium, Large }
  *
  * @param icon optional leading icon
  * @param enabled a disabled button is drawn in paper tones and does not react
+ * @param onField the button stands on the playing field, as in the HUD, and takes the field's contact shadow
  */
 @Composable
 fun FaButton(
@@ -43,6 +44,7 @@ fun FaButton(
     size: FaButtonSize = FaButtonSize.Medium,
     icon: FaIcon? = null,
     enabled: Boolean = true,
+    onField: Boolean = false,
 ) {
     val colors = FaTheme.colors
     val type = FaTheme.type
@@ -84,6 +86,8 @@ fun FaButton(
         enabled = enabled,
         shine = variant != FaButtonVariant.Ghost,
         touchInsetY = touchInsetY,
+        contact = if (onField) colors.contactField else colors.contact,
+        contactOffset = if (onField) FaDimens.contactOffsetField else FaDimens.contactOffset,
     ) {
         Row(
             Modifier.padding(horizontal = spec.paddingX),

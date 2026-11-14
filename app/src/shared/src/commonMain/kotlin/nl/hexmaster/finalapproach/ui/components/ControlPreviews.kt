@@ -21,7 +21,8 @@ private object ControlPreviewData {
     const val WIDTH = 420
     const val CONTROLS_HEIGHT = 420
     const val BUTTONS_HEIGHT = 520
-    const val READOUTS_HEIGHT = 360
+    const val READOUTS_HEIGHT = 400
+    const val DIALOG_HEIGHT = 640
     const val SCORE = 12_450
     const val BEST = 18_200
     val choices = ReduceMotionChoice.entries
@@ -117,9 +118,16 @@ private fun ReadoutsPreview(night: Boolean) {
             }
             Row(horizontalArrangement = Arrangement.spacedBy(FaDimens.space2)) {
                 FaChip("Too close", tone = FaChipTone.Cherry, icon = FaIcon.Warning)
+                FaChip("Streak x3", tone = FaChipTone.Tangerine, icon = FaIcon.Bolt)
                 FaChip("Locked", tone = FaChipTone.Plain, icon = FaIcon.Lock)
             }
-            Row(Modifier.background(FaTheme.colors.paper100).padding(FaDimens.space4)) { FaStamp("Too close") }
+            Row(
+                Modifier.background(FaTheme.colors.paper100).padding(FaDimens.space4),
+                horizontalArrangement = Arrangement.spacedBy(FaDimens.space5),
+            ) {
+                FaStamp("Too close")
+                FaStamp("All landed", tone = FaStampTone.Success)
+            }
         }
     }
 }
@@ -131,3 +139,37 @@ private fun ReadoutsDayPreview() = ReadoutsPreview(night = false)
 @Preview(widthDp = ControlPreviewData.WIDTH, heightDp = ControlPreviewData.READOUTS_HEIGHT)
 @Composable
 private fun ReadoutsNightPreview() = ReadoutsPreview(night = true)
+
+/** A dialog in each header tone, with its stamp and a sky chip on the stub. */
+@Composable
+private fun DialogPreview(night: Boolean, tone: FaDialogTone) {
+    FaTheme(night = night, reduceMotion = true) {
+        FaDialog(
+            title = if (tone == FaDialogTone.Success) "Cleared" else "Paused",
+            body = if (tone == FaDialogTone.Success) "Every aircraft is on the ground." else "The tower is holding all traffic.",
+            actions = listOf(
+                FaDialogAction("Resume", {}),
+                FaDialogAction("Choose airport", {}, FaButtonVariant.Secondary),
+            ),
+            eyebrow = "Meadow Field",
+            modifier = Modifier.background(FaTheme.colors.bgField),
+            tone = tone,
+            stamp = if (tone == FaDialogTone.Success) "All landed" else null,
+            content = {
+                Row(Modifier.padding(horizontal = FaDimens.space5, vertical = FaDimens.space3)) { FaChip("1 runway") }
+            },
+        )
+    }
+}
+
+@Preview(widthDp = ControlPreviewData.WIDTH, heightDp = ControlPreviewData.DIALOG_HEIGHT)
+@Composable
+private fun DialogSuccessDayPreview() = DialogPreview(night = false, tone = FaDialogTone.Success)
+
+@Preview(widthDp = ControlPreviewData.WIDTH, heightDp = ControlPreviewData.DIALOG_HEIGHT)
+@Composable
+private fun DialogSuccessNightPreview() = DialogPreview(night = true, tone = FaDialogTone.Success)
+
+@Preview(widthDp = ControlPreviewData.WIDTH, heightDp = ControlPreviewData.DIALOG_HEIGHT)
+@Composable
+private fun DialogNeutralNightPreview() = DialogPreview(night = true, tone = FaDialogTone.Neutral)

@@ -42,15 +42,15 @@ private object FaSurfaceDefaults {
 internal data class FaTone(val light: Color, val base: Color, val lip: Color, val edge: Color)
 
 internal val FaColors.tonePrimary get() = FaTone(sun200, sun500, sun700, sun900)
-internal val FaColors.toneSecondary get() = FaTone(sky300, sky500, sky700, sky900)
+internal val FaColors.toneSecondary get() = FaTone(skyBand, sky500, sky700, sky900)
 internal val FaColors.toneDanger get() = FaTone(cherry200, cherry500, cherry700, cherry900)
 internal val FaColors.toneGhost get() = FaTone(paper0, paper0, paper300, paper500)
 
 /** Panels, dialogs and level cards. */
 internal val FaColors.tonePaper get() = FaTone(paper0, paper100, paper400, paper500)
 
-/** Any disabled control: paper, without a coloured face. */
-internal val FaColors.toneDisabled get() = FaTone(paper100, paper200, paper300, paper400)
+/** Any disabled control: a flat paper face without a highlight, on a sliver of lip without a darker edge. */
+internal val FaColors.toneDisabled get() = FaTone(light = paper200, base = paper200, lip = paper300, edge = paper300)
 
 /** The knob of a toggle. */
 internal val FaColors.toneKnob get() = FaTone(paper0, paper0, paper400, paper400)

@@ -98,7 +98,8 @@ enum class FaDialogTone { Neutral, Failure, Success }
  * @param actions the buttons, primary first
  * @param eyebrow a few words above the title, shown in capitals
  * @param tone the tint of the header band
- * @param stamp optional two or three words stamped under the body; they repeat it, so screen readers skip them
+ * @param stamp optional two or three words stamped under the body, in the success tone on a
+ *   [FaDialogTone.Success] dialog; they repeat the body, so screen readers skip them
  * @param content optional stats on the stub, above the buttons; see [FaDialogStats]
  * @param below optional full-width content under the dialog, such as an ad banner; sits on the scrim
  */
@@ -204,7 +205,7 @@ private fun PortraitPass(
 ) {
     val colors = FaTheme.colors
     PassHeader(eyebrow, title, tone)
-    PassBody(body, stamp)
+    PassBody(body, stamp, tone)
     Box(
         Modifier.fillMaxWidth().height(FaDimens.lineUiSm).drawWithCache {
             val clip = Path()
@@ -251,7 +252,7 @@ private fun CompactPass(
                 },
         ) {
             PassHeader(eyebrow, title, tone)
-            PassBody(body, stamp)
+            PassBody(body, stamp, tone)
         }
         Column(
             Modifier.weight(FaDialogDefaults.COMPACT_STUB_WEIGHT).fillMaxHeight(),
@@ -269,7 +270,7 @@ private fun PassHeader(eyebrow: String, title: String, tone: FaDialogTone) {
     val type = FaTheme.type
     val compact = LocalFaDialogLayout.current == FaDialogLayout.Compact
     val (fill, rule) = when (tone) {
-        FaDialogTone.Neutral -> colors.sky300 to colors.sky500
+        FaDialogTone.Neutral -> colors.skyBand to colors.sky500
         FaDialogTone.Failure -> colors.cherry200 to colors.cherry500
         FaDialogTone.Success -> colors.mint200 to colors.mint500
     }
@@ -288,13 +289,13 @@ private fun PassHeader(eyebrow: String, title: String, tone: FaDialogTone) {
         verticalArrangement = Arrangement.spacedBy(FaDimens.space1),
     ) {
         BasicText(eyebrow.uppercase(), style = type.labelSm.copy(color = colors.ink.copy(alpha = FaOpacity.eyebrow)))
-        BasicText(title, style = type.dialogTitle.copy(color = colors.ink))
+        BasicText(title, style = (if (compact) type.dialogTitleCompact else type.dialogTitle).copy(color = colors.ink))
     }
 }
 
 /** What happened, in one sentence, with the optional stamp under it. */
 @Composable
-private fun PassBody(body: String, stamp: String?) {
+private fun PassBody(body: String, stamp: String?, tone: FaDialogTone) {
     val colors = FaTheme.colors
     val type = FaTheme.type
     val compact = LocalFaDialogLayout.current == FaDialogLayout.Compact
@@ -305,9 +306,12 @@ private fun PassBody(body: String, stamp: String?) {
         ),
         verticalArrangement = Arrangement.spacedBy(FaDimens.space3),
     ) {
-        BasicText(body, style = (if (compact) type.body else type.bodyLg).copy(color = colors.inkMuted))
+        BasicText(body, style = type.body.copy(color = colors.inkMuted))
         // The stamp repeats the body in fewer words.
-        if (stamp != null) FaStamp(stamp, Modifier.padding(start = FaDimens.space1).clearAndSetSemantics { })
+        if (stamp != null) {
+            val stampTone = if (tone == FaDialogTone.Success) FaStampTone.Success else FaStampTone.Danger
+            FaStamp(stamp, Modifier.padding(start = FaDimens.space1).clearAndSetSemantics { }, stampTone)
+        }
     }
 }
 
@@ -322,7 +326,7 @@ private fun PassStub(actions: List<FaDialogAction>, content: (@Composable Column
         vertical = if (compact) FaDimens.space2 else FaDimens.space4,
     )
     when (dialogActionFlowFor(layout, hasStats = content != null)) {
-        FaDialogActionFlow.SideBySide -> Row(padding, horizontalArrangement = Arrangement.spacedBy(FaDimens.space2)) {
+        FaDialogActionFlow.SideBySide -> Row(padding, horizontalArrangement = Arrangement.spacedBy(FaDimens.space3)) {
             // Small buttons keep the full 48dp touch target.
             actions.forEach { DialogButton(it, Modifier.weight(1f), FaButtonSize.Small) }
         }

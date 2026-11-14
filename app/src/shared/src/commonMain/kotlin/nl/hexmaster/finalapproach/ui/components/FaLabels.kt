@@ -29,7 +29,7 @@ private object FaLabelDefaults {
 }
 
 /** The tint of a [FaChip]. The words on the chip carry the meaning; the tint only supports it. */
-enum class FaChipTone { Sky, Sun, Mint, Cherry, Plain }
+enum class FaChipTone { Sky, Sun, Tangerine, Mint, Cherry, Plain }
 
 /**
  * A chip: a small flat tag for a fact, such as "1 runway". A tinted fill with a fine edge in a
@@ -39,8 +39,9 @@ enum class FaChipTone { Sky, Sun, Mint, Cherry, Plain }
 fun FaChip(text: String, modifier: Modifier = Modifier, tone: FaChipTone = FaChipTone.Sky, icon: FaIcon? = null) {
     val colors = FaTheme.colors
     val (fill, edge, ink) = when (tone) {
-        FaChipTone.Sky -> Triple(colors.sky100, colors.sky300, colors.sky900)
-        FaChipTone.Sun -> Triple(colors.sun200, colors.sun700, colors.sun900)
+        FaChipTone.Sky -> Triple(colors.skyTint, colors.skyBand, colors.sky900)
+        FaChipTone.Sun -> Triple(colors.sun200, colors.sun700, colors.ink)
+        FaChipTone.Tangerine -> Triple(colors.tangerine200, colors.tangerine700, colors.ink)
         FaChipTone.Mint -> Triple(colors.mint200, colors.mint700, colors.mint900)
         FaChipTone.Cherry -> Triple(colors.cherry200, colors.cherry700, colors.cherry900)
         FaChipTone.Plain -> Triple(colors.paper200, colors.paper400, colors.inkMuted)
@@ -129,13 +130,20 @@ fun FaSticker(
     }
 }
 
+/** The ink of a [FaStamp]. The words on the stamp carry the meaning; the ink only supports it. */
+enum class FaStampTone { Danger, Success }
+
 /**
  * A stamp: a small tilted label with a double border, as inked onto a boarding pass. It repeats
  * in two or three words what the text beside it says; it never carries the message alone.
  */
 @Composable
-fun FaStamp(text: String, modifier: Modifier = Modifier) {
+fun FaStamp(text: String, modifier: Modifier = Modifier, tone: FaStampTone = FaStampTone.Danger) {
     val colors = FaTheme.colors
+    val (border, ink) = when (tone) {
+        FaStampTone.Danger -> colors.cherry700 to colors.cherry900
+        FaStampTone.Success -> colors.mint700 to colors.mint900
+    }
     BasicText(
         text.uppercase(),
         modifier = modifier
@@ -147,7 +155,7 @@ fun FaStamp(text: String, modifier: Modifier = Modifier) {
                 val outer = FaDimens.lineDetail.toPx()
                 val radius = FaDimens.radiusChip.toPx()
                 drawRoundRect(
-                    colors.cherry700,
+                    border,
                     Offset(inner / 2f, inner / 2f),
                     Size(size.width - inner, size.height - inner),
                     CornerRadius(radius - inner / 2f),
@@ -155,7 +163,7 @@ fun FaStamp(text: String, modifier: Modifier = Modifier) {
                 )
                 val reach = inner + outer / 2f
                 drawRoundRect(
-                    colors.cherry700,
+                    border,
                     Offset(-reach, -reach),
                     Size(size.width + 2f * reach, size.height + 2f * reach),
                     CornerRadius(radius + reach),
@@ -163,7 +171,7 @@ fun FaStamp(text: String, modifier: Modifier = Modifier) {
                 )
             }
             .padding(horizontal = FaDimens.space2, vertical = FaDimens.space1),
-        style = FaTheme.type.labelSm.copy(color = colors.cherry900),
+        style = FaTheme.type.labelSm.copy(color = ink),
         maxLines = 1,
     )
 }

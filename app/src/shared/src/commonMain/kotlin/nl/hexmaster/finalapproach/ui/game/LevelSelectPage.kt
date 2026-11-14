@@ -65,7 +65,7 @@ fun LevelSelectPage(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            BasicText(LevelSelectText.TITLE, style = type.displayMd.copy(color = colors.ink, textAlign = TextAlign.Center))
+            BasicText(LevelSelectText.TITLE, style = type.displayMd.copy(color = colors.onSky, textAlign = TextAlign.Center))
             Box(Modifier.padding(top = FaDimens.space5).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Row(
                     Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = FaDimens.space2, vertical = FaDimens.space3),

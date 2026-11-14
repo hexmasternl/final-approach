@@ -94,7 +94,7 @@ fun Hud(
         ) {
             // Only while the first-time tutorial runs.
             if (onSkipTutorial != null) {
-                FaButton(TutorialText.SKIP, onSkipTutorial, variant = FaButtonVariant.Ghost, size = FaButtonSize.Small)
+                FaButton(TutorialText.SKIP, onSkipTutorial, variant = FaButtonVariant.Ghost, size = FaButtonSize.Small, onField = true)
             }
             FaIconButton(FaIcon.Settings, HudText.OPTIONS, onOptions, compact = true)
         }

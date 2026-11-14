@@ -31,9 +31,10 @@ import nl.hexmaster.finalapproach.ui.theme.FaTheme
 /**
  * An on/off switch for settings that apply at once. The track is a well, 60 x 34 with a 48dp
  * touch area; the knob is a small moulded piece. On is told by the knob's position, the mint
- * track and a check mark together; the knob slides in `dur-quick` with `ease-bounce`, and jumps
- * with reduced motion. Focus shows the two-tone ring around the track. Disabled, it is drawn in
- * paper tones. Put a visible label next to it.
+ * track and a check mark together; the knob slides in `dur-quick` with `ease-bounce` while the
+ * track changes colour with `ease-snap`, and both jump with reduced motion. Focus shows the
+ * two-tone ring around the track. Disabled, it is drawn flat in paper tones: the knob has no lip.
+ * Put a visible label next to it.
  *
  * @param onCheckedChange called with the new value; with null the toggle is only drawn, for a
  *   row that is the switch itself: it takes no touches and says nothing to a screen reader
@@ -49,8 +50,17 @@ fun FaToggle(
     interactionSource: MutableInteractionSource? = null,
 ) {
     val colors = FaTheme.colors
-    val motion = if (FaTheme.reduceMotion) snap() else tween<Float>(FaMotion.durQuickMs, easing = FaMotion.easeBounce)
-    val position by animateFloatAsState(if (checked) 1f else 0f, motion)
+    val reduceMotion = FaTheme.reduceMotion
+    val target = if (checked) 1f else 0f
+    // Only the knob bounces; the colour of the track and the check mark snap.
+    val position by animateFloatAsState(
+        target,
+        if (reduceMotion) snap() else tween<Float>(FaMotion.durQuickMs, easing = FaMotion.easeBounce),
+    )
+    val trackShade by animateFloatAsState(
+        target,
+        if (reduceMotion) snap() else tween<Float>(FaMotion.durQuickMs, easing = FaMotion.easeSnap),
+    )
     val interaction = interactionSource ?: remember { MutableInteractionSource() }
     val focused by interaction.collectIsFocusedAsState()
     val switch = if (onCheckedChange != null) {
@@ -77,8 +87,7 @@ fun FaToggle(
                 val knobPaths = MouldedPaths()
                 onDrawBehind {
                     val border = FaDimens.lineUi.toPx()
-                    // The bounce overshoots; colours and the check mark stay inside their range.
-                    val shade = position.coerceIn(0f, 1f)
+                    val shade = trackShade.coerceIn(0f, 1f)
                     val outline = if (enabled) colors.outline else colors.ink3
                     if (focused && enabled) {
                         drawFocusRing(focus = colors.focus, outline = colors.outline, radius = size.height / 2f, band = border)
@@ -101,18 +110,32 @@ fun FaToggle(
                     val knob = FaDimens.toggleKnobV2.toPx()
                     val gap = (size.height - knob) / 2f
                     val travel = size.width - knob - 2f * gap
-                    drawMoulded(
-                        tone = colors.toneKnob,
-                        paths = knobPaths,
-                        outline = outline,
-                        border = border,
-                        radius = knob / 2f,
-                        lip = FaDimens.lipInset.toPx(),
-                        topLeft = Offset(gap + travel * position, gap),
-                        size = Size(knob, knob),
-                        insetLip = true,
-                        lipEdge = 0f,
-                    )
+                    val knobTopLeft = Offset(gap + travel * position, gap)
+                    val knobSize = Size(knob, knob)
+                    if (enabled) {
+                        drawMoulded(
+                            tone = colors.toneKnob,
+                            paths = knobPaths,
+                            outline = outline,
+                            border = border,
+                            radius = knob / 2f,
+                            lip = FaDimens.lipInset.toPx(),
+                            topLeft = knobTopLeft,
+                            size = knobSize,
+                            insetLip = true,
+                            lipEdge = 0f,
+                        )
+                    } else {
+                        // A disabled knob is flat: no lip, so it does not look pressable.
+                        drawFlat(
+                            fill = colors.paper100,
+                            outline = outline,
+                            border = border,
+                            radius = knob / 2f,
+                            topLeft = knobTopLeft,
+                            size = knobSize,
+                        )
+                    }
                 }
             },
         )
