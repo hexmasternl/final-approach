@@ -31,7 +31,7 @@ Why: the generator feeds the app. Replacing names would break the build or force
 | 700 | Shade tone; the lip of a control |
 | 900 | Tinted inner line (W3, U4); the bottom edge of a lip |
 
-Materials: `grass`, `leaf`, `pine`, `wood`, `soil`, `sand`, `straw`, `roof`, `wall`, `tin`, `stone`, `concrete`, `asphalt`, `road`, `water`, `hide`, plus single tokens `window`, `beacon`, `muzzle`, `shadow` and `shadow-opacity`. Accents: `sun`, `sky`, `cherry`, `tangerine`, `mint` (the ramp around `success`). Surfaces: `paper-0` to `paper-500`. Day and Night values come from `reference/tokens.css`; Dawn values are derived the way v1 derived them (dim and warm, cooler shadow) and checked in the showcase.
+Materials: `grass`, `leaf`, `pine`, `wood`, `soil`, `sand`, `straw`, `roof`, `wall`, `tin`, `stone`, `concrete`, `asphalt`, `road`, `water`, `hide`, plus single tokens `window`, `beacon`, `muzzle`, `shadow-cast` and `opacity-shadow-cast`. Accents: `sun`, `sky`, `cherry`, `tangerine`, `mint` (the ramp around `success`). Surfaces: `paper-0` to `paper-500`. Day and Night values come from `reference/tokens.css`; Dawn values are derived the way v1 derived them (dim and warm, cooler shadow) and checked in the showcase.
 
 ### 3. Five line ranks
 
@@ -39,13 +39,13 @@ Materials: `grass`, `leaf`, `pine`, `wood`, `soil`, `sand`, `straw`, `roof`, `wa
 
 ### 4. Height tiers and shadows are sprite data
 
-Each scenery sprite carries a height tier (`flat`, `S`, `M`, `L`), a shadow silhouette and whether it may rotate. Standing sprites (tier M or L with a south wall) may not rotate and bake their shadow; top-down sprites (vehicles, animals, boats, hay bales, rocks) rotate, and their shadow is their silhouette offset down-right by the tier's distance, applied outside the rotation. All ground shadows are drawn in one layer between flat ground and standing scenery, in `shadow` at `shadow-opacity`, so overlapping shadows never darken twice. Airborne shadows stay soft and further offset, so altitude still reads.
+Each scenery sprite carries a height tier (`flat`, `S`, `M`, `L`), a shadow silhouette and whether it may rotate. Standing sprites (tier M or L with a south wall) may not rotate and bake their shadow; top-down sprites (vehicles, animals, boats, hay bales, rocks) rotate, and their shadow is their silhouette offset down-right by the tier's distance, applied outside the rotation. All ground shadows are drawn in one layer between flat ground and standing scenery, in `shadow-cast` at `opacity-shadow-cast`, so overlapping shadows never darken twice. Airborne shadows stay soft and further offset, so altitude still reads.
 
 Why: the rule "the shadow always falls down-right" cannot hold if a baked shadow rotates with its sprite. Alternative considered: per-sprite shadows drawn with the sprite; rejected because neighbouring shadows would fall on canopies and double up.
 
 ### 5. The generator's checks change with the rules
 
-The four-fill and colour checks are replaced by: at most three materials per sprite; every fill is a ramp step or one of the single tokens; inner strokes are never `outline`; no scenery sprite uses `fuselage`, `glass-shine`, a path colour or `sun-500`; every standing sprite has a wall and a shadow silhouette. The tower cab (`cherry`) and the windsock (`tangerine`) keep their accent, as in v1.
+The four-fill and colour checks are replaced by: at most three main materials per sprite, plus at most two trim materials the sprite names (a sprite that carries other things is exempt); every paint is a live colour token; no scenery sprite uses `fuselage`, a path colour or `sun-500`; every sprite with height has an `outline` silhouette and a shadow silhouette; flat ground has no `outline`; a tier M sprite does not rotate. Whether an inner line avoids `outline` is left to review: small parts that stand on a sprite, such as a chimney, keep an outline of their own. The tower cab (`cherry`) and the windsock (`tangerine`) keep their accent, as in v1.
 
 ### 6. Carry the reference over, shape by shape
 

@@ -43,6 +43,7 @@ import nl.hexmaster.finalapproach.ui.theme.FaTheme
 private object MainPageText {
     const val TAKE_OFF = "Take off"
     const val SETTINGS = "Settings"
+    const val QUIT_EYEBROW = "Tower · signing off"
     const val QUIT_TITLE = "Quit?"
     const val QUIT_BODY = "Leave the tower for now?"
     const val QUIT = "Quit"
@@ -138,6 +139,7 @@ fun MainPage(
             FaDialog(
                 title = MainPageText.QUIT_TITLE,
                 body = MainPageText.QUIT_BODY,
+                eyebrow = MainPageText.QUIT_EYEBROW,
                 actions = listOf(
                     FaDialogAction(MainPageText.QUIT, host::quit, FaButtonVariant.Danger),
                     FaDialogAction(MainPageText.CANCEL, { quitOpen = false }, FaButtonVariant.Ghost),

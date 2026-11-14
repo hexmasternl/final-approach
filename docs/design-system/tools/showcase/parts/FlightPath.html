@@ -1,0 +1,21 @@
+<article class="sc-comp" id="c-FlightPath">
+  <header><h3>Flight Path</h3><p>The dashed line a player draws from an aircraft to where it should go.</p></header>
+  <div class="sc-demo fa-stage fa-stage--field"><div style="position:relative;width:860px;height:290px">
+  <fa-runway length="300" numbers="09/27" zone="ok" style="position:absolute;left:540px;top:150px"></fa-runway>
+  <svg viewBox="0 0 860 290" width="860" height="290" style="position:absolute;inset:0" aria-hidden="true">
+    <g class="fa-path--march" style="--fa-livery:var(--path-4)">
+      <path class="fa-path-casing" d="M70 70C150 260 470 190 650 190"/>
+      <path class="fa-path-dash" d="M70 70C150 260 470 190 650 190"/>
+      <circle class="fa-path-dot" cx="650" cy="190" r="6"/>
+    </g>
+    <g class="fa-path--idle" style="--fa-livery:var(--path-1)">
+      <path class="fa-path-casing" d="M330 40C420 40 470 80 500 120"/>
+      <path class="fa-path-dash" d="M330 40C420 40 470 80 500 120"/>
+      <circle class="fa-path-dot" cx="500" cy="120" r="6"/>
+    </g>
+    <path class="fa-path-ghost" d="M500 120l66 88"/>
+  </svg>
+  <fa-aircraft type="jet" livery="4" heading="156" selected callsign="FA 204" style="position:absolute;left:34px;top:34px"></fa-aircraft>
+  <fa-aircraft type="light-prop" livery="1" heading="90" style="position:absolute;left:302px;top:12px"></fa-aircraft>
+</div></div>
+</article>

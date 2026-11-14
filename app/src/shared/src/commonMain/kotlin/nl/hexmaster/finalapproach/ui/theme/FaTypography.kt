@@ -13,7 +13,9 @@ import nl.hexmaster.finalapproach.resources.Res
 import nl.hexmaster.finalapproach.resources.dynapuff_bold
 import nl.hexmaster.finalapproach.resources.dynapuff_semibold
 import nl.hexmaster.finalapproach.resources.inconsolata_extrabold
-import nl.hexmaster.finalapproach.resources.inconsolata_medium
+import nl.hexmaster.finalapproach.resources.nunito_bold
+import nl.hexmaster.finalapproach.resources.nunito_extrabold
+import nl.hexmaster.finalapproach.resources.nunito_semibold
 import org.jetbrains.compose.resources.Font
 
 /** One text style per type style of the design system. */
@@ -24,6 +26,9 @@ class FaTypography(
     val displayMd: TextStyle,
     val score: TextStyle,
     val scoreCompact: TextStyle,
+    val stripValue: TextStyle,
+    val dialogTitle: TextStyle,
+    val dialogTitleCompact: TextStyle,
     val titleLg: TextStyle,
     val titleMd: TextStyle,
     val titleSm: TextStyle,
@@ -31,18 +36,20 @@ class FaTypography(
     val buttonLabel: TextStyle,
     val buttonLabelSm: TextStyle,
     val bodyLg: TextStyle,
+    val row: TextStyle,
     val body: TextStyle,
     val bodySm: TextStyle,
     val caption: TextStyle,
     val readout: TextStyle,
     val label: TextStyle,
     val callsign: TextStyle,
+    val labelSm: TextStyle,
 )
 
 /**
- * DynaPuff for headers, titles, button labels and the score; Inconsolata for regular text,
- * labels and readouts. Only the weights the app ships are bundled: other weights resolve to
- * the nearest one.
+ * DynaPuff for headers, titles, button labels and the score; Nunito for running text;
+ * Inconsolata for labels, readouts and callsigns. Only the weights the app ships are bundled:
+ * other weights resolve to the nearest one.
  */
 @Composable
 fun rememberFaTypography(): FaTypography {
@@ -50,30 +57,39 @@ fun rememberFaTypography(): FaTypography {
         Font(Res.font.dynapuff_semibold, FontWeight.SemiBold),
         Font(Res.font.dynapuff_bold, FontWeight.Bold),
     )
+    val body = FontFamily(
+        Font(Res.font.nunito_semibold, FontWeight.SemiBold),
+        Font(Res.font.nunito_bold, FontWeight.Bold),
+        Font(Res.font.nunito_extrabold, FontWeight.ExtraBold),
+    )
     val text = FontFamily(
-        Font(Res.font.inconsolata_medium, FontWeight.Medium),
         Font(Res.font.inconsolata_extrabold, FontWeight.ExtraBold),
     )
-    return remember(display, text) {
+    return remember(display, body, text) {
         FaTypography(
             displayXl = TextStyle(fontFamily = display, fontWeight = FontWeight(700), fontSize = 72.sp, lineHeight = 68.sp, letterSpacing = -0.01.em),
             displayLg = TextStyle(fontFamily = display, fontWeight = FontWeight(700), fontSize = 48.sp, lineHeight = 48.sp),
             displayMd = TextStyle(fontFamily = display, fontWeight = FontWeight(700), fontSize = 36.sp, lineHeight = 40.sp),
             score = TextStyle(fontFamily = display, fontWeight = FontWeight(700), fontSize = 32.sp, lineHeight = 32.sp, fontFeatureSettings = "tnum"),
             scoreCompact = TextStyle(fontFamily = display, fontWeight = FontWeight(700), fontSize = 24.sp, lineHeight = 24.sp, fontFeatureSettings = "tnum"),
+            stripValue = TextStyle(fontFamily = display, fontWeight = FontWeight(700), fontSize = 21.sp, lineHeight = 24.sp, fontFeatureSettings = "tnum"),
+            dialogTitle = TextStyle(fontFamily = display, fontWeight = FontWeight(700), fontSize = 38.sp, lineHeight = 40.sp),
+            dialogTitleCompact = TextStyle(fontFamily = display, fontWeight = FontWeight(700), fontSize = 32.sp, lineHeight = 36.sp),
             titleLg = TextStyle(fontFamily = display, fontWeight = FontWeight(600), fontSize = 28.sp, lineHeight = 32.sp),
             titleMd = TextStyle(fontFamily = display, fontWeight = FontWeight(600), fontSize = 22.sp, lineHeight = 28.sp),
             titleSm = TextStyle(fontFamily = display, fontWeight = FontWeight(600), fontSize = 18.sp, lineHeight = 24.sp),
             buttonLabelLg = TextStyle(fontFamily = display, fontWeight = FontWeight(700), fontSize = 24.sp, lineHeight = 28.sp),
             buttonLabel = TextStyle(fontFamily = display, fontWeight = FontWeight(600), fontSize = 18.sp, lineHeight = 20.sp),
             buttonLabelSm = TextStyle(fontFamily = display, fontWeight = FontWeight(600), fontSize = 15.sp, lineHeight = 18.sp),
-            bodyLg = TextStyle(fontFamily = text, fontWeight = FontWeight(500), fontSize = 18.sp, lineHeight = 28.sp),
-            body = TextStyle(fontFamily = text, fontWeight = FontWeight(500), fontSize = 16.sp, lineHeight = 24.sp),
-            bodySm = TextStyle(fontFamily = text, fontWeight = FontWeight(500), fontSize = 14.sp, lineHeight = 20.sp),
-            caption = TextStyle(fontFamily = text, fontWeight = FontWeight(600), fontSize = 12.sp, lineHeight = 16.sp),
+            bodyLg = TextStyle(fontFamily = body, fontWeight = FontWeight(600), fontSize = 18.sp, lineHeight = 28.sp),
+            row = TextStyle(fontFamily = body, fontWeight = FontWeight(700), fontSize = 15.sp, lineHeight = 20.sp),
+            body = TextStyle(fontFamily = body, fontWeight = FontWeight(600), fontSize = 16.sp, lineHeight = 24.sp),
+            bodySm = TextStyle(fontFamily = body, fontWeight = FontWeight(600), fontSize = 14.sp, lineHeight = 20.sp),
+            caption = TextStyle(fontFamily = body, fontWeight = FontWeight(700), fontSize = 12.sp, lineHeight = 16.sp),
             readout = TextStyle(fontFamily = text, fontWeight = FontWeight(800), fontSize = 20.sp, lineHeight = 24.sp),
             label = TextStyle(fontFamily = text, fontWeight = FontWeight(800), fontSize = 13.sp, lineHeight = 16.sp, letterSpacing = 0.08.em),
             callsign = TextStyle(fontFamily = text, fontWeight = FontWeight(800), fontSize = 12.sp, lineHeight = 14.sp, letterSpacing = 0.04.em),
+            labelSm = TextStyle(fontFamily = text, fontWeight = FontWeight(800), fontSize = 11.5.sp, lineHeight = 14.sp, letterSpacing = 0.09.em),
         )
     }
 }

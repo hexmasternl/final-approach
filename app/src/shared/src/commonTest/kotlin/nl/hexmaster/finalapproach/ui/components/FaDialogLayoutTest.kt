@@ -41,4 +41,12 @@ class FaDialogLayoutTest {
     fun aSquareSpaceIsNotLandscape() {
         assertEquals(FaDialogLayout.Portrait, dialogLayoutFor(400.dp, 400.dp))
     }
+
+    @Test
+    fun buttonsStandSideBySideOnlyOnACompactStubWithStats() {
+        assertEquals(FaDialogActionFlow.SideBySide, dialogActionFlowFor(FaDialogLayout.Compact, hasStats = true))
+        assertEquals(FaDialogActionFlow.Stacked, dialogActionFlowFor(FaDialogLayout.Compact, hasStats = false))
+        assertEquals(FaDialogActionFlow.Stacked, dialogActionFlowFor(FaDialogLayout.Portrait, hasStats = true))
+        assertEquals(FaDialogActionFlow.Stacked, dialogActionFlowFor(FaDialogLayout.Portrait, hasStats = false))
+    }
 }

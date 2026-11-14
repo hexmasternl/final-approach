@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.graphics.Color
 
 private val LocalFaColors = staticCompositionLocalOf { DayColors }
 private val LocalFaNight = staticCompositionLocalOf { false }
@@ -52,8 +51,4 @@ object FaTheme {
     /** True when animation should be reduced: the device asks for it, or the player turned it on. */
     val reduceMotion: Boolean
         @Composable @ReadOnlyComposable get() = LocalFaReduceMotion.current
-
-    /** Colour of the translucent second lip under a dialog. */
-    val softLip: Color
-        @Composable @ReadOnlyComposable get() = if (LocalFaNight.current) FaShadows.softLipNight else FaShadows.softLipDay
 }

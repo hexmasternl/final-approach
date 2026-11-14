@@ -1,20 +1,29 @@
-The chunky toy-block button for every text action in menus and dialogs.
+The moulded button for every text action in menus and dialogs.
 
 **You provide:** a label of one to three words, optionally one leading icon, a variant and a size.
 
-| Variant | Class | Fill / lip | Use for |
+| Variant | Class | Face / highlight / lip / lip edge | Use for |
 |---|---|---|---|
-| Primary | `fa-btn` | `sun` / `sun-deep` | The one action that moves the player forward: Take off, Resume, Try again. One per screen. |
-| Secondary | `fa-btn fa-btn--secondary` | `sky-500` / `sky-700` | A second path: Choose airport. |
-| Ghost | `fa-btn fa-btn--ghost` | `surface` / `surface-sunken` | Everything else: Settings, Restart, Main menu. |
-| Danger | `fa-btn fa-btn--danger` | `cherry` / `cherry-deep` | Leaving a running game. Never for Retry. |
+| Primary | `fa-btn` | `sun-500` / `sun-200` / `sun-700` / `sun-900` | The one action that moves the player forward: Take off, Resume, Try again. One per screen. |
+| Secondary | `fa-btn fa-btn--secondary` | `sky-500` / `sky-band` / `sky-700` / `sky-900` | A second path: Choose airport. |
+| Ghost | `fa-btn fa-btn--ghost` | `paper-0` / `paper-0` / `paper-300` / `paper-500` | Everything else: Settings, Restart, Main menu. |
+| Danger | `fa-btn fa-btn--danger` | `cherry-500` / `cherry-200` / `cherry-700` / `cherry-900` | Leaving a running game. Never for Retry. |
 
-Sizes: `fa-btn--sm` (`button-sm`, 40px), default (`button-md`, 52px), `fa-btn--lg` (`button-lg`, 64px, main call to action only). `fa-btn--block` fills the dialog width.
+| Size | Class | Height | Lip | Radius | Label |
+|---|---|---|---|---|---|
+| Small | `fa-btn--sm` | `button-sm` | `lip-sm` | `radius-control-sm` | `button-label-sm`, icon `icon-sm` |
+| Medium | (default) | `button-md` | `lip-md` | `radius-control` | `button-label` |
+| Large | `fa-btn--lg` | `button-lg` | `lip-lg` | `radius-control-lg` | `button-label-lg`, icon `icon-md` |
 
-**Construction.** Fill, `line-3` `outline` border, `radius-md`, an inset 5px lip in the deep colour and `shadow-lip` below. Label in `button-label` (`button-label-sm` on small, `button-label-lg` on large), colour `on-accent` (ghost: `ink`). Large buttons use `radius-lg`.
+The large button is for the main call to action on a menu only. `fa-btn--block` fills the width of a dialog or a column.
 
-**States.** Pressed: move down 2px and swap `shadow-lip` for `shadow-lip-sm`, in `dur-press` with `ease-snap`. Focus: the two-tone ring, 3px `focus` then 3px `outline`. Disabled: `opacity-disabled`, no press movement.
+**Construction.** A moulded control (U1). Back to front: a flat `contact` shadow showing `contact-offset` below it; one `outline` at `line-ui`; the lip in the variant's 700 tone with a `lip-edge` line of its 900 tone along the bottom; the face in the base tone with a `highlight` line along its top edge. The height token measures the button from outline to outline, lip included. The face's bottom corners are the radius minus the lip (U5). A coloured face carries one small shine, `shine-width` by `shine-height` at `opacity-shine`; the ghost button has none. The label is `on-accent`, on the ghost button `ink`.
 
-**Do** start labels with a verb. **Don't** put two primary buttons side by side, and don't use a button narrower than `touch-min`.
+**States.**
+- Pressed (`.is-pressed`): the face drops onto its lip until `lip-pressed` is left, in `dur-press` with `ease-snap`. The bottom of the button stays where it is.
+- Focus (`.is-focus`): the two-tone ring outside the outline, a `line-ui` band of `focus` then a `line-ui` band of `outline`.
+- Disabled: flat, not faded (U7). `paper-200` face on a `lip-pressed` sliver of `paper-300`, outline and label in `ink-3`, no shine, no contact shadow, full opacity. It does not move.
 
-**Compose.** A `Box` with `Modifier.offset` driven by press state; draw the lip as a second rounded rect `5.dp` below the face in `outline`.
+**Do** start labels with a verb. **Do** keep a full `touch-min` touch area around a small button. **Don't** put two primary buttons side by side, don't draw the lip in `outline`, and don't use a button narrower than `touch-min`.
+
+**Compose.** `FaButton` in `ui/components/FaButton.kt`, with `FaButtonVariant` (Primary, Secondary, Ghost, Danger) and `FaButtonSize` (Small, Medium, Large). It is built on `FaMoulded`, which draws the surface with `drawMoulded` and handles press, focus, reduced motion and the disabled state.

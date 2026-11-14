@@ -25,18 +25,22 @@ Every scenery sprite SHALL be lit from the top-left: a lit tone towards the nort
 - **THEN** the aircraft's shadow is soft and further from its sprite than the tree's hard shadow is from the tree
 
 ### Requirement: Three tones per material
-A scenery sprite SHALL use at most three materials, each drawn in flat tones of that material's ramp, and SHALL NOT use a gradient, a texture or a blur.
+A scenery sprite SHALL use at most three main materials, each drawn in flat tones of that material's ramp, and SHALL NOT use a gradient, a texture or a blur. On top of its main materials a sprite MAY name at most two trim materials for small parts such as a chimney or an awning. Glass, lamps and other single trim tokens do not count as a material. A sprite that carries other things, such as a vessel with containers, is exempt from the count.
 
 #### Scenario: Generator check
 - **WHEN** the generator processes the scenery sprites
-- **THEN** it fails for a sprite with more than three materials or with a fill that is not a ramp step or a named single token
+- **THEN** it fails for a sprite with more than three main materials, for a sprite that names more than two trim materials, and for a paint that is not a colour token of the design system
 
 ### Requirement: Navy outside, tinted inside
 The silhouette of a scenery sprite SHALL be stroked in `outline`. Every line inside the silhouette SHALL be a darker step of the material it lies on.
 
+#### Scenario: Silhouette
+- **WHEN** the generator processes a scenery sprite that has height
+- **THEN** it fails if the sprite has no stroke in `outline`
+
 #### Scenario: Inner lines
-- **WHEN** the generator processes a scenery sprite
-- **THEN** it fails if a stroke that is not the silhouette uses `outline`
+- **WHEN** the design-critic agent reviews the scenery sprites in the showcase
+- **THEN** it finds no line inside a silhouette drawn in `outline`, apart from small parts that stand on a sprite with an outline of their own, such as a chimney or a door frame
 
 ### Requirement: Line ranks
 The design system SHALL define five line ranks: `line-hero` (4) for aircraft only, `line-zone` (3) for landing zones and clouds, `line-ui` (2.5) for controls, panels, HUD strips and scenery silhouettes, `line-ui-sm` (2) for small parts, and `line-detail` (1.25) for tinted inner lines and keylines.
@@ -153,6 +157,17 @@ The aircraft sprites, the icon set, the path colours, the flight path, selection
 #### Scenario: Unchanged assets
 - **WHEN** this change's branch is compared with `development` before it
 - **THEN** no file under `assets/aircraft` or `assets/icons` differs, and the duration, easing, zIndex and path token values are equal
+
+### Requirement: App icon
+The app icon SHALL show the sun-yellow jet of the game in close-up at `line-hero`, with its soft shadow, over a v2 runway on the mown lawn. The nose and the wing roots SHALL lie inside the central 66% of the icon, so every launcher mask keeps them; wing tips and tail MAY bleed off the edge. The icon SHALL be generated from the design system's own sprite and tokens, as a full-bleed icon, a rounded in-app icon, and a separate foreground and background for Android.
+
+#### Scenario: Under a circle mask
+- **WHEN** the icon is shown under a circular launcher mask
+- **THEN** the cockpit, the nose and both wing roots are visible
+
+#### Scenario: Android layers match the source
+- **WHEN** the icon script is run
+- **THEN** the Android launcher foreground and background are rendered from the same SVG sources as the design system's icon, and the foreground has a transparent ground
 
 ### Requirement: The app keeps building
 Every token name that exists before this change SHALL still exist after it with the same value. Tokens that v2 no longer uses SHALL be marked deprecated with the name of their replacement.

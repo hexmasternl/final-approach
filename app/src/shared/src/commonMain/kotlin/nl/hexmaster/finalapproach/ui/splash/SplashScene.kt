@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import kotlin.math.PI
 import kotlin.math.roundToInt
 import kotlin.math.sin
-import nl.hexmaster.finalapproach.ui.components.drawBlock
+import nl.hexmaster.finalapproach.ui.components.drawFlat
 import nl.hexmaster.finalapproach.ui.sprites.AirportSilhouette
 import nl.hexmaster.finalapproach.ui.sprites.drawSideViewLightProp
 import nl.hexmaster.finalapproach.ui.sprites.parsePath
@@ -98,12 +98,11 @@ internal fun renderBanner(
     val image = ImageBitmap(widthPx, heightPx)
     val size = Size(widthPx.toFloat(), heightPx.toFloat())
     CanvasDrawScope().draw(density, LayoutDirection.Ltr, Canvas(image), size) {
-        drawBlock(
+        drawFlat(
             fill = colors.surface,
             outline = colors.outline,
             border = FaDimens.line3.toPx(),
             radius = FaDimens.radiusMd.toPx(),
-            lip = 0f,
         )
         drawText(
             name,
