@@ -4,7 +4,7 @@ A flat, tinted tag that names a property: landing zones, a best score, a lock re
 
 | Tone | Class | Fill / edge / text | Meaning |
 |---|---|---|---|
-| Sky | `fa-chip` or `fa-chip fa-chip--sky` | `sky-100` / `sky-300` / `sky-900` | Facts and counts: 1 runway, 1 helipad. |
+| Sky | `fa-chip` or `fa-chip fa-chip--sky` | `sky-tint` / `sky-band` / `sky-900` | Facts and counts: 1 runway, 1 helipad. |
 | Sun | `fa-chip fa-chip--sun` | `sun-200` / `sun-700` / `ink` | A best score, with `star`. |
 | Success | `fa-chip fa-chip--success` | `mint-200` / `mint-700` / `mint-900` | Landed, valid, safe. With `check`. |
 | Cherry | `fa-chip fa-chip--cherry` | `cherry-200` / `cherry-700` / `cherry-900` | Warnings: too close, wrong zone. Always with `warning`. |

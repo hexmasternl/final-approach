@@ -122,7 +122,7 @@ Every sprite carries a height tier, the silhouette of its cast shadow and whethe
 
 ### The south wall
 
-A building, a tree and the control tower show their top face above a visible south-facing wall or trunk (W5). A building's wall carries at least one door or window; the east end of a wall and the east side of a roof are in the shade tone (W1). Tier M and tier L differ in what stands on the ground: a building is a roof over a wall, a tall thing is a crown or a top over a narrow trunk, post or drum.
+A building, a tree and the control tower show their top face above a visible south-facing wall or trunk (W5). A building's wall carries at least one door or window; the east end of a wall and the east side of a roof are in the shade tone (W1). Tier M and tier L differ in what stands on the ground: a building is a roof over a wall, a tall thing is a crown or a top over a narrow trunk, post or drum. Two tall shapes hide their own support and are drawn without one: a conifer, whose lowest tier is wider than its trunk, and a round tank such as a silo, whose top is as wide as its drum. Their tiers and their long shadow carry the height.
 
 ### The shadow layer
 

@@ -69,6 +69,19 @@ accent('success', 'success-ink', [
 ]);
 add('sky-700', 'sky-900', '#0f4c80', 'The bottom edge of a sky lip. sky-700 is the lip of a secondary button; sky-100 and sky-300 are its tint and highlight.');
 
+const disp = t.type.groups.find(x => x.name === 'Display');
+add('sky-900', 'sky-tint', '#e6f6ff', 'UI only. The fill of a sky chip and of an icon tile. The same in every theme, because paper and what lies on it stay light at night. sky-100 is a backdrop tint and goes dark.');
+add('sky-tint', 'sky-band', '#a9defc', 'UI only. The header band of a neutral dialog, the edge of a sky chip and of an icon tile, and the highlight on a secondary button. The same in every theme. sky-300 is a backdrop tint and goes dark.');
+if (!disp.styles.find(s => s.name === 'dialog-title-compact')) disp.styles.push({ name: 'dialog-title-compact', fontSize: '32px', lineHeight: '36px', fontWeight: 700, sample: 'Paused', usage: 'The title of a dialog in its compact, landscape layout.' });
+
+add('sky-900', 'sky-tint', '#e6f6ff', 'UI only. The fill of a sky chip and of an icon tile. The same in every theme, because paper and what lies on it stay light at night. sky-100 is a backdrop tint and goes dark.');
+add('sky-tint', 'sky-band', '#a9defc', 'UI only. The header band of a neutral dialog, the edge of a sky chip and of an icon tile, and the highlight on a secondary button. The same in every theme. sky-300 is a backdrop tint and goes dark.');
+if (!disp.styles.find(s => s.name === 'dialog-title-compact')) disp.styles.push({ name: 'dialog-title-compact', fontSize: '32px', lineHeight: '36px', fontWeight: 700, sample: 'Paused', usage: 'The title of a dialog in its compact, landscape layout.' });
+
+add('sky-900', 'sky-tint', '#e6f6ff', 'UI only. The fill of a sky chip and of an icon tile. The same in every theme, because paper and what lies on it stay light at night. sky-100 is a backdrop tint and goes dark.');
+add('sky-tint', 'sky-band', '#a9defc', 'UI only. The header band of a neutral dialog, the edge of a sky chip and of an icon tile, and the highlight on a secondary button. The same in every theme. sky-300 is a backdrop tint and goes dark.');
+if (!disp.styles.find(s => s.name === 'dialog-title-compact')) disp.styles.push({ name: 'dialog-title-compact', fontSize: '32px', lineHeight: '36px', fontWeight: 700, sample: 'Paused', usage: 'The title of a dialog in its compact, landscape layout.' });
+
 // ---- world materials. 300 lit, 500 base, 700 shade, 900 tinted inner line.
 const g = n => byName(n).value;
 add('grass-300', 'grass-400', { light: '#97d858', dark: '#4a9571', dawn: mix(g('grass-300').dawn, g('grass-500').dawn) }, 'Light patches in unmown meadow, and the ground inside a paddock.');
@@ -212,7 +225,6 @@ const st = textGroup.styles.find(s => s.name === 'body'); st.usage = 'All runnin
 if (!textGroup.styles.find(s => s.name === 'row')) textGroup.styles.splice(1, 0, { name: 'row', fontSize: '15px', lineHeight: '20px', fontWeight: 700, sample: 'Tap an aircraft to select it.', usage: 'A row in a panel or a settings list, and the text of a coach mark.' });
 const read = t.type.groups.find(x => x.name === 'Readouts');
 if (!read.styles.find(s => s.name === 'label-sm')) read.styles.push({ name: 'label-sm', fontSize: '11.5px', lineHeight: '14px', fontWeight: 800, letterSpacing: '0.09em', sample: 'SCORE', usage: 'The label cell of a flight strip, the label of a stat cell, the eyebrow of a dialog and the text of a stamp. Write it in capitals.' });
-const disp = t.type.groups.find(x => x.name === 'Display');
 if (!disp.styles.find(s => s.name === 'strip-value')) disp.styles.push({ name: 'strip-value', fontSize: '21px', lineHeight: '24px', fontWeight: 700, fontVariantNumeric: 'tabular-nums', sample: '12 450', usage: 'The value in a flight strip and in a stat cell. Thin space as thousands separator.' });
 if (!disp.styles.find(s => s.name === 'dialog-title')) disp.styles.push({ name: 'dialog-title', fontSize: '38px', lineHeight: '40px', fontWeight: 700, sample: 'Paused', usage: 'The title in the header band of a dialog.' });
 

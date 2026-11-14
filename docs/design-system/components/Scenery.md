@@ -48,3 +48,5 @@ Decoration that makes a level read as a place: the airfield's buildings and vehi
 **Do** let trees overlap in a wood, and scale a sprite a little to vary a row. **Don't** use scenery to carry meaning: it never marks a landing zone, a hazard or a state. **Don't** give it a path colour, a livery or a soft shadow, and **don't** draw it heavier than an aircraft.
 
 **Compose.** In the app each item is a `SceneryItem` of a `SceneryKind`. The app's sprites (`ui/sprites/ScenerySprites.kt`) are still generated from the version 1 sprites in `tools/scenery-v1.js`; they move to these sprites when the app's world is ported.
+
+A conifer and a round tank such as a silo show no trunk or wall: seen from above the top hides it. Their stacked tones and their long shadow carry the height (W5).

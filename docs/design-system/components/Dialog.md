@@ -13,7 +13,7 @@ A modal that stops the game, built as a boarding pass: a tinted header, the mess
 
 | Header tone | Class | Band / rule | Use for |
 |---|---|---|---|
-| Neutral | `fa-dialog__head` | `sky-300` / `sky-500` | Paused, a confirmation. |
+| Neutral | `fa-dialog__head` | `sky-band` / `sky-500` | Paused, a confirmation. |
 | Failure | `fa-dialog__head fa-dialog__head--danger` | `cherry-200` / `cherry-500` | Game over after a collision or a miss. |
 | Success | `fa-dialog__head fa-dialog__head--success` | `mint-200` / `mint-500` | A level cleared. |
 
@@ -23,7 +23,7 @@ The title and the body say what happened; the tint only supports them.
 
 **Stamp** (`fa-stamp`). The verdict in two or three words, pressed on at an angle: a double border in `cherry-700`, text in `label-sm` in `cherry-900`, `radius-chip`. `fa-stamp--success` is `mint-700` with `mint-900` text. A stamp always stands next to the same words as text; it never carries the message alone, and a screen reader skips it.
 
-**Compact variant** (`fa-dialog--compact`). Used when the space inside the system bars is wider than it is tall and less high than `dialog-compact-breakpoint`: a phone in landscape. The layout follows that measured space, not the device orientation, so split screen and tall landscape tablets keep the upright layout. The pass lies on its side: header and body on the left (`fa-dialog__lead`), a vertical perforation, and the stub on the right (`fa-dialog__stub`) with the stats and small buttons. At most `dialog-compact-max-width` wide, with a smaller title and tighter padding.
+**Compact variant** (`fa-dialog--compact`). Used when the space inside the system bars is wider than it is tall and less high than `dialog-compact-breakpoint`: a phone in landscape. The layout follows that measured space, not the device orientation, so split screen and tall landscape tablets keep the upright layout. The pass lies on its side: header and body on the left (`fa-dialog__lead`), a vertical perforation, and the stub on the right (`fa-dialog__stub`) with the stats and small buttons. At most `dialog-compact-max-width` wide, with the title in `dialog-title-compact` and tighter padding. With stats, the stub is the wider part and its two small buttons sit side by side, `space-3` apart, and each stat is one line: picture, label, value. Without stats the stub holds the buttons stacked.
 
 On a 640 by 360 phone with its system bars and a 50px banner under it, the game over dialog fits without scrolling.
 

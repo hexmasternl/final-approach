@@ -520,9 +520,9 @@
         '<rect ' + k('tin-300', O, 2) + ' x="-9" y="-12" width="18" height="30" rx="5"/><rect ' + k('tin-500') + ' x="4" y="-10" width="3.500" height="26" rx="1.500"/><path ' + k('glass', 'glass-700', 1.1) + ' d="M-6.500 -9q6.500 -4 13 0v5h-13z"/><rect ' + k('glass', 'glass-700', 1.1) + ' x="-6.500" y="8" width="13" height="6" rx="1.500"/><path ' + k('', 'glass-shine', 1.6) + ' d="M-4 -6l3 -2.500"/>'
     });
     var ch = 'M-22 -70q22 -16 44 0V62q0 8 -8 8H-14q-8 0 -8 -8Z', boxes = '';
-    [['roof-500', 'roof-300'], ['tin-500', 'tin-300'], ['denim-500', 'denim-300'], ['tin-500', 'tin-100'], ['roof-500', 'roof-300'], ['denim-500', 'denim-300']].forEach(function (c, i) {
+    [['roof-500', 'roof-300', 'roof-700'], ['tin-500', 'tin-300', 'tin-700'], ['denim-500', 'denim-300', 'water-700'], ['tin-500', 'tin-100', 'tin-700'], ['roof-500', 'roof-300', 'roof-700'], ['denim-500', 'denim-300', 'water-700']].forEach(function (c, i) {
       var y = -44 + Math.floor(i / 2) * 26, x = i % 2 ? 1.5 : -17.5;
-      boxes += '<rect ' + k(c[0], O, 1.8) + ' x="' + x + '" y="' + y + '" width="16" height="22" rx="1.500"/><rect ' + k(c[1]) + ' x="' + (x + 1.5) + '" y="' + (y + 1.5) + '" width="5" height="19"/><path ' + k('', O, 1, 'opacity="0.35"') + ' d="M' + (x + 8) + ' ' + (y + 1) + 'v20M' + (x + 12) + ' ' + (y + 1) + 'v20"/>';
+      boxes += '<rect ' + k(c[0], O, 1.8) + ' x="' + x + '" y="' + y + '" width="16" height="22" rx="1.500"/><rect ' + k(c[1]) + ' x="' + (x + 1.5) + '" y="' + (y + 1.5) + '" width="5" height="19"/><path ' + k('', c[2], 1) + ' d="M' + (x + 8) + ' ' + (y + 1) + 'v20M' + (x + 12) + ' ' + (y + 1) + 'v20"/>';
     });
     sprite('container-vessel', {
       label: 'Container vessel', group: 'Water', tier: 'S', rotates: true, carries: true, w: 96, h: 176, off: [6, 7], ground: 'water', sh: '<path d="' + ch + '"/>',
@@ -562,7 +562,7 @@
     'flower-pink': '<circle ' + k('muzzle') + ' r="2.300"/><circle ' + k('wall-100') + ' r="0.900"/>',
     reed: '<path ' + k('', 'leaf-700', 1.6) + ' d="M0 0l-2 -11M0 0l1 -13M0 0l4 -10"/><path ' + k('', 'wood-700', 2.6) + ' d="M-2 -11l-0.400 -3M1 -13l0.200 -3.500M4 -10l0.600 -3"/>',
     lily: '<path ' + k('leaf-500', 'leaf-900', 1) + ' d="M0 0L6 -2A6.300 6.300 0 1 1 5 -4Z"/><circle ' + k('muzzle') + ' cx="-1.500" cy="1.500" r="1.800"/>',
-    duck: '<path ' + k('', 'foam', 1.5) + ' d="M-9 6q9 5 18 0M-6 11q6 3 12 0"/><ellipse ' + k('wall-100', O, 1.5) + ' cx="0" cy="1" rx="4.200" ry="6"/><circle ' + k('pine-500', O, 1.5) + ' cx="0" cy="-5" r="3"/><path ' + k('straw-500', O, 1) + ' d="M-1.300 -8.500h2.600l-1.300 -2.600z"/>'
+    duck: '<path ' + k('', 'foam', 1.5) + ' d="M-9 6q9 5 18 0M-6 11q6 3 12 0"/><ellipse ' + k('wall-100', 'wall-500', 1.5) + ' cx="0" cy="1" rx="4.200" ry="6"/><circle ' + k('pine-500', 'pine-900', 1.5) + ' cx="0" cy="-5" r="3"/><path ' + k('straw-500', 'straw-700', 1) + ' d="M-1.300 -8.500h2.600l-1.300 -2.600z"/>'
   };
 
   /* A sprite on its own: shadow first, then the sprite, on a square that fits both. */

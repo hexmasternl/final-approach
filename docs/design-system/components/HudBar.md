@@ -11,11 +11,11 @@ The gameplay overlay: score and streak on the left; next aircraft, lives and pau
 
 Draw order is `z-hud`, above clouds. Aircraft can fly under the HUD; the spawner should avoid the top 88px for entries so nothing appears beneath a strip.
 
-Counter row: a level may add a second row under the score strips (`fa-hud__stack`, then `fa-hud__counters`), `space-3` below them and left-aligned with them, holding one Spawn Counter per aircraft type the level spawns: at most five, one per type, in roster order: light prop, turboprop, jet, jumbo, helicopter. The row does not count towards the five items of the first row.
+Counter row: a level may add a second row under the score strips (`fa-hud__stack`, then `fa-hud__counters`), `space-3` below them and left-aligned with them, holding one Spawn Counter per aircraft type the level spawns: at most five, one per type, in roster order: light prop, turboprop, jet, jumbo, helicopter. The row does not count towards the six items of the first row.
 
-While the first-time tutorial runs, a ghost small Button "Skip tutorial" sits in the first row, left of the HUD button. It is a sixth item only for as long as the tutorial runs; the five-item limit counts the permanent items.
+While the first-time tutorial runs, a ghost small Button "Skip tutorial" sits in the first row, left of the HUD button. It is a seventh item only for as long as the tutorial runs; the six-item limit counts the permanent items: best score, score, streak, next aircraft, lives and the button. It stands on `contact-field` like everything in the HUD.
 
-**Do** keep every item the height of a strip, with a full `touch-min` touch area around the button. **Don't** add more than five items to the first row, or more than five strips to the counter row. Anything else belongs in the pause dialog. **Don't** give a readout a lip.
+**Do** keep every item the height of a strip, with a full `touch-min` touch area around the button. **Don't** add more than six items to the first row, or more than five strips to the counter row. Anything else belongs in the pause dialog. **Don't** give a readout a lip.
 
 In version 1 every HUD item was a 56dp HUD chip with a navy lip. See `FlightStrip.md`.
 

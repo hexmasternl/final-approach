@@ -44,7 +44,7 @@ Nine world rules, for everything on the ground (`docs/design-system/world.md`):
 
 - **W1** One sun, top-left: a lit tone north-west, a shade tone south-east, a hard shadow cast down-right.
 - **W2** Three flat tones per material, never a gradient; at most three main materials in a sprite.
-- **W3** Navy outside, tinted inside: the silhouette is `outline`, inner lines are a darker tone of their material.
+- **W3** Navy outside, tinted inside: the silhouette is `outline`, inner lines are a darker tone of their material; only a small part such as a chimney keeps a thin outline of its own.
 - **W4** Line weight is rank: aircraft 4, landing zones 3, scenery 2.5, inner detail 1.25.
 - **W5** Standing things show a south wall, in a height tier, and never rotate.
 - **W6** Flat ground has no outline; only things with height and landing zones get a navy line.

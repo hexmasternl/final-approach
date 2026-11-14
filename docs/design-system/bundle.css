@@ -1,5 +1,6 @@
 /* Final Approach component styles, design system v2. Every colour comes from a token; so does every
-   outline, radius, lip and control height. Classes are prefixed fa-.
+   outline, radius, lip and control height. Small paddings, keyline widths and a few fixed sizes are
+   written out here. Classes are prefixed fa-.
    UI rules (brand-book.md): U1 moulded, not boxed. U2 a lip means pressable. U3 thin line, thick form.
    U4 tinted inside. U5 nested radii. U6 tower paperwork. U7 disabled is flat, not faded. */
 
@@ -118,7 +119,7 @@ fa-silhouette { display: block; width: 100%; }
 .fa-btn:active, .fa-btn.is-pressed, .fa-iconbtn:active, .fa-iconbtn.is-pressed { --fa-liph: var(--lip-pressed); transform: translateY(calc(var(--fa-rest) - var(--lip-pressed))); box-shadow: 0 0 0 var(--line-ui) var(--outline), 0 calc(var(--line-ui) + var(--lip-pressed)) 0 0 var(--fa-contact, var(--contact)), inset 0 calc(-1 * var(--lip-pressed)) 0 var(--fa-edge); }
 /* Focus: the two-tone ring, focus then outline, outside the control's own outline. */
 .fa-btn:focus-visible, .fa-iconbtn:focus-visible, .fa-toggle:focus-visible, .fa-segment:focus-visible, .fa-levelcard:focus-visible, .is-focus { outline: var(--line-ui) solid var(--outline); outline-offset: calc(2 * var(--line-ui)); box-shadow: 0 0 0 var(--line-ui) var(--outline), 0 0 0 calc(2 * var(--line-ui)) var(--focus); }
-.fa-btn--secondary { --fa-fill: var(--sky-500); --fa-light: var(--sky-300); --fa-lip: var(--sky-700); --fa-edge: var(--sky-900); }
+.fa-btn--secondary { --fa-fill: var(--sky-500); --fa-light: var(--sky-band); --fa-lip: var(--sky-700); --fa-edge: var(--sky-900); }
 .fa-btn--danger { --fa-fill: var(--cherry-500); --fa-light: var(--cherry-200); --fa-lip: var(--cherry-700); --fa-edge: var(--cherry-900); }
 .fa-btn--ghost, .fa-iconbtn { --fa-fill: var(--paper-0); --fa-light: var(--paper-0); --fa-lip: var(--paper-300); --fa-edge: var(--paper-500); color: var(--ink); }
 .fa-btn--ghost::after { display: none; }
@@ -133,7 +134,7 @@ fa-silhouette { display: block; width: 100%; }
 .fa-iconbtn { width: calc(var(--fa-h) - 2 * var(--line-ui)); padding: 0 0 var(--fa-liph); --fa-icon: var(--icon-md); }
 .fa-iconbtn--sm { --fa-h: var(--touch-min); --fa-icon: 24px; }
 /* In the HUD the button is as high as a flight strip and stands on the field. */
-.fa-iconbtn--hud { --fa-h: calc(var(--strip-height) + 2 * var(--line-ui)); --fa-rest: var(--lip-sm); --fa-r: var(--radius-strip); --fa-contact: var(--contact-field); --fa-icon: 22px; }
+.fa-iconbtn--hud { --fa-h: var(--strip-height); --fa-rest: var(--lip-sm); --fa-r: var(--radius-strip); --fa-contact: var(--contact-field); --fa-icon: 22px; }
 .fa-iconbtn--sun { --fa-fill: var(--sun-500); --fa-light: var(--sun-200); --fa-lip: var(--sun-700); --fa-edge: var(--sun-900); color: var(--on-accent); }
 
 /* ---------- Toggle and segmented control ---------- */
@@ -156,12 +157,12 @@ fa-silhouette { display: block; width: 100%; }
 .fa-segment[aria-pressed="true"] { background: var(--sun-500); color: var(--on-accent); box-shadow: 0 0 0 var(--line-ui-sm) var(--outline), inset 0 var(--highlight) 0 var(--sun-200), inset 0 calc(-1 * var(--lip-inset)) 0 var(--sun-700); }
 
 /* ---------- Chip: flat and tinted, never pressable (U2, U4) ---------- */
-.fa-chip { display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--chip-height); padding: 0 10px; border-radius: var(--radius-chip); background: var(--sky-100); color: var(--sky-900); font: 800 13px/16px var(--font-body); text-decoration: none; white-space: nowrap; box-shadow: inset 0 0 0 1.5px var(--sky-300); --fa-icon: var(--icon-xs); }
+.fa-chip { display: inline-flex; align-items: center; gap: var(--space-1); min-height: var(--chip-height); padding: 0 10px; border-radius: var(--radius-chip); background: var(--sky-tint); color: var(--sky-900); font: 800 13px/16px var(--font-body); text-decoration: none; white-space: nowrap; box-shadow: inset 0 0 0 1.5px var(--sky-band); --fa-icon: var(--icon-xs); }
 .fa-chip--sun { background: var(--sun-200); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--sun-700); }
 .fa-chip--tangerine { background: var(--tangerine-200); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--tangerine-700); }
 .fa-chip--cherry { background: var(--cherry-200); color: var(--cherry-900); box-shadow: inset 0 0 0 1.5px var(--cherry-700); }
 .fa-chip--success { background: var(--mint-200); color: var(--mint-900); box-shadow: inset 0 0 0 1.5px var(--mint-700); }
-.fa-chip--sky { background: var(--sky-100); color: var(--sky-900); }
+.fa-chip--sky { background: var(--sky-tint); color: var(--sky-900); }
 .fa-chip--plain { background: var(--paper-200); color: var(--ink-muted); box-shadow: inset 0 0 0 1.5px var(--paper-400); }
 
 /* ---------- Panel ---------- */
@@ -175,7 +176,7 @@ fa-silhouette { display: block; width: 100%; }
 .fa-rows { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; font: 700 15px/20px var(--font-body); }
 .fa-rows li { display: flex; align-items: center; gap: var(--space-3); }
 /* The tinted tile behind an icon in a row. */
-.fa-icontile { flex: none; display: inline-grid; place-items: center; width: var(--icon-tile); height: var(--icon-tile); border-radius: var(--radius-strip); background: var(--sky-100); color: var(--sky-900); box-shadow: inset 0 0 0 1.5px var(--sky-300); --fa-icon: 22px; }
+.fa-icontile { flex: none; display: inline-grid; place-items: center; width: var(--icon-tile); height: var(--icon-tile); border-radius: var(--radius-strip); background: var(--sky-tint); color: var(--sky-900); box-shadow: inset 0 0 0 1.5px var(--sky-band); --fa-icon: 22px; }
 
 /* ---------- Dialog: the boarding pass (U6) ---------- */
 .fa-scrim { display: grid; place-items: center; padding: var(--space-5); background: var(--scrim); }
@@ -183,14 +184,14 @@ fa-silhouette { display: block; width: 100%; }
 .fa-dialog::before { content: ""; position: absolute; z-index: -1; inset: 0 0 var(--lip-dialog) 0; border-radius: var(--radius-dialog) var(--radius-dialog) calc(var(--radius-dialog) - var(--lip-dialog)) calc(var(--radius-dialog) - var(--lip-dialog)); background: var(--paper-100); }
 .fa-dialog[data-loop] { animation: fa-drop var(--dur-dialog) var(--ease-bounce) both; }
 /* The header band: sky for a neutral dialog, cherry for a failure, mint for a success. */
-.fa-dialog__head { display: grid; gap: var(--space-1); padding: var(--space-4) var(--space-5) var(--space-3); border-radius: var(--radius-dialog) var(--radius-dialog) 0 0; background: var(--sky-300); border-bottom: 1.5px solid var(--sky-500); }
+.fa-dialog__head { display: grid; gap: var(--space-1); padding: var(--space-4) var(--space-5) var(--space-3); border-radius: var(--radius-dialog) var(--radius-dialog) 0 0; background: var(--sky-band); border-bottom: 1.5px solid var(--sky-500); }
 .fa-dialog__head--danger { background: var(--cherry-200); border-color: var(--cherry-500); }
 .fa-dialog__head--success { background: var(--mint-200); border-color: var(--mint-500); }
 .fa-dialog__eyebrow { font: 800 11.5px/14px var(--font-text); letter-spacing: .09em; text-transform: uppercase; color: var(--ink); opacity: var(--opacity-eyebrow); }
 .fa-dialog__title { margin: 0; font: 700 38px/40px var(--font-display); text-wrap: balance; }
 .fa-dialog__body { margin: 0; padding: var(--space-3) var(--space-5) var(--space-4); font: 600 16px/24px var(--font-body); color: var(--ink-muted); text-wrap: pretty; }
 /* The perforation: a dashed line with a punched half-hole at each end. */
-.fa-perf { position: relative; height: 0; margin: 0 var(--space-4); border: 0; border-top: 2px dashed var(--paper-500); }
+.fa-perf { position: relative; overflow: visible; height: 0; margin: 0 var(--space-4); border: 0; border-top: 2px dashed var(--paper-500); }
 .fa-perf::before, .fa-perf::after { content: ""; position: absolute; top: calc(var(--perforation-dot) / -2 - 1px); width: var(--perforation-dot); height: var(--perforation-dot); border-radius: 50%; background: var(--paper-400); box-shadow: inset 0 2.5px 0 var(--paper-500); }
 .fa-perf::before { left: calc(-1 * var(--space-4) - var(--perforation-dot) / 2); }
 .fa-perf::after { right: calc(-1 * var(--space-4) - var(--perforation-dot) / 2); }
@@ -208,7 +209,7 @@ fa-silhouette { display: block; width: 100%; }
 .fa-dialog--compact { width: min(calc(100% - 2 * var(--line-ui)), var(--dialog-compact-max-width)); display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); }
 .fa-dialog__lead { min-width: 0; display: flex; flex-direction: column; border-right: 2px dashed var(--paper-500); }
 .fa-dialog--compact .fa-dialog__head { border-radius: var(--radius-dialog) 0 0 0; }
-.fa-dialog--compact .fa-dialog__title { font: 700 32px/36px var(--font-display); }
+.fa-dialog--compact .fa-dialog__title { font: 700 32px/36px var(--font-display); /* dialog-title-compact */ }
 .fa-dialog__stub { min-width: 0; display: flex; flex-direction: column; justify-content: center; }
 .fa-dialog--compact .fa-stat { padding: var(--space-2) var(--space-4); }
 .fa-dialog--compact .fa-dialog__actions { padding: var(--space-3) var(--space-4); }
@@ -219,10 +220,10 @@ fa-silhouette { display: block; width: 100%; }
 .fa-hud__stack { display: grid; justify-items: start; gap: var(--space-3); }
 .fa-hud__counters { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 /* A flight strip: a flat readout with an optional labelled cell. It has no lip and never moves. */
-.fa-strip { display: inline-flex; align-items: stretch; box-sizing: border-box; height: var(--strip-height); margin: var(--line-ui); border-radius: var(--radius-strip); overflow: hidden; background: var(--paper-100); color: var(--ink); box-shadow: 0 0 0 var(--line-ui) var(--outline), 0 calc(var(--line-ui) + var(--contact-offset-field)) 0 0 var(--contact-field); }
+.fa-strip { display: inline-flex; align-items: stretch; box-sizing: border-box; height: calc(var(--strip-height) - 2 * var(--line-ui)); margin: var(--line-ui); border-radius: var(--radius-strip); overflow: hidden; background: var(--paper-100); color: var(--ink); box-shadow: 0 0 0 var(--line-ui) var(--outline), 0 calc(var(--line-ui) + var(--contact-offset-field)) 0 0 var(--contact-field); }
 .fa-strip__label { display: flex; align-items: center; gap: 5px; padding: 0 9px; background: var(--paper-200); border-right: 1.5px solid var(--paper-400); color: var(--ink-muted); font: 800 11.5px/14px var(--font-text); letter-spacing: .09em; text-transform: uppercase; --fa-icon: var(--icon-xs); }
 .fa-strip__label--sun { background: var(--sun-200); border-color: var(--sun-700); color: var(--ink); }
-.fa-strip__value { display: flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-3); font: 700 21px/24px var(--font-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fa-strip__value { display: flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-3); font: 700 20px/24px var(--font-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .fa-strip fa-aircraft { --fa-size: 30px !important; filter: none; }
 .fa-lives { gap: 3px; padding: 0 10px; --fa-icon: 22px; }
 .fa-life { color: var(--cherry-500); }

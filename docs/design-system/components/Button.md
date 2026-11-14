@@ -5,7 +5,7 @@ The moulded button for every text action in menus and dialogs.
 | Variant | Class | Face / highlight / lip / lip edge | Use for |
 |---|---|---|---|
 | Primary | `fa-btn` | `sun-500` / `sun-200` / `sun-700` / `sun-900` | The one action that moves the player forward: Take off, Resume, Try again. One per screen. |
-| Secondary | `fa-btn fa-btn--secondary` | `sky-500` / `sky-300` / `sky-700` / `sky-900` | A second path: Choose airport. |
+| Secondary | `fa-btn fa-btn--secondary` | `sky-500` / `sky-band` / `sky-700` / `sky-900` | A second path: Choose airport. |
 | Ghost | `fa-btn fa-btn--ghost` | `paper-0` / `paper-0` / `paper-300` / `paper-500` | Everything else: Settings, Restart, Main menu. |
 | Danger | `fa-btn fa-btn--danger` | `cherry-500` / `cherry-200` / `cherry-700` / `cherry-900` | Leaving a running game. Never for Retry. |
 

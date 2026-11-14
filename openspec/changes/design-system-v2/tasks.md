@@ -40,7 +40,7 @@ The visual reference for every task is `reference/final-approach-v2.html` in thi
 ## 6. Showcase
 
 - [x] 6.1 Rebuild `showcase.html` for v2: principles, ramps, line ranks, type, scenery by landscape, ground and landing zones, components, and reference screens for all three levels, the main menu, pause, game over and level select, with the Day, Night and Dawn switch; verify no deprecated token is shown
-- [ ] 6.2 Have the design-critic agent review the showcase game screens in Day, Night and Dawn against W1 to W9 and U1 to U7 and fix what it finds; verify its final report names no violation and confirms aircraft, paths and zones read first
+- [x] 6.2 Have the design-critic agent review the showcase game screens in Day, Night and Dawn against W1 to W9 and U1 to U7 and fix what it finds; verify its final report names no violation and confirms aircraft, paths and zones read first
 - [x] 6.3 Regenerate `showcase.pdf` and rebuild the visuals in `visuals/` that show scenery or UI; verify each PNG was regenerated from its source
 - [x] 6.4 Confirm nothing that must stay changed: verify `git diff development -- docs/design-system/assets/aircraft docs/design-system/assets/icons` is empty and the duration, easing, zIndex and path token values are equal to `development`
 - [ ] 6.5 Human check: publish the updated design system to https://claude.ai/artifact/WPS86AMwfU8Ph1ehK5kdpL and confirm it matches `showcase.html`

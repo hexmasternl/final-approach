@@ -4,7 +4,7 @@ The flat HUD readout: an optional labelled cell and a value. It replaces the ver
 
 | Part | Class | Look |
 |---|---|---|
-| Strip | `fa-strip` | `paper-100`, `strip-height` high, `radius-strip`, `line-ui` `outline` |
+| Strip | `fa-strip` | `paper-100`, `strip-height` high from outline to outline, `radius-strip`, `line-ui` `outline` |
 | Label cell | `fa-strip__label` | `paper-200` with a `paper-400` keyline on its right; text in `label-sm` `ink-muted`, icon at `icon-xs` |
 | Label cell, sun | `fa-strip__label fa-strip__label--sun` | `sun-200` with a `sun-700` keyline; text in `ink`. For the score only. |
 | Value | `fa-strip__value` | `strip-value` in `ink`, tabular figures, `space-3` side padding |

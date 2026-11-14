@@ -6,7 +6,7 @@ A paper container for grouped content in menus, with an optional header band.
 
 - **Title** (`fa-panel__title`): `title-md` in `ink`. Body text is `body`; secondary text is `ink-muted`.
 - **Header band** (`fa-panel__head`): a `paper-200` band across the top with a dashed rule of `paper-500` under it (`rule-dash`, `rule-gap`). It holds a title and, at the end, a chip or a small icon button.
-- **Rows** (`fa-rows`): a list in `row`, `space-3` apart. An icon in a row sits on an icon tile (`fa-icontile`): an `icon-tile` square, `radius-strip`, `sky-100` with a `sky-300` edge and a `sky-900` icon.
+- **Rows** (`fa-rows`): a list in `row`, `space-3` apart. An icon in a row sits on an icon tile (`fa-icontile`): an `icon-tile` square, `radius-strip`, `sky-tint` with a `sky-band` edge and a `sky-900` icon.
 
 Every line inside a panel is a paper step (U4). Panels stay light in Night and Dawn.
 
