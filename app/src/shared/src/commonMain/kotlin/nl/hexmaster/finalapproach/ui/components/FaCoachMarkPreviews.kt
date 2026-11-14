@@ -16,10 +16,9 @@ private object CoachPreviewData {
     const val HEIGHT = 520
 }
 
-@Preview(widthDp = CoachPreviewData.WIDTH, heightDp = CoachPreviewData.HEIGHT)
 @Composable
-private fun CoachMarkVariantsPreview() {
-    FaTheme(reduceMotion = true) {
+private fun CoachMarkVariants(night: Boolean) {
+    FaTheme(night = night, reduceMotion = true) {
         Column(
             Modifier.background(FaTheme.colors.bgField).padding(FaDimens.space5),
             verticalArrangement = Arrangement.spacedBy(FaDimens.space5),
@@ -36,3 +35,11 @@ private fun CoachMarkVariantsPreview() {
         }
     }
 }
+
+@Preview(widthDp = CoachPreviewData.WIDTH, heightDp = CoachPreviewData.HEIGHT)
+@Composable
+private fun CoachMarkVariantsPreview() = CoachMarkVariants(night = false)
+
+@Preview(widthDp = CoachPreviewData.WIDTH, heightDp = CoachPreviewData.HEIGHT)
+@Composable
+private fun CoachMarkVariantsNightPreview() = CoachMarkVariants(night = true)

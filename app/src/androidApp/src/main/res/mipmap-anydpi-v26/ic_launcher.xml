@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   The app icon from the design system (docs/design-system/assets/app-icon), as an adaptive icon:
-  app-icon-foreground (the jet, its shadow and its flight path, on a transparent ground) over
-  app-icon-background (the lawn stripes). Both are rendered from the SVG sources at 432px.
+  app-icon-foreground (the jet in close-up and its soft shadow, on a transparent ground) over
+  app-icon-background (the mown lawn and the runway). Both are rendered from the SVG sources at 432px.
 -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
     <background android:drawable="@mipmap/ic_launcher_background" />
