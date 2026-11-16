@@ -75,7 +75,35 @@ object Levels {
 
     /** Corners of the outline of an island's airfield, and how much smaller than the island it is. */
     private const val ISLAND_OUTLINE_POINTS = 48
-    private const val ISLAND_OUTLINE_SCALE = 0.99
+    private const val ISLAND_OUTLINE_SCALE = 0.8
+
+    /**
+     * The sides of a helipad's rough-grass fringe, in world units, at the pad's default size: the design
+     * system's `helipad.fringe` (half the side, and the corner radius) over its `helipad.disc`. A test
+     * keeps them equal to the generated ground metrics.
+     */
+    internal const val HELIPAD_FRINGE_HALF = 76.0
+    internal const val HELIPAD_FRINGE_RX = 22.0
+    internal const val HELIPAD_DISC = 56.0
+
+    /** A little room beyond the fringe, so its edge lies inside the outline and not on it. */
+    private const val FRINGE_ROOM = 2.0
+
+    /** Points on the fringe of [pad]: the middle of each side, where each corner starts to round, and its round. */
+    private fun fringePoints(pad: HelipadConfig): List<Vec2> {
+        val unit = pad.radius / HELIPAD_DISC
+        val half = HELIPAD_FRINGE_HALF * unit + FRINGE_ROOM
+        val corner = (HELIPAD_FRINGE_HALF - HELIPAD_FRINGE_RX + HELIPAD_FRINGE_RX * cos(PI / 4)) * unit + FRINGE_ROOM
+        val straight = (HELIPAD_FRINGE_HALF - HELIPAD_FRINGE_RX) * unit
+        val offsets = listOf(half to 0.0, half to straight, straight to half, 0.0 to half, corner to corner)
+        return offsets.flatMap { (dx, dy) ->
+            listOf(dx, -dx).flatMap { x -> listOf(dy, -dy).map { y -> pad.position + Vec2(x, y) } }
+        }
+    }
+
+    /** The airfield of an island: its grass drawn in, bulging out to hold the fringe of each of [pads]. */
+    private fun islandAirfield(island: Island, pads: List<HelipadConfig>): List<Vec2> =
+        Polygons.convexHull(islandOutline(island, ISLAND_OUTLINE_SCALE) + pads.flatMap(::fringePoints))
 
     /** Width of a hedge, a fence, a forest edge and a road, in world units. */
     private const val HEDGE_WIDTH = 28.0
@@ -100,6 +128,7 @@ object Levels {
 
     /** The island of level 2. */
     private val ISLAND = Island(Vec2(960.0, 540.0), radiusX = 560.0, radiusY = 300.0)
+    private val ISLAND_HELIPADS = listOf(HelipadConfig(id = "h1", position = Vec2(1350.0, 450.0)))
 
     /**
      * Level 2: an airport on an island in the sea. A long main runway, a shorter one-way diagonal runway (22, approached from the north-east)
@@ -114,7 +143,7 @@ object Levels {
         landscape = LevelScenery.Island,
         allowCrossingRunways = true,
         island = ISLAND,
-        airfield = islandOutline(ISLAND, ISLAND_OUTLINE_SCALE),
+        airfield = islandAirfield(ISLAND, ISLAND_HELIPADS),
         decorationSeed = 4711L,
         runways = listOf(
             RunwayConfig("09-27", Vec2(920.0, 560.0), EAST, length = 700.0),
@@ -127,7 +156,7 @@ object Levels {
                 mode = RunwayMode.OneWay(SOUTH_WEST),
             ),
         ),
-        helipads = listOf(HelipadConfig(id = "h1", position = Vec2(1350.0, 450.0))),
+        helipads = ISLAND_HELIPADS,
         scenery = listOf(
             item(SceneryKind.Jetty, 1584.0, 540.0, EAST),
             area(SceneryKind.Apron, 750.0, 456.0, width = 260.0, height = 100.0),

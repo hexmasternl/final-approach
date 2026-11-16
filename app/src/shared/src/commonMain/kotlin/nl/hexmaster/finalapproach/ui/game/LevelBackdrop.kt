@@ -68,17 +68,19 @@ internal fun DrawScope.drawField(
     numberStyle: TextStyle,
     letterStyle: TextStyle,
 ) {
-    val lines = groundLines(viewport.px(WORLD_UNIT))
-    drawLevelGround(level, viewport, colors, lines)
+    drawLevelGround(level, viewport, colors)
+    drawRoadsAndTracks(level, viewport, colors)
+    drawFields(level, viewport, colors)
+    drawWaters(level, viewport, colors)
+    drawHardSurfaces(level, viewport, colors)
     val (flat, raised) = level.scenery.partition { it.drawsOnGround }
-    flat.filter { it.kind == SceneryKind.Road }.forEach { drawRoadEdge(it, level.landscape, viewport, colors, lines) }
-    flat.forEach { drawScenery(it, level.landscape, viewport, colors, lines) }
+    flat.filter { it.kind !in groundPieceKinds }.forEach { drawScenery(it, viewport, colors) }
     level.runways.forEach { drawRunway(it, viewport, colors, measurer, numberStyle) }
     level.helipads.forEach { drawHelipad(it, viewport, colors) }
     drawShadowLayer(level, raised, ambient, viewport, colors)
-    raised.sortedBy { it.position.y }.forEach { drawScenery(it, level.landscape, viewport, colors, lines) }
+    raised.sortedBy { it.position.y }.forEach { drawScenery(it, viewport, colors) }
     level.paddock?.let { drawPaddockFence(it, viewport, colors) }
-    drawAmbient(level, ambient, viewport, colors, lines)
+    drawAmbient(level, ambient, viewport, colors)
 }
 
 /**
@@ -103,11 +105,8 @@ private fun DrawScope.drawShadowLayer(
     }
 }
 
-/** One world unit, to ask the viewport how many pixels it is. */
-private const val WORLD_UNIT = 1.0
-
 /** The ground of a level: lawn with the paddock, sea with the island and its beach, or dry dawn grass. */
-internal fun DrawScope.drawLevelGround(level: LevelConfig, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
+internal fun DrawScope.drawLevelGround(level: LevelConfig, viewport: WorldViewport, colors: FaColors) {
     when (level.landscape) {
         LevelScenery.Meadow -> {
             drawLawn(GameScreenDefaults.lawnStripe.toPx(), colors)
@@ -115,50 +114,12 @@ internal fun DrawScope.drawLevelGround(level: LevelConfig, viewport: WorldViewpo
         }
 
         LevelScenery.Island -> {
-            drawRect(colors.sky500)
-            level.island?.let { drawIsland(it, viewport, colors, lines) }
+            drawRect(colors.water500)
+            level.island?.let { drawIslandShore(it, viewport, colors) }
         }
 
         LevelScenery.Savanna -> drawLawn(GameScreenDefaults.lawnStripe.toPx(), colors)
     }
-}
-
-/** The island: waves off the shore, a sand beach all around, and the grass the airport stands on. */
-private fun DrawScope.drawIsland(island: Island, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
-    val center = viewport.offsetOf(island.center)
-    val rx = viewport.px(island.radiusX)
-    val ry = viewport.px(island.radiusY)
-    val beach = viewport.px(SceneryDefaults.BEACH_WIDTH)
-    drawWaves(island, viewport, colors, lines)
-    val shore = Size((rx + beach) * 2f, (ry + beach) * 2f)
-    drawOval(colors.sand300, center - Offset(rx + beach, ry + beach), shore)
-    drawOval(colors.outline, center - Offset(rx + beach, ry + beach), shore, style = sceneryOutline(lines))
-    drawOval(colors.grass500, center - Offset(rx, ry), Size(rx * 2f, ry * 2f))
-    drawOval(colors.outline, center - Offset(rx, ry), Size(rx * 2f, ry * 2f), style = Stroke(lines.fine))
-}
-
-/** Still waves in a ring around the island, evenly spaced along the shore. */
-private fun DrawScope.drawWaves(island: Island, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
-    val reach = SceneryDefaults.BEACH_WIDTH + SceneryDefaults.WAVE_OFFSET
-    val rx = island.radiusX + reach
-    val ry = island.radiusY + reach
-    // The mean radius times a full turn is close enough to the length of the shore for spacing waves.
-    val count = ((rx + ry) / 2.0 * Angles.TWO_PI / SceneryDefaults.WAVE_SPACING).toInt()
-    val width = viewport.px(SceneryDefaults.WAVE_WIDTH)
-    val length = width * ScenerySprite.Wave.height / ScenerySprite.Wave.width
-    for (i in 0 until count) {
-        val along = Angles.direction(i * Angles.TWO_PI / count)
-        val at = Vec2(island.center.x + along.x * rx, island.center.y + along.y * ry)
-        drawScenerySprite(ScenerySprite.Wave, viewport.offsetOf(at), width, length, 0f, colors)
-    }
-}
-
-private fun sceneryOutline(lines: GroundLines) = Stroke(lines.outline, cap = StrokeCap.Round, join = StrokeJoin.Round)
-
-/** The paddock ground: lighter grass. Its fence stands, so it is drawn with the standing scenery. */
-private fun DrawScope.drawPaddockGround(paddock: Bounds, viewport: WorldViewport, colors: FaColors) {
-    val topLeft = viewport.offsetOf(Vec2(paddock.left, paddock.top))
-    drawRect(colors.grass300, topLeft, Size(viewport.px(paddock.width), viewport.px(paddock.height)))
 }
 
 /** One side of the paddock fence: a row of fence pieces along a strip. */
@@ -193,7 +154,6 @@ internal fun DrawScope.drawAmbient(
     life: AmbientLife,
     viewport: WorldViewport,
     colors: FaColors,
-    lines: GroundLines,
 ) {
     val ambience = life.config
     life.cows.forEach { cow ->
@@ -209,7 +169,7 @@ internal fun DrawScope.drawAmbient(
     life.farmer?.let {
         drawScenerySprite(ScenerySprite.Farmer, viewport.offsetOf(it), viewport.px(ambience.farmerWidth), viewport.px(ambience.farmerLength), 0f, colors)
     }
-    life.boat?.let { drawBoat(it, ambience, viewport, colors, lines) }
+    life.boat?.let { drawBoat(it, ambience, viewport, colors) }
     val bird = if (life.wingsOut) ScenerySprite.BirdUp else ScenerySprite.BirdDown
     life.flock.forEach {
         drawScenerySprite(bird, viewport.offsetOf(it), viewport.px(ambience.birdSpan), viewport.px(ambience.birdLength), degreesOf(life.flockHeading), colors)
@@ -249,7 +209,7 @@ private fun boatSprite(kind: BoatKind): ScenerySprite = when (kind) {
 }
 
 /** A boat with its deck, and behind it the wake it leaves in its direction of travel. */
-private fun DrawScope.drawBoat(boat: Boat, ambience: LevelAmbienceConfig, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
+private fun DrawScope.drawBoat(boat: Boat, ambience: LevelAmbienceConfig, viewport: WorldViewport, colors: FaColors) {
     val sprite = boatSprite(boat.kind)
     val heading = boat.direction.toFloat() * Backdrop.QUARTER_TURN_DEGREES
     val wakeLength = ambience.wakeLength(boat.kind)

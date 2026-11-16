@@ -30,6 +30,7 @@ import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.RunwayConfig
 import nl.hexmaster.finalapproach.domain.RunwayMode
 import nl.hexmaster.finalapproach.domain.Levels
+import nl.hexmaster.finalapproach.domain.SceneryDefaults
 import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.domain.Vec2
@@ -127,6 +128,40 @@ private fun IslandAirportPreview() = FieldPreview(Levels.islandAirport)
 @Composable
 private fun ZonesPreview(runways: List<RunwayConfig>, helipads: List<HelipadConfig> = emptyList(), theme: LevelTheme = LevelTheme.Day) =
     FieldPreview(Levels.meadowField.copy(runways = runways, helipads = helipads, scenery = emptyList(), paddock = null), theme)
+
+/** Every flat ground piece once, to check it against Ground.md: road, track, taxiway, apron, car park, the three crop fields and a pond. */
+private val groundSample: List<SceneryItem> = listOf(
+    SceneryItem(SceneryKind.Road, Vec2(300.0, 540.0), 40.0, 1100.0),
+    SceneryItem(SceneryKind.Road, Vec2(850.0, 140.0), 40.0, 1100.0, rotation = PreviewData.EAST),
+    SceneryItem(SceneryKind.Track, Vec2(560.0, 380.0), 32.0, 500.0, rotation = PreviewData.EAST),
+    SceneryItem(SceneryKind.FieldWheat, Vec2(1300.0, 190.0), 300.0, 140.0),
+    SceneryItem(SceneryKind.FieldGreen, Vec2(1640.0, 190.0), 300.0, 140.0),
+    SceneryItem(SceneryKind.FieldPlough, Vec2(1470.0, 400.0), 640.0, 160.0),
+    SceneryItem(SceneryKind.Pond, Vec2(1560.0, 780.0), 240.0, 140.0),
+    SceneryItem(SceneryKind.Apron, Vec2(760.0, 480.0), 320.0, 120.0),
+    SceneryItem(SceneryKind.ParkedAircraft, Vec2(690.0, 480.0), SceneryDefaults.PARKED_AIRCRAFT_SIZE, SceneryDefaults.PARKED_AIRCRAFT_SIZE),
+    SceneryItem(SceneryKind.Taxiway, Vec2(760.0, 560.0), 44.0, 76.0),
+    SceneryItem(SceneryKind.CarPark, Vec2(520.0, 700.0), 110.0, 60.0),
+)
+
+@Composable
+private fun GroundPiecesPreview(theme: LevelTheme) = FieldPreview(
+    Levels.meadowField.copy(
+        runways = listOf(RunwayConfig("r", Vec2(PreviewData.ZONE_X, 620.0), PreviewData.EAST, length = PreviewData.LONG_RUNWAY)),
+        helipads = emptyList(),
+        scenery = groundSample,
+        paddock = null,
+    ),
+    theme,
+)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun GroundPiecesDayPreview() = GroundPiecesPreview(LevelTheme.Day)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun GroundPiecesNightPreview() = GroundPiecesPreview(LevelTheme.Night)
 
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
 @Composable

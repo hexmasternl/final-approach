@@ -11,6 +11,11 @@ enum class SceneryKind(val ground: Boolean = false, val standing: Boolean = fals
     Taxiway(ground = true),
     Apron(ground = true),
     Field(ground = true),
+    FieldWheat(ground = true),
+    FieldGreen(ground = true),
+    FieldPlough(ground = true),
+    Track(ground = true),
+    CarPark(ground = true),
     Road(ground = true),
     Pond(ground = true),
     Waterhole(ground = true),
@@ -68,28 +73,12 @@ object SceneryDefaults {
      */
     const val PARKED_AIRCRAFT_SIZE = 67.5
 
-    /** Distance between two crop rows of a field. */
-    const val FIELD_ROW_SPACING = 12.0
-
-    /** Length of a dash of a road's centre line, and of the gap after it. */
-    const val ROAD_DASH = 22.0
-    const val ROAD_GAP = 18.0
-
-    /** How far the ruts of a dirt road lie from its centre, as a fraction of its width. */
-    const val ROAD_RUT_FRACTION = 0.22
-
-    /** How far inside an apron its edge line is painted. */
-    const val APRON_LINE_INSET = 8.0
-
-    /** Width of the bank around a waterhole. */
-    const val WATERHOLE_BANK = 14.0
-
     /** Width of the beach around an island. */
     const val BEACH_WIDTH = 26.0
 
     /** Size of a wave, how far off the beach waves lie, and how far apart along the shore. */
     const val WAVE_WIDTH = 44.0
-    const val WAVE_OFFSET = 26.0
+    const val WAVE_OFFSET = 56.0
     const val WAVE_SPACING = 150.0
 
     /** The trees of a forest edge overlap by this fraction of their size, and alternate sides by that one. */

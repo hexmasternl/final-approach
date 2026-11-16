@@ -1,5 +1,6 @@
 package nl.hexmaster.finalapproach.domain
 
+import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -53,6 +54,29 @@ class AirfieldOutlineTest {
     }
 
     @Test
+    fun theIslandOutlineKeepsToTheGrassAroundTheAirfield() {
+        // Smaller than the island, so there is open grass left for flowers and palms.
+        val level = Levels.islandAirport
+        val island = requireNotNull(level.island)
+        assertTrue(level.airfield.count { !island.contains(it, margin = 30.0) } < level.airfield.size / 2, "only the bulge for the helipad reaches the shore")
+    }
+
+    @Test
+    fun theDomainCopiesOfTheHelipadFringeEqualTheDesignSystem() {
+        assertEquals(GroundMetrics.Helipad.Fringe.half.toDouble(), Levels.HELIPAD_FRINGE_HALF)
+        assertEquals(GroundMetrics.Helipad.Fringe.rx.toDouble(), Levels.HELIPAD_FRINGE_RX)
+        assertEquals(GroundMetrics.Helipad.disc.toDouble(), Levels.HELIPAD_DISC)
+    }
+
+    @Test
+    fun theConvexHullOfPointsHoldsThemAll() {
+        val points = listOf(Vec2(0.0, 0.0), Vec2(4.0, 0.0), Vec2(4.0, 4.0), Vec2(0.0, 4.0), Vec2(2.0, 2.0), Vec2(2.0, 0.0))
+        val hull = Polygons.convexHull(points)
+        assertEquals(4, hull.size)
+        assertTrue(Polygons.contains(hull, Vec2(2.0, 2.0)))
+    }
+
+    @Test
     fun anOutlineThatMissesARunwayIsRejected() {
         val level = Levels.meadowField
         val tooSmall = level.copy(airfield = listOf(Vec2(0.0, 0.0), Vec2(100.0, 0.0), Vec2(100.0, 100.0)))
@@ -65,19 +89,20 @@ class AirfieldOutlineTest {
 
     /** Points on the rounded rectangle of a runway's rough-grass fringe: the design system's fringe, turned like the runway. */
     private fun fringeOfRunway(runway: RunwayConfig): List<Vec2> {
-        val across = runway.width / FRINGE_WIDTH_REFERENCE
+        val across = runway.width / GroundMetrics.Runway.width
         return roundedRectPoints(
             runway.position,
             runway.orientation,
-            halfAlong = runway.length / 2.0 + RUNWAY_FRINGE,
-            halfAcross = RUNWAY_FRINGE_HALF * across,
-            radius = RUNWAY_FRINGE_RX,
+            halfAlong = runway.length / 2.0 + GroundMetrics.Runway.fringe,
+            halfAcross = GroundMetrics.Runway.fringeHalf * across,
+            radius = GroundMetrics.Runway.fringeRx.toDouble(),
         )
     }
 
     private fun fringeOfHelipad(pad: HelipadConfig): List<Vec2> {
-        val half = HELIPAD_FRINGE_HALF * pad.radius / HELIPAD_DISC
-        return roundedRectPoints(pad.position, 0.0, half, half, HELIPAD_FRINGE_RX * pad.radius / HELIPAD_DISC)
+        val unit = pad.radius / GroundMetrics.Helipad.disc
+        val half = GroundMetrics.Helipad.Fringe.half * unit
+        return roundedRectPoints(pad.position, 0.0, half, half, GroundMetrics.Helipad.Fringe.rx * unit.toDouble())
     }
 
     /** The straight sides' ends and three points on each corner arc of a rounded rectangle. */
@@ -94,16 +119,5 @@ class AirfieldOutlineTest {
             }
         }
         return local.map { center + it.rotated(heading - PI / 2.0) }
-    }
-
-    private companion object {
-        // The design system's fringe sizes (GroundMetrics), in world units; the domain does not read the UI.
-        const val RUNWAY_FRINGE = 24.0
-        const val RUNWAY_FRINGE_HALF = 54.0
-        const val RUNWAY_FRINGE_RX = 30.0
-        const val FRINGE_WIDTH_REFERENCE = 64.0
-        const val HELIPAD_FRINGE_HALF = 76.0
-        const val HELIPAD_FRINGE_RX = 22.0
-        const val HELIPAD_DISC = 56.0
     }
 }

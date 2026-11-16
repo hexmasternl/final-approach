@@ -217,7 +217,8 @@ class LevelConfigValidatorTest {
         val flat = SceneryKind.entries.filter { it.ground }
         assertEquals(
             setOf(
-                SceneryKind.Taxiway, SceneryKind.Apron, SceneryKind.Field, SceneryKind.Road,
+                SceneryKind.Taxiway, SceneryKind.Apron, SceneryKind.Field, SceneryKind.FieldWheat, SceneryKind.FieldGreen,
+                SceneryKind.FieldPlough, SceneryKind.Track, SceneryKind.CarPark, SceneryKind.Road,
                 SceneryKind.Pond, SceneryKind.Waterhole, SceneryKind.Jetty,
             ),
             flat.toSet(),

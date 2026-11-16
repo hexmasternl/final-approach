@@ -140,6 +140,8 @@ internal object GroundMetrics {
             const val width = 11f
             const val edge = 4f
             const val clearance = 14f
+            val rutDash = listOf(6f, 7f)
+            const val rutShift = 2.5f
         }
         object Field {
             const val margin = 6f
@@ -178,6 +180,60 @@ internal object GroundMetrics {
             const val flower = 5f
             const val spreadX = 16f
             const val spreadY = 12f
+        }
+        object Lines {
+            const val roadDash = 1.8f
+            const val trackRut = 1.5f
+            const val taxiCentre = 1.8f
+            const val taxiHold = 1.5f
+            const val apronSlab = 2f
+            const val apronJoint = 1.2f
+            const val apronStand = 2f
+            const val lotSlab = 1.6f
+            const val lotBay = 1.5f
+            const val fieldEdge = 2f
+            const val pondShore = 1.6f
+            const val pondFoam = 2f
+            const val paddock = 2f
+            const val cropRows = 4f
+            const val ploughRows = 2.2f
+        }
+        const val airfieldBoundaryOpacity = 0.7f
+        const val paddockOpacity = 0.9f
+        object Patch {
+            val rx = listOf(60f, 150f)
+            val ry = listOf(40f, 90f)
+            const val lobes = 9f
+            const val jitter = 0.22f
+            const val darkOpacity = 0.75f
+            const val lightOpacity = 0.6f
+            const val seaOpacity = 0.28f
+        }
+        object Stand {
+            const val down = 36f
+            const val length = 22f
+            const val barAt = 14f
+            const val barHalf = 11f
+        }
+        object HoldShort {
+            const val half = 13f
+            const val gap = 4f
+            val dash = listOf(4f, 3f)
+            const val dashAt = 9f
+            const val dashGap = 4f
+            const val fromEnd = 30f
+        }
+        val pondRipples = listOf(listOf(-38f, -12f, 10f, -6f, 22f), listOf(22f, 30f, 12f, -7f, 26f), listOf(-8f, -40f, 8f, -5f, 18f))
+        const val airfieldCorner = 20f
+        const val lotBayLength = 0.42f
+        object Island {
+            const val beach = 26f
+            const val shallows = 22f
+            const val sandEdge = 2f
+            const val grassEdge = 7f
+            val foamDash = listOf(46f, 30f)
+            const val foamWidth = 2.2f
+            const val foamOut = 29f
         }
     }
 }
