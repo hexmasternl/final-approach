@@ -19,13 +19,13 @@
 ## 4. Checks
 
 - [x] 4.1 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug` from `app/src`. Verify both succeed.
-- [ ] 4.2 Run the play-policy-critic agent on the change. Fix every finding within scope, and file any finding about ad placement or format as a new issue. Verify the critic reports no open violations within scope.
+- [x] 4.2 Run the play-policy-critic agent on the change. Fix every finding within scope, and file any finding about ad placement or format as a new issue. Verify the critic reports no open violations within scope.
 - [x] 4.3 Run `openspec validate update-privacy-policy --strict`. Verify it passes.
 
 ## 5. Human: Play Console and AdMob
 
-- [ ] 5.1 Play Console > App content > Target audience and content: include the under-13 age groups. Verify the Families policy questions are answered.
-- [ ] 5.2 Play Console > App content: Ads ("contains ads") and Advertising ID ("does not use"). Verify both are saved.
-- [ ] 5.3 Play Console > Data safety: match the new policy (data collected by the ads SDK, nothing collected by the game itself). Verify it agrees with `docs/privacy-policy.md`.
-- [ ] 5.4 Play Console > App content > Privacy policy: set https://github.com/hexmasternl/final-approach/blob/main/docs/privacy-policy.md. Verify the link opens after the release merge into `main`.
-- [ ] 5.5 AdMob > app settings: mark the app as child-directed with a maximum ad content rating of G. Verify it matches the in-app configuration.
+- [x] 5.1 Play Console > App content > Target audience and content: include the under-13 age groups. Verify the Families policy questions are answered.
+- [x] 5.2 Play Console > App content: Ads ("contains ads") and Advertising ID ("does not use"). Verify both are saved.
+- [x] 5.3 Play Console > Data safety: match the new policy (data collected by the ads SDK, nothing collected by the game itself). Verify it agrees with `docs/privacy-policy.md`.
+- [x] 5.4 Play Console > App content > Privacy policy: set https://github.com/hexmasternl/final-approach/blob/main/docs/privacy-policy.md. Verify the link opens after the release merge into `main`.
+- [x] 5.5 AdMob > app settings: mark the app as child-directed with a maximum ad content rating of G. Verify it matches the in-app configuration.
