@@ -45,7 +45,7 @@ internal fun DrawScope.drawTutorialHighlight(
     val effect = PathEffect.dashPathEffect(floatArrayOf(dash, gap), phase)
 
     fun outline(draw: (Stroke) -> Unit) {
-        draw(Stroke(FaDimens.line4.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = effect))
+        draw(Stroke(FaDimens.demoPathStroke.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = effect))
     }
 
     when (highlight) {
@@ -54,11 +54,11 @@ internal fun DrawScope.drawTutorialHighlight(
             val center = viewport.offsetOf(runway.position)
             val width = viewport.px(runway.width) + 2f * margin
             val length = viewport.px(runway.length) + 2f * margin
-            val corner = CornerRadius(FaDimens.radiusMd.toPx(), FaDimens.radiusMd.toPx())
+            val corner = CornerRadius(FaDimens.radiusControl.toPx(), FaDimens.radiusControl.toPx())
             rotate(degreesOf(runway.orientation), center) {
                 val topLeft = Offset(center.x - width / 2f, center.y - length / 2f)
                 outline { drawRoundRect(colors.outline, topLeft, Size(width, length), corner, style = it) }
-                val inner = Stroke(FaDimens.line3.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = effect)
+                val inner = Stroke(FaDimens.highlightStroke.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = effect)
                 drawRoundRect(colors.sun, topLeft, Size(width, length), corner, style = inner)
             }
             val heading = runway.landingHeadings.first()
@@ -77,7 +77,7 @@ internal fun DrawScope.drawTutorialHighlight(
                 colors.sun,
                 radius,
                 center,
-                style = Stroke(FaDimens.line3.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = effect),
+                style = Stroke(FaDimens.highlightStroke.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = effect),
             )
         }
     }
@@ -97,8 +97,8 @@ private fun DrawScope.drawLandingArrow(tip: Offset, direction: Offset, colors: F
         moveTo(tip.x, tip.y)
         lineTo(tip.x - direction.x * head - side.x * head, tip.y - direction.y * head - side.y * head)
     }
-    drawPath(path, colors.outline, style = Stroke(FaDimens.line4.toPx() + FaDimens.line3.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
-    drawPath(path, colors.sun, style = Stroke(FaDimens.line4.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+    drawPath(path, colors.outline, style = Stroke((FaDimens.demoPathStroke + FaDimens.demoPathRim).toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+    drawPath(path, colors.sun, style = Stroke(FaDimens.demoPathStroke.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
 }
 
 /** The dotted path of the drag demo, on the path layer: `on-outline` dots with an `outline` casing. */
@@ -109,7 +109,7 @@ internal fun DrawScope.drawTutorialDemoPath(demo: TutorialDemo, viewport: WorldV
     val spacing = dot + FaDimens.pathGap.toPx()
     val dots = PathEffect.dashPathEffect(floatArrayOf(0f, spacing), 0f)
     drawLine(colors.outline, from, to, strokeWidth = dot, cap = StrokeCap.Round, pathEffect = dots)
-    drawLine(colors.onOutline, from, to, strokeWidth = dot - 2f * FaDimens.line1.toPx(), cap = StrokeCap.Round, pathEffect = dots)
+    drawLine(colors.onOutline, from, to, strokeWidth = dot - 2f * FaDimens.lineUiSm.toPx(), cap = StrokeCap.Round, pathEffect = dots)
 }
 
 /**
@@ -138,7 +138,7 @@ internal fun DrawScope.drawTutorialDemoFinger(
     // The fingertip is the top of the icon's glyph, centred on the point being dragged.
     val left = tip.x - icon / 2f
     val top = tip.y - icon * FINGERTIP_FRACTION
-    val casing = FaDimens.line1.toPx()
+    val casing = FaDimens.lineUiSm.toPx()
     for (offset in listOf(Offset(casing, 0f), Offset(-casing, 0f), Offset(0f, casing), Offset(0f, -casing))) {
         inset(left + offset.x, top + offset.y, size.width - left - offset.x - icon, size.height - top - offset.y - icon) {
             drawIcon(FaIcon.Finger, colors.outline)
