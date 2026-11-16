@@ -4,7 +4,7 @@ The visual reference for every task is `docs/design-system/showcase.html` (secti
 
 ## 1. Baseline
 
-- [ ] 1.1 Add a seeded-run test in `commonTest/engine` that plays each of the three levels with a fixed seed and compares spawns, landings, collisions and score with values recorded on this base commit (design Decision 11); verify `./gradlew :shared:allTests` passes and note the base commit hash in the test's KDoc
+- [x] 1.1 Add a seeded-run test in `commonTest/engine` that plays each of the three levels with a fixed seed and compares spawns, landings, collisions and score with values recorded on this base commit (design Decision 11); verify `./gradlew :shared:allTests` passes and note the base commit hash in the test's KDoc
 
 ## 2. Generator and sprite data
 
