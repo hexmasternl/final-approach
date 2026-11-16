@@ -64,8 +64,9 @@ object FaDimens {
     val spriteLightPropSide = 116.dp
     val towLine = 44.dp
     val warnRingMargin = 10.dp
-    val levelTile = 168.dp
+    val levelTile = 184.dp
     val levelTileArt = 120.dp
+    val lockBadge = 44.dp
     val dialogMaxWidth = 400.dp
     val dialogCompactMaxWidth = 720.dp
     val dialogCompactBreakpoint = 600.dp
