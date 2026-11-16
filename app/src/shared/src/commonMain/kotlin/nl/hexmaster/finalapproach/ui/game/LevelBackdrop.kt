@@ -23,11 +23,13 @@ import nl.hexmaster.finalapproach.domain.SceneryDefaults
 import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.domain.Vec2
+import kotlin.math.cos
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
 import nl.hexmaster.finalapproach.ui.game.ambient.Boat
 import nl.hexmaster.finalapproach.ui.game.ambient.BoatKind
 import nl.hexmaster.finalapproach.ui.game.ambient.LevelAmbienceConfig
+import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.drawLawn
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRow
@@ -41,8 +43,9 @@ import nl.hexmaster.finalapproach.ui.theme.FaOpacity
 /** Sizes of the lights of a Dawn level, in world units, and how the running light fades. */
 private object Backdrop {
     const val BEACON_RADIUS = 22.0
-    const val RUNNING_LIGHT_RADIUS = 4.0
-    const val RUNNING_LIGHTS_PER_EDGE = 12
+
+    /** The running light glows this much wider than the edge light it lights. */
+    const val RUNNING_LIGHT_GLOW = 1.6f
     const val TRAIL_FADE = 0.35f
     const val UNLIT_FRACTION = 0.2f
 
@@ -55,6 +58,7 @@ private object Backdrop {
  * Ground.md: flat ground, flat scenery, helipads and runways, then the one layer of hard
  * shadows, then everything with height from north to south, then the ambient life.
  */
+@Suppress("UNUSED_PARAMETER")
 internal fun DrawScope.drawField(
     level: LevelConfig,
     ambient: AmbientLife,
@@ -70,7 +74,7 @@ internal fun DrawScope.drawField(
     flat.filter { it.kind == SceneryKind.Road }.forEach { drawRoadEdge(it, level.landscape, viewport, colors, lines) }
     flat.forEach { drawScenery(it, level.landscape, viewport, colors, lines) }
     level.runways.forEach { drawRunway(it, viewport, colors, measurer, numberStyle) }
-    level.helipads.forEach { drawHelipad(it, viewport, colors, measurer, letterStyle) }
+    level.helipads.forEach { drawHelipad(it, viewport, colors) }
     drawShadowLayer(level, raised, ambient, viewport, colors)
     raised.sortedBy { it.position.y }.forEach { drawScenery(it, level.landscape, viewport, colors, lines) }
     level.paddock?.let { drawPaddockFence(it, viewport, colors) }
@@ -255,17 +259,21 @@ private fun DrawScope.drawBoat(boat: Boat, ambience: LevelAmbienceConfig, viewpo
     drawScenerySprite(sprite, viewport.offsetOf(boat.position), viewport.px(boat.kind.beam), viewport.px(boat.kind.length), heading, colors)
 }
 
+/**
+ * The running light of a Dawn level: it runs along both edges of [runway], one edge light after
+ * the other, over the edge lights of the runway's plan.
+ */
 private fun DrawScope.drawRunwayLights(runway: RunwayConfig, life: AmbientLife, viewport: WorldViewport) {
-    val count = Backdrop.RUNNING_LIGHTS_PER_EDGE
-    val along = Angles.direction(runway.orientation)
-    val across = Vec2(-along.y, along.x)
+    val landingEnds = runway.landingHeadings.map { if (cos(it - runway.orientation) >= 0.0) RunwayEnd.Low else RunwayEnd.High }.toSet()
+    val plan = runwayPlan(runway.length.toFloat(), landingEnds, runway.width.toFloat() / GroundMetrics.Runway.width)
+    val count = plan.edgeLightsPerSide
     val head = life.runningLightHead(count)
-    val radius = viewport.px(Backdrop.RUNNING_LIGHT_RADIUS)
-    for (side in listOf(-1.0, 1.0)) for (i in 0 until count) {
-        val t = (i + 0.5) / count - 0.5
-        val point = runway.position + along * (t * runway.length) + across * (side * runway.width / 2.0)
-        val alpha = lightAlpha(i, head, count, life.lightOpacity)
-        drawCircle(FaLights.agl.copy(alpha = alpha), radius, viewport.offsetOf(point))
+    val radius = GroundMetrics.Runway.Lights.Edge.r * Backdrop.RUNNING_LIGHT_GLOW
+    inRunwayFrame(runway, viewport) {
+        plan.edgeLights.forEachIndexed { index, light ->
+            val alpha = lightAlpha(index / 2, head, count, life.lightOpacity)
+            drawCircle(FaLights.agl.copy(alpha = alpha), radius, Offset(light.x, light.y))
+        }
     }
 }
 

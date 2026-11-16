@@ -6,26 +6,27 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.isSpecified
-import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.HelipadConfig
 import nl.hexmaster.finalapproach.domain.LevelScenery
 import nl.hexmaster.finalapproach.domain.RunwayConfig
-import nl.hexmaster.finalapproach.domain.RunwayMode
 import nl.hexmaster.finalapproach.domain.SceneryDefaults
 import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.input.WorldViewport
+import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics
+import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics.Helipad
+import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics.Runway
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.SceneryTier
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRow
@@ -33,7 +34,6 @@ import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRowShadows
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryShadowAt
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.theme.FaColors
-import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import kotlin.math.PI
 import kotlin.math.cos
 
@@ -48,41 +48,6 @@ internal fun WorldViewport.px(worldLength: Double): Float = toScreenLength(world
 internal fun degreesOf(radians: Double): Float = (radians * DEGREES_PER_RADIAN).toFloat()
 
 private const val DEGREES_PER_RADIAN = 180.0 / PI
-
-/**
- * The markings of runways and helipads belong to the airfield and shrink with it: a token is
- * drawn as that many world units, the scale of the design system's 64-unit runway and 112-unit
- * helipad, so the markings always fit their runway or pad.
- */
-private class FieldScale(viewport: WorldViewport, private val density: Float) {
-    private val pxPerUnit = viewport.px(WORLD_UNIT)
-
-    fun px(token: Dp): Float = token.value * pxPerUnit
-
-    /** [style] with its text sized like the markings. */
-    fun text(style: TextStyle): TextStyle {
-        val factor = pxPerUnit / density
-        return style.copy(
-            fontSize = if (style.fontSize.isSpecified) style.fontSize * factor else style.fontSize,
-            lineHeight = if (style.lineHeight.isSpecified) style.lineHeight * factor else style.lineHeight,
-        )
-    }
-
-    private companion object {
-        const val WORLD_UNIT = 1.0
-    }
-}
-
-/** The outline of runways and helipads: `line-3`, the stroke of everything that is part of play. */
-private fun DrawScope.outlineStroke() =
-    Stroke(width = FaDimens.line3.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
-
-/** Fills and outlines a rectangle, the shape most airfield parts are made of. */
-private fun DrawScope.outlinedRect(rect: Rect, fill: Color, colors: FaColors, corner: Float) {
-    val radius = CornerRadius(corner, corner)
-    drawRoundRect(fill, rect.topLeft, rect.size, radius)
-    drawRoundRect(colors.outline, rect.topLeft, rect.size, radius, style = outlineStroke())
-}
 
 /**
  * Runs [block] in a frame centred on [center] and turned by [heading], where up is along the
@@ -100,7 +65,40 @@ private inline fun DrawScope.inFrame(
     }
 }
 
-/** Draws a runway with its centre line, threshold bars and a number at each landing end. */
+/**
+ * Runs [block] in the frame of a runway: origin at its middle, x along its axis, y across it, and
+ * one unit of the frame one world unit. Sizes of the design system's ground metrics, and their
+ * line widths, can be used as they are.
+ */
+internal fun DrawScope.inRunwayFrame(runway: RunwayConfig, viewport: WorldViewport, block: DrawScope.() -> Unit) {
+    val center = viewport.offsetOf(runway.position)
+    val unit = viewport.px(WORLD_UNIT)
+    withTransform({
+        translate(center.x, center.y)
+        rotate(degreesOf(runway.orientation) - QUARTER_TURN_DEGREES, Offset.Zero)
+        scale(unit, unit, Offset.Zero)
+    }, block)
+}
+
+private const val WORLD_UNIT = 1.0
+private const val QUARTER_TURN_DEGREES = 90f
+
+private fun roundStroke(width: Float, cap: StrokeCap = StrokeCap.Round) = Stroke(width, cap = cap, join = StrokeJoin.Round)
+
+private fun PlanRect.topLeft() = Offset(x, y)
+
+private fun PlanRect.size() = Size(width, height)
+
+/** The end of [runway] an airplane landing on [heading] touches down at. */
+private fun RunwayConfig.endFor(heading: Double): RunwayEnd = if (cos(heading - orientation) >= 0.0) RunwayEnd.Low else RunwayEnd.High
+
+/**
+ * Draws a runway as the design system builds it (`Runway.md`): a rough-grass fringe, a concrete
+ * shoulder, the outlined asphalt at the level's footprint, then the markings and lights of its
+ * [runwayPlan]: an edge line, six threshold bars, the number, aiming blocks and touchdown marks,
+ * the centre line (dashes, or chevrons on a one-way runway), tyre rubber, and edge, threshold and
+ * approach lights. Sizes come from [GroundMetrics], colours from [colors].
+ */
 internal fun DrawScope.drawRunway(
     runway: RunwayConfig,
     viewport: WorldViewport,
@@ -108,105 +106,151 @@ internal fun DrawScope.drawRunway(
     measurer: TextMeasurer,
     numberStyle: TextStyle,
 ) {
-    val center = viewport.offsetOf(runway.position)
-    val lengthPx = viewport.px(runway.length)
-    val widthPx = viewport.px(runway.width)
-    val field = FieldScale(viewport, density)
-    inFrame(center, runway.orientation, widthPx, lengthPx) { rect ->
-        outlinedRect(rect, colors.asphalt500, colors, field.px(FaDimens.radiusSm))
-        val inset = field.px(FaDimens.space4)
-        val barLength = field.px(FaDimens.space5)
-        val barWidth = field.px(FaDimens.line4)
-        val patchLength = field.px(FaDimens.space8)
-        val patchWidth = rect.width / 2f
-        val numberRoom = field.px(FaDimens.space7)
-        // The ends airplanes land from: the top of the frame is the front of the runway, the bottom its back.
-        val landsAtTop = runway.landingHeadings.any { cos(it - runway.orientation) < 0.0 }
-        val landsAtBottom = runway.landingHeadings.any { cos(it - runway.orientation) >= 0.0 }
-        // Touchdown patches past the numbers, then four threshold bars, at each landing end.
-        val barSpacing = (rect.width - inset * 2f) / THRESHOLD_BARS
-        fun patchAt(y: Float) =
-            drawRect(colors.asphalt700, Offset(rect.center.x - patchWidth / 2f, y), Size(patchWidth, patchLength))
-        if (landsAtTop) patchAt(rect.top + inset + barLength + numberRoom)
-        if (landsAtBottom) patchAt(rect.bottom - inset - barLength - numberRoom - patchLength)
-        repeat(THRESHOLD_BARS) { i ->
-            val x = rect.left + inset + barSpacing * (i + 0.5f) - barWidth / 2f
-            if (landsAtTop) drawRect(colors.marking, Offset(x, rect.top + inset), Size(barWidth, barLength))
-            if (landsAtBottom) drawRect(colors.marking, Offset(x, rect.bottom - inset - barLength), Size(barWidth, barLength))
-        }
-        val dash = field.px(FaDimens.space5)
-        val gap = field.px(FaDimens.space4)
-        val clear = inset + barLength + numberRoom
-        when (val mode = runway.mode) {
-            is RunwayMode.OneWay -> {
-                // A row of chevrons along the centre line, pointing the way airplanes land.
-                val down = if (cos(mode.heading - runway.orientation) < 0.0) 1f else -1f
-                val half = dash / 2f
-                val chevron = Stroke(width = barWidth, cap = StrokeCap.Round, join = StrokeJoin.Round)
-                var y = rect.top + clear
-                while (y + dash < rect.bottom - clear) {
-                    val tipY = if (down > 0f) y + half else y
-                    val baseY = if (down > 0f) y else y + half
-                    val path = Path().apply {
-                        moveTo(rect.center.x - half, baseY)
-                        lineTo(rect.center.x, tipY)
-                        lineTo(rect.center.x + half, baseY)
-                    }
-                    drawPath(path, colors.marking, style = chevron)
-                    y += dash + gap
-                }
-            }
-            RunwayMode.TwoWay -> {
-                var y = rect.top + clear
-                while (y + dash < rect.bottom - clear) {
-                    drawRect(colors.marking, Offset(rect.center.x - barWidth / 2f, y), Size(barWidth, dash))
-                    y += dash + gap
-                }
-            }
-        }
-    }
-    val numberInset = field.px(FaDimens.space4) + field.px(FaDimens.space5) + field.px(FaDimens.space7) / 2f
-    val fieldNumberStyle = field.text(numberStyle)
-    for (heading in runway.landingHeadings) {
-        val direction = Angles.direction(heading)
-        val threshold = center - Offset(direction.x.toFloat(), direction.y.toFloat()) * (lengthPx / 2f)
-        val at = threshold + Offset(direction.x.toFloat(), direction.y.toFloat()) * numberInset
-        val layout = measurer.measure(runway.numberFor(heading), fieldNumberStyle)
-        rotate(degreesOf(heading), at) {
-            drawText(
-                layout,
-                color = colors.marking,
-                topLeft = at - Offset(layout.size.width / 2f, layout.size.height / 2f),
-            )
+    val m = GroundMetrics.Runway
+    val across = runway.width.toFloat() / m.width
+    val landingEnds = runway.landingHeadings.map { runway.endFor(it) }.toSet()
+    val plan = runwayPlan(runway.length.toFloat(), landingEnds, across)
+    val half = runway.length.toFloat() / 2f
+    val asphaltHalf = m.halfWidth * across
+    fun band(extraAlong: Float, extraAcross: Float) =
+        Rect(-half - extraAlong, -asphaltHalf - extraAcross, half + extraAlong, asphaltHalf + extraAcross)
+    inRunwayFrame(runway, viewport) {
+        val fringe = band(m.fringe, m.fringeHalf * across - asphaltHalf)
+        drawRoundRect(colors.grass700, fringe.topLeft, fringe.size, CornerRadius(m.fringeRx))
+        val shoulder = band(m.shoulder, m.shoulderHalf * across - asphaltHalf)
+        drawRoundRect(colors.concrete500, shoulder.topLeft, shoulder.size, CornerRadius(m.shoulderRx))
+        drawRoundRect(colors.concrete700, shoulder.topLeft, shoulder.size, CornerRadius(m.shoulderRx), style = roundStroke(Runway.Lines.shoulder))
+        val asphalt = band(0f, 0f)
+        drawRoundRect(colors.asphalt500, asphalt.topLeft, asphalt.size, CornerRadius(m.rx))
+        drawRoundRect(colors.outline, asphalt.topLeft, asphalt.size, CornerRadius(m.rx), style = roundStroke(Runway.Lines.outline))
+        plan.ends.forEach { drawRunwayEnd(it, colors) }
+        plan.edgeLines.forEach { drawLine(colors.marking, Offset(it.x0, it.y0), Offset(it.x1, it.y1), Runway.Lines.edge, StrokeCap.Round) }
+        drawCentreLine(plan, colors)
+        plan.ends.forEach { drawRunwayNumber(runway, it, colors, measurer, numberStyle) }
+        plan.edgeLights.forEach { drawLight(colors.beacon, colors.concrete700, it, Runway.Lights.Edge.r) }
+        plan.approachLights.forEach {
+            val box = it.box
+            val radius = CornerRadius(APPROACH_LIGHT_RX)
+            drawRoundRect(if (it.red) colors.cherry500 else colors.foam, box.topLeft(), box.size(), radius)
+            drawRoundRect(colors.outline, box.topLeft(), box.size(), radius, style = roundStroke(Runway.Lines.light))
         }
     }
 }
 
-/** Draws a helipad: an outlined asphalt disc with a ring and an H. */
+/** The corner radius of an approach light's box, in world units (the design system's `rx="1"`). */
+private const val APPROACH_LIGHT_RX = 1f
+
+private fun DrawScope.drawLight(fill: Color, edge: Color, at: PlanPoint, radius: Float) {
+    drawCircle(fill, radius, Offset(at.x, at.y))
+    drawCircle(edge, radius, Offset(at.x, at.y), style = Stroke(Runway.Lines.light))
+}
+
+/** The marks of one landing end: tyre rubber, threshold bars, aiming blocks, touchdown marks and threshold lights. */
+private fun DrawScope.drawRunwayEnd(end: RunwayEndPlan, colors: FaColors) {
+    val m = GroundMetrics.Runway
+    end.rubber.forEach { drawLine(colors.asphalt700, Offset(it.x0, it.y0), Offset(it.x1, it.y1), Runway.Lines.rubber, StrokeCap.Round) }
+    end.bars.forEach { drawRoundRect(colors.marking, it.topLeft(), it.size(), CornerRadius(Runway.Bars.rx)) }
+    end.aiming.forEach { drawRoundRect(colors.marking, it.topLeft(), it.size(), CornerRadius(Runway.Aiming.rx)) }
+    end.touchdown.forEach { drawLine(colors.marking, Offset(it.x0, it.y0), Offset(it.x1, it.y1), Runway.Lines.touchdown, StrokeCap.Butt) }
+    end.thresholdLights.forEach { drawLight(colors.mint500, colors.concrete700, it, Runway.Lights.Threshold.r) }
+}
+
+/** The centre line: dashes on a two-way runway, chevrons pointing the way airplanes land on a one-way one. */
+private fun DrawScope.drawCentreLine(plan: RunwayPlan, colors: FaColors) {
+    val m = GroundMetrics.Runway
+    plan.centreDashes?.let {
+        val dashes = PathEffect.dashPathEffect(m.dash.toFloatArray())
+        drawLine(colors.marking, Offset(it.x0, it.y0), Offset(it.x1, it.y1), Runway.Lines.centre, StrokeCap.Butt, dashes)
+    }
+    val chevron = roundStroke(Runway.Lines.chevron)
+    plan.chevrons.forEach {
+        val path = Path().apply {
+            moveTo(it.armA.x, it.armA.y)
+            lineTo(it.tip.x, it.tip.y)
+            lineTo(it.armB.x, it.armB.y)
+        }
+        drawPath(path, colors.marking, style = chevron)
+    }
+}
+
+/** The runway number of [end], read from its own approach end: the top of the text points along the landing heading. */
+private fun DrawScope.drawRunwayNumber(
+    runway: RunwayConfig,
+    end: RunwayEndPlan,
+    colors: FaColors,
+    measurer: TextMeasurer,
+    numberStyle: TextStyle,
+) {
+    val heading = runway.landingHeadings.first { runway.endFor(it) == end.end }
+    val size = GroundMetrics.Runway.numberSize.toSp()
+    val layout = measurer.measure(runway.numberFor(heading), numberStyle.copy(fontSize = size, lineHeight = size))
+    val at = Offset(end.numberAt.x, end.numberAt.y)
+    // The frame's x axis points along the runway: text that reads up along +x is turned a quarter, along -x three quarters.
+    rotate(end.end.sign * QUARTER_TURN_DEGREES * -1f, at) {
+        drawText(layout, color = colors.marking, topLeft = at - Offset(layout.size.width / 2f, layout.size.height / 2f))
+    }
+}
+
+/**
+ * Draws a helipad as the design system builds it (`Helipad.md`): a rough-grass fringe, a concrete
+ * pad with slab joints and a light in each corner, and on it the outlined asphalt disc at the
+ * level's radius with a worn ring, the warning ring and the H. Sizes come from [GroundMetrics].
+ */
 internal fun DrawScope.drawHelipad(
     pad: HelipadConfig,
     viewport: WorldViewport,
     colors: FaColors,
-    measurer: TextMeasurer,
-    letterStyle: TextStyle,
 ) {
+    val m = GroundMetrics.Helipad
     val center = viewport.offsetOf(pad.position)
-    val radius = viewport.px(pad.radius)
-    val field = FieldScale(viewport, density)
-    drawCircle(colors.asphalt500, radius, center)
-    drawCircle(colors.outline, radius, center, style = outlineStroke())
-    drawCircle(
-        colors.markingWarn,
-        radius - field.px(FaDimens.space3),
-        center,
-        style = Stroke(width = field.px(FaDimens.line4)),
-    )
-    val layout = measurer.measure(HELIPAD_LETTER, field.text(letterStyle))
-    drawText(layout, color = colors.marking, topLeft = center - Offset(layout.size.width / 2f, layout.size.height / 2f))
+    // The design system draws the disc 56 units in radius; the level's radius scales the whole pad.
+    val unit = viewport.px(pad.radius) / m.disc
+    withTransform({
+        translate(center.x, center.y)
+        scale(unit, unit, Offset.Zero)
+    }) {
+        val fringe = Helipad.Fringe.half
+        drawRoundRect(colors.grass700, Offset(-fringe, -fringe), Size(fringe * 2f, fringe * 2f), CornerRadius(Helipad.Fringe.rx))
+        val slab = Helipad.Pad.half
+        val slabTopLeft = Offset(-slab, -slab)
+        val slabSize = Size(slab * 2f, slab * 2f)
+        drawRoundRect(colors.concrete300, slabTopLeft, slabSize, CornerRadius(Helipad.Pad.rx))
+        drawRoundRect(colors.concrete700, slabTopLeft, slabSize, CornerRadius(Helipad.Pad.rx), style = roundStroke(Helipad.Lines.pad))
+        val joints = roundStroke(Helipad.Lines.joint)
+        drawPath(
+            Path().apply {
+                moveTo(-slab, 0f)
+                lineTo(slab, 0f)
+                moveTo(0f, -slab)
+                lineTo(0f, slab)
+            },
+            colors.concrete500,
+            style = joints,
+        )
+        drawCircle(colors.asphalt500, m.disc, Offset.Zero)
+        drawCircle(colors.outline, m.disc, Offset.Zero, style = roundStroke(Helipad.Lines.outline))
+        drawCircle(colors.asphalt700, m.wornRing, Offset.Zero, alpha = m.wornOpacity, style = roundStroke(Helipad.Lines.wornRing))
+        drawCircle(colors.markingWarn, m.warnRing, Offset.Zero, style = roundStroke(Helipad.Lines.warnRing))
+        val h = Helipad.H
+        drawPath(
+            Path().apply {
+                moveTo(-h.x, -h.y)
+                lineTo(-h.x, h.y)
+                moveTo(h.x, -h.y)
+                lineTo(h.x, h.y)
+                moveTo(-h.x, 0f)
+                lineTo(h.x, 0f)
+            },
+            colors.marking,
+            style = roundStroke(Helipad.Lines.h),
+        )
+        for (sx in listOf(-1f, 1f)) for (sy in listOf(-1f, 1f)) {
+            val at = Offset(sx * Helipad.CornerLight.at, sy * Helipad.CornerLight.at)
+            drawCircle(colors.beacon, Helipad.CornerLight.r, at)
+            drawCircle(colors.concrete700, Helipad.CornerLight.r, at, style = Stroke(Helipad.Lines.cornerLight))
+        }
+    }
 }
-
-private const val HELIPAD_LETTER = "H"
-private const val THRESHOLD_BARS = 4
 
 /** The sprite of every kind of scenery that is drawn as one sprite, fitted into the item. */
 internal val scenerySprites: Map<SceneryKind, ScenerySprite> = mapOf(
@@ -405,25 +449,3 @@ private fun DrawScope.drawWater(rect: Rect, bank: Float, viewport: WorldViewport
 
 /** Ripples lie this fraction of the water's size from its middle: one over this number. */
 private const val RIPPLE_SPREAD = 6f
-
-/**
- * The strokes and corner the ground pieces of the app's world still draw with, in pixels: the
- * [outline] (`line-2`), the [fine] detail line (`line-fine`) and the [corner] radius of flat
- * scenery (`radius-sm`). Interim, version 1: the ground pieces move to the design system's
- * ground metrics in tasks 5.2 and 5.3 of the `world-v2-port` change, and this goes with them.
- * Sprites no longer use it.
- */
-internal class GroundLines(val outline: Float, val fine: Float, val corner: Float)
-
-/** The ground lines for a world drawn at [pxPerWorldUnit]: world lengths that shrink with the field. */
-internal fun DrawScope.groundLines(pxPerWorldUnit: Float): GroundLines {
-    val pxPerUnit = pxPerWorldUnit * GROUND_UNITS_PER_DP
-    fun shrinking(token: Dp): Float = minOf(token.toPx(), token.value * pxPerUnit)
-    return GroundLines(
-        outline = shrinking(FaDimens.line2),
-        fine = shrinking(FaDimens.lineFine),
-        corner = shrinking(FaDimens.radiusSm),
-    )
-}
-
-private const val GROUND_UNITS_PER_DP = 0.8f

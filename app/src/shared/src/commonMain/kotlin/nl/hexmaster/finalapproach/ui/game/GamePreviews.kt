@@ -25,7 +25,10 @@ import androidx.compose.ui.unit.dp
 import nl.hexmaster.finalapproach.domain.Aircraft
 import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.LevelConfig
+import nl.hexmaster.finalapproach.domain.HelipadConfig
 import nl.hexmaster.finalapproach.domain.LevelTheme
+import nl.hexmaster.finalapproach.domain.RunwayConfig
+import nl.hexmaster.finalapproach.domain.RunwayMode
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
@@ -73,6 +76,13 @@ private object PreviewData {
     const val COLLISION_X = 900.0
     const val COLLISION_Y = 420.0
     const val COLLISION_HEADING = 1.2
+    const val EAST = 1.5707963267948966
+    const val ZONE_X = 960.0
+    const val ZONE_Y = 600.0
+    const val LONG_RUNWAY = 760.0
+    const val SHORT_RUNWAY = 300.0
+    const val PAD_X = 960.0
+    const val PAD_Y = 300.0
     const val TREE_X = 1300.0
     const val TREE_Y = 700.0
     const val TREE_SIZE = 86.0
@@ -112,6 +122,40 @@ private fun MeadowFieldPreview() = FieldPreview(Levels.meadowField)
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
 @Composable
 private fun IslandAirportPreview() = FieldPreview(Levels.islandAirport)
+
+/** A bare field with just the given landing zones, to check their construction against Runway.md and Helipad.md. */
+@Composable
+private fun ZonesPreview(runways: List<RunwayConfig>, helipads: List<HelipadConfig> = emptyList(), theme: LevelTheme = LevelTheme.Day) =
+    FieldPreview(Levels.meadowField.copy(runways = runways, helipads = helipads, scenery = emptyList(), paddock = null), theme)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun TwoWayRunwayPreview() = ZonesPreview(listOf(RunwayConfig("r", Vec2(PreviewData.ZONE_X, PreviewData.ZONE_Y), PreviewData.EAST, length = PreviewData.LONG_RUNWAY)))
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun OneWayRunwayPreview() = ZonesPreview(
+    listOf(RunwayConfig("r", Vec2(PreviewData.ZONE_X, PreviewData.ZONE_Y), PreviewData.EAST, length = PreviewData.LONG_RUNWAY, mode = RunwayMode.OneWay(PreviewData.EAST))),
+)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun ShortRunwayPreview() = ZonesPreview(listOf(RunwayConfig("r", Vec2(PreviewData.ZONE_X, PreviewData.ZONE_Y), PreviewData.EAST, length = PreviewData.SHORT_RUNWAY)))
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun RunwayAndHelipadDawnPreview() = ZonesPreview(
+    runways = listOf(RunwayConfig("r", Vec2(PreviewData.ZONE_X, PreviewData.ZONE_Y), PreviewData.EAST, length = PreviewData.LONG_RUNWAY)),
+    helipads = listOf(HelipadConfig("h", Vec2(PreviewData.PAD_X, PreviewData.PAD_Y))),
+    theme = LevelTheme.Dawn,
+)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun HelipadPreview() = ZonesPreview(
+    runways = listOf(RunwayConfig("r", Vec2(PreviewData.ZONE_X, PreviewData.ZONE_Y), PreviewData.EAST, length = PreviewData.LONG_RUNWAY)),
+    helipads = listOf(HelipadConfig("h", Vec2(PreviewData.PAD_X, PreviewData.PAD_Y))),
+)
 
 /** Two trees that overlap: where their shadows meet, the ground must not be darker than under one. */
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)

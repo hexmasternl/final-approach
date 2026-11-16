@@ -22,8 +22,8 @@ The visual reference for every task is `docs/design-system/showcase.html` (secti
 ## 4. Runways and helipads
 
 - [x] 4.1 Add `runwayPlan` (design Decision 6) with unit tests: marked ends for one-way and two-way, six threshold bars, aiming blocks from 460 units, touchdown marks from 560, chevrons or dashes, edge lights every 58 units, four threshold lights per landing end, approach lights at one landing end
-- [ ] 4.2 Draw the runway from the plan and the metrics object: fringe, shoulder, outlined asphalt at the level's footprint, edge lines, markings, tyre rubber, number, lights; move the Dawn running light onto the plan's edge lights and remove the replaced constants in `LevelBackdrop.kt`; verify previews of a one-way, a two-way and a short runway against `Runway.md`, and that `LevelLayoutsTest`, `LandingZonesTest` and the test of 1.1 pass unchanged
-- [ ] 4.3 Draw the helipad: fringe, concrete pad with joints and corner lights, outlined disc at the level's radius, worn ring, warning ring, H; verify a preview against `Helipad.md` and that `AirfieldDrawing.kt` no longer reads `line3`, `line4`, `radiusSm` or a `space` token for a world size
+- [x] 4.2 Draw the runway from the plan and the metrics object: fringe, shoulder, outlined asphalt at the level's footprint, edge lines, markings, tyre rubber, number, lights; move the Dawn running light onto the plan's edge lights and remove the replaced constants in `LevelBackdrop.kt`; verify previews of a one-way, a two-way and a short runway against `Runway.md`, and that `LevelLayoutsTest`, `LandingZonesTest` and the test of 1.1 pass unchanged
+- [x] 4.3 Draw the helipad: fringe, concrete pad with joints and corner lights, outlined disc at the level's radius, worn ring, warning ring, H; verify a preview against `Helipad.md` and that `AirfieldDrawing.kt` no longer reads `line3`, `line4`, `radiusSm` or a `space` token for a world size
 - [ ] 4.4 Update the Compose notes of `components/Runway.md` and `components/Helipad.md`; verify they no longer say the app renders version 1
 
 ## 5. Ground
