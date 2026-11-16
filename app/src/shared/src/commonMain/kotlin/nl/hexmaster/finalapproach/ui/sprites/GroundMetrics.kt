@@ -203,6 +203,8 @@ internal object GroundMetrics {
         object Patch {
             val rx = listOf(60f, 150f)
             val ry = listOf(40f, 90f)
+            val seaRx = listOf(120f, 260f)
+            val seaRy = listOf(60f, 120f)
             const val lobes = 9f
             const val jitter = 0.22f
             const val darkOpacity = 0.75f

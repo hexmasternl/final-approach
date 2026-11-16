@@ -18,6 +18,7 @@ import nl.hexmaster.finalapproach.domain.Angles
 import nl.hexmaster.finalapproach.domain.Bounds
 import nl.hexmaster.finalapproach.domain.Island
 import nl.hexmaster.finalapproach.domain.LevelConfig
+import nl.hexmaster.finalapproach.domain.LevelScenery
 import nl.hexmaster.finalapproach.domain.SceneryDefaults
 import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
@@ -25,6 +26,7 @@ import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics.Ground
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
+import nl.hexmaster.finalapproach.ui.sprites.drawSceneryArt
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import kotlin.math.abs
@@ -78,6 +80,71 @@ private fun dashes(pattern: List<Float>) = PathEffect.dashPathEffect(pattern.toF
 private val SceneryItem.size: Size get() = Size(width.toFloat(), height.toFloat())
 
 private fun List<SceneryItem>.of(vararg kinds: SceneryKind) = filter { it.kind in kinds }
+
+/**
+ * What is built once per level for drawing its ground: the decoration (a pure function of the
+ * level) and the smooth curves of its patches. Level data does not change while it is on screen.
+ */
+internal class GroundArt(val decoration: LevelDecoration) {
+    val patchPaths: List<Path> = decoration.patches.map { smoothClosedPath(it.outline) }
+}
+
+private var cachedArt: Pair<LevelConfig, GroundArt>? = null
+
+/** The ground art of [level], built the first time it is asked for and kept while the same level is drawn. */
+internal fun groundArtOf(level: LevelConfig): GroundArt {
+    cachedArt?.let { (cachedLevel, art) -> if (cachedLevel === level) return art }
+    return GroundArt(levelDecoration(level)).also { cachedArt = level to it }
+}
+
+/** A smooth closed curve through [points]: the design system's `smooth`, a Catmull-Rom spline as cubic curves. */
+internal fun smoothClosedPath(points: List<Vec2>): Path {
+    val path = Path()
+    val n = points.size
+    if (n < 3) return path
+    fun at(i: Int) = points[(i + n) % n]
+    path.moveTo(points[0].x.toFloat(), points[0].y.toFloat())
+    for (i in 0 until n) {
+        val p0 = at(i - 1)
+        val p1 = at(i)
+        val p2 = at(i + 1)
+        val p3 = at(i + 2)
+        path.cubicTo(
+            (p1.x + (p2.x - p0.x) / SPLINE_TENSION).toFloat(), (p1.y + (p2.y - p0.y) / SPLINE_TENSION).toFloat(),
+            (p2.x - (p3.x - p1.x) / SPLINE_TENSION).toFloat(), (p2.y - (p3.y - p1.y) / SPLINE_TENSION).toFloat(),
+            p2.x.toFloat(), p2.y.toFloat(),
+        )
+    }
+    path.close()
+    return path
+}
+
+/** A Catmull-Rom curve's handles are the neighbours' distance over six. */
+private const val SPLINE_TENSION = 6.0
+
+/** Irregular patches of tone on open ground, under the roads and everything else: tone, not objects. */
+internal fun DrawScope.drawPatches(level: LevelConfig, art: GroundArt, viewport: WorldViewport, colors: FaColors) {
+    val dry = level.landscape == LevelScenery.Savanna
+    inWorld(viewport) {
+        art.decoration.patches.forEachIndexed { index, patch ->
+            val (color, alpha) = when (patch.tone) {
+                PatchTone.Light -> (if (dry) colors.sand300 else colors.grass400) to Ground.Patch.lightOpacity
+                PatchTone.Dark -> (if (dry) colors.grass500 else colors.grass600) to Ground.Patch.darkOpacity
+                PatchTone.Sea -> colors.water700 to Ground.Patch.seaOpacity
+            }
+            drawPath(art.patchPaths[index], color, alpha = alpha)
+        }
+    }
+}
+
+/** Tufts, flowers and reeds, in clusters on open ground. */
+internal fun DrawScope.drawDecorationDetails(art: GroundArt, viewport: WorldViewport, colors: FaColors) {
+    inWorld(viewport) {
+        art.decoration.details.forEach { detail ->
+            withTransform({ translate(detail.position.x.toFloat(), detail.position.y.toFloat()) }) { drawSceneryArt(detail.detail.art, colors) }
+        }
+    }
+}
 
 /** Roads and dirt tracks, tracks first so a road runs over them. */
 internal fun DrawScope.drawRoadsAndTracks(level: LevelConfig, viewport: WorldViewport, colors: FaColors) {

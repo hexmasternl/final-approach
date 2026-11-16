@@ -66,19 +66,25 @@ internal fun DrawScope.drawField(
     measurer: TextMeasurer,
     numberStyle: TextStyle,
     letterStyle: TextStyle,
+    art: GroundArt = groundArtOf(level),
 ) {
     drawLevelGround(level, viewport, colors)
+    drawPatches(level, art, viewport, colors)
     drawRoadsAndTracks(level, viewport, colors)
     drawFields(level, viewport, colors)
     drawWaters(level, viewport, colors)
+    drawDecorationDetails(art, viewport, colors)
     drawAirfield(level, viewport, colors)
     drawHardSurfaces(level, viewport, colors)
     val (flat, raised) = level.scenery.partition { it.drawsOnGround }
     flat.filter { it.kind !in groundPieceKinds }.forEach { drawScenery(it, viewport, colors) }
     level.runways.forEach { drawRunway(it, viewport, colors, measurer, numberStyle) }
     level.helipads.forEach { drawHelipad(it, viewport, colors) }
-    drawShadowLayer(level, raised, ambient, viewport, colors)
-    raised.sortedBy { it.position.y }.forEach { drawScenery(it, viewport, colors) }
+    drawShadowLayer(level, raised, art.decoration.trees, ambient, viewport, colors)
+    // Everything with height, from north to south: the level's scenery and the trees of its woods.
+    val standing = raised.map { it.position.y to { drawScenery(it, viewport, colors) } } +
+        art.decoration.trees.map { it.position.y to { drawTree(it, viewport, colors) } }
+    standing.sortedBy { it.first }.forEach { it.second() }
     level.paddock?.let { drawPaddockFence(it, viewport, colors) }
     drawAmbient(level, ambient, viewport, colors)
 }
@@ -92,6 +98,7 @@ internal fun DrawScope.drawField(
 private fun DrawScope.drawShadowLayer(
     level: LevelConfig,
     raised: List<SceneryItem>,
+    trees: List<DecorationTree>,
     ambient: AmbientLife,
     viewport: WorldViewport,
     colors: FaColors,
@@ -99,6 +106,7 @@ private fun DrawScope.drawShadowLayer(
     drawIntoCanvas { canvas ->
         canvas.saveLayer(Rect(Offset.Zero, size), Paint().apply { alpha = FaOpacity.shadowCast })
         raised.forEach { drawSceneryItemShadow(it, viewport, colors.shadowCast) }
+        trees.forEach { drawTreeShadow(it, viewport, colors.shadowCast) }
         level.paddock?.let { paddock -> paddockFence(paddock, viewport).forEach { it.shadow(this, colors.shadowCast) } }
         drawAmbientShadows(ambient, viewport, colors.shadowCast)
         canvas.restore()

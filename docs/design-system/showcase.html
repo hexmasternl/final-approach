@@ -1152,7 +1152,7 @@ h1,h2,h3,h4,p{margin:0}
       lines: { roadDash: 1.8, trackRut: 1.5, taxiCentre: 1.8, taxiHold: 1.5, apronSlab: 2, apronJoint: 1.2, apronStand: 2, lotSlab: 1.6, lotBay: 1.5, fieldEdge: 2, pondShore: 1.6, pondFoam: 2, paddock: 2, cropRows: 4, ploughRows: 2.2 },
       /* The mown airfield's soft boundary, the paddock ground and the patches of tone on open ground. */
       airfieldBoundaryOpacity: 0.7, paddockOpacity: 0.9,
-      patch: { rx: [60, 150], ry: [40, 90], lobes: 9, jitter: 0.22, darkOpacity: 0.75, lightOpacity: 0.6, seaOpacity: 0.28 },
+      patch: { rx: [60, 150], ry: [40, 90], seaRx: [120, 260], seaRy: [60, 120], lobes: 9, jitter: 0.22, darkOpacity: 0.75, lightOpacity: 0.6, seaOpacity: 0.28 },
       stand: { down: 36, length: 22, barAt: 14, barHalf: 11 },
       holdShort: { half: 13, gap: 4, dash: '4 3', dashAt: 9, dashGap: 4, fromEnd: 30 },
       /* Three ripples on a pond or waterhole: start x and y from its centre, then the curve's control and end offsets. */
@@ -1858,7 +1858,7 @@ h1,h2,h3,h4,p{margin:0}
   function islandScene() {
     var S = Scene(4711), p, rng = rnd(99);
     S.lawn('water-500');
-    for (var i = 0; i < 14; i++) S.raw('<path ' + k('water-700', '', 0, 'opacity="' + METRICS.ground.patch.seaOpacity + '"') + ' d="' + smooth(organic(S.R(0, 1920), S.R(0, 1080), S.R(120, 260), S.R(60, 120), 9, rng, 0.2)) + '"/>');
+    for (var i = 0; i < 14; i++) S.raw('<path ' + k('water-700', '', 0, 'opacity="' + METRICS.ground.patch.seaOpacity + '"') + ' d="' + smooth(organic(S.R(0, 1920), S.R(0, 1080), S.R(METRICS.ground.patch.seaRx[0], METRICS.ground.patch.seaRx[1]), S.R(METRICS.ground.patch.seaRy[0], METRICS.ground.patch.seaRy[1]), 9, rng, 0.2)) + '"/>');
     var isle = organic(960, 560, 640, 350, 14, rnd(31), 0.1), d = smooth(isle);
     function shrink(f) { return smooth(isle.map(function (q) { return [960 + (q[0] - 960) * f, 560 + (q[1] - 560) * f]; })); }
     S.raw('<path ' + k('', 'foam', 26, 'opacity="0.55"') + ' d="' + d + '"/><path ' + k('water-300', 'water-300', 2 * METRICS.ground.island.shallows) + ' d="' + d + '"/><path ' + k('sand-300', 'sand-500', METRICS.ground.island.sandEdge) + ' d="' + d + '"/><path ' + k('grass-500', 'grass-700', METRICS.ground.island.grassEdge) + ' d="' + shrink(0.86) + '"/>');

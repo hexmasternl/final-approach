@@ -258,6 +258,16 @@ internal val scenerySprites: Map<SceneryKind, ScenerySprite> = mapOf(
     SceneryKind.Elephant to ScenerySprite.Elephant,
 )
 
+/** Draws one tree, palm, bush or rock of a wood, upright, at its sprite's natural size times its scale. */
+internal fun DrawScope.drawTree(tree: DecorationTree, viewport: WorldViewport, colors: FaColors) {
+    drawScenerySprite(tree.sprite, viewport.offsetOf(tree.position), viewport.px(tree.sprite.width * tree.scale.toDouble()), viewport.px(tree.sprite.height * tree.scale.toDouble()), 0f, colors)
+}
+
+/** Draws the shadow of one tree of a wood, opaque in [color], for the shadow layer. */
+internal fun DrawScope.drawTreeShadow(tree: DecorationTree, viewport: WorldViewport, color: Color) {
+    drawSceneryShadowAt(tree.sprite, viewport.offsetOf(tree.position), viewport.px(tree.sprite.width * tree.scale.toDouble()), viewport.px(tree.sprite.height * tree.scale.toDouble()), 0f, color)
+}
+
 /** How a row kind is laid out: the sprite of one piece, how far pieces overlap, how far they stagger. */
 private class RowSpec(val sprite: ScenerySprite, val overlap: Float = 0f, val stagger: Float = 0f)
 
