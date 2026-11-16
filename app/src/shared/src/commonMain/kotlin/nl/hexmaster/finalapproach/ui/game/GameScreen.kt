@@ -423,6 +423,6 @@ private fun DrawScope.drawSelection(state: GameState, engine: GameEngine, viewpo
         colors.selectRing,
         radius,
         viewport.offsetOf(selected.position),
-        style = Stroke(width = FaDimens.line3.toPx()),
+        style = Stroke(width = FaDimens.lineHero.toPx()),
     )
 }

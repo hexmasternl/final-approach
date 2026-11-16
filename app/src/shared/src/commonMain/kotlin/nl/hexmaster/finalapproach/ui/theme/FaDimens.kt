@@ -56,6 +56,11 @@ object FaDimens {
     val pathDot = 12.dp
     val warnRingDash = 10.dp
     val warnRingGap = 8.dp
+    val warnRingStroke = 3.dp
+    val warnRingCasing = 6.dp
+    val demoPathStroke = 6.dp
+    val demoPathRim = 4.dp
+    val highlightStroke = 4.dp
 
     // Sizes
     val touchMin = 48.dp
