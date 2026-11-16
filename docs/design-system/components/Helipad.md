@@ -14,4 +14,4 @@ The landing rule is distance-based: the path end must fall within the disc's rad
 
 **Don't** outline the pad, and don't put scenery or detail on the pad or its fringe.
 
-**Compose.** The app's helipad is drawn in `ui/game/AirfieldDrawing.kt` and still renders version 1 until the app's world is ported.
+**Compose.** `drawHelipad` in `ui/game/AirfieldDrawing.kt` draws the fringe, pad, joints, corner lights, disc, rings and the H as paths, in world units, from the generated `GroundMetrics.Helipad` (`ui/sprites/GroundMetrics.kt`) and `FaColors`. The level's helipad radius scales the whole pad (the design system's disc is 56 units in radius).
