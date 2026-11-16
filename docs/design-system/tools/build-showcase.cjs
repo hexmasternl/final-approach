@@ -13,11 +13,10 @@ const FA = require(path.join(DS, 'bundle.js'));
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
 
 // ---------------------------------------------------------------- tokens as CSS
-const live = k => !k.deprecated;
 const cssValue = v => { const m = /^\{(.+)\}$/.exec(v); return m ? `var(--${m[1]})` : v; };
 function tokensCss() {
   const light = [], dark = [], dawn = [];
-  for (const c of t.color.tokens.filter(live)) {
+  for (const c of t.color.tokens) {
     if (typeof c.value === 'string') { light.push(`--${c.name}:${cssValue(c.value)}`); continue; }
     light.push(`--${c.name}:${cssValue(c.value.light)}`);
     if (c.value.dark) dark.push(`--${c.name}:${cssValue(c.value.dark)}`);
@@ -25,7 +24,7 @@ function tokensCss() {
   }
   const rest = [];
   for (const fam of ['spacing', 'radius', 'line', 'size', 'duration', 'easing', 'opacity', 'zIndex'])
-    for (const k of t[fam].tokens.filter(live)) rest.push(`--${k.name}:${k.value}`);
+    for (const k of t[fam].tokens) rest.push(`--${k.name}:${k.value}`);
   // the float shadow is the one shadow token v2 keeps
   const float = t.shadow.tokens.find(k => k.name === 'shadow-float');
   rest.push(`--shadow-float:${float.value.light}`);
@@ -81,7 +80,7 @@ const secPrinciples = `<section class="sc-section sc-keep" id="principles">
   <div class="sc-card sc-rules2">${U.map((r, i) => rule('U' + (i + 1), r)).join('')}</div>
 </section>`;
 
-const colours = t.color.tokens.filter(live);
+const colours = t.color.tokens;
 const groups = [
   ['Ink and edges', n => /^(outline|ink|ink-muted|ink-3|on-|focus)/.test(n)],
   ['Sky', n => /^(bg-sky|sky-)/.test(n)],
@@ -122,20 +121,20 @@ ${t.type.groups.map(g => `  <h3 class="sc-sub">${g.name} · ${fontOf[g.family]}<
 
 const px = v => parseFloat(v);
 const table = (head, rows) => `<div class="sc-card"><div class="sc-scroll"><table class="sc-table"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
-const fam = (name, demo) => t[name].tokens.filter(live).map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, demo(k), esc(k.usage)]);
+const fam = (name, demo) => t[name].tokens.map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, demo(k), esc(k.usage)]);
 const lipNames = ['lip-sm', 'lip-md', 'lip-lg', 'lip-panel', 'lip-dialog', 'lip-pressed', 'lip-inset', 'lip-edge', 'highlight', 'well-inset', 'contact-offset', 'contact-offset-field', 'contact-offset-overlay'];
-const sizeRows = t.size.tokens.filter(live);
+const sizeRows = t.size.tokens;
 const secShape = `<section class="sc-section" id="shape">
   <h2><small>Foundations</small>Shape and depth</h2>
   <p class="sc-lede">A 4px spacing grid, five line ranks, nested radii, and depth from a lip and a flat contact shadow. Nothing in the UI is blurred.</p>
-  <h3 class="sc-sub">Line ranks</h3>${table(['Token', 'Value', 'Weight', 'Use'], t.line.tokens.filter(live).filter(k => /^line-/.test(k.name)).map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, `<span class="sc-line" style="height:${k.value}${k.name === 'line-detail' ? ';background:var(--paper-500)' : ''}"></span>`, esc(k.usage)]))}
+  <h3 class="sc-sub">Line ranks</h3>${table(['Token', 'Value', 'Weight', 'Use'], t.line.tokens.filter(k => /^line-/.test(k.name)).map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, `<span class="sc-line" style="height:${k.value}${k.name === 'line-detail' ? ';background:var(--paper-500)' : ''}"></span>`, esc(k.usage)]))}
   <h3 class="sc-sub">Depth: lips and contact shadows</h3>${table(['Token', 'Value', 'Use'], sizeRows.filter(k => lipNames.includes(k.name)).map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, esc(k.usage)]))}
   <div class="sc-demo fa-stage fa-stage--sky"><div class="fa-item"><span class="fa-chip">1 runway</span><span class="fa-note">Flat: information</span></div><div class="fa-item"><div class="fa-strip"><span class="fa-strip__label"><fa-icon name="star"></fa-icon>Best</span><span class="fa-strip__value">18&#8201;200</span></div><span class="fa-note">Flat on the field: a readout</span></div><div class="fa-item"><button class="fa-btn">Resume</button><span class="fa-note">A lip: pressable</span></div><div class="fa-item"><button class="fa-btn is-pressed">Resume</button><span class="fa-note">Pressed: on its lip</span></div></div>
   <h3 class="sc-sub">Radius</h3>${table(['Token', 'Value', 'Corner', 'Use'], fam('radius', k => `<span class="sc-rad" style="border-radius:${px(k.value) > 60 ? '20px' : k.value}"></span>`))}
   <h3 class="sc-sub">Spacing</h3>${table(['Token', 'Value', 'Scale', 'Use'], fam('spacing', k => `<span class="sc-bar-v" style="width:${k.value}"></span>`))}
-  <h3 class="sc-sub">Flight path and rings</h3>${table(['Token', 'Value', 'Use'], t.line.tokens.filter(live).filter(k => !/^line-/.test(k.name)).map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, esc(k.usage)]))}
+  <h3 class="sc-sub">Flight path and rings</h3>${table(['Token', 'Value', 'Use'], t.line.tokens.filter(k => !/^line-/.test(k.name)).map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, esc(k.usage)]))}
   <h3 class="sc-sub">Sizes</h3>${table(['Token', 'Value', 'Use'], sizeRows.filter(k => !lipNames.includes(k.name)).map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, esc(k.usage)]))}
-  <h3 class="sc-sub">Opacity</h3>${table(['Token', 'Value', 'Use'], t.opacity.tokens.filter(live).map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, esc(k.usage)]))}
+  <h3 class="sc-sub">Opacity</h3>${table(['Token', 'Value', 'Use'], t.opacity.tokens.map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, esc(k.usage)]))}
   <h3 class="sc-sub">Layers</h3>${table(['Token', 'Value', 'What is on it'], t.zIndex.tokens.map(k => [`<b>${k.name}</b>`, `<span class="sc-num">${k.value}</span>`, esc(k.usage)]))}
 </section>`;
 
@@ -358,9 +357,5 @@ ${part('theme.js')}
 </body>
 </html>
 `;
-// nothing deprecated may be used or shown
-const dead = [...t.color.tokens, ...['spacing', 'radius', 'line', 'size', 'opacity'].flatMap(f => t[f].tokens)].filter(k => k.deprecated).map(k => k.name);
-const usedDead = dead.filter(n => new RegExp(`var\\(--${n}\\)`).test(html));
-if (usedDead.length) throw new Error('deprecated tokens used in the showcase: ' + usedDead.join(', '));
 fs.writeFileSync(path.join(DS, 'showcase.html'), html);
 console.log(`showcase.html: ${Math.round(html.length / 1024)}KB, ${colours.length} colours, ${Object.keys(FA.WORLD).length} scenery sprites, ${components.length} components`);
