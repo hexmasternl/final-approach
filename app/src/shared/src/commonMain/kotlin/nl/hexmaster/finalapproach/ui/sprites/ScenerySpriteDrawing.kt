@@ -198,3 +198,30 @@ internal fun DrawScope.drawSceneryRow(
         }
     }
 }
+
+private class BakedShadow(val path: Path, val strokeWidth: Float)
+
+private val bakedShadows = HashMap<ScenerySprite, List<BakedShadow>>()
+
+private val ScenerySprite.bakedShadow: List<BakedShadow>
+    get() = bakedShadows.getOrPut(this) {
+        shadow.map { s ->
+            val m = s.matrix?.let(::affineOf)
+            BakedShadow(transformed(parsePath(s.pathData), m), s.strokeWidth * (m?.lengthScale() ?: 1f))
+        }
+    }
+
+/**
+ * Draws the cast shadow silhouette of [sprite] in [color], in the sprite's own units around the
+ * current origin and moved by the sprite's throw. Every shape is opaque, so the caller puts them
+ * in one alpha layer and overlapping shadows do not darken twice. Flat sprites have no shadow.
+ */
+internal fun DrawScope.drawSceneryShadow(sprite: ScenerySprite, color: Color) {
+    if (sprite.shadow.isEmpty()) return
+    withTransform({ translate(sprite.shadowX, sprite.shadowY) }) {
+        for (s in sprite.bakedShadow) {
+            if (s.strokeWidth > 0f) drawPath(s.path, color, style = Stroke(s.strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round))
+            else drawPath(s.path, color)
+        }
+    }
+}

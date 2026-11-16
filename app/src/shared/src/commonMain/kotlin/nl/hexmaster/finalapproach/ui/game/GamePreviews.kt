@@ -14,6 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,9 +36,12 @@ import nl.hexmaster.finalapproach.ui.components.FaScoreCounter
 import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
+import nl.hexmaster.finalapproach.ui.sprites.bounds
+import nl.hexmaster.finalapproach.ui.sprites.drawSceneryShadow
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaMotion
+import nl.hexmaster.finalapproach.ui.theme.FaOpacity
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** Sample data for the previews: a run part way through a level. Not used by the game. */
@@ -47,7 +54,7 @@ private object PreviewData {
     const val AMBIENT_STEP = 0.05
     const val PHONE_WIDTH = 800
     const val PHONE_HEIGHT = 380
-    const val SHEET_HEIGHT = 520
+    const val SHEET_HEIGHT = 900
     const val SMALL_PHONE_WIDTH = 640
     const val SMALL_PHONE_HEIGHT = 360
     const val PORTRAIT_WIDTH = 360
@@ -123,7 +130,11 @@ private fun SavannaDayPreview() = FieldPreview(Levels.savannaDawn, LevelTheme.Da
 @Composable
 private fun SavannaNightPreview() = FieldPreview(Levels.savannaDawn, LevelTheme.Night)
 
-/** Every scenery sprite at its grid size on the lawn, to hold beside the SVGs of the design system. */
+/**
+ * Every scenery sprite of the design system on the lawn, each at its natural size with its hard
+ * cast shadow, to hold beside the tiles of the showcase. Windows are glass by day and lit at
+ * night and at dawn.
+ */
 @Composable
 private fun ScenerySheet(theme: LevelTheme) {
     FaTheme(night = theme == LevelTheme.Night, dawn = theme == LevelTheme.Dawn) {
@@ -134,21 +145,38 @@ private fun ScenerySheet(theme: LevelTheme) {
             var x = gap
             var y = gap
             var rowHeight = 0f
-            for (sprite in ScenerySprite.entries) {
-                val width = sprite.width.dp.toPx()
-                val height = sprite.height.dp.toPx()
+            val tiles = ScenerySprite.entries.map { it to it.bounds }
+            // Flat things first would hide under standing ones; the sheet keeps the design system's order.
+            for ((sprite, bounds) in tiles) {
+                val width = maxOf(bounds.width, sprite.width).dp.toPx()
+                val height = maxOf(bounds.height, sprite.height).dp.toPx()
                 if (x + width + gap > size.width) {
                     x = gap
                     y += rowHeight + gap
                     rowHeight = 0f
                 }
-                drawScenerySprite(sprite, Offset(x + width / 2f, y + height / 2f), width, height, 0f, colors)
+                val center = Offset(x + width / 2f, y + height / 2f)
+                val scale = 1.dp.toPx()
+                withTransform({
+                    translate(center.x, center.y)
+                    scale(scale, scale, Offset.Zero)
+                    translate(-bounds.center.x, -bounds.center.y)
+                }) {
+                    drawIntoCanvas { canvas ->
+                        canvas.saveLayer(Rect(-SHEET_EXTENT, -SHEET_EXTENT, SHEET_EXTENT, SHEET_EXTENT), Paint().apply { alpha = FaOpacity.shadowCast })
+                        drawSceneryShadow(sprite, colors.shadowCast)
+                        canvas.restore()
+                    }
+                }
+                drawScenerySprite(sprite, center, bounds.width * scale, bounds.height * scale, 0f, colors)
                 x += width + gap
                 rowHeight = maxOf(rowHeight, height)
             }
         }
     }
 }
+
+private const val SHEET_EXTENT = 400f
 
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.SHEET_HEIGHT)
 @Composable
@@ -157,6 +185,10 @@ private fun ScenerySheetDayPreview() = ScenerySheet(LevelTheme.Day)
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.SHEET_HEIGHT)
 @Composable
 private fun ScenerySheetNightPreview() = ScenerySheet(LevelTheme.Night)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.SHEET_HEIGHT)
+@Composable
+private fun ScenerySheetDawnPreview() = ScenerySheet(LevelTheme.Dawn)
 
 /** The HUD over the field it sits on, with the counts of a run part way through. */
 @Composable
