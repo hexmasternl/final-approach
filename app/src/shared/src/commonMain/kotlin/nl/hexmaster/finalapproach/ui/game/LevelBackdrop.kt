@@ -2,9 +2,13 @@ package nl.hexmaster.finalapproach.ui.game
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -16,6 +20,7 @@ import nl.hexmaster.finalapproach.domain.LevelScenery
 import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.RunwayConfig
 import nl.hexmaster.finalapproach.domain.SceneryDefaults
+import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.input.WorldViewport
@@ -26,9 +31,12 @@ import nl.hexmaster.finalapproach.ui.game.ambient.LevelAmbienceConfig
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.drawLawn
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRow
+import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRowShadows
+import nl.hexmaster.finalapproach.ui.sprites.drawSceneryShadowAt
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaLights
+import nl.hexmaster.finalapproach.ui.theme.FaOpacity
 
 /** Sizes of the lights of a Dawn level, in world units, and how the running light fades. */
 private object Backdrop {
@@ -43,8 +51,9 @@ private object Backdrop {
 }
 
 /**
- * The field layer of a level, everything below the zone glows and aircraft: ground, flat
- * scenery, runways, helipads, standing scenery and the ambient life, in that order.
+ * The field layer of a level, everything below the zone glows and aircraft, in the order of
+ * Ground.md: flat ground, flat scenery, helipads and runways, then the one layer of hard
+ * shadows, then everything with height from north to south, then the ambient life.
  */
 internal fun DrawScope.drawField(
     level: LevelConfig,
@@ -57,13 +66,37 @@ internal fun DrawScope.drawField(
 ) {
     val lines = groundLines(viewport.px(WORLD_UNIT))
     drawLevelGround(level, viewport, colors, lines)
-    val (ground, standing) = level.scenery.partition { it.isGround }
-    ground.filter { it.kind == SceneryKind.Road }.forEach { drawRoadEdge(it, level.landscape, viewport, colors, lines) }
-    ground.forEach { drawScenery(it, level.landscape, viewport, colors, lines) }
+    val (flat, raised) = level.scenery.partition { it.drawsOnGround }
+    flat.filter { it.kind == SceneryKind.Road }.forEach { drawRoadEdge(it, level.landscape, viewport, colors, lines) }
+    flat.forEach { drawScenery(it, level.landscape, viewport, colors, lines) }
     level.runways.forEach { drawRunway(it, viewport, colors, measurer, numberStyle) }
     level.helipads.forEach { drawHelipad(it, viewport, colors, measurer, letterStyle) }
-    standing.forEach { drawScenery(it, level.landscape, viewport, colors, lines) }
+    drawShadowLayer(level, raised, ambient, viewport, colors)
+    raised.sortedBy { it.position.y }.forEach { drawScenery(it, level.landscape, viewport, colors, lines) }
+    level.paddock?.let { drawPaddockFence(it, viewport, colors) }
     drawAmbient(level, ambient, viewport, colors, lines)
+}
+
+/**
+ * The one layer of hard ground shadows: the shadow of everything with height, scenery and
+ * ambient life alike, each filled opaque in `shadow-cast` inside one layer that is faded as a
+ * whole at `opacity-shadow-cast`. Overlapping shadows therefore do not darken twice. Flat
+ * sprites (waves, wakes, crop tiles) cast none.
+ */
+private fun DrawScope.drawShadowLayer(
+    level: LevelConfig,
+    raised: List<SceneryItem>,
+    ambient: AmbientLife,
+    viewport: WorldViewport,
+    colors: FaColors,
+) {
+    drawIntoCanvas { canvas ->
+        canvas.saveLayer(Rect(Offset.Zero, size), Paint().apply { alpha = FaOpacity.shadowCast })
+        raised.forEach { drawSceneryItemShadow(it, viewport, colors.shadowCast) }
+        level.paddock?.let { paddock -> paddockFence(paddock, viewport).forEach { it.shadow(this, colors.shadowCast) } }
+        drawAmbientShadows(ambient, viewport, colors.shadowCast)
+        canvas.restore()
+    }
 }
 
 /** One world unit, to ask the viewport how many pixels it is. */
@@ -74,7 +107,7 @@ internal fun DrawScope.drawLevelGround(level: LevelConfig, viewport: WorldViewpo
     when (level.landscape) {
         LevelScenery.Meadow -> {
             drawLawn(GameScreenDefaults.lawnStripe.toPx(), colors)
-            level.paddock?.let { drawPaddock(it, viewport, colors, lines) }
+            level.paddock?.let { drawPaddockGround(it, viewport, colors) }
         }
 
         LevelScenery.Island -> {
@@ -118,21 +151,33 @@ private fun DrawScope.drawWaves(island: Island, viewport: WorldViewport, colors:
 
 private fun sceneryOutline(lines: GroundLines) = Stroke(lines.outline, cap = StrokeCap.Round, join = StrokeJoin.Round)
 
-/** The paddock: lighter grass inside a fence drawn piece by piece along its four sides. */
-private fun DrawScope.drawPaddock(paddock: Bounds, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
+/** The paddock ground: lighter grass. Its fence stands, so it is drawn with the standing scenery. */
+private fun DrawScope.drawPaddockGround(paddock: Bounds, viewport: WorldViewport, colors: FaColors) {
+    val topLeft = viewport.offsetOf(Vec2(paddock.left, paddock.top))
+    drawRect(colors.grass300, topLeft, Size(viewport.px(paddock.width), viewport.px(paddock.height)))
+}
+
+/** One side of the paddock fence: a row of fence pieces along a strip. */
+private class FenceSide(val center: Offset, val lengthPx: Float, val widthPx: Float, val degrees: Float) {
+    fun draw(scope: DrawScope, colors: FaColors) =
+        scope.drawSceneryRow(ScenerySprite.Fence, center, widthPx, lengthPx, degrees, colors)
+
+    fun shadow(scope: DrawScope, color: Color) =
+        scope.drawSceneryRowShadows(ScenerySprite.Fence, center, widthPx, lengthPx, degrees, color)
+}
+
+/** The four sides of the fence around [paddock]: the two that run north to south, then the two west to east. */
+private fun paddockFence(paddock: Bounds, viewport: WorldViewport): List<FenceSide> {
     val topLeft = viewport.offsetOf(Vec2(paddock.left, paddock.top))
     val size = Size(viewport.px(paddock.width), viewport.px(paddock.height))
-    drawRect(colors.grass300, topLeft, size)
     val fence = viewport.px(ScenerySprite.Fence.width.toDouble())
     val middle = Offset(topLeft.x + size.width / 2f, topLeft.y + size.height / 2f)
-    // The two sides that run north to south, then the two that run west to east.
-    for (x in listOf(topLeft.x, topLeft.x + size.width)) {
-        drawSceneryRow(ScenerySprite.Fence, Offset(x, middle.y), fence, size.height, 0f, colors)
-    }
-    for (y in listOf(topLeft.y, topLeft.y + size.height)) {
-        drawSceneryRow(ScenerySprite.Fence, Offset(middle.x, y), fence, size.width, Backdrop.QUARTER_TURN_DEGREES, colors)
-    }
+    return listOf(topLeft.x, topLeft.x + size.width).map { FenceSide(Offset(it, middle.y), size.height, fence, 0f) } +
+        listOf(topLeft.y, topLeft.y + size.height).map { FenceSide(Offset(middle.x, it), size.width, fence, Backdrop.QUARTER_TURN_DEGREES) }
 }
+
+private fun DrawScope.drawPaddockFence(paddock: Bounds, viewport: WorldViewport, colors: FaColors) =
+    paddockFence(paddock, viewport).forEach { it.draw(this, colors) }
 
 /**
  * The moving and glowing details of a level: cows and farmer, the flock, boats with their wake,
@@ -174,13 +219,34 @@ internal fun DrawScope.drawAmbient(
     }
 }
 
+/** The shadows of the ambient life that casts one: cows, the farmer, boats and the flock. */
+private fun DrawScope.drawAmbientShadows(life: AmbientLife, viewport: WorldViewport, color: Color) {
+    val ambience = life.config
+    life.cows.forEach { cow ->
+        drawSceneryShadowAt(ScenerySprite.Cow, viewport.offsetOf(cow.position), viewport.px(ambience.cowWidth), viewport.px(ambience.cowLength), degreesOf(cow.heading), color)
+    }
+    life.farmer?.let {
+        drawSceneryShadowAt(ScenerySprite.Farmer, viewport.offsetOf(it), viewport.px(ambience.farmerWidth), viewport.px(ambience.farmerLength), 0f, color)
+    }
+    life.boat?.let { boat ->
+        val sprite = boatSprite(boat.kind)
+        drawSceneryShadowAt(sprite, viewport.offsetOf(boat.position), viewport.px(boat.kind.beam), viewport.px(boat.kind.length), boat.direction.toFloat() * Backdrop.QUARTER_TURN_DEGREES, color)
+    }
+    val bird = if (life.wingsOut) ScenerySprite.BirdUp else ScenerySprite.BirdDown
+    life.flock.forEach {
+        drawSceneryShadowAt(bird, viewport.offsetOf(it), viewport.px(ambience.birdSpan), viewport.px(ambience.birdLength), degreesOf(life.flockHeading), color)
+    }
+}
+
+private fun boatSprite(kind: BoatKind): ScenerySprite = when (kind) {
+    BoatKind.Sailboat -> ScenerySprite.Sailboat
+    BoatKind.Yacht -> ScenerySprite.Yacht
+    BoatKind.ContainerVessel -> ScenerySprite.ContainerVessel
+}
+
 /** A boat with its deck, and behind it the wake it leaves in its direction of travel. */
 private fun DrawScope.drawBoat(boat: Boat, ambience: LevelAmbienceConfig, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
-    val sprite = when (boat.kind) {
-        BoatKind.Sailboat -> ScenerySprite.Sailboat
-        BoatKind.Yacht -> ScenerySprite.Yacht
-        BoatKind.ContainerVessel -> ScenerySprite.ContainerVessel
-    }
+    val sprite = boatSprite(boat.kind)
     val heading = boat.direction.toFloat() * Backdrop.QUARTER_TURN_DEGREES
     val wakeLength = ambience.wakeLength(boat.kind)
     // The wake starts at the stern and trails away from the bow.

@@ -27,7 +27,10 @@ import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
+import nl.hexmaster.finalapproach.ui.sprites.SceneryTier
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRow
+import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRowShadows
+import nl.hexmaster.finalapproach.ui.sprites.drawSceneryShadowAt
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
@@ -227,6 +230,39 @@ internal val scenerySprites: Map<SceneryKind, ScenerySprite> = mapOf(
     SceneryKind.Elephant to ScenerySprite.Elephant,
 )
 
+/** How a row kind is laid out: the sprite of one piece, how far pieces overlap, how far they stagger. */
+private class RowSpec(val sprite: ScenerySprite, val overlap: Float = 0f, val stagger: Float = 0f)
+
+private val sceneryRows: Map<SceneryKind, RowSpec> = mapOf(
+    SceneryKind.Hedge to RowSpec(ScenerySprite.Hedge),
+    SceneryKind.Fence to RowSpec(ScenerySprite.Fence),
+    SceneryKind.ForestEdge to RowSpec(
+        ScenerySprite.Tree,
+        overlap = SceneryDefaults.FOREST_OVERLAP.toFloat(),
+        stagger = SceneryDefaults.FOREST_STAGGER.toFloat(),
+    ),
+)
+
+/**
+ * True for scenery that lies flat and is drawn in the ground pass: a sprite of the flat tier, or
+ * a kind without a sprite that the domain marks as ground (road, field, water, slabs). Everything
+ * else has height: it casts a shadow and is drawn after the shadow layer, from north to south.
+ */
+internal val SceneryItem.drawsOnGround: Boolean
+    get() = scenerySprites[kind]?.let { it.tier == SceneryTier.Flat } ?: kind.ground
+
+/** Draws the shadow of one piece of scenery with height, opaque in [color], for the shadow layer. */
+internal fun DrawScope.drawSceneryItemShadow(item: SceneryItem, viewport: WorldViewport, color: Color) {
+    val center = viewport.offsetOf(item.position)
+    val widthPx = viewport.px(item.width)
+    val lengthPx = viewport.px(item.height)
+    val degrees = degreesOf(item.rotation)
+    scenerySprites[item.kind]?.let { drawSceneryShadowAt(it, center, widthPx, lengthPx, degrees, color) }
+    sceneryRows[item.kind]?.let {
+        drawSceneryRowShadows(it.sprite, center, widthPx, lengthPx, degrees, color, it.overlap, it.stagger)
+    }
+}
+
 private fun sceneryStroke(width: Float) = Stroke(width = width, cap = StrokeCap.Round, join = StrokeJoin.Round)
 
 /**
@@ -250,20 +286,12 @@ internal fun DrawScope.drawScenery(
         drawScenerySprite(sprite, center, widthPx, lengthPx, degrees, colors)
         return
     }
+    val row = sceneryRows[item.kind]
+    if (row != null) {
+        drawSceneryRow(row.sprite, center, widthPx, lengthPx, degrees, colors, row.overlap, row.stagger)
+        return
+    }
     when (item.kind) {
-        SceneryKind.Hedge -> drawSceneryRow(ScenerySprite.Hedge, center, widthPx, lengthPx, degrees, colors)
-        SceneryKind.Fence -> drawSceneryRow(ScenerySprite.Fence, center, widthPx, lengthPx, degrees, colors)
-        SceneryKind.ForestEdge -> drawSceneryRow(
-            ScenerySprite.Tree,
-            center,
-            widthPx,
-            lengthPx,
-            degrees,
-            colors,
-            overlap = SceneryDefaults.FOREST_OVERLAP.toFloat(),
-            stagger = SceneryDefaults.FOREST_STAGGER.toFloat(),
-        )
-
         else -> inFrame(center, item.rotation, widthPx, lengthPx) { rect ->
             when (item.kind) {
                 SceneryKind.Taxiway -> slab(rect, colors.asphalt500, colors, lines)

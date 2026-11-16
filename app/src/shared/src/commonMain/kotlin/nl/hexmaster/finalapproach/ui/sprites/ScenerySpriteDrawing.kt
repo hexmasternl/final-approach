@@ -11,10 +11,13 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
 import nl.hexmaster.finalapproach.ui.theme.FaColors
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
@@ -144,8 +147,7 @@ internal fun DrawScope.drawScenerySprite(
     colors: FaColors,
 ) {
     val bounds = sprite.bounds
-    if (bounds.width <= 0f || bounds.height <= 0f) return
-    val scale = min(widthPx / bounds.width, lengthPx / bounds.height)
+    val scale = spriteScale(sprite, widthPx, lengthPx)
     if (scale <= 0f) return
     withTransform({
         translate(center.x, center.y)
@@ -157,9 +159,23 @@ internal fun DrawScope.drawScenerySprite(
     }
 }
 
+/** The scale at which the own shapes of [sprite] fit [widthPx] by [lengthPx]; 0 when it has no size. */
+internal fun spriteScale(sprite: ScenerySprite, widthPx: Float, lengthPx: Float): Float =
+    fitScale(sprite.bounds.width, sprite.bounds.height, widthPx, lengthPx)
+
+/** The scale at which shapes of [boundsWidth] by [boundsHeight] fit [widthPx] by [lengthPx]; 0 when they have no size. */
+internal fun fitScale(boundsWidth: Float, boundsHeight: Float, widthPx: Float, lengthPx: Float): Float {
+    if (boundsWidth <= 0f || boundsHeight <= 0f) return 0f
+    return min(widthPx / boundsWidth, lengthPx / boundsHeight)
+}
+
+/** One piece of a row: where its middle goes, in pixels, and the room it is fitted into. */
+internal class RowPiece(val center: Offset, val widthPx: Float, val lengthPx: Float)
+
 /**
- * Draws [sprite] piece after piece along a strip: a hedge, a fence, a forest edge. The pieces
- * are spread evenly over the length, so the row starts and ends on a whole piece.
+ * The pieces of a row of [sprite]: a hedge, a fence, a forest edge. The pieces are spread evenly
+ * over the length, so the row starts and ends on a whole piece. They are listed from the far end
+ * towards the front, in the order they are drawn, so each piece lies over the one behind it.
  *
  * @param center middle of the strip, in pixels
  * @param widthPx width of the strip; one piece is this wide, less twice the [stagger]
@@ -167,6 +183,50 @@ internal fun DrawScope.drawScenerySprite(
  * @param overlap how far a piece overlaps the one before it, as a fraction of its length
  * @param stagger how far pieces step aside, to the left and to the right in turn, as a fraction
  *   of the strip's width
+ */
+internal fun sceneryRowPieces(
+    sprite: ScenerySprite,
+    center: Offset,
+    widthPx: Float,
+    lengthPx: Float,
+    rotationDegrees: Float,
+    overlap: Float = 0f,
+    stagger: Float = 0f,
+): List<RowPiece> = rowPieces(sprite.bounds.width, sprite.bounds.height, center, widthPx, lengthPx, rotationDegrees, overlap, stagger)
+
+/** [sceneryRowPieces] for a piece whose shapes are [boundsWidth] by [boundsHeight]. */
+internal fun rowPieces(
+    boundsWidth: Float,
+    boundsHeight: Float,
+    center: Offset,
+    widthPx: Float,
+    lengthPx: Float,
+    rotationDegrees: Float,
+    overlap: Float = 0f,
+    stagger: Float = 0f,
+): List<RowPiece> {
+    if (boundsWidth <= 0f) return emptyList()
+    val pieceWidth = widthPx * (1f - 2f * stagger)
+    val pieceLength = pieceWidth * boundsHeight / boundsWidth
+    val pitch = pieceLength * (1f - overlap)
+    if (pitch <= 0f) return emptyList()
+    val count = max(1, ((lengthPx - pieceLength) / pitch).roundToInt() + 1)
+    val step = if (count > 1) (lengthPx - pieceLength) / (count - 1) else 0f
+    val first = -(count - 1) * step / 2f
+    val radians = rotationDegrees * PI.toFloat() / HALF_TURN_DEGREES
+    val sin = sin(radians)
+    val cos = cos(radians)
+    return (count - 1 downTo 0).map { i ->
+        val aside = if (stagger == 0f) 0f else widthPx * stagger * (if (i % 2 == 0) -1f else 1f)
+        val along = first + i * step
+        // The strip is turned about its middle; the pieces keep their own facing.
+        RowPiece(Offset(center.x + aside * cos - along * sin, center.y + aside * sin + along * cos), pieceWidth, pieceLength)
+    }
+}
+
+/**
+ * Draws [sprite] piece after piece along a strip, as laid out by [sceneryRowPieces]. A piece of a
+ * sprite that stands never turns with the strip, only its place does.
  */
 internal fun DrawScope.drawSceneryRow(
     sprite: ScenerySprite,
@@ -178,24 +238,8 @@ internal fun DrawScope.drawSceneryRow(
     overlap: Float = 0f,
     stagger: Float = 0f,
 ) {
-    val bounds = sprite.bounds
-    if (bounds.width <= 0f) return
-    val pieceWidth = widthPx * (1f - 2f * stagger)
-    val pieceLength = pieceWidth * bounds.height / bounds.width
-    val pitch = pieceLength * (1f - overlap)
-    if (pitch <= 0f) return
-    val count = max(1, ((lengthPx - pieceLength) / pitch).roundToInt() + 1)
-    val step = if (count > 1) (lengthPx - pieceLength) / (count - 1) else 0f
-    val first = -(count - 1) * step / 2f
-    withTransform({
-        translate(center.x, center.y)
-        rotate(rotationDegrees, Offset.Zero)
-    }) {
-        // From the far end towards the front, so each piece lies over the one behind it.
-        for (i in count - 1 downTo 0) {
-            val aside = if (stagger == 0f) 0f else widthPx * stagger * (if (i % 2 == 0) -1f else 1f)
-            drawScenerySprite(sprite, Offset(aside, first + i * step), pieceWidth, pieceLength, 0f, colors)
-        }
+    for (piece in sceneryRowPieces(sprite, center, widthPx, lengthPx, rotationDegrees, overlap, stagger)) {
+        drawScenerySprite(sprite, piece.center, piece.widthPx, piece.lengthPx, rotationDegrees, colors)
     }
 }
 
@@ -211,6 +255,14 @@ private val ScenerySprite.bakedShadow: List<BakedShadow>
         }
     }
 
+/** Draws the shadow shapes of [sprite] around the current origin, in its own units, without its throw. */
+private fun DrawScope.drawShadowShapes(sprite: ScenerySprite, color: Color) {
+    for (s in sprite.bakedShadow) {
+        if (s.strokeWidth > 0f) drawPath(s.path, color, style = Stroke(s.strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round))
+        else drawPath(s.path, color)
+    }
+}
+
 /**
  * Draws the cast shadow silhouette of [sprite] in [color], in the sprite's own units around the
  * current origin and moved by the sprite's throw. Every shape is opaque, so the caller puts them
@@ -218,10 +270,59 @@ private val ScenerySprite.bakedShadow: List<BakedShadow>
  */
 internal fun DrawScope.drawSceneryShadow(sprite: ScenerySprite, color: Color) {
     if (sprite.shadow.isEmpty()) return
-    withTransform({ translate(sprite.shadowX, sprite.shadowY) }) {
-        for (s in sprite.bakedShadow) {
-            if (s.strokeWidth > 0f) drawPath(s.path, color, style = Stroke(s.strokeWidth, cap = StrokeCap.Round, join = StrokeJoin.Round))
-            else drawPath(s.path, color)
-        }
+    withTransform({ translate(sprite.shadowX, sprite.shadowY) }) { drawShadowShapes(sprite, color) }
+}
+
+/**
+ * Where the middle of a shadow goes relative to its sprite, in pixels. The throw of the sprite
+ * is scaled with the sprite and applied in screen axes, outside the rotation: the sun is fixed,
+ * so a turned car casts its shadow down and to the right, never turned with it (W1). The
+ * [rotationDegrees] of the sprite is a parameter to make that explicit: it changes nothing.
+ */
+@Suppress("UNUSED_PARAMETER")
+internal fun shadowOffset(sprite: ScenerySprite, scale: Float, rotationDegrees: Float): Offset =
+    Offset(sprite.shadowX * scale, sprite.shadowY * scale)
+
+/**
+ * Draws the shadow of [sprite] placed like [drawScenerySprite] places it: the silhouette follows
+ * the sprite's rotation and scale, and its middle moves by [shadowOffset] in screen axes. Draw
+ * every shadow of a field this way inside one alpha layer, in [color] opaque.
+ */
+internal fun DrawScope.drawSceneryShadowAt(
+    sprite: ScenerySprite,
+    center: Offset,
+    widthPx: Float,
+    lengthPx: Float,
+    rotationDegrees: Float,
+    color: Color,
+) {
+    if (sprite.shadow.isEmpty()) return
+    val bounds = sprite.bounds
+    val scale = spriteScale(sprite, widthPx, lengthPx)
+    if (scale <= 0f) return
+    val moved = center + shadowOffset(sprite, scale, rotationDegrees)
+    withTransform({
+        translate(moved.x, moved.y)
+        if (sprite.rotates) rotate(rotationDegrees, Offset.Zero)
+        scale(scale, scale, Offset.Zero)
+        translate(-bounds.center.x, -bounds.center.y)
+    }) { drawShadowShapes(sprite, color) }
+}
+
+/** The shadows of a row, piece by piece, as [drawSceneryRow] lays them out. */
+internal fun DrawScope.drawSceneryRowShadows(
+    sprite: ScenerySprite,
+    center: Offset,
+    widthPx: Float,
+    lengthPx: Float,
+    rotationDegrees: Float,
+    color: Color,
+    overlap: Float = 0f,
+    stagger: Float = 0f,
+) {
+    for (piece in sceneryRowPieces(sprite, center, widthPx, lengthPx, rotationDegrees, overlap, stagger)) {
+        drawSceneryShadowAt(sprite, piece.center, piece.widthPx, piece.lengthPx, rotationDegrees, color)
     }
 }
+
+private const val HALF_TURN_DEGREES = 180f

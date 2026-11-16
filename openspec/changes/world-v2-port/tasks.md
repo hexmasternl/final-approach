@@ -16,7 +16,7 @@ The visual reference for every task is `docs/design-system/showcase.html` (secti
 
 ## 3. Shadows and rotation
 
-- [ ] 3.1 Add the pure shadow-placement function and the single shadow pass in `drawField` (design Decision 3): one alpha layer in `shadowCast` at `FaOpacity.shadowCast`, between ground and everything with height, which is drawn north to south; verify with a unit test that a sprite rotated by 0, 90 and 180 degrees gets the same shadow offset, and in a preview that two overlapping tree shadows are not darker where they overlap
+- [x] 3.1 Add the pure shadow-placement function and the single shadow pass in `drawField` (design Decision 3): one alpha layer in `shadowCast` at `FaOpacity.shadowCast`, between ground and everything with height, which is drawn north to south; verify with a unit test that a sprite rotated by 0, 90 and 180 degrees gets the same shadow offset, and in a preview that two overlapping tree shadows are not darker where they overlap
 - [x] 3.2 Add `SceneryKind.standing`, the validator rule that a standing item has no rotation, and remove the rotations of buildings and windsocks in `Levels.kt` (design Decision 4); verify with `LevelConfigValidatorTest` cases that pass and fail the rule, a test that `standing` is the opposite of each sprite's `rotates`, and that all three levels still validate
 
 ## 4. Runways and helipads

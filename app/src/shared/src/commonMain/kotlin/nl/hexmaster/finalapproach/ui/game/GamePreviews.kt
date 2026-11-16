@@ -27,6 +27,8 @@ import nl.hexmaster.finalapproach.domain.AircraftType
 import nl.hexmaster.finalapproach.domain.LevelConfig
 import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.Levels
+import nl.hexmaster.finalapproach.domain.SceneryItem
+import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.engine.GameEngine
 import nl.hexmaster.finalapproach.engine.GameOverReason
@@ -71,6 +73,10 @@ private object PreviewData {
     const val COLLISION_X = 900.0
     const val COLLISION_Y = 420.0
     const val COLLISION_HEADING = 1.2
+    const val TREE_X = 1300.0
+    const val TREE_Y = 700.0
+    const val TREE_SIZE = 86.0
+    const val TREE_GAP = 40.0
     const val OTHER_X = 400.0
     const val OTHER_Y = 300.0
 }
@@ -106,6 +112,18 @@ private fun MeadowFieldPreview() = FieldPreview(Levels.meadowField)
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
 @Composable
 private fun IslandAirportPreview() = FieldPreview(Levels.islandAirport)
+
+/** Two trees that overlap: where their shadows meet, the ground must not be darker than under one. */
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun OverlappingTreeShadowsPreview() = FieldPreview(
+    Levels.meadowField.copy(
+        scenery = listOf(
+            SceneryItem(SceneryKind.Tree, Vec2(PreviewData.TREE_X, PreviewData.TREE_Y), PreviewData.TREE_SIZE, PreviewData.TREE_SIZE),
+            SceneryItem(SceneryKind.Tree, Vec2(PreviewData.TREE_X + PreviewData.TREE_GAP, PreviewData.TREE_Y), PreviewData.TREE_SIZE, PreviewData.TREE_SIZE),
+        ),
+    ),
+)
 
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
 @Composable
