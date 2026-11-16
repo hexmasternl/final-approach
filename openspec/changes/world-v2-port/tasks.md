@@ -12,7 +12,7 @@ The visual reference for every task is `docs/design-system/showcase.html` (secti
 - [x] 2.2 Replace the v1 scenery pass of `tools/gen-kotlin.cjs` by one that writes `ui/sprites/ScenerySprites.kt` from `WORLD`, `DETAILS` and the cloud (design Decision 1), and writes the metrics table of 2.1 as a Kotlin object under `ui/sprites`; delete `tools/scenery-v1.js`; verify the generator fails with the sprite's name on a sample sprite with an unknown attribute, that running it twice gives no diff, and that `grep -r scenery-v1` finds nothing outside `openspec/`
 - [x] 2.3 Rewrite `ui/sprites/ScenerySpriteDrawing.kt` for the new data: fills, strokes with their own width, opacity, clip groups, transforms, the non-scaling stroke, and the fit of design Decision 2; remove `SceneryLines`; keep the callers compiling; verify `./gradlew :shared:allTests :androidApp:assembleDebug` passes and the file reads no `line2`, `lineFine` or `radiusSm`
 - [x] 2.4 Update the sprite sheet previews in `GamePreviews.kt` to show every v2 sprite in Day, Night and Dawn; verify each sprite next to its tile in the showcase, and that windows are glass in Day and lit in Night and Dawn
-- [ ] 2.5 Update `docs/design-system/compose.md` and `docs/architecture.md` for the generator: scenery sprite data and ground metrics come from `bundle.js`, no v1 sprite source remains; verify neither file mentions `scenery-v1.js`
+- [x] 2.5 Update `docs/design-system/compose.md` and `docs/architecture.md` for the generator: scenery sprite data and ground metrics come from `bundle.js`, no v1 sprite source remains; verify neither file mentions `scenery-v1.js`
 
 ## 3. Shadows and rotation
 
