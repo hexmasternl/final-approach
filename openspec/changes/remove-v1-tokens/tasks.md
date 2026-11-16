@@ -9,7 +9,7 @@
 ## 2. Remove the tokens
 
 - [x] 2.1 Remove all `deprecated` tokens from `tokens.json`; remove the `dep` helper and the "is a v1 token" guards from `gen-kotlin.cjs`; adjust `check-tokens.cjs`; update the showcase if it lists them. Verify: `node docs/design-system/tools/check-tokens.cjs` passes.
-- [ ] 2.2 Regenerate the theme; reduce `FaShadows` to the float offsets. Verify: no `v1` or `deprecated` in `ui/theme`; `./gradlew :shared:allTests :androidApp:assembleDebug` passes from `app/src`.
+- [x] 2.2 Regenerate the theme; reduce `FaShadows` to the float offsets. Verify: no `v1` or `deprecated` in `ui/theme`; `./gradlew :shared:allTests :androidApp:assembleDebug` passes from `app/src`.
 - [ ] 2.3 Delete `docs/design-system/tools/migrate-tokens-v2.cjs`. Verify: no reference left in `docs/`.
 
 ## 3. Docs and review

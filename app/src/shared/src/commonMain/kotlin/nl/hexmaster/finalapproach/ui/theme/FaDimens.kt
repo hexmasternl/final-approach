@@ -16,14 +16,6 @@ object FaDimens {
     val space8 = 64.dp
 
     // Radius
-    /** v1. Use [radiusChip] in new code. */
-    val radiusSm = 8.dp
-    /** v1. Use [radiusControl] in new code. */
-    val radiusMd = 14.dp
-    /** v1. Use [radiusPanel] in new code. */
-    val radiusLg = 22.dp
-    /** v1. Use [radiusDialog] in new code. */
-    val radiusXl = 32.dp
     val radiusChip = 9.dp
     val radiusStrip = 12.dp
     val radiusControlSm = 13.dp
@@ -34,16 +26,6 @@ object FaDimens {
     val radiusPill = 999.dp
 
     // Lines and flight path
-    /** v1. Use [lineDetail] in new code. */
-    val lineFine = 1.5.dp
-    /** v1. Use [lineDetail] in new code. */
-    val line1 = 2.dp
-    /** v1. Use [lineUiSm] in new code. */
-    val line2 = 3.dp
-    /** v1. Use [lineUi] in new code. */
-    val line3 = 4.dp
-    /** v1. Use [lineUi] in new code. */
-    val line4 = 6.dp
     val lineHero = 4.dp
     val lineZone = 3.dp
     val lineUi = 2.5.dp
@@ -65,17 +47,9 @@ object FaDimens {
     // Sizes
     val touchMin = 48.dp
     val touchAircraft = 72.dp
-    /** v1. Use [stripHeight] in new code. */
-    val hudChip = 56.dp
     val buttonSm = 40.dp
     val buttonMd = 52.dp
     val buttonLg = 64.dp
-    /** v1. Use [toggleWidthV2] in new code. */
-    val toggleWidth = 68.dp
-    /** v1. Use [toggleHeightV2] in new code. */
-    val toggleHeight = 40.dp
-    /** v1. Use [toggleKnobV2] in new code. */
-    val toggleKnob = 28.dp
     val coachMaxWidth = 300.dp
     val coachExplainMaxWidth = 360.dp
     val highlightMargin = 12.dp
