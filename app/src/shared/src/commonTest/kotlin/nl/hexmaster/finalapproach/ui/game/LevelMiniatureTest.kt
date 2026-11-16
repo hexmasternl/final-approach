@@ -58,17 +58,20 @@ class LevelMiniatureTest {
     }
 
     @Test
-    fun theViewMapsTheCropsTopLeftToPixelZeroAndItsSideToTheWholeTile() {
-        val tile = 168f
+    fun aWideArtAreaShowsTheWholeCropAndStaysInsideTheWorld() {
+        val width = 184f
+        val height = 120f
         Levels.all.forEach { level ->
             val crop = miniatureCrop(level)
-            val view = miniatureView(crop, tile)
+            val view = miniatureView(crop, width, height, level.world.width, level.world.height)
             val topLeft = view.toTile(Vec2(crop.left, crop.top))
             val bottomRight = view.toTile(Vec2(crop.right, crop.bottom))
-            assertEquals(0f, topLeft.x, 1e-3f, level.id)
-            assertEquals(0f, topLeft.y, 1e-3f, level.id)
-            assertEquals(tile, bottomRight.x, 1e-2f, level.id)
-            assertEquals(tile, bottomRight.y, 1e-2f, level.id)
+            assertTrue(topLeft.x >= -1e-2f && topLeft.y >= -1e-2f, "${level.id}: the crop starts inside the area")
+            assertTrue(bottomRight.x <= width + 1e-2f && bottomRight.y <= height + 1e-2f, "${level.id}: the crop ends inside the area")
+            val worldTopLeft = view.toTile(Vec2(0.0, 0.0))
+            val worldBottomRight = view.toTile(Vec2(level.world.width, level.world.height))
+            assertTrue(worldTopLeft.x <= 1e-2f && worldTopLeft.y <= 1e-2f, "${level.id}: the area has no gap at the top left")
+            assertTrue(worldBottomRight.x >= width - 1e-2f && worldBottomRight.y >= height - 1e-2f, "${level.id}: the area has no gap at the bottom right")
         }
     }
 }

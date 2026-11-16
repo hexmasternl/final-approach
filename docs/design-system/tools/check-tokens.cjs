@@ -1,7 +1,7 @@
 // Checks tokens.json against the rules of design system v2.
 // usage, from the repository root: node docs/design-system/tools/check-tokens.cjs [git ref to compare with]
 // With a git ref (for example origin/development) it also checks that every token of that ref
-// still exists with the same value, which is what keeps the app building while v1 tokens remain.
+// still exists with the same value. Removing a token on purpose is a change of its own: pass no ref then.
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
@@ -12,11 +12,9 @@ const all = t => { const m = new Map(); for (const c of t.color.tokens) m.set('c
 const errors = [];
 const cur = all(now);
 
-// every token has a usage note; every deprecated token names a replacement that exists
-const names = new Set([...cur.keys()].map(k => k.split('/')[1]));
+// every token has a usage note
 for (const [key, k] of cur) {
   if (!k.usage) errors.push(`${key}: no usage note`);
-  if (k.deprecated && /^[a-z0-9-]+$/.test(k.deprecated) && !names.has(k.deprecated)) errors.push(`${key}: replacement ${k.deprecated} does not exist`);
 }
 // ramps have at least three steps
 const ramps = ['grass', 'leaf', 'pine', 'wood', 'roof', 'wall', 'tin', 'stone', 'concrete', 'asphalt', 'water', 'straw', 'sun', 'sky', 'cherry', 'tangerine', 'mint', 'paper'];

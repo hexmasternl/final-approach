@@ -12,9 +12,6 @@ const base = path.join(repo, 'app', 'src', 'shared', 'src', 'commonMain', 'kotli
 const w = (rel, s) => { const f = path.join(base, rel); fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, s); };
 const camel = n => n.replace(/[-.](\w)/g, (_, c) => c.toUpperCase());
 const HEAD = '// Generated from the design system (docs/design-system/tokens.json). Do not edit by hand.\n';
-// A v1 token that v2 no longer uses keeps its name and value until the app's world is ported; its
-// KDoc names the replacement. (Not @Deprecated: the v1 world still reads these on purpose.)
-const dep = (k, indent) => k.deprecated ? `${indent}/** v1. Use ${/^[a-z0-9-]+$/.test(k.deprecated) ? '[' + camel(k.deprecated) + ']' : k.deprecated} in new code. */\n` : '';
 const ctok = Object.fromEntries(t.color.tokens.map(c => [c.name, c]));
 
 // ---------- colours
@@ -47,7 +44,7 @@ import androidx.compose.ui.graphics.Color
  */
 @Immutable
 class FaColors internal constructor(tokens: FaColorTokens) {
-${names.map(n => `${dep(ctok[n], '    ')}    val ${camel(n)}: Color = tokens.${camel(n)}`).join('\n')}
+${names.map(n => `    val ${camel(n)}: Color = tokens.${camel(n)}`).join('\n')}
 
     /** Flight path and livery colour for index 1 to 6. */
     fun path(index: Int): Color = when (index) {
@@ -93,7 +90,7 @@ ${sunsetNames.map(n => `    ${camel(n)} = ${kColor(resolve(n, 'light'))},`).join
 
 // ---------- dimensions, motion, opacity
 const dp = v => { const m = /^([\d.]+)px$/.exec(v); if (!m) throw new Error('dp ' + v); return `${m[1]}.dp`; };
-const group = (fam, comment) => `    // ${comment}\n` + t[fam].tokens.map(k => `${dep(k, '    ')}    val ${camel(k.name)} = ${dp(k.value)}`).join('\n');
+const group = (fam, comment) => `    // ${comment}\n` + t[fam].tokens.map(k => `    val ${camel(k.name)} = ${dp(k.value)}`).join('\n');
 w('theme/FaDimens.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 
 import androidx.compose.ui.unit.dp
@@ -123,7 +120,7 @@ ${t.easing.tokens.map(k => { const m = /cubic-bezier\(([^)]+)\)/.exec(k.value)[1
 
 /** Opacity tokens. */
 object FaOpacity {
-${t.opacity.tokens.filter(k => !isLight(k.name)).map(k => `${dep(k, '    ')}    const val ${camel(k.name.replace(/^opacity-/, ''))} = ${k.value}f`).join('\n')}
+${t.opacity.tokens.filter(k => !isLight(k.name)).map(k => `    const val ${camel(k.name.replace(/^opacity-/, ''))} = ${k.value}f`).join('\n')}
 }
 `);
 
@@ -242,7 +239,6 @@ for (const [name, a] of worldEntries) {
   for (const p of keys) for (const tk of [p.fill, p.stroke]) {
     if (!tk) continue;
     if (!cmap[tk]) throw new Error(`scenery ${name}: unknown colour token ${tk}`);
-    if (ctok[tk].deprecated) throw new Error(`scenery ${name}: ${tk} is a v1 token`);
     if (FA.WORLD_BANNED.includes(tk)) throw new Error(`scenery ${name}: ${tk} belongs to aircraft and paths (W9)`);
     if (FA.WORLD_TRIM.includes(tk)) continue;
     const mat = material(tk);
@@ -283,7 +279,6 @@ const kf = v => num(v) + 'f';
 const ks = s => '"' + s.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
 const checkToken = (where, tk) => {
   if (!cmap[tk]) throw new Error(`${where}: unknown colour token ${tk}`);
-  if (ctok[tk].deprecated) throw new Error(`${where}: ${tk} is a v1 token`);
 };
 const parsedSprites = worldEntries.map(([name, a]) => {
   const art = parseArt(name, a.svg, FA.worldPaint);
@@ -577,41 +572,15 @@ ${styles.map(s => `            ${camel(s.name)} = TextStyle(fontFamily = ${s.fam
 }
 `);
 
-// ---------- shadows (hard lips and the soft second lip)
-const sh = Object.fromEntries(t.shadow.tokens.map(k => [k.name, k.value]));
-const lip = n => { const m = /^0 (\d+)px 0 /.exec(sh[n].light); return `${m[1]}.dp`; };
-const wellCol = th => kColor(/rgba\([^)]+\)/.exec(sh['shadow-well'][th])[0]);
-const wellInset = /^inset 0 ([0-9]+)px 0 /.exec(sh['shadow-well'].light)[1] + '.dp';
-const softCol = th => kColor(/rgba\([^)]+\)/.exec(sh['shadow-soft'][th])[0]);
+// ---------- shadows (only the float offset is left; lips and contact shadows are in FaDimens and FaColors)
 w('theme/FaShadows.kt', `${HEAD}package nl.hexmaster.finalapproach.ui.theme
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 /**
- * Depth tokens of v1: a lip was a hard offset straight down in the outline colour. v2 draws a
- * lip in the control's own colour, from the lip and contact tokens in [FaDimens] and [FaColors].
- * Only the float offsets below are still current; everything else here is v1 and is kept until
- * the app's world is ported.
+ * Depth of things that float: the ground shadow of an aircraft in the air.
  */
 object FaShadows {
-    /** v1. Use [FaDimens.lipSm] in new code. */
-    val lipSm = ${lip('shadow-lip-sm')}
-    /** v1. Use [FaDimens.lipMd] in new code. */
-    val lip = ${lip('shadow-lip')}
-    /** v1. Use [FaDimens.lipPanel] in new code. */
-    val lipLg = ${lip('shadow-lip-lg')}
-
-    /** v1: the translucent second lip under a dialog. Use [FaColors.contactOverlay] in new code. */
-    val softLip = ${lip('shadow-soft')}
-    val softLipDay = ${softCol('light')}
-    val softLipNight = ${softCol('dark')}
-
-    /** v1: the inner top edge of a well. Use [FaDimens.wellInset] in new code. */
-    val wellInset = ${wellInset}
-    val wellDay = ${wellCol('light')}
-    val wellNight = ${wellCol('dark')}
-
     /** Ground shadow of airborne things: offset down-right. */
     val floatOffsetX = 6.dp
     val floatOffsetY = 10.dp

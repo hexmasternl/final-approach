@@ -180,7 +180,7 @@ Detail that would fall under 1.5dp is left out of the sprite rather than drawn. 
 
 `tools/gen-kotlin.cjs` refuses a sprite that breaks one of these, and names it:
 
-- every shape has a paint key, and every paint key names a colour token that exists and is not a version 1 token;
+- every shape has a paint key, and every paint key names a colour token that exists;
 - no banned colour and no UI ramp, except the sprite's own accent (W9);
 - at most three main materials, at most two trim materials that the sprite really uses, unless it `carries` (W2);
 - a sprite with height has an `outline` stroke (W3) and a cast shadow (W1);

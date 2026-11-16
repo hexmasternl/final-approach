@@ -9,6 +9,8 @@ class FakeAppHost(
 
     override val highScores = InMemoryHighScoreStore()
 
+    override val levelProgress = InMemoryLevelProgressStore()
+
     override val settings = InMemorySettingsStore()
 
     override val tutorials = InMemoryTutorialStore()

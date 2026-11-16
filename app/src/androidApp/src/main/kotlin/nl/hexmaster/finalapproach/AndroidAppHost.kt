@@ -18,7 +18,9 @@ import nl.hexmaster.finalapproach.domain.ReduceMotionChoice
 import nl.hexmaster.finalapproach.platform.Ads
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.platform.BackDispatcher
+import nl.hexmaster.finalapproach.domain.LevelTotals
 import nl.hexmaster.finalapproach.platform.HighScoreStore
+import nl.hexmaster.finalapproach.platform.LevelProgressStore
 import nl.hexmaster.finalapproach.platform.ScreenRect
 import nl.hexmaster.finalapproach.platform.SettingsStore
 import nl.hexmaster.finalapproach.platform.SoundPlayer
@@ -27,6 +29,10 @@ import nl.hexmaster.finalapproach.platform.TutorialStore
 private const val PREFERENCES_NAME = "best-scores"
 private const val SETTINGS_PREFERENCES_NAME = "settings"
 private const val TUTORIAL_PREFERENCES_NAME = "tutorials"
+private const val PROGRESS_PREFERENCES_NAME = "level-progress"
+private const val KEY_LANDINGS = "landings."
+private const val KEY_POINTS = "points."
+private const val KEY_UNLOCKED = "unlocked."
 private const val KEY_SOUND_EFFECTS = "sound_effects"
 private const val KEY_REDUCE_MOTION = "reduce_motion"
 private const val KEY_KEEP_SCREEN_ON = "keep_screen_on"
@@ -58,6 +64,28 @@ class AndroidAppHost(private val activity: ComponentActivity) : AppHost {
 
         override fun save(levelId: String, score: Int) {
             preferences.edit().putInt(levelId, score).apply()
+        }
+    }
+
+    /** Level progress lives in its own private preferences file: totals and opened levels, keyed by level id. */
+    override val levelProgress = object : LevelProgressStore {
+        private val preferences = activity.getSharedPreferences(PROGRESS_PREFERENCES_NAME, Context.MODE_PRIVATE)
+
+        override fun totals(levelId: String) =
+            LevelTotals(preferences.getInt(KEY_LANDINGS + levelId, 0), preferences.getInt(KEY_POINTS + levelId, 0))
+
+        override fun add(levelId: String, landings: Int, points: Int) {
+            val now = totals(levelId)
+            preferences.edit()
+                .putInt(KEY_LANDINGS + levelId, now.landings + landings)
+                .putInt(KEY_POINTS + levelId, now.points + points)
+                .apply()
+        }
+
+        override fun isUnlocked(levelId: String): Boolean = preferences.getBoolean(KEY_UNLOCKED + levelId, false)
+
+        override fun markUnlocked(levelId: String) {
+            preferences.edit().putBoolean(KEY_UNLOCKED + levelId, true).apply()
         }
     }
 

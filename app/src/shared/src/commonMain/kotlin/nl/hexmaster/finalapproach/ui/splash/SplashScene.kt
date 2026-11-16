@@ -99,10 +99,10 @@ internal fun renderBanner(
     val size = Size(widthPx.toFloat(), heightPx.toFloat())
     CanvasDrawScope().draw(density, LayoutDirection.Ltr, Canvas(image), size) {
         drawFlat(
-            fill = colors.surface,
+            fill = colors.paper100,
             outline = colors.outline,
-            border = FaDimens.line3.toPx(),
-            radius = FaDimens.radiusMd.toPx(),
+            border = FaDimens.lineHero.toPx(),
+            radius = FaDimens.radiusControl.toPx(),
         )
         drawText(
             name,
@@ -152,7 +152,7 @@ internal fun DrawScope.drawTowLine(from: Offset, to: Offset, colors: FaColors) {
         moveTo(from.x, from.y)
         quadraticTo((from.x + to.x) / 2f, (from.y + to.y) / 2f + sag, to.x, to.y)
     }
-    drawPath(line, colors.outline, style = Stroke(FaDimens.line2.toPx(), cap = StrokeCap.Round))
+    drawPath(line, colors.outline, style = Stroke(FaDimens.lineZone.toPx(), cap = StrokeCap.Round))
 }
 
 /** The side-view light prop, nose to the right, in the first flight-path colour. */

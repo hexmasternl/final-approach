@@ -68,6 +68,10 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.play.services.ads)
     implementation(libs.user.messaging.platform)
-    implementation(libs.play.services.ads)
-    implementation(libs.user.messaging.platform)
+    // play-services-basement pulls in androidx.fragment 1.1.0, which Google Play flags.
+    constraints {
+        implementation(libs.androidx.fragment) {
+            because("Play flags the transitive androidx.fragment 1.1.0")
+        }
+    }
 }

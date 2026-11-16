@@ -39,7 +39,7 @@ private object SplashPageDefaults {
     const val MAX_FRAME_SECONDS = 0.1f
 
     /** From the edge of the banner to the name: its outline, then space-5 of clear room. */
-    val bannerPaddingX = FaDimens.line3 + FaDimens.space5
+    val bannerPaddingX = FaDimens.lineHero + FaDimens.space5
 }
 
 /**
