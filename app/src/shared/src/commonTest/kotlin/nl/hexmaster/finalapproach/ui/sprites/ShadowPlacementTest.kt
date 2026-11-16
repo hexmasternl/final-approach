@@ -23,6 +23,17 @@ class ShadowPlacementTest {
     }
 
     @Test
+    fun theShadowOfAnAmbientSpriteFallsToItsLowerRightWhateverWayItIsTurned() {
+        // A cow that has turned, a farmer, a boat sailing left and the flock all throw down and to the right.
+        val ambient = listOf(ScenerySprite.Cow, ScenerySprite.Farmer, ScenerySprite.Sailboat, ScenerySprite.Yacht, ScenerySprite.ContainerVessel, ScenerySprite.BirdUp, ScenerySprite.BirdDown)
+        ambient.forEach { sprite ->
+            val offsets = listOf(0f, 37f, 90f, 135f, 270f).map { shadowOffset(sprite, scale = 1f, rotationDegrees = it) }
+            assertEquals(1, offsets.toSet().size, "$sprite: the throw does not depend on the turn")
+            assertTrue(offsets.first().x > 0f && offsets.first().y > 0f, "$sprite: down and to the right")
+        }
+    }
+
+    @Test
     fun theThrowGrowsWithTheScaleOfTheSprite() {
         val tree = ScenerySprite.Tree
         assertEquals(shadowOffset(tree, 1f, 0f) * 3f, shadowOffset(tree, 3f, 0f))

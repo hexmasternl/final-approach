@@ -25,6 +25,7 @@ import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics.Ground
+import nl.hexmaster.finalapproach.ui.sprites.SceneryDetail
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryArt
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
@@ -260,7 +261,33 @@ private fun DrawScope.drawPond(pond: SceneryItem, colors: FaColors) {
             ripples.relativeQuadraticBezierTo(controlX, controlY, endX, 0f)
         }
         drawPath(ripples, colors.foam, style = round(Ground.Lines.pondFoam))
+        // Lily pads and ducks float on a pond; a waterhole has reeds only.
+        if (pond.kind == SceneryKind.Pond) {
+            PondLife.all.forEach { floating ->
+                withTransform({
+                    translate(floating.x * size.width / 2f, floating.y * size.height / 2f)
+                    rotate(floating.degrees, Offset.Zero)
+                    scale(floating.scale, floating.scale, Offset.Zero)
+                }) { drawSceneryArt(floating.detail.art, colors) }
+            }
+        }
     }
+}
+
+/**
+ * What floats on a pond, as in the showcase's pond: where it floats as a fraction of the pond's
+ * half width and half height, how far it is turned, and its scale.
+ */
+private class Floating(val detail: SceneryDetail, val x: Float, val y: Float, val degrees: Float = 0f, val scale: Float = 1f)
+
+private object PondLife {
+    val all = listOf(
+        Floating(SceneryDetail.Lily, -0.48f, 0.37f),
+        Floating(SceneryDetail.Lily, -0.33f, 0.56f, degrees = 120f, scale = 0.8f),
+        Floating(SceneryDetail.Lily, 0.52f, -0.37f, degrees = 200f),
+        Floating(SceneryDetail.Duck, 0.10f, -0.06f, degrees = 60f),
+        Floating(SceneryDetail.Duck, 0.31f, 0.15f, degrees = 75f, scale = 0.85f),
+    )
 }
 
 /**
