@@ -28,6 +28,7 @@ import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
@@ -195,6 +196,58 @@ private fun DrawScope.drawPond(pond: SceneryItem, colors: FaColors) {
         drawPath(ripples, colors.foam, style = round(Ground.Lines.pondFoam))
     }
 }
+
+/**
+ * The mown airfield: inside the level's outline the ground is `grass-500` mown in `grass-600`
+ * stripes parallel to the level's main runway (its first), with a soft `grass-700` boundary
+ * (W8). Nothing outside the outline is striped.
+ */
+internal fun DrawScope.drawAirfield(level: LevelConfig, viewport: WorldViewport, colors: FaColors) {
+    if (level.airfield.size < MIN_OUTLINE_POINTS) return
+    val outline = roundedPolygon(level.airfield, Ground.airfieldCorner)
+    inWorld(viewport) {
+        drawPath(outline, colors.grass700, alpha = Ground.airfieldBoundaryOpacity, style = round(Ground.airfieldBoundary))
+        clipPath(outline) {
+            drawPath(outline, colors.grass500)
+            val main = level.runways.firstOrNull()
+            val origin = main?.position ?: Vec2(level.world.width / 2.0, level.world.height / 2.0)
+            val turn = main?.let { degreesOf(it.orientation) - QUARTER_TURN_DEGREES } ?: 0f
+            withTransform({
+                translate(origin.x.toFloat(), origin.y.toFloat())
+                rotate(turn, Offset.Zero)
+            }) {
+                // Stripes lie along the runway: one every stripePitch across it, each stripe wide, as far as the world reaches.
+                val reach = hypot(level.world.width, level.world.height).toFloat()
+                val first = -ceil(reach / Ground.stripePitch).toInt()
+                val last = ceil(reach / Ground.stripePitch).toInt()
+                for (n in first..last) drawRect(colors.grass600, Offset(-reach, n * Ground.stripePitch), Size(2f * reach, Ground.stripe))
+            }
+        }
+    }
+}
+
+/** A polygon with each corner rounded by [radius] (less on a short side), as one closed path. */
+internal fun roundedPolygon(corners: List<Vec2>, radius: Float): Path {
+    val path = Path()
+    val n = corners.size
+    for (i in 0 until n) {
+        val before = corners[(i + n - 1) % n]
+        val corner = corners[i]
+        val after = corners[(i + 1) % n]
+        val inLength = hypot(corner.x - before.x, corner.y - before.y)
+        val outLength = hypot(after.x - corner.x, after.y - corner.y)
+        val cut = minOf(radius.toDouble(), inLength / 2.0, outLength / 2.0)
+        val start = Vec2(corner.x + (before.x - corner.x) * cut / inLength, corner.y + (before.y - corner.y) * cut / inLength)
+        val end = Vec2(corner.x + (after.x - corner.x) * cut / outLength, corner.y + (after.y - corner.y) * cut / outLength)
+        if (i == 0) path.moveTo(start.x.toFloat(), start.y.toFloat()) else path.lineTo(start.x.toFloat(), start.y.toFloat())
+        path.quadraticTo(corner.x.toFloat(), corner.y.toFloat(), end.x.toFloat(), end.y.toFloat())
+    }
+    path.close()
+    return path
+}
+
+/** An outline needs three corners to hold anything. */
+private const val MIN_OUTLINE_POINTS = 3
 
 /** Aprons and car parks, then taxiways, in the order of Ground.md. */
 internal fun DrawScope.drawHardSurfaces(level: LevelConfig, viewport: WorldViewport, colors: FaColors) {

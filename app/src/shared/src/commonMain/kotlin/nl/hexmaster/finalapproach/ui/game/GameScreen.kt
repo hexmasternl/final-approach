@@ -61,9 +61,6 @@ import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** Tunables of the game screen that are not design tokens. */
 internal object GameScreenDefaults {
-    /** Width of one lawn stripe. */
-    val lawnStripe = 64.dp
-
     /** A long frame (the app was paused) is cut to this, so aircraft do not jump. */
     const val MAX_FRAME_SECONDS = 0.1
 

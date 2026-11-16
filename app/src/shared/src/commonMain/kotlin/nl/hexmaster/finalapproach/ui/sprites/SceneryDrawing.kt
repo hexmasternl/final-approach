@@ -100,22 +100,3 @@ internal fun DrawScope.drawSunburst(
         start += rayDegrees * 2f
     }
 }
-
-/** Fills the draw area with the mown lawn: `grass-500` and `grass-700` stripes, tilted 12 degrees. */
-internal fun DrawScope.drawLawn(stripeWidthPx: Float, colors: FaColors) {
-    drawRect(colors.grass500)
-    val reach = hypot(size.width, size.height)
-    withTransform({ rotate(LAWN_TILT_DEGREES, Offset(size.width / 2f, size.height / 2f)) }) {
-        var x = size.width / 2f - reach
-        while (x < size.width / 2f + reach) {
-            drawRect(
-                colors.grass700,
-                topLeft = Offset(x + stripeWidthPx, size.height / 2f - reach),
-                size = Size(stripeWidthPx, reach * 2f),
-            )
-            x += stripeWidthPx * 2f
-        }
-    }
-}
-
-private const val LAWN_TILT_DEGREES = 12f

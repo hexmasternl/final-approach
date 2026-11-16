@@ -65,7 +65,7 @@ internal fun DrawScope.inRunwayFrame(runway: RunwayConfig, viewport: WorldViewpo
 }
 
 internal const val WORLD_UNIT = 1.0
-private const val QUARTER_TURN_DEGREES = 90f
+internal const val QUARTER_TURN_DEGREES = 90f
 
 private fun roundStroke(width: Float, cap: StrokeCap = StrokeCap.Round) = Stroke(width, cap = cap, join = StrokeJoin.Round)
 

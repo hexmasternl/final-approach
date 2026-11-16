@@ -31,7 +31,6 @@ import nl.hexmaster.finalapproach.ui.game.ambient.BoatKind
 import nl.hexmaster.finalapproach.ui.game.ambient.LevelAmbienceConfig
 import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
-import nl.hexmaster.finalapproach.ui.sprites.drawLawn
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRow
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRowShadows
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryShadowAt
@@ -72,6 +71,7 @@ internal fun DrawScope.drawField(
     drawRoadsAndTracks(level, viewport, colors)
     drawFields(level, viewport, colors)
     drawWaters(level, viewport, colors)
+    drawAirfield(level, viewport, colors)
     drawHardSurfaces(level, viewport, colors)
     val (flat, raised) = level.scenery.partition { it.drawsOnGround }
     flat.filter { it.kind !in groundPieceKinds }.forEach { drawScenery(it, viewport, colors) }
@@ -105,21 +105,21 @@ private fun DrawScope.drawShadowLayer(
     }
 }
 
-/** The ground of a level: lawn with the paddock, sea with the island and its beach, or dry dawn grass. */
+/**
+ * The ground under everything else: one flat tone (`grass-500`, `grass-400` on the dry savanna, or
+ * the sea around the island with its shore) and the paddock's lighter grass. It is never striped:
+ * only the airfield is mown.
+ */
 internal fun DrawScope.drawLevelGround(level: LevelConfig, viewport: WorldViewport, colors: FaColors) {
     when (level.landscape) {
-        LevelScenery.Meadow -> {
-            drawLawn(GameScreenDefaults.lawnStripe.toPx(), colors)
-            level.paddock?.let { drawPaddockGround(it, viewport, colors) }
-        }
-
+        LevelScenery.Meadow -> drawRect(colors.grass500)
+        LevelScenery.Savanna -> drawRect(colors.grass400)
         LevelScenery.Island -> {
             drawRect(colors.water500)
             level.island?.let { drawIslandShore(it, viewport, colors) }
         }
-
-        LevelScenery.Savanna -> drawLawn(GameScreenDefaults.lawnStripe.toPx(), colors)
     }
+    level.paddock?.let { drawPaddockGround(it, viewport, colors) }
 }
 
 /** One side of the paddock fence: a row of fence pieces along a strip. */
