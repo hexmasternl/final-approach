@@ -9,7 +9,7 @@
 
 - [x] 2.1 In `AdMobAds.kt`, set a global `RequestConfiguration` before `MobileAds.initialize`: child-directed true, under age of consent true, max ad content rating G (design decision 1). Verify on a device with a debug build that test interstitials and banners still load, and that logcat shows the configuration was applied before initialisation. (Device check not run by the autocoder: a human confirms it.)
 - [x] 2.2 Build the UMP `ConsentRequestParameters` with `setTagForUnderAgeOfConsent(true)` (design decision 2). Verify on a device with UMP's EEA debug geography that the game stays playable and that no ad is requested before consent resolves. Record whether ads show in that geography in design.md, under the matching risk. (Device check not run by the autocoder: a human confirms it and records the EEA result in design.md.)
-- [ ] 2.3 Update the ads paragraph in `docs/architecture.md` to describe the child-directed configuration and the removed `AD_ID`. Verify the paragraph matches the code from 2.1 and 2.2.
+- [x] 2.3 Update the ads paragraph in `docs/architecture.md` to describe the child-directed configuration and the removed `AD_ID`. Verify the paragraph matches the code from 2.1 and 2.2.
 
 ## 3. Privacy policy
 
