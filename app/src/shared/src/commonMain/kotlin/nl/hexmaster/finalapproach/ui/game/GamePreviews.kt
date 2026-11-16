@@ -57,6 +57,8 @@ private object PreviewData {
     const val BEST = 240
     const val SCORE = 130
     const val BEST_LARGE = 18_720
+    const val CARD_BEST_SCORE = 18_200
+    const val CARD_LOCKED_TEXT = "Land 50 to unlock"
     const val SCORE_LARGE = 12_450
     const val AMBIENT_SECONDS = 40.0
     const val AMBIENT_STEP = 0.05
@@ -426,23 +428,26 @@ private fun GameEndedLeftAreaPreview() = GameEndedPreview(night = false, reason 
 @Composable
 private fun GameEndedPortraitPreview() = GameEndedPreview(night = false)
 
-/** The level tiles, to compare each miniature with its level. */
+/** The level cards, to compare each art with its level: normal, with a best score, and locked. */
 @Composable
-private fun LevelTilesPreview(night: Boolean) {
+private fun LevelCardsPreview(night: Boolean) {
     FaTheme(night = night) {
         Row(Modifier.padding(FaDimens.space4), horizontalArrangement = Arrangement.spacedBy(FaDimens.space4)) {
-            Levels.all.forEach { LevelCard(it, levelCardState(it, bestScore = 0), onClick = {}) }
+            val levels = Levels.all
+            LevelCard(levels[0], levelCardState(levels[0], bestScore = 0), onClick = {})
+            LevelCard(levels[0], levelCardState(levels[0], bestScore = PreviewData.CARD_BEST_SCORE), onClick = {})
+            LevelCard(levels[1], levelCardState(levels[1], bestScore = 0, locked = LockedInfo(PreviewData.CARD_LOCKED_TEXT)), onClick = {})
         }
     }
 }
 
 @Preview
 @Composable
-private fun LevelTilesDayPreview() = LevelTilesPreview(night = false)
+private fun LevelCardsDayPreview() = LevelCardsPreview(night = false)
 
 @Preview
 @Composable
-private fun LevelTilesNightPreview() = LevelTilesPreview(night = true)
+private fun LevelCardsNightPreview() = LevelCardsPreview(night = true)
 
 /** The level select page as the player sees it. */
 @Composable

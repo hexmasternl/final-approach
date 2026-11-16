@@ -9,7 +9,7 @@
 
 - [x] 2.1 Build `LevelCard` (art, `lineUi` divider, name, tag chips, best-score chip) and use it in `LevelSelectPage` in place of `LevelTile`; read the best score from the host. Verify: the three cards show; a level with a best score shows the chip; tapping still starts the level.
 - [x] 2.2 Add the locked state (washed art, lock badge, plain chip, flat, no press, disabled semantics), driven by `LevelCardState.locked`. Verify: a locked preview does not react to a tap and is reported as disabled.
-- [ ] 2.3 Add Day and Night previews: normal, with best score, locked. Verify: `./gradlew :androidApp:assembleDebug` passes and the previews render.
+- [x] 2.3 Add Day and Night previews: normal, with best score, locked. Verify: `./gradlew :androidApp:assembleDebug` passes and the previews render.
 
 ## 3. Docs and review
 
