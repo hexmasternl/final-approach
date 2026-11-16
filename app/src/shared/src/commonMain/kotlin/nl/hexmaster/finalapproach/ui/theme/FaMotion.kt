@@ -31,9 +31,8 @@ object FaMotion {
 
 /** Opacity tokens. */
 object FaOpacity {
-    /** v1. Use the flat disabled state (U7) in new code. */
-    const val disabled = 0.45f
     const val cloud = 0.85f
+    const val levelWash = 0.6f
     const val pathIdle = 0.7f
     const val ghost = 0.5f
     const val descentScaleEnd = 0.6f

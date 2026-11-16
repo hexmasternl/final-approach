@@ -37,6 +37,8 @@ import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.isPickable
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.engine.BestScore
+import nl.hexmaster.finalapproach.engine.LevelUnlocks
+import nl.hexmaster.finalapproach.engine.RunTotals
 import nl.hexmaster.finalapproach.engine.GameEngine
 import nl.hexmaster.finalapproach.engine.TutorialProgress
 import nl.hexmaster.finalapproach.engine.GameOverReason
@@ -99,6 +101,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     }
     val state by engine.state.collectAsState()
     val bestScore = remember(level, host) { BestScore(host.highScores, level.id) }
+    val runTotals = remember(level, host) { RunTotals(host.levelProgress, level.id) }
     var optionsOpen by remember { mutableStateOf(false) }
     var screen by remember { mutableStateOf(IntSize.Zero) }
     val rings = remember(engine) { ProximityRings() }
@@ -156,23 +159,37 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
         }
     }
 
+    // A run is counted once when it ends: lost, restarted or quit. Counting also opens the levels it earned.
+    fun endRun() {
+        if (runTotals.finish(engine.state.value)) LevelUnlocks().settle(host.levelProgress, host.highScores)
+    }
+
+    fun quit() {
+        endRun()
+        onQuit()
+    }
+
     // A restart is a level start too: the new run begins when the ad is dismissed.
     fun restartWithAd(afterRestart: () -> Unit = {}) {
+        endRun()
         host.ads.showInterstitial {
             engine.restart()
+            runTotals.begin()
             afterRestart()
             host.ads.preload()
         }
     }
     BackHandler(host) {
         when (backAction(state, optionsOpen)) {
-            BackAction.Quit -> onQuit()
+            BackAction.Quit -> quit()
             BackAction.CloseOptions -> closeOptions()
             BackAction.OpenOptions -> openOptions()
         }
     }
 
     LaunchedEffect(state.score) { bestScore.update(state.score) }
+    // A lost level ends the run, whether or not the dialog is up yet.
+    LaunchedEffect(state.status) { if (state.status is GameStatus.GameOver) endRun() }
 
     val viewport = WorldViewport(
         level.world.width,
@@ -272,14 +289,14 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
             total = state.totalLanded,
             points = state.score,
             onTryAgain = { restartWithAd() },
-            onMainPage = onQuit,
+            onMainPage = ::quit,
             below = { host.ads.Banner(Modifier.fillMaxWidth()) },
         )
     } else if (optionsOpen) {
         OptionsPanel(
             onContinue = ::closeOptions,
             onRestart = { restartWithAd { optionsOpen = false } },
-            onQuit = onQuit,
+            onQuit = ::quit,
         )
     }
     }
@@ -423,6 +440,6 @@ private fun DrawScope.drawSelection(state: GameState, engine: GameEngine, viewpo
         colors.selectRing,
         radius,
         viewport.offsetOf(selected.position),
-        style = Stroke(width = FaDimens.line3.toPx()),
+        style = Stroke(width = FaDimens.lineHero.toPx()),
     )
 }

@@ -4,7 +4,7 @@ The game renders with Compose Multiplatform. The HTML and CSS in this system are
 
 ## Where the app stands
 
-The app's UI components are version 2. The app's world is not yet: scenery sprites, runway and helipad drawing and level backdrops still render version 1. The generator builds the app's scenery sprite data (`ui/sprites/ScenerySprites.kt`: `WORLD`, `DETAILS` and the cloud) and the ground metrics (`ui/sprites/GroundMetrics.kt`: `METRICS`, the sizes of runways, helipads and ground pieces) from `bundle.js`; no version 1 sprite source remains. Everything in `world.md` describes the design system; the port brings the app to it and then removes the version 1 tokens.
+The app's UI components and its world are version 2, and no version 1 token remains. The generator builds the app's scenery sprite data (`ui/sprites/ScenerySprites.kt`: `WORLD`, `DETAILS` and the cloud) and the ground metrics (`ui/sprites/GroundMetrics.kt`: `METRICS`, the sizes of runways, helipads and ground pieces) from `bundle.js`; no version 1 sprite source remains.
 
 ## Mapping tokens to the theme
 
@@ -22,10 +22,6 @@ object FaMotion {
     val easeSnap = CubicBezierEasing(0.2f, 0.9f, 0.3f, 1f)
 }
 ```
-
-### Version 1 tokens
-
-Deprecated tokens are still generated, because the app's version 1 world reads them. Each carries a KDoc note that names its replacement, such as "v1. Use `paper100` in new code.". They are not marked `@Deprecated`, so the world keeps building without warnings. New code never reads one.
 
 ## Surfaces
 

@@ -35,6 +35,13 @@ Nothing is published if the build or a unit test fails.
 2. Complete the required setup tasks (app content, store listing basics).
 3. **The first bundle must be uploaded manually.** Google Play does not accept API uploads until the app has had at least one manual release. Build a signed bundle locally (see below) and upload it under *Testing > Internal testing > Create new release*.
 4. Under *Internal testing > Testers* add a tester list (email addresses) and share the opt-in link.
+5. Under *App content* make these declarations, which must agree with the privacy policy:
+   - *Privacy policy*: https://github.com/hexmasternl/final-approach/blob/main/docs/privacy-policy.md (it opens once the release is merged into `main`).
+   - *Target audience and content*: include the under-13 age groups, and answer the Families policy questions. Every ad is child-directed.
+   - *Ads*: the app contains ads.
+   - *Advertising ID*: the app does not use it (the manifest removes the permission).
+   - *Data safety*: data collected by the ads SDK (see the policy); nothing is collected by the game itself.
+6. In AdMob, under the app's settings, mark the app as child-directed with a maximum ad content rating of G, to match the in-app configuration.
 
 ### 2. Create the upload key
 

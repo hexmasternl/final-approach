@@ -92,14 +92,14 @@ internal fun DrawScope.drawProximityRing(
             r,
             center,
             alpha = alpha,
-            style = Stroke(width = FaDimens.line4.toPx(), cap = StrokeCap.Round, pathEffect = dashes),
+            style = Stroke(width = FaDimens.warnRingCasing.toPx(), cap = StrokeCap.Round, pathEffect = dashes),
         )
         drawCircle(
             dashColor,
             r,
             center,
             alpha = alpha,
-            style = Stroke(width = FaDimens.line2.toPx(), cap = StrokeCap.Round, pathEffect = dashes),
+            style = Stroke(width = FaDimens.warnRingStroke.toPx(), cap = StrokeCap.Round, pathEffect = dashes),
         )
     }
 }

@@ -8,7 +8,12 @@
 
 ## Findings
 
-To be filled in by task 1.3: flagged call, location (class, library, version), chosen fix.
+Scan by autocoder run runner-20261116-vpu1: all AARs of the release runtime classpath (bytecode search) plus our sources, theme and lint.
+
+- **Our code and theme: clean.** `MainActivity` only calls `enableEdgeToEdge()`; `Theme.FinalApproach` sets only `android:windowBackground`. No `setStatusBarColor`, `setNavigationBarColor`, `setDecorFitsSystemWindows`, cutout mode or `SYSTEM_UI_FLAG_*` in `app/src`. Nothing to fix. `:androidApp:lint` reports 0 errors and no edge-to-edge finding (7 unrelated warnings).
+- **play-services-ads 25.5.0** (`setDecorFitsSystemWindows`, `layoutInDisplayCutoutMode`) and **user-messaging-platform 4.0.0** (`setDecorFitsSystemWindows`): these are the likeliest source of Play's message. Both are already the latest releases on Google Maven, so there is no fixed release. Decision: keep them (the ads SDK is required by `level-start-ads`) and re-check on each release.
+- **androidx.browser 1.8.0** (`setNavigationBarColor`, `setNavigationBarDividerColor`, cutout mode), pulled in by the ads SDK: 1.10.0 still has the same calls, so a bump gains nothing. Left alone.
+- **androidx.activity 1.13.0, androidx.core 1.18.0, core-splashscreen**: AndroidX own edge-to-edge implementation, version-guarded; already current. Left alone.
 
 ## Assumptions
 

@@ -8,12 +8,14 @@ android-compileSdk = "37"
 android-targetSdk = "37"
 android-minSdk = "26"
 androidx-activity = "1.13.0"
+androidx-fragment = "1.8.9"
 kotlinx-coroutines = "1.11.0"
 play-services-ads = "25.5.0"
 user-messaging-platform = "4.0.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "androidx-fragment" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
 compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
