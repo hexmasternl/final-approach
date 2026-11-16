@@ -2,6 +2,8 @@ package nl.hexmaster.finalapproach.engine
 
 import nl.hexmaster.finalapproach.domain.LevelTotals
 import nl.hexmaster.finalapproach.domain.Levels
+import nl.hexmaster.finalapproach.platform.HighScoreStore
+import nl.hexmaster.finalapproach.platform.LevelProgressStore
 
 /** What an unlock rule counts. */
 enum class UnlockMetric { Landings, Points }
@@ -74,4 +76,12 @@ class LevelUnlocks(
         if (index >= 0 && order.drop(index).any(hasBestScore)) return true
         return rule.isMet(totals(rule.requiredLevelId))
     }
+
+    /** True when [levelId] is open on this device, judged from [progress] and [highScores]. */
+    fun isUnlocked(levelId: String, progress: LevelProgressStore, highScores: HighScoreStore): Boolean =
+        isUnlocked(levelId, progress::totals, { highScores.best(it) > 0 }, progress.isUnlocked(levelId))
+
+    /** Remembers every level that is open now, so it stays open; returns the open levels. */
+    fun settle(progress: LevelProgressStore, highScores: HighScoreStore): Set<String> =
+        order.filter { isUnlocked(it, progress, highScores) }.onEach(progress::markUnlocked).toSet()
 }
