@@ -18,9 +18,9 @@
 
 ## 4. Checks
 
-- [ ] 4.1 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug` from `app/src`. Verify both succeed.
+- [x] 4.1 Run `./gradlew :shared:allTests` and `./gradlew :androidApp:assembleDebug` from `app/src`. Verify both succeed.
 - [ ] 4.2 Run the play-policy-critic agent on the change. Fix every finding within scope, and file any finding about ad placement or format as a new issue. Verify the critic reports no open violations within scope.
-- [ ] 4.3 Run `openspec validate update-privacy-policy --strict`. Verify it passes.
+- [x] 4.3 Run `openspec validate update-privacy-policy --strict`. Verify it passes.
 
 ## 5. Human: Play Console and AdMob
 
