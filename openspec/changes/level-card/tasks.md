@@ -2,7 +2,7 @@
 
 ## 1. Card content
 
-- [ ] 1.1 Add a pure `levelTags(level)` and `LevelCardState`, with `kotlin.test` tests for "1 runway", "2 runways", "1 helipad", none. Verify: `./gradlew :shared:allTests` passes.
+- [x] 1.1 Add a pure `levelTags(level)` and `LevelCardState`, with `kotlin.test` tests for "1 runway", "2 runways", "1 helipad", none. Verify: `./gradlew :shared:allTests` passes.
 - [ ] 1.2 Add any new level-card dimens to `tokens.json` and regenerate the theme (`check-tokens.cjs`, `gen-kotlin.cjs`). Verify: the check passes and no literal remains in the composable.
 
 ## 2. Card UI
