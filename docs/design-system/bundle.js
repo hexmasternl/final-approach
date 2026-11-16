@@ -215,7 +215,8 @@
       shoulder: 10, shoulderHalf: 41, shoulderRx: 12,
       fringe: 24, fringeHalf: 54, fringeRx: 30,
       zonePad: 14, zoneHalf: 45, zoneRx: 16,
-      numberInset: 58, dash: '26 20',
+      numberInset: 58, numberSize: 27, dash: '26 20',
+      lines: { outline: 3, shoulder: 1.6, rubber: 3, touchdown: 3, edge: 1.6, chevron: 3.2, centre: 3.2, light: 1 },
       chevron: { start: 60, pitch: 40 },
       edgeLine: { inset: 8, y: 27.5 },
       rubber: [[74, -10, 96], [82, -5, 118], [78, 6, 104], [88, 11, 70]],
@@ -230,7 +231,8 @@
     },
     helipad: {
       fringe: { half: 76, rx: 22 }, pad: { half: 69, rx: 16 }, zoneRadius: 60, disc: 56, wornRing: 47, warnRing: 39,
-      h: { x: 13, y: 18 }, cornerLight: { at: 60, r: 3 }
+      h: { x: 13, y: 18 }, cornerLight: { at: 60, r: 3 },
+      lines: { pad: 2, joint: 1.2, outline: 3, wornRing: 5, warnRing: 5, h: 7.5, cornerLight: 1.2 }, wornOpacity: 0.5
     },
     ground: {
       stripe: 52, stripePitch: 104, airfieldBoundary: 7,
@@ -628,29 +630,29 @@
     /* A short runway keeps its threshold, number and lights and drops the marks it has no room for. */
     var full = L >= R.fullLength, inset = full ? R.centreInsetFull : R.centreInsetShort;
     s += '<rect ' + k('grass-700') + ' x="' + (-h - R.fringe) + '" y="' + -R.fringeHalf + '" width="' + (L + 2 * R.fringe) + '" height="' + 2 * R.fringeHalf + '" rx="' + R.fringeRx + '"/>';
-    s += '<rect ' + k('concrete-500', 'concrete-700', 1.6) + ' x="' + (-h - R.shoulder) + '" y="' + -R.shoulderHalf + '" width="' + (L + 2 * R.shoulder) + '" height="' + 2 * R.shoulderHalf + '" rx="' + R.shoulderRx + '"/>';
+    s += '<rect ' + k('concrete-500', 'concrete-700', R.lines.shoulder) + ' x="' + (-h - R.shoulder) + '" y="' + -R.shoulderHalf + '" width="' + (L + 2 * R.shoulder) + '" height="' + 2 * R.shoulderHalf + '" rx="' + R.shoulderRx + '"/>';
     if (zone) s += '<rect class="fa-zone' + (zone === 'no' ? ' fa-zone--no' : '') + '" x="' + (-h - R.zonePad) + '" y="' + -R.zoneHalf + '" width="' + (L + 2 * R.zonePad) + '" height="' + 2 * R.zoneHalf + '" rx="' + R.zoneRx + '"/>';
-    s += '<rect ' + k('asphalt-500', O, 3) + ' x="' + (-h) + '" y="' + -R.halfWidth + '" width="' + L + '" height="' + 2 * R.halfWidth + '" rx="' + R.rx + '"/>';
+    s += '<rect ' + k('asphalt-500', O, R.lines.outline) + ' x="' + (-h) + '" y="' + -R.halfWidth + '" width="' + L + '" height="' + 2 * R.halfWidth + '" rx="' + R.rx + '"/>';
     [-1, 1].forEach(function (sgn) {
       if (oneWay && sgn > 0) return;
       var e = -h;
       s += '<g transform="scale(' + sgn + ',1)">';
-      if (full) s += '<path ' + k('', 'asphalt-700', 3) + ' d="' + R.rubber.map(function (m) { return 'M' + (e + m[0]) + ' ' + m[1] + 'h' + m[2]; }).join('') + '"/>';
+      if (full) s += '<path ' + k('', 'asphalt-700', R.lines.rubber) + ' d="' + R.rubber.map(function (m) { return 'M' + (e + m[0]) + ' ' + m[1] + 'h' + m[2]; }).join('') + '"/>';
       for (i = 0; i < B.count; i++) s += '<rect ' + k('marking') + ' x="' + (e + B.inset) + '" y="' + (B.y0 + i * B.pitch) + '" width="' + B.length + '" height="' + B.width + '" rx="' + B.rx + '"/>';
       if (full) A.y.forEach(function (y) { s += '<rect ' + k('marking') + ' x="' + (e + A.inset) + '" y="' + y + '" width="' + A.length + '" height="' + A.width + '" rx="' + c3(A.rx) + '"/>'; });
-      if (L >= R.touchdownLength) s += '<path ' + k('', 'marking', 3, 'stroke-linecap="butt"') + ' d="' + T.y.map(function (y) { return 'M' + (e + T.inset) + ' ' + y + 'h' + T.length; }).join('') + '"/>';
-      Lt.threshold.y.forEach(function (y) { s += '<circle ' + k('mint-500', 'concrete-700', 1) + ' cx="' + (e - Lt.threshold.out) + '" cy="' + y + '" r="' + c3(Lt.threshold.r) + '"/>'; });
+      if (L >= R.touchdownLength) s += '<path ' + k('', 'marking', R.lines.touchdown, 'stroke-linecap="butt"') + ' d="' + T.y.map(function (y) { return 'M' + (e + T.inset) + ' ' + y + 'h' + T.length; }).join('') + '"/>';
+      Lt.threshold.y.forEach(function (y) { s += '<circle ' + k('mint-500', 'concrete-700', R.lines.light) + ' cx="' + (e - Lt.threshold.out) + '" cy="' + y + '" r="' + c3(Lt.threshold.r) + '"/>'; });
       s += '</g>';
     });
-    s += '<path ' + k('', 'marking', 1.6) + ' d="M' + (-h + R.edgeLine.inset) + ' ' + c3(-R.edgeLine.y) + 'h' + (L - 2 * R.edgeLine.inset) + 'M' + (-h + R.edgeLine.inset) + ' ' + c3(R.edgeLine.y) + 'h' + (L - 2 * R.edgeLine.inset) + '"/>';
-    if (oneWay) for (x = -h + R.chevron.start; x < h - inset - 6; x += R.chevron.pitch) s += '<path ' + k('', 'marking', 3.2) + ' d="M' + (x + 12) + ' -9l-12 9l12 9"/>';
-    else s += '<path ' + k('', 'marking', 3.2, 'stroke-dasharray="' + R.dash + '" stroke-linecap="butt"') + ' d="M' + (-h + inset) + ' 0h' + (L - 2 * inset) + '"/>';
+    s += '<path ' + k('', 'marking', R.lines.edge) + ' d="M' + (-h + R.edgeLine.inset) + ' ' + c3(-R.edgeLine.y) + 'h' + (L - 2 * R.edgeLine.inset) + 'M' + (-h + R.edgeLine.inset) + ' ' + c3(R.edgeLine.y) + 'h' + (L - 2 * R.edgeLine.inset) + '"/>';
+    if (oneWay) for (x = -h + R.chevron.start; x < h - inset - 6; x += R.chevron.pitch) s += '<path ' + k('', 'marking', R.lines.chevron) + ' d="M' + (x + 12) + ' -9l-12 9l12 9"/>';
+    else s += '<path ' + k('', 'marking', R.lines.centre, 'stroke-dasharray="' + R.dash + '" stroke-linecap="butt"') + ' d="M' + (-h + inset) + ' 0h' + (L - 2 * inset) + '"/>';
     if (!oneWay) s += '<text class="fa-p-num" transform="translate(' + (-h + R.numberInset) + ',0) rotate(90)" text-anchor="middle" dominant-baseline="central">' + (n[0] || '') + '</text>';
     s += '<text class="fa-p-num" transform="translate(' + (h - R.numberInset) + ',0) rotate(-90)" text-anchor="middle" dominant-baseline="central">' + (n[1] || '') + '</text>';
-    for (x = -Math.floor((h - Lt.edge.inset) / Lt.edge.spacing) * Lt.edge.spacing; x <= h - Lt.edge.inset; x += Lt.edge.spacing) s += '<circle ' + k('beacon', 'concrete-700', 1) + ' cx="' + x + '" cy="' + c3(-Lt.edge.y) + '" r="' + c3(Lt.edge.r) + '"/><circle ' + k('beacon', 'concrete-700', 1) + ' cx="' + x + '" cy="' + c3(Lt.edge.y) + '" r="' + c3(Lt.edge.r) + '"/>';
+    for (x = -Math.floor((h - Lt.edge.inset) / Lt.edge.spacing) * Lt.edge.spacing; x <= h - Lt.edge.inset; x += Lt.edge.spacing) s += '<circle ' + k('beacon', 'concrete-700', R.lines.light) + ' cx="' + x + '" cy="' + c3(-Lt.edge.y) + '" r="' + c3(Lt.edge.r) + '"/><circle ' + k('beacon', 'concrete-700', R.lines.light) + ' cx="' + x + '" cy="' + c3(Lt.edge.y) + '" r="' + c3(Lt.edge.r) + '"/>';
     /* The approach lights beside the landing end: two red, two white. */
     var Ap = Lt.approach, px = oneWay ? h - (full ? Ap.insetFull : Ap.insetShort) - Ap.oneWayBack : -h + (full ? Ap.insetFull : Ap.insetShort);
-    for (i = 0; i < Ap.count; i++) s += '<rect ' + k((i < Ap.red) !== !!oneWay ? 'cherry-500' : 'foam', O, 1) + ' x="' + (px + i * Ap.pitch) + '" y="' + -Ap.y + '" width="' + c3(Ap.w) + '" height="' + c3(Ap.h) + '" rx="1"/>';
+    for (i = 0; i < Ap.count; i++) s += '<rect ' + k((i < Ap.red) !== !!oneWay ? 'cherry-500' : 'foam', O, R.lines.light) + ' x="' + (px + i * Ap.pitch) + '" y="' + -Ap.y + '" width="' + c3(Ap.w) + '" height="' + c3(Ap.h) + '" rx="1"/>';
     return s;
   }
   function runwaySvg(length, numbers, oneWay, zone) {
@@ -660,10 +662,10 @@
   /* A helipad: 112 units across, as in v1, on a concrete pad with slab joints and corner lights. */
   function helipadMarkup(zone) {
     var H = METRICS.helipad, f = H.fringe, p = H.pad, hh = H.h, cl = H.cornerLight;
-    var s = '<rect ' + k('grass-700') + ' x="' + -f.half + '" y="' + -f.half + '" width="' + 2 * f.half + '" height="' + 2 * f.half + '" rx="' + f.rx + '"/><rect ' + k('concrete-300', 'concrete-700', 2) + ' x="' + -p.half + '" y="' + -p.half + '" width="' + 2 * p.half + '" height="' + 2 * p.half + '" rx="' + p.rx + '"/><path ' + k('', 'concrete-500', 1.2) + ' d="M' + -p.half + ' 0h' + 2 * p.half + 'M0 ' + -p.half + 'v' + 2 * p.half + '"/>';
+    var s = '<rect ' + k('grass-700') + ' x="' + -f.half + '" y="' + -f.half + '" width="' + 2 * f.half + '" height="' + 2 * f.half + '" rx="' + f.rx + '"/><rect ' + k('concrete-300', 'concrete-700', H.lines.pad) + ' x="' + -p.half + '" y="' + -p.half + '" width="' + 2 * p.half + '" height="' + 2 * p.half + '" rx="' + p.rx + '"/><path ' + k('', 'concrete-500', H.lines.joint) + ' d="M' + -p.half + ' 0h' + 2 * p.half + 'M0 ' + -p.half + 'v' + 2 * p.half + '"/>';
     if (zone) s += '<circle class="fa-zone' + (zone === 'no' ? ' fa-zone--no' : '') + '" r="' + H.zoneRadius + '"/>';
-    s += '<circle ' + k('asphalt-500', O, 3) + ' r="' + H.disc + '"/><circle ' + k('', 'asphalt-700', 5, 'opacity="0.5"') + ' r="' + H.wornRing + '"/><circle ' + k('', 'marking-warn', 5) + ' r="' + H.warnRing + '"/><path ' + k('', 'marking', 7.5) + ' d="M' + -hh.x + ' ' + -hh.y + 'V' + hh.y + 'M' + hh.x + ' ' + -hh.y + 'V' + hh.y + 'M' + -hh.x + ' 0H' + hh.x + '"/>';
-    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (q) { s += '<circle ' + k('beacon', 'concrete-700', 1.2) + ' cx="' + q[0] * cl.at + '" cy="' + q[1] * cl.at + '" r="' + cl.r + '"/>'; });
+    s += '<circle ' + k('asphalt-500', O, H.lines.outline) + ' r="' + H.disc + '"/><circle ' + k('', 'asphalt-700', H.lines.wornRing, 'opacity="' + H.wornOpacity + '"') + ' r="' + H.wornRing + '"/><circle ' + k('', 'marking-warn', H.lines.warnRing) + ' r="' + H.warnRing + '"/><path ' + k('', 'marking', H.lines.h) + ' d="M' + -hh.x + ' ' + -hh.y + 'V' + hh.y + 'M' + hh.x + ' ' + -hh.y + 'V' + hh.y + 'M' + -hh.x + ' 0H' + hh.x + '"/>';
+    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (q) { s += '<circle ' + k('beacon', 'concrete-700', H.lines.cornerLight) + ' cx="' + q[0] * cl.at + '" cy="' + q[1] * cl.at + '" r="' + cl.r + '"/>'; });
     return s;
   }
   function helipadSvg(zone) {

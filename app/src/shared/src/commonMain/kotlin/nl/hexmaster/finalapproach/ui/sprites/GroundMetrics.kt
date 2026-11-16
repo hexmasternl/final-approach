@@ -26,7 +26,18 @@ internal object GroundMetrics {
         const val zoneHalf = 45f
         const val zoneRx = 16f
         const val numberInset = 58f
+        const val numberSize = 27f
         val dash = listOf(26f, 20f)
+        object Lines {
+            const val outline = 3f
+            const val shoulder = 1.6f
+            const val rubber = 3f
+            const val touchdown = 3f
+            const val edge = 1.6f
+            const val chevron = 3.2f
+            const val centre = 3.2f
+            const val light = 1f
+        }
         object Chevron {
             const val start = 60f
             const val pitch = 40f
@@ -103,6 +114,16 @@ internal object GroundMetrics {
             const val at = 60f
             const val r = 3f
         }
+        object Lines {
+            const val pad = 2f
+            const val joint = 1.2f
+            const val outline = 3f
+            const val wornRing = 5f
+            const val warnRing = 5f
+            const val h = 7.5f
+            const val cornerLight = 1.2f
+        }
+        const val wornOpacity = 0.5f
     }
     object Ground {
         const val stripe = 52f
