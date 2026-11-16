@@ -13,5 +13,5 @@
 
 ## 3. Docs and review
 
-- [ ] 3.1 Update `docs/design-system/components/LevelCard.md` (Compose note) and, if the showcase changes, rebuild it with `build-showcase.cjs`. Verify: the note no longer says "Not yet the full card".
+- [x] 3.1 Update `docs/design-system/components/LevelCard.md` (Compose note) and, if the showcase changes, rebuild it with `build-showcase.cjs`. Verify: the note no longer says "Not yet the full card".
 - [ ] 3.2 Human check: run the design-critic review on the previews against `LevelCard.md`; it names no violation. Tell #83 that the locked state is in.
