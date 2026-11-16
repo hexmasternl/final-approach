@@ -274,19 +274,40 @@ internal fun DrawScope.drawSceneryShadow(sprite: ScenerySprite, color: Color) {
 }
 
 /**
- * Where the middle of a shadow goes relative to its sprite, in pixels. The throw of the sprite
- * is scaled with the sprite and applied in screen axes, outside the rotation: the sun is fixed,
- * so a turned car casts its shadow down and to the right, never turned with it (W1). The
- * [rotationDegrees] of the sprite is a parameter to make that explicit: it changes nothing.
+ * Maps the shadow silhouette of a sprite, in the sprite's own units, onto the canvas. The
+ * silhouette follows the sprite's rotation (only a sprite that [rotates] turns) and its [scale]
+ * about the middle of its own shapes, [boundsCenter]. Its middle is then moved by the sprite's
+ * throw ([throwX], [throwY], scaled with the sprite) in screen axes, outside the rotation: the
+ * sun is fixed, so a turned car casts its shadow down and to the right, never turned with it (W1).
+ * The sprite itself is placed by the same steps without the throw, so the shadow's middle minus
+ * the sprite's middle is always the scaled throw.
  */
-@Suppress("UNUSED_PARAMETER")
-internal fun shadowOffset(sprite: ScenerySprite, scale: Float, rotationDegrees: Float): Offset =
-    Offset(sprite.shadowX * scale, sprite.shadowY * scale)
+internal fun shadowMatrix(
+    throwX: Float,
+    throwY: Float,
+    rotates: Boolean,
+    scale: Float,
+    boundsCenter: Offset,
+    center: Offset,
+    rotationDegrees: Float,
+): Matrix = Matrix().apply {
+    translate(center.x + throwX * scale, center.y + throwY * scale)
+    if (rotates) rotateZ(rotationDegrees)
+    scale(scale, scale)
+    translate(-boundsCenter.x, -boundsCenter.y)
+}
+
+/** The [shadowMatrix] of [sprite] fitted into [widthPx] by [lengthPx] around [center]; null when it has no size. */
+internal fun shadowMatrix(sprite: ScenerySprite, center: Offset, widthPx: Float, lengthPx: Float, rotationDegrees: Float): Matrix? {
+    val scale = spriteScale(sprite, widthPx, lengthPx)
+    if (scale <= 0f) return null
+    return shadowMatrix(sprite.shadowX, sprite.shadowY, sprite.rotates, scale, sprite.bounds.center, center, rotationDegrees)
+}
 
 /**
- * Draws the shadow of [sprite] placed like [drawScenerySprite] places it: the silhouette follows
- * the sprite's rotation and scale, and its middle moves by [shadowOffset] in screen axes. Draw
- * every shadow of a field this way inside one alpha layer, in [color] opaque.
+ * Draws the shadow of [sprite] placed like [drawScenerySprite] places it, moved by its throw
+ * as [shadowMatrix] says. Draw every shadow of a field this way inside one alpha layer, in
+ * [color] opaque.
  */
 internal fun DrawScope.drawSceneryShadowAt(
     sprite: ScenerySprite,
@@ -297,16 +318,8 @@ internal fun DrawScope.drawSceneryShadowAt(
     color: Color,
 ) {
     if (sprite.shadow.isEmpty()) return
-    val bounds = sprite.bounds
-    val scale = spriteScale(sprite, widthPx, lengthPx)
-    if (scale <= 0f) return
-    val moved = center + shadowOffset(sprite, scale, rotationDegrees)
-    withTransform({
-        translate(moved.x, moved.y)
-        if (sprite.rotates) rotate(rotationDegrees, Offset.Zero)
-        scale(scale, scale, Offset.Zero)
-        translate(-bounds.center.x, -bounds.center.y)
-    }) { drawShadowShapes(sprite, color) }
+    val matrix = shadowMatrix(sprite, center, widthPx, lengthPx, rotationDegrees) ?: return
+    withTransform({ transform(matrix) }) { drawShadowShapes(sprite, color) }
 }
 
 /** The shadows of a row, piece by piece, as [drawSceneryRow] lays them out. */
