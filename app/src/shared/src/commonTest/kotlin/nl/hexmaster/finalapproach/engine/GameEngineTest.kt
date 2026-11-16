@@ -285,6 +285,7 @@ class GameEngineTest {
         )
         assertEquals(setOf(1, 2, 3), engine.state.value.warnedAircraft)
     }
+
     private fun rolling(id: Int, position: Vec2, direction: Double, runway: String = "r", fade: Double = 0.0) =
         jet(id, position, direction).copy(
             altitude = AltitudeState.Landed,
@@ -346,8 +347,8 @@ class GameEngineTest {
             setOf(1, 3),
             warnedAfterPlacing(
                 rolling(1, first, PI / 2),
-                rolling(2, first + Vec2(-220.0 * zoom, 0.0), PI / 2),
-                rolling(3, first + Vec2(0.0, 40.0 * zoom), PI / 2, runway = "s"),
+                rolling(2, first + Vec2(-100.0 * zoom, 0.0), PI / 2),
+                rolling(3, first + Vec2(80.0 * zoom, 0.0), PI / 2, runway = "s"),
             ),
         )
     }
