@@ -2,8 +2,11 @@ package nl.hexmaster.finalapproach.ui.game
 
 import nl.hexmaster.finalapproach.domain.LevelConfig
 
-/** Why a level card is locked: the unlock condition and the progress, as the chip reads it. */
-data class LockedInfo(val text: String)
+/**
+ * Why a level card is locked: [text] is what the chip reads (the progress), [condition] an optional
+ * line under it that says what unlocks the level.
+ */
+data class LockedInfo(val text: String, val condition: String? = null)
 
 /**
  * What a level card shows besides the level itself. It is presentation only: whether a level is

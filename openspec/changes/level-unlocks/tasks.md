@@ -8,7 +8,7 @@
 
 ## 2. Level selection
 
-- [ ] 2.1 Make the selection page read the unlock state and show the locked tile (lock icon, condition, progress, disabled flat style, no start), with theme tokens only. If the design system lacks the level card locked state, add it to the showcase and tokens first. Verify: tapping a locked tile starts nothing; the tile shows the copy of the spec.
+- [x] 2.1 Make the selection page read the unlock state and show the locked tile (lock icon, condition, progress, disabled flat style, no start), with theme tokens only. If the design system lacks the level card locked state, add it to the showcase and tokens first. Verify: tapping a locked tile starts nothing; the tile shows the copy of the spec.
 - [ ] 2.2 Update `docs/game-design.md` with the unlock rules. Verify: the text matches the specs.
 
 ## 3. Check on a device

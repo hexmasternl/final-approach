@@ -84,7 +84,7 @@ internal fun LevelCard(level: LevelConfig, state: LevelCardState, onClick: () ->
                 .padding(FaDimens.lineUi)
                 .semantics(mergeDescendants = true) {
                     disabled()
-                    contentDescription = "${level.name}. ${locked.text}"
+                    contentDescription = listOfNotNull(level.name, locked.condition, locked.text).joinToString(". ")
                 },
         ) {
             LevelCardFace(level, state, Modifier.clip(RoundedCornerShape(FaDimens.radiusPanel - FaDimens.lineUi)))
@@ -134,6 +134,7 @@ private fun LevelCardFace(level: LevelConfig, state: LevelCardState, modifier: M
                     FaChip(locked.text, tone = FaChipTone.Plain, icon = FaIcon.Lock)
                 }
             }
+            locked?.condition?.let { BasicText(it, style = type.caption.copy(color = colors.inkMuted)) }
         }
     }
 }
