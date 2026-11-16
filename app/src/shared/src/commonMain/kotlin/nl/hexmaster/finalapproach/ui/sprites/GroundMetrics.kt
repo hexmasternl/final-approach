@@ -41,6 +41,9 @@ internal object GroundMetrics {
         object Chevron {
             const val start = 60f
             const val pitch = 40f
+            const val along = 12f
+            const val across = 9f
+            const val endClearance = 6f
         }
         object EdgeLine {
             const val inset = 8f
@@ -87,6 +90,7 @@ internal object GroundMetrics {
                 const val y = 52f
                 const val w = 6.5f
                 const val h = 5.5f
+                const val rx = 1f
                 const val insetFull = 112f
                 const val insetShort = 50f
                 const val oneWayBack = 36f
@@ -163,6 +167,7 @@ internal object GroundMetrics {
             const val rx = 14f
             const val innerRx = 10f
             const val joint = 45f
+            const val jointEndRoom = 10f
         }
         object Taxi {
             const val verge = 44f
@@ -174,6 +179,7 @@ internal object GroundMetrics {
             const val rx = 10f
             const val innerRx = 7f
             const val bay = 22f
+            const val bayEndRoom = 6f
         }
         object Cluster {
             const val tuft = 3f
@@ -225,6 +231,9 @@ internal object GroundMetrics {
             const val dashGap = 4f
             const val fromEnd = 30f
         }
+        val pondReference = listOf(96f, 68f)
+        val pondLilies = listOf(listOf(-46f, 25f, 0f, 1f), listOf(-32f, 38f, 120f, 0.8f), listOf(50f, -25f, 200f, 1f))
+        val pondDucks = listOf(listOf(10f, -4f, 60f, 1f), listOf(30f, 10f, 75f, 0.85f))
         val pondRipples = listOf(listOf(-38f, -12f, 10f, -6f, 22f), listOf(22f, 30f, 12f, -7f, 26f), listOf(-8f, -40f, 8f, -5f, 18f))
         const val airfieldCorner = 20f
         const val lotBayLength = 0.42f

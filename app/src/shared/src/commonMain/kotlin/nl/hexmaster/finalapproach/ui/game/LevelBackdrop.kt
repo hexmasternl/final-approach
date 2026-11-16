@@ -39,15 +39,27 @@ import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaLights
 import nl.hexmaster.finalapproach.ui.theme.FaOpacity
 
-/** Sizes of the lights of a Dawn level, in world units, and how the running light fades. */
-private object Backdrop {
+/**
+ * Tuning of the lights of a Dawn level: the sizes of the beacon and the running light, in world
+ * units, and how the running light fades. The design system names the light colours (`light-*`)
+ * but gives no sizes or fade for them, so these are the app's own animation values and not design
+ * metrics; if the design system ever sizes them, they move into its metrics table.
+ */
+internal object DawnLightDefaults {
+    /** Radius of the glow of the tower beacon. */
     const val BEACON_RADIUS = 22.0
 
     /** The running light glows this much wider than the edge light it lights. */
     const val RUNNING_LIGHT_GLOW = 1.6f
-    const val TRAIL_FADE = 0.35f
-    const val UNLIT_FRACTION = 0.2f
 
+    /** How much of its brightness the running light loses with each light behind its head. */
+    const val TRAIL_FADE = 0.35f
+
+    /** The least brightness of a light the running light has passed, as a fraction of full. */
+    const val UNLIT_FRACTION = 0.2f
+}
+
+private object Backdrop {
     /** A boat's bow points up in its sprite; it sails to the right or to the left. */
     const val QUARTER_TURN_DEGREES = 90f
 }
@@ -201,7 +213,7 @@ internal fun DrawScope.drawAmbient(
         level.runways.forEach { drawRunwayLights(it, life, viewport) }
         level.scenery.filter { it.kind == SceneryKind.Tower }.forEach {
             val alpha = life.beaconOpacity()
-            if (alpha > 0f) drawCircle(FaLights.beacon.copy(alpha = alpha), viewport.px(Backdrop.BEACON_RADIUS), viewport.offsetOf(it.position))
+            if (alpha > 0f) drawCircle(FaLights.beacon.copy(alpha = alpha), viewport.px(DawnLightDefaults.BEACON_RADIUS), viewport.offsetOf(it.position))
         }
     }
 }
@@ -251,7 +263,7 @@ private fun DrawScope.drawRunwayLights(runway: RunwayConfig, life: AmbientLife, 
     val plan = runwayPlan(runway.length.toFloat(), landingEnds, runway.width.toFloat() / GroundMetrics.Runway.width)
     val count = plan.edgeLightsPerSide
     val head = life.runningLightHead(count)
-    val radius = GroundMetrics.Runway.Lights.Edge.r * Backdrop.RUNNING_LIGHT_GLOW
+    val radius = GroundMetrics.Runway.Lights.Edge.r * DawnLightDefaults.RUNNING_LIGHT_GLOW
     inRunwayFrame(runway, viewport) {
         plan.edgeLights.forEachIndexed { index, light ->
             val alpha = lightAlpha(index / 2, head, count, life.lightOpacity)
@@ -264,7 +276,7 @@ private fun DrawScope.drawRunwayLights(runway: RunwayConfig, life: AmbientLife, 
 private fun lightAlpha(index: Int, head: Int?, count: Int, max: Float): Float {
     if (head == null) return max
     val behind = (head - index + count) % count
-    return (max * (1f - behind * Backdrop.TRAIL_FADE)).coerceAtLeast(max * Backdrop.UNLIT_FRACTION)
+    return (max * (1f - behind * DawnLightDefaults.TRAIL_FADE)).coerceAtLeast(max * DawnLightDefaults.UNLIT_FRACTION)
 }
 
 /** Navigation lights (green right, red left, white tail) and a headlight at the nose, for Dawn levels. */

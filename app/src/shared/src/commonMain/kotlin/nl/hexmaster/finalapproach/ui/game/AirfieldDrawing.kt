@@ -114,15 +114,12 @@ internal fun DrawScope.drawRunway(
         plan.edgeLights.forEach { drawLight(colors.beacon, colors.concrete700, it, Runway.Lights.Edge.r) }
         plan.approachLights.forEach {
             val box = it.box
-            val radius = CornerRadius(APPROACH_LIGHT_RX)
+            val radius = CornerRadius(Runway.Lights.Approach.rx)
             drawRoundRect(if (it.red) colors.cherry500 else colors.foam, box.topLeft(), box.size(), radius)
             drawRoundRect(colors.outline, box.topLeft(), box.size(), radius, style = roundStroke(Runway.Lines.light))
         }
     }
 }
-
-/** The corner radius of an approach light's box, in world units (the design system's `rx="1"`). */
-private const val APPROACH_LIGHT_RX = 1f
 
 private fun DrawScope.drawLight(fill: Color, edge: Color, at: PlanPoint, radius: Float) {
     drawCircle(fill, radius, Offset(at.x, at.y))

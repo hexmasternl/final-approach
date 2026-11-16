@@ -79,12 +79,11 @@ internal fun runwayPlan(length: Float, landingEnds: Set<RunwayEnd>, acrossScale:
     if (oneWay) {
         val flip = if (landingEnds.single() == RunwayEnd.High) 1f else -1f
         var x = -half + Runway.Chevron.start
-        while (x < half - inset - CHEVRON_END_CLEARANCE) {
-            val a = CHEVRON_ARM
+        while (x < half - inset - Runway.Chevron.endClearance) {
             chevrons += PlanChevron(
                 tip = PlanPoint(flip * x, 0f),
-                armA = PlanPoint(flip * (x + a.along), -a.across * acrossScale),
-                armB = PlanPoint(flip * (x + a.along), a.across * acrossScale),
+                armA = PlanPoint(flip * (x + Runway.Chevron.along), -Runway.Chevron.across * acrossScale),
+                armB = PlanPoint(flip * (x + Runway.Chevron.along), Runway.Chevron.across * acrossScale),
             )
             x += Runway.Chevron.pitch
         }
@@ -110,14 +109,6 @@ internal fun runwayPlan(length: Float, landingEnds: Set<RunwayEnd>, acrossScale:
         approachLights = approachLights(approachEnd, half, full, acrossScale),
     )
 }
-
-/** The arm of a chevron: how far it reaches back along the runway and out across it. */
-private class ChevronArm(val along: Float, val across: Float)
-
-private val CHEVRON_ARM = ChevronArm(along = 12f, across = 9f)
-
-/** A one-way centre line stops this far before the marks of the landing end. */
-private const val CHEVRON_END_CLEARANCE = 6f
 
 /** Positions measured from [end] inwards: a mark [u] units in from the end lies at x = sign * (half - u). */
 private fun alongOf(end: RunwayEnd, half: Float, u: Float): Float = end.sign * (half - u)

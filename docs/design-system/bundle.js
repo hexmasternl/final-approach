@@ -217,7 +217,7 @@
       zonePad: 14, zoneHalf: 45, zoneRx: 16,
       numberInset: 58, numberSize: 27, dash: '26 20',
       lines: { outline: 3, shoulder: 1.6, rubber: 3, touchdown: 3, edge: 1.6, chevron: 3.2, centre: 3.2, light: 1 },
-      chevron: { start: 60, pitch: 40 },
+      chevron: { start: 60, pitch: 40, along: 12, across: 9, endClearance: 6 },
       edgeLine: { inset: 8, y: 27.5 },
       rubber: [[74, -10, 96], [82, -5, 118], [78, 6, 104], [88, 11, 70]],
       bars: { count: 6, inset: 8, y0: -25, pitch: 9, length: 22, width: 5, rx: 1 },
@@ -226,7 +226,7 @@
       lights: {
         threshold: { y: [-19, -7, 7, 19], out: 5, r: 2.3 },
         edge: { spacing: 58, inset: 32, y: 36.5, r: 2.5 },
-        approach: { count: 4, red: 2, pitch: 9, y: 52, w: 6.5, h: 5.5, insetFull: 112, insetShort: 50, oneWayBack: 36 }
+        approach: { count: 4, red: 2, pitch: 9, y: 52, w: 6.5, h: 5.5, rx: 1, insetFull: 112, insetShort: 50, oneWayBack: 36 }
       }
     },
     helipad: {
@@ -240,9 +240,9 @@
       track: { width: 11, edge: 4, clearance: 14, rutDash: '6 7', rutShift: 2.5 },
       field: { margin: 6, outerRx: 16, innerRx: 11, rowPitch: 9, rowInset: 7, clearance: 34 },
       pond: { shore: 22, sand: 9, shallowsX: 0.74, shallowsY: 0.7, clearance: 30 },
-      apron: { margin: 6, rx: 14, innerRx: 10, joint: 45 },
+      apron: { margin: 6, rx: 14, innerRx: 10, joint: 45, jointEndRoom: 10 },
       taxi: { verge: 44, kerb: 33, surface: 29 },
-      lot: { margin: 5, rx: 10, innerRx: 7, bay: 22 },
+      lot: { margin: 5, rx: 10, innerRx: 7, bay: 22, bayEndRoom: 6 },
       cluster: { tuft: 3, flower: 5, spreadX: 16, spreadY: 12 },
       lines: { roadDash: 1.8, trackRut: 1.5, taxiCentre: 1.8, taxiHold: 1.5, apronSlab: 2, apronJoint: 1.2, apronStand: 2, lotSlab: 1.6, lotBay: 1.5, fieldEdge: 2, pondShore: 1.6, pondFoam: 2, paddock: 2, cropRows: 4, ploughRows: 2.2 },
       /* The mown airfield's soft boundary, the paddock ground and the patches of tone on open ground. */
@@ -251,6 +251,10 @@
       stand: { down: 36, length: 22, barAt: 14, barHalf: 11 },
       holdShort: { half: 13, gap: 4, dash: '4 3', dashAt: 9, dashGap: 4, fromEnd: 30 },
       /* Three ripples on a pond or waterhole: start x and y from its centre, then the curve's control and end offsets. */
+      /* What floats on a pond, for a pond of the reference half sizes: [x, y, turn in degrees, scale] from its centre. */
+      pondReference: [96, 68],
+      pondLilies: [[-46, 25, 0, 1], [-32, 38, 120, 0.8], [50, -25, 200, 1]],
+      pondDucks: [[10, -4, 60, 1], [30, 10, 75, 0.85]],
       pondRipples: [[-38, -12, 10, -6, 22], [22, 30, 12, -7, 26], [-8, -40, 8, -5, 18]],
       airfieldCorner: 20,
       lotBayLength: 0.42,
@@ -657,14 +661,14 @@
       s += '</g>';
     });
     s += '<path ' + k('', 'marking', R.lines.edge) + ' d="M' + (-h + R.edgeLine.inset) + ' ' + c3(-R.edgeLine.y) + 'h' + (L - 2 * R.edgeLine.inset) + 'M' + (-h + R.edgeLine.inset) + ' ' + c3(R.edgeLine.y) + 'h' + (L - 2 * R.edgeLine.inset) + '"/>';
-    if (oneWay) for (x = -h + R.chevron.start; x < h - inset - 6; x += R.chevron.pitch) s += '<path ' + k('', 'marking', R.lines.chevron) + ' d="M' + (x + 12) + ' -9l-12 9l12 9"/>';
+    if (oneWay) for (x = -h + R.chevron.start; x < h - inset - R.chevron.endClearance; x += R.chevron.pitch) s += '<path ' + k('', 'marking', R.lines.chevron) + ' d="M' + (x + R.chevron.along) + ' ' + -R.chevron.across + 'l' + -R.chevron.along + ' ' + R.chevron.across + 'l' + R.chevron.along + ' ' + R.chevron.across + '"/>';
     else s += '<path ' + k('', 'marking', R.lines.centre, 'stroke-dasharray="' + R.dash + '" stroke-linecap="butt"') + ' d="M' + (-h + inset) + ' 0h' + (L - 2 * inset) + '"/>';
     if (!oneWay) s += '<text class="fa-p-num" transform="translate(' + (-h + R.numberInset) + ',0) rotate(90)" text-anchor="middle" dominant-baseline="central">' + (n[0] || '') + '</text>';
     s += '<text class="fa-p-num" transform="translate(' + (h - R.numberInset) + ',0) rotate(-90)" text-anchor="middle" dominant-baseline="central">' + (n[1] || '') + '</text>';
     for (x = -Math.floor((h - Lt.edge.inset) / Lt.edge.spacing) * Lt.edge.spacing; x <= h - Lt.edge.inset; x += Lt.edge.spacing) s += '<circle ' + k('beacon', 'concrete-700', R.lines.light) + ' cx="' + x + '" cy="' + c3(-Lt.edge.y) + '" r="' + c3(Lt.edge.r) + '"/><circle ' + k('beacon', 'concrete-700', R.lines.light) + ' cx="' + x + '" cy="' + c3(Lt.edge.y) + '" r="' + c3(Lt.edge.r) + '"/>';
     /* The approach lights beside the landing end: two red, two white. */
     var Ap = Lt.approach, px = oneWay ? h - (full ? Ap.insetFull : Ap.insetShort) - Ap.oneWayBack : -h + (full ? Ap.insetFull : Ap.insetShort);
-    for (i = 0; i < Ap.count; i++) s += '<rect ' + k((i < Ap.red) !== !!oneWay ? 'cherry-500' : 'foam', O, R.lines.light) + ' x="' + (px + i * Ap.pitch) + '" y="' + -Ap.y + '" width="' + c3(Ap.w) + '" height="' + c3(Ap.h) + '" rx="1"/>';
+    for (i = 0; i < Ap.count; i++) s += '<rect ' + k((i < Ap.red) !== !!oneWay ? 'cherry-500' : 'foam', O, R.lines.light) + ' x="' + (px + i * Ap.pitch) + '" y="' + -Ap.y + '" width="' + c3(Ap.w) + '" height="' + c3(Ap.h) + '" rx="' + Ap.rx + '"/>';
     return s;
   }
   function runwaySvg(length, numbers, oneWay, zone) {
@@ -789,7 +793,7 @@
     /* --- hard surfaces, in the runway frame */
     S.apron = function (x, y, w, h, stands) {
       var s = '<rect ' + k('grass-700') + ' x="' + (x - G.apron.margin) + '" y="' + (y - G.apron.margin) + '" width="' + (w + 2 * G.apron.margin) + '" height="' + (h + 2 * G.apron.margin) + '" rx="' + G.apron.rx + '"/><rect ' + k('concrete-300', 'concrete-700', G.lines.apronSlab) + ' x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + G.apron.innerRx + '"/>', j = '';
-      for (var a = x + G.apron.joint; a < x + w - 10; a += G.apron.joint) j += 'M' + a + ' ' + y + 'v' + h;
+      for (var a = x + G.apron.joint; a < x + w - G.apron.jointEndRoom; a += G.apron.joint) j += 'M' + a + ' ' + y + 'v' + h;
       j += 'M' + x + ' ' + r1(y + h / 2) + 'h' + w;
       s += '<path ' + k('', 'concrete-500', G.lines.apronJoint) + ' d="' + j + '"/>';
       (stands || []).forEach(function (p) { s += '<path ' + k('', 'marking-warn', G.lines.apronStand) + ' d="M' + p[0] + ' ' + (p[1] + G.stand.down) + 'v-' + G.stand.length + 'M' + (p[0] - G.stand.barHalf) + ' ' + (p[1] + G.stand.barAt) + 'h' + 2 * G.stand.barHalf + '"/>'; });
@@ -810,7 +814,7 @@
     S.runway = function (length, numbers, oneWay, zone, x, y, deg) { local.push('<g transform="translate(' + (x || 0) + ',' + (y || 0) + ') rotate(' + (deg || 0) + ')">' + runwayMarkup(length, numbers, oneWay, zone) + '</g>'); return S; };
     S.lot = function (x, y, w, h) {
       var s = '<rect ' + k('grass-700') + ' x="' + (x - G.lot.margin) + '" y="' + (y - G.lot.margin) + '" width="' + (w + 2 * G.lot.margin) + '" height="' + (h + 2 * G.lot.margin) + '" rx="' + G.lot.rx + '"/><rect ' + k('concrete-300', 'concrete-700', G.lines.lotSlab) + ' x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + G.lot.innerRx + '"/>', j = '';
-      for (var a = x + G.lot.bay; a < x + w - 6; a += G.lot.bay) j += 'M' + a + ' ' + y + 'v' + r1(h * G.lotBayLength);
+      for (var a = x + G.lot.bay; a < x + w - G.lot.bayEndRoom; a += G.lot.bay) j += 'M' + a + ' ' + y + 'v' + r1(h * G.lotBayLength);
       ground.push(s + '<path ' + k('', 'foam', G.lines.lotBay) + ' d="' + j + '"/>');
       return S;
     };
@@ -905,6 +909,12 @@
     return S;
   }
 
+  /* What floats on the reference pond, as scene extras: a detail, its place, and a transform when it is turned or scaled. */
+  function pondLife() {
+    var G = METRICS.ground;
+    function extra(name) { return function (m) { var t = [m[2] ? 'rotate(' + m[2] + ')' : '', m[3] !== 1 ? 'scale(' + String(m[3]).replace('0.', '.') + ')' : ''].filter(Boolean).join(' '); return t ? [name, m[0], m[1], t] : [name, m[0], m[1]]; }; }
+    return G.pondLilies.map(extra('lily')).concat(G.pondDucks.map(extra('duck')));
+  }
   /* Meadow Field: one runway and a helipad between a road, a farm, crop fields, a pond and woods. */
   function meadowScene() {
     var S = Scene(20261113), p;
@@ -916,7 +926,7 @@
     S.roads([[[232, -30], [205, 170], [172, 370], [214, 600], [250, 800], [205, 1110]], [[178, 330], [300, 322], [420, 318], [500, 322]]]);
     S.field(860, 975, 330, 120, -3, 'wheat').field(1215, 985, 300, 112, 2, 'green').field(78, 560, 112, 290, -2, 'plough').field(74, 900, 104, 190, 1, 'green');
     [[760, 952], [802, 1004], [905, 960], [968, 1002]].forEach(function (q) { S.put('hay-bale', q[0], q[1]); });
-    S.pond(1768, 560, 96, 68, 77, [['lily', -46, 25], ['lily', -32, 38, 'rotate(120) scale(.8)'], ['lily', 50, -25, 'rotate(200)'], ['duck', 10, -4, 'rotate(60)'], ['duck', 30, 10, 'rotate(75) scale(.85)'], ['reed', -78, -40], ['reed', -70, -30], ['reed', 78, 40], ['reed', 70, 52], ['reed', -8, 68], ['reed', -78, 40]]);
+    S.pond(1768, 560, METRICS.ground.pondReference[0], METRICS.ground.pondReference[1], 77, pondLife().concat([['reed', -78, -40], ['reed', -70, -30], ['reed', 78, 40], ['reed', 70, 52], ['reed', -8, 68], ['reed', -78, 40]]));
     S.airfield(field);
     S.apron(-300, -235, 360, 105, [[-205, -186], [-112, -186]]).taxi(['M-160 -132V-30', 'M58 -185H250'], [[-160, -60]]).helipad(300, -190).runway(760, '09/27', false, 'ok');
     S.lot(491, 301, 86, 48);

@@ -282,13 +282,13 @@ private fun DrawScope.drawPond(pond: SceneryItem, colors: FaColors) {
 private class Floating(val detail: SceneryDetail, val x: Float, val y: Float, val degrees: Float = 0f, val scale: Float = 1f)
 
 private object PondLife {
-    val all = listOf(
-        Floating(SceneryDetail.Lily, -0.48f, 0.37f),
-        Floating(SceneryDetail.Lily, -0.33f, 0.56f, degrees = 120f, scale = 0.8f),
-        Floating(SceneryDetail.Lily, 0.52f, -0.37f, degrees = 200f),
-        Floating(SceneryDetail.Duck, 0.10f, -0.06f, degrees = 60f),
-        Floating(SceneryDetail.Duck, 0.31f, 0.15f, degrees = 75f, scale = 0.85f),
-    )
+    /** The design system gives places for a reference pond; they scale with the pond's half sizes. */
+    private fun floating(detail: SceneryDetail, place: List<Float>): Floating {
+        val (halfWidth, halfHeight) = Ground.pondReference
+        return Floating(detail, place[0] / halfWidth, place[1] / halfHeight, degrees = place[2], scale = place[3])
+    }
+
+    val all = Ground.pondLilies.map { floating(SceneryDetail.Lily, it) } + Ground.pondDucks.map { floating(SceneryDetail.Duck, it) }
 }
 
 /**
@@ -364,7 +364,7 @@ private fun DrawScope.drawApron(apron: SceneryItem, parked: List<SceneryItem>, c
         roundedBox(colors.concrete700, apron.size, m.innerRx, round(Ground.Lines.apronSlab))
         val joints = Path()
         var x = -w / 2f + m.joint
-        while (x < w / 2f - JOINT_END_ROOM) {
+        while (x < w / 2f - m.jointEndRoom) {
             joints.moveTo(x, -h / 2f)
             joints.lineTo(x, h / 2f)
             x += m.joint
@@ -387,9 +387,6 @@ private fun DrawScope.drawApron(apron: SceneryItem, parked: List<SceneryItem>, c
     }
 }
 
-/** How far short of an apron's right edge its last joint ends: joints too close to the edge are left out. */
-private const val JOINT_END_ROOM = 10f
-
 /** A car park: a concrete slab with bay lines inside a rough-grass verge. */
 private fun DrawScope.drawCarPark(lot: SceneryItem, colors: FaColors) {
     val m = Ground.Lot
@@ -401,7 +398,7 @@ private fun DrawScope.drawCarPark(lot: SceneryItem, colors: FaColors) {
         roundedBox(colors.concrete700, lot.size, m.innerRx, round(Ground.Lines.lotSlab))
         val bays = Path()
         var x = -w / 2f + m.bay
-        while (x < w / 2f - BAY_END_ROOM) {
+        while (x < w / 2f - m.bayEndRoom) {
             bays.moveTo(x, -h / 2f)
             bays.relativeLineTo(0f, h * Ground.lotBayLength)
             x += m.bay
@@ -409,9 +406,6 @@ private fun DrawScope.drawCarPark(lot: SceneryItem, colors: FaColors) {
         drawPath(bays, colors.foam, style = round(Ground.Lines.lotBay))
     }
 }
-
-/** How far short of a car park's right edge its last bay line ends. */
-private const val BAY_END_ROOM = 6f
 
 /**
  * A taxiway: lighter asphalt than a runway, a concrete edge and a rough-grass verge, a yellow
