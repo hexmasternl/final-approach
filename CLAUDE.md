@@ -110,7 +110,7 @@ Seven UI rules, for controls and panels (`docs/design-system/brand-book.md`):
 - **U6** Tower paperwork: flight strips, boarding-pass dialogs, stamps.
 - **U7** Disabled is flat, not faded: no colour, lip or shine, full opacity.
 
-The app's UI components are version 2; the app's world (scenery sprites, runway and helipad drawing, level backdrops) still renders version 1 until it is ported in the follow-up to issue #76.
+The app's UI components and its world (scenery sprites, runway and helipad drawing, level backdrops, the level-select miniatures) are version 2 (issues #76 and #77). Scenery sprite data and the sizes of runways, helipads and ground pieces are generated from `bundle.js`. A few readers outside the world (flight path end dot, proximity ring, tutorial highlight and drag demo, selection ring, splash banner, `FaShadows`) still read version 1 tokens until a follow-up issue moves them.
 
 ### Using it in code
 
@@ -120,7 +120,7 @@ The app's UI components are version 2; the app's world (scenery sprites, runway 
 - **Dimensions:** spacing, radius, line, size and flight-path values as `dp` in `FaDimens`. Use the version 2 values: the line ranks `lineHero`, `lineZone`, `lineUi`, `lineUiSm`, `lineDetail`; the radii `radiusChip`, `radiusStrip`, `radiusControl`, `radiusPanel`, `radiusDialog`; the lips `lipSm`, `lipMd`, `lipLg`, `lipPanel`, `lipDialog`; `stripHeight` for HUD readouts. UI sizes are fixed; world positions scale with the viewport.
 - **A lip means pressable.** Build pressable controls on `FaMoulded` and readouts on the flat surface (`drawFlat`, `Modifier.faFlatSurface`) in `ui/components`. Do not draw a lip by hand, and never in `outline`.
 - **Disabled is flat.** A disabled control is drawn in `paper` tones with its label in `ink3`, at full opacity. Do not fade it.
-- **No version 1 tokens in new code.** Tokens marked `deprecated` in `tokens.json` (the three surface colours, the navy lip shadows, the numbered line widths, the old radii, the deep shades, the HUD chip height and the disabled opacity) exist only for the world that is not ported yet. Their KDoc names the replacement.
+- **No version 1 tokens in new code.** Tokens marked `deprecated` in `tokens.json` (the three surface colours, the navy lip shadows, the numbered line widths, the old radii, the deep shades, the HUD chip height and the disabled opacity) exist only for the few readers that have not moved off them yet (see above), and are removed in the follow-up. Their KDoc names the replacement.
 - **Motion:** durations in milliseconds and easings as `CubicBezierEasing` from the `duration` and `easing` tokens. Arrivals bounce, controls snap.
 - **Layers:** draw in the fixed order field, zone glows, paths, ground shadows, aircraft, effects, clouds, HUD, overlays. Inside the field: flat ground, then the one layer of hard ground shadows (`shadowCast` at `opacity-shadow-cast`), then standing scenery. The ground-shadows layer above the paths holds only the soft shadows of aircraft.
 - **Themes:** Day is the default; Night is for night levels, Dawn for levels before sunrise. Paper, strips and aircraft stay light in Night and Dawn. Do not invert the UI.

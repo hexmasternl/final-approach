@@ -19,4 +19,4 @@ The airport names in the showcase are examples.
 
 In version 1 the art was a schematic miniature on mown stripes, and a square variant existed for the level select page. Version 2 has one card.
 
-**Compose.** `LevelTile` in `ui/game/LevelSelectPage.kt`: a `level-tile` square on `FaMoulded` with `tonePaper`, holding a `level-tile-art` miniature and the name in `title-sm`. Its miniature still draws the version 1 layout until the app's world is ported.
+**Compose.** `LevelTile` in `ui/game/LevelSelectPage.kt`: a `level-tile` square on `FaMoulded` with `tonePaper`, holding a `level-tile-art` miniature and the name in `title-sm`. Its miniature is a crop of the level's own field, drawn by the same code as the game (`drawFieldStatic` in `ui/game/LevelBackdrop.kt`) in the palette of the level's own theme, through `Modifier.levelMiniature` in `ui/game/LevelMiniature.kt`. `miniatureCrop` picks the smallest square around every runway and helipad with its fringe, kept inside the world. The field is recorded once per tile size. The miniature has no aircraft, paths, clouds or moving ambient life.
