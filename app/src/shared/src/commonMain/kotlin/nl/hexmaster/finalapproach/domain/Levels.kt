@@ -1,6 +1,8 @@
 package nl.hexmaster.finalapproach.domain
 
 import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 
 /** The levels of the game, in play order. */
 object Levels {
@@ -64,6 +66,17 @@ object Levels {
         SceneryKind.Elephant to (64.0 to 84.0),
     )
 
+    /** The outline of an island's grass, [scale] of its size, as a polygon of [points] corners. */
+    private fun islandOutline(island: Island, scale: Double, points: Int = ISLAND_OUTLINE_POINTS): List<Vec2> =
+        List(points) { i ->
+            val angle = 2 * PI * i / points
+            Vec2(island.center.x + island.radiusX * scale * cos(angle), island.center.y + island.radiusY * scale * sin(angle))
+        }
+
+    /** Corners of the outline of an island's airfield, and how much smaller than the island it is. */
+    private const val ISLAND_OUTLINE_POINTS = 48
+    private const val ISLAND_OUTLINE_SCALE = 0.99
+
     /** Width of a hedge, a fence, a forest edge and a road, in world units. */
     private const val HEDGE_WIDTH = 28.0
     private const val FENCE_WIDTH = 12.0
@@ -85,6 +98,9 @@ object Levels {
     private fun strip(kind: SceneryKind, x: Double, y: Double, length: Double, width: Double, rotation: Double = 0.0) =
         SceneryItem(kind, Vec2(x, y), width, length, rotation)
 
+    /** The island of level 2. */
+    private val ISLAND = Island(Vec2(960.0, 540.0), radiusX = 560.0, radiusY = 300.0)
+
     /**
      * Level 2: an airport on an island in the sea. A long main runway, a shorter one-way diagonal runway (22, approached from the north-east)
      * that crosses it (the jumbo does not fit on it) and a helipad. Around it a beach with palms,
@@ -97,7 +113,9 @@ object Levels {
         world = world(),
         landscape = LevelScenery.Island,
         allowCrossingRunways = true,
-        island = Island(Vec2(960.0, 540.0), radiusX = 560.0, radiusY = 300.0),
+        island = ISLAND,
+        airfield = islandOutline(ISLAND, ISLAND_OUTLINE_SCALE),
+        decorationSeed = 4711L,
         runways = listOf(
             RunwayConfig("09-27", Vec2(920.0, 560.0), EAST, length = 700.0),
             RunwayConfig(
@@ -150,6 +168,12 @@ object Levels {
         world = world(),
         theme = LevelTheme.Dawn,
         landscape = LevelScenery.Savanna,
+        // Keeps clear of the track that ends under the apron, the waterhole and the buildings' road.
+        airfield = listOf(
+            Vec2(560.0, 330.0), Vec2(1500.0, 320.0), Vec2(1525.0, 345.0), Vec2(1525.0, 830.0),
+            Vec2(1490.0, 915.0), Vec2(610.0, 915.0), Vec2(610.0, 690.0), Vec2(560.0, 680.0),
+        ),
+        decorationSeed = 1903L,
         allowCrossingRunways = true,
         runways = listOf(
             RunwayConfig("09L-27R", Vec2(920.0, 460.0), EAST, length = 640.0),
@@ -240,6 +264,13 @@ object Levels {
         ),
         helipads = listOf(HelipadConfig(id = "h1", position = Vec2(1430.0, 630.0))),
         paddock = Bounds(left = 220.0, top = 520.0, right = 500.0, bottom = 770.0),
+        // Keeps clear of the fields and hedges, the road that ends under the apron and the farm road.
+        airfield = listOf(
+            Vec2(760.0, 285.0), Vec2(1150.0, 285.0), Vec2(1300.0, 350.0), Vec2(1540.0, 430.0),
+            Vec2(1548.0, 640.0), Vec2(1520.0, 740.0), Vec2(1300.0, 770.0), Vec2(660.0, 770.0),
+            Vec2(604.0, 720.0), Vec2(604.0, 540.0), Vec2(760.0, 500.0),
+        ),
+        decorationSeed = 20261113L,
         scenery = listOf(
             strip(SceneryKind.Field, 460.0, 200.0, length = 180.0, width = 520.0),
             strip(SceneryKind.Field, 1010.0, 190.0, length = 480.0, width = 160.0, rotation = EAST),

@@ -253,7 +253,14 @@ data class ScoringConfig(
 /** Wind blowing towards [direction] (radians) with [strength] in world units per second. */
 data class Wind(val direction: Double, val strength: Double)
 
-/** Everything the engine, the spawner and the UI need to run one level. */
+/**
+ * Everything the engine, the spawner and the UI need to run one level.
+ *
+ * [airfield] is the outline of the mown airfield, a polygon in world units: the ground inside it
+ * is mown in stripes parallel to the first runway, and no decoration lies there. Every runway
+ * and helipad lies inside it; on an island it lies on the island. [decorationSeed] seeds the
+ * placing of patches, tufts, flowers and reeds, which never use the engine's random numbers.
+ */
 data class LevelConfig(
     val id: String,
     val name: String,
@@ -264,6 +271,8 @@ data class LevelConfig(
     val landscape: LevelScenery = LevelScenery.Meadow,
     val island: Island? = null,
     val paddock: Bounds? = null,
+    val airfield: List<Vec2> = emptyList(),
+    val decorationSeed: Long = 0L,
     val allowCrossingRunways: Boolean = false,
     val ambience: Ambience = Ambience(),
     val runways: List<RunwayConfig> = emptyList(),

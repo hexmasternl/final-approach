@@ -11,6 +11,23 @@ object LevelConfigValidator {
         addAll(rampProblems(config))
         addAll(worldProblems(config))
         addAll(sceneryProblems(config))
+        addAll(airfieldProblems(config))
+    }
+
+    private fun airfieldProblems(config: LevelConfig): List<String> = buildList {
+        val outline = config.airfield
+        if (outline.isEmpty()) return@buildList
+        if (outline.size < 3) {
+            add("The airfield outline needs at least three points")
+            return@buildList
+        }
+        config.island?.let { island ->
+            if (outline.any { !island.contains(it) }) add("The airfield outline must lie on the island")
+        }
+        config.runways.filter { runway -> runway.shape.corners.any { !Polygons.contains(outline, it) } }
+            .forEach { add("Runway '${it.id}' lies outside the airfield outline") }
+        config.helipads.filter { !Polygons.contains(outline, it.position) }
+            .forEach { add("Helipad '${it.id}' lies outside the airfield outline") }
     }
 
     private fun sceneryProblems(config: LevelConfig): List<String> = buildList {

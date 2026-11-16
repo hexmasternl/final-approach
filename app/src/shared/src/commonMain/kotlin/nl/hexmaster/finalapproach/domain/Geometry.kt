@@ -175,3 +175,21 @@ object Overlap {
         return from + d * t
     }
 }
+
+/** Tests against a polygon given by its corners in order, in either direction. */
+object Polygons {
+    /** True when [point] lies inside [corners] (the even-odd rule); a polygon of fewer than three corners holds nothing. */
+    fun contains(corners: List<Vec2>, point: Vec2): Boolean {
+        if (corners.size < 3) return false
+        var inside = false
+        var previous = corners.last()
+        for (corner in corners) {
+            val crosses = (corner.y > point.y) != (previous.y > point.y)
+            if (crosses && point.x < (previous.x - corner.x) * (point.y - corner.y) / (previous.y - corner.y) + corner.x) {
+                inside = !inside
+            }
+            previous = corner
+        }
+        return inside
+    }
+}
