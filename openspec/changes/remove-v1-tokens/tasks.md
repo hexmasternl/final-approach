@@ -14,5 +14,5 @@
 
 ## 3. Docs and review
 
-- [ ] 3.1 `CLAUDE.md` and `.github/copilot-instructions.md`: remove the "A few readers outside the world ..." sentence and the "No version 1 tokens in new code" rule, keeping both files consistent. Verify: neither mentions version 1 tokens or `deprecated` tokens.
+- [x] 3.1 `CLAUDE.md` and `.github/copilot-instructions.md`: remove the "A few readers outside the world ..." sentence and the "No version 1 tokens in new code" rule, keeping both files consistent. Verify: neither mentions version 1 tokens or `deprecated` tokens.
 - [ ] 3.2 Human: design review of Day, Night and Dawn (game screen, tutorial, splash, menu). Verify: the review names no violation.

@@ -168,7 +168,7 @@ Icons are the 22 glyphs in the Icons asset group: a 24px grid, 3px round strokes
 
 ## Using the kit
 
-- `tokens.json` holds every token with its usage note. A token with a `deprecated` field is a version 1 leftover, kept only until the app's world is ported; never use one in new work. The field names its replacement.
+- `tokens.json` holds every token with its usage note.
 - `bundle.css` holds every component class, prefixed `fa-`. It reads only token variables.
 - `bundle.js` defines `window.FinalApproach` and the elements `fa-aircraft`, `fa-side-aircraft`, `fa-silhouette`, `fa-icon`, `fa-runway`, `fa-helipad`, `fa-cloud`, `fa-windsock`, `fa-burst`, `fa-scenery` (one scenery sprite with its cast shadow) and `fa-scene` (the picture of a whole level). It has no dependencies.
 - Fonts are in `fonts/`: DynaPuff, Nunito and Inconsolata as variable `woff2` files.
@@ -177,6 +177,6 @@ Icons are the 22 glyphs in the Icons asset group: a 24px grid, 3px round strokes
   - `gen-kotlin.cjs` generates the Compose theme and sprite data, checks the scenery sprites against the world rules, and writes `assets/scenery/*.svg`.
   - `build-showcase.cjs` builds `showcase.html` from the tokens, `bundle.css`, `bundle.js` and the fonts.
   - `build-app-icon.cjs` builds the app icon SVGs, their PNG exports and the Android launcher layers.
-  - `check-tokens.cjs` checks `tokens.json`: usage notes, replacements of deprecated tokens, ramp sizes, line ranks and type weights; with a git ref it also checks that no earlier token was removed or changed.
+  - `check-tokens.cjs` checks `tokens.json`: usage notes, ramp sizes, line ranks and type weights; with a git ref it also checks that no earlier token was removed or changed.
 - There is no logo artwork yet. The Wordmark component is the name typeset in DynaPuff; use it wherever a logo would go.
 - The game itself is Kotlin with Compose Multiplatform: see `compose.md` for how tokens map to the theme object.
