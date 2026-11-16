@@ -2,7 +2,7 @@
 
 ## 1. Manifest
 
-- [ ] 1.1 Remove the duplicate `AD_ID` permission and `com.google.android.gms.ads.APPLICATION_ID` meta-data entries from `androidApp/src/main/AndroidManifest.xml`. Verify that `./gradlew :androidApp:assembleDebug` succeeds and the merged debug manifest has the `APPLICATION_ID` meta-data exactly once.
+- [x] 1.1 Remove the duplicate `AD_ID` permission and `com.google.android.gms.ads.APPLICATION_ID` meta-data entries from `androidApp/src/main/AndroidManifest.xml`. Verify that `./gradlew :androidApp:assembleDebug` succeeds and the merged debug manifest has the `APPLICATION_ID` meta-data exactly once.
 - [ ] 1.2 Add the `tools` namespace and remove `com.google.android.gms.permission.AD_ID` with `tools:node="remove"` (design decision 3). Verify that the merged manifests for both debug and release under `androidApp/build/intermediates/merged_manifest/` contain no `AD_ID` permission (spec: No advertising ID permission).
 
 ## 2. Child-directed ad requests
