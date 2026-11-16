@@ -431,7 +431,7 @@ private fun GameEndedPortraitPreview() = GameEndedPreview(night = false)
 private fun LevelTilesPreview(night: Boolean) {
     FaTheme(night = night) {
         Row(Modifier.padding(FaDimens.space4), horizontalArrangement = Arrangement.spacedBy(FaDimens.space4)) {
-            Levels.all.forEach { LevelTile(it, onClick = {}) }
+            Levels.all.forEach { LevelCard(it, levelCardState(it, bestScore = 0), onClick = {}) }
         }
     }
 }

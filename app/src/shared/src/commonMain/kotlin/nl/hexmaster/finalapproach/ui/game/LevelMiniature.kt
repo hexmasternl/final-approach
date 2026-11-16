@@ -37,7 +37,7 @@ internal object MiniatureDefaults {
     const val MARGIN = 40.0
 }
 
-/** The square of the world a level tile shows: its top-left corner and its side, in world units. */
+/** The square of the world a level card's art shows: its top-left corner and its side, in world units. */
 internal class MiniatureCrop(val left: Double, val top: Double, val side: Double) {
     val right: Double get() = left + side
     val bottom: Double get() = top + side
@@ -96,7 +96,21 @@ internal fun miniatureView(crop: MiniatureCrop, tilePx: Float): MiniatureView {
 }
 
 /**
- * [level]'s own field, cropped to [miniatureCrop], in a square: the same code the game draws
+ * How a crop is laid onto an art area of [widthPx] by [heightPx] pixels: the whole crop square fits
+ * the shorter side, and the longer side shows more of the world around it, centred on the crop and
+ * kept inside the world of [worldWidth] by [worldHeight] units where it can be.
+ */
+internal fun miniatureView(crop: MiniatureCrop, widthPx: Float, heightPx: Float, worldWidth: Double, worldHeight: Double): MiniatureView {
+    val pxPerUnit = min(widthPx, heightPx) / crop.side.toFloat()
+    val visibleWidth = widthPx.toDouble() / pxPerUnit
+    val visibleHeight = heightPx.toDouble() / pxPerUnit
+    val left = (crop.left + crop.side / 2.0 - visibleWidth / 2.0).coerceIn(0.0, max(0.0, worldWidth - visibleWidth))
+    val top = (crop.top + crop.side / 2.0 - visibleHeight / 2.0).coerceIn(0.0, max(0.0, worldHeight - visibleHeight))
+    return MiniatureView(pxPerUnit, (-left).toFloat() * pxPerUnit, (-top).toFloat() * pxPerUnit)
+}
+
+/**
+ * [level]'s own field, cropped to [miniatureCrop], in the art area of a level card: the same code the game draws
  * with ([drawFieldStatic]), in [colors], the palette of the level's own theme. Only the crop is
  * drawn, once, into a bitmap the size of the tile. The bitmap is rebuilt when the size changes or
  * when the level, palette, text styles or ground art change, and not on any other recomposition.
@@ -121,10 +135,11 @@ private fun miniatureRecorder(
     numberStyle: TextStyle,
     art: GroundArt,
 ): CacheDrawScope.() -> DrawResult = {
-    val tile = max(1, min(size.width, size.height).roundToInt())
-    val view = miniatureView(miniatureCrop(level), tile.toFloat())
-    val bitmap = ImageBitmap(tile, tile)
-    CanvasDrawScope().draw(this, layoutDirection, Canvas(bitmap), Size(tile.toFloat(), tile.toFloat())) {
+    val widthPx = max(1, size.width.roundToInt())
+    val heightPx = max(1, size.height.roundToInt())
+    val view = miniatureView(miniatureCrop(level), widthPx.toFloat(), heightPx.toFloat(), level.world.width, level.world.height)
+    val bitmap = ImageBitmap(widthPx, heightPx)
+    CanvasDrawScope().draw(this, layoutDirection, Canvas(bitmap), Size(widthPx.toFloat(), heightPx.toFloat())) {
         val worldPx = Size(level.world.width.toFloat() * view.pxPerUnit, level.world.height.toFloat() * view.pxPerUnit)
         val viewport = WorldViewport(level.world.width, level.world.height, worldPx.width.toDouble(), worldPx.height.toDouble())
         translate(view.originX, view.originY) {
