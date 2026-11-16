@@ -5,6 +5,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.withTransform
@@ -12,66 +13,50 @@ import kotlin.math.hypot
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaOpacity
 
-/** A cloud is drawn on a 132 by 76 grid, as in the design system. */
-private const val CLOUD_UNITS_WIDTH = 132f
-private const val CLOUD_UNITS_HEIGHT = 76f
+/**
+ * The cloud's silhouette: the first shape of the generated cloud, a lobed outline in one piece.
+ * Its shadow and the cut-out of that shadow are made from it.
+ */
+private val cloudSilhouette: Path by lazy { parsePath((sceneryCloud.nodes.first() as SceneryShape).pathData) }
 
-/** Half the 8-unit outline: outlined lobes are drawn as larger dark lobes behind the white ones. */
-private const val CLOUD_EDGE_UNITS = 4f
-private const val CLOUD_SHADE_STROKE_UNITS = 5f
-
-/** Centre x, centre y and radius of each lobe. */
-private val cloudLobes = listOf(
-    Triple(30f, 46f, 18f),
-    Triple(54f, 32f, 24f),
-    Triple(84f, 38f, 20f),
-    Triple(104f, 50f, 14f),
-    Triple(66f, 52f, 18f),
-    Triple(46f, 52f, 14f),
-    Triple(88f, 53f, 13f),
-)
-
-private val cloudShade: Path by lazy { parsePath("M 22 58 q 44 12 90 0") }
+/** The width of the outline the cloud is drawn with, in the cloud's own units: the last stroke of its art. */
+private val cloudOutlineUnits: Float by lazy {
+    sceneryCloud.nodes.filterIsInstance<SceneryShape>().last { it.stroke == SceneryPaint.Outline }.strokeWidth
+}
 
 /**
- * Draws a cloud with its ground shadow.
+ * Draws a cloud with its ground shadow. The cloud is the one of the design system (generated from
+ * `cloudMarkup`): a silhouette in three tones with its outline. Its shadow is the same silhouette,
+ * offset, in `shadow-ground`: a cloud is airborne, so it keeps a soft shadow, not a hard one.
  *
  * @param center middle of the cloud in pixels
- * @param widthPx drawn width in pixels
+ * @param widthPx drawn width of the cloud's silhouette in pixels
  * @param shadowOffset where its ground shadow falls, in pixels
  */
 internal fun DrawScope.drawCloud(center: Offset, widthPx: Float, colors: FaColors, shadowOffset: Offset) {
-    val scale = widthPx / CLOUD_UNITS_WIDTH
-    val topLeft = Offset(center.x - widthPx / 2f, center.y - CLOUD_UNITS_HEIGHT * scale / 2f)
+    // The silhouette's own bounds: the shade and the highlight lie inside it, behind a clip.
+    val bounds = cloudSilhouette.getBounds()
+    val scale = widthPx / bounds.width
+    fun withCloud(at: Offset, block: DrawScope.() -> Unit) = withTransform({
+        translate(at.x, at.y)
+        scale(scale, scale, Offset.Zero)
+        translate(-bounds.center.x, -bounds.center.y)
+    }) { block() }
+    // The silhouette and half its outline, as one shape.
+    fun DrawScope.body(color: androidx.compose.ui.graphics.Color, mode: BlendMode = BlendMode.SrcOver) {
+        drawPath(cloudSilhouette, color, blendMode = mode)
+        drawPath(cloudSilhouette, color, style = Stroke(cloudOutlineUnits, cap = StrokeCap.Round, join = StrokeJoin.Round), blendMode = mode)
+    }
     val shadow = colors.shadowGround
     alphaLayer(shadow.alpha) {
-        withTransform({
-            translate(topLeft.x + shadowOffset.x, topLeft.y + shadowOffset.y)
-            scale(scale, scale, Offset.Zero)
-        }) {
-            for ((x, y, r) in cloudLobes) drawCircle(shadow.copy(alpha = 1f), r + CLOUD_EDGE_UNITS, Offset(x, y))
-        }
-        // The cloud is slightly see-through, so cut its own outline out of the shadow:
+        withCloud(center + shadowOffset) { body(shadow.copy(alpha = 1f)) }
+        // The cloud is slightly see-through, so cut its own shape out of the shadow:
         // otherwise the shadow would show as a grey patch inside the cloud.
-        withTransform({
-            translate(topLeft.x, topLeft.y)
-            scale(scale, scale, Offset.Zero)
-        }) {
-            for ((x, y, r) in cloudLobes) {
-                // The colour does not matter: Clear erases whatever it covers.
-                drawCircle(colors.outline, r + CLOUD_EDGE_UNITS, Offset(x, y), blendMode = BlendMode.Clear)
-            }
-        }
+        // The colour does not matter: Clear erases whatever it covers.
+        withCloud(center) { body(colors.outline, BlendMode.Clear) }
     }
     alphaLayer(FaOpacity.cloud) {
-        withTransform({
-            translate(topLeft.x, topLeft.y)
-            scale(scale, scale, Offset.Zero)
-        }) {
-            for ((x, y, r) in cloudLobes) drawCircle(colors.outline, r + CLOUD_EDGE_UNITS, Offset(x, y))
-            for ((x, y, r) in cloudLobes) drawCircle(colors.cloud, r, Offset(x, y))
-            drawPath(cloudShade, colors.cloudShade, style = Stroke(CLOUD_SHADE_STROKE_UNITS, cap = StrokeCap.Round))
-        }
+        withCloud(center) { drawSceneryArt(sceneryCloud, colors) }
     }
 }
 

@@ -38,7 +38,7 @@ The visual reference for every task is `docs/design-system/showcase.html` (secti
 
 - [x] 6.1 Add the scenery kinds of design Decision 8 and bring each level's scenery list to its row in `world.md`, Surroundings per landscape, with footprints at the sprites' natural sizes; verify `LevelsTest`, `LevelLayoutsTest`, `LevelConfigValidatorTest`, `SceneryIsDecorationTest` and the test of 1.1 pass, and that runway and helipad entries in `Levels.kt` show no diff
 - [x] 6.2 Draw cows, farmer, flock and boats with their wakes from the v2 sprites, with their shadows in the shadow layer; verify `AmbientLifeTest` passes unchanged and in a preview that a turned cow's shadow lies to its lower right
-- [ ] 6.3 Port the cloud from the generated data in `SceneryDrawing.kt` (design Decision 10) and update the Compose note of `components/Cloud.md`; verify previews of the game and the main menu backdrop against the showcase cloud
+- [x] 6.3 Port the cloud from the generated data in `SceneryDrawing.kt` (design Decision 10) and update the Compose note of `components/Cloud.md`; verify previews of the game and the main menu backdrop against the showcase cloud
 - [ ] 6.4 Update the level previews in `GamePreviews.kt` to render each level in its theme and in the other two; verify each level in its theme side by side with its game screen in the showcase, and list any difference other than layout in the pull request
 
 ## 7. Level select

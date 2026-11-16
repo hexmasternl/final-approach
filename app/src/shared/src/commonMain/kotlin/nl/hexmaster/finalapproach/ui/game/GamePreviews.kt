@@ -43,11 +43,13 @@ import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.bounds
+import nl.hexmaster.finalapproach.ui.sprites.drawCloud
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryShadow
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaMotion
 import nl.hexmaster.finalapproach.ui.theme.FaOpacity
+import nl.hexmaster.finalapproach.ui.theme.FaShadows
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** Sample data for the previews: a run part way through a level. Not used by the game. */
@@ -89,6 +91,13 @@ private object PreviewData {
     const val TREE_SIZE = 86.0
     const val TREE_GAP = 40.0
     const val OTHER_X = 400.0
+    const val CLOUD_WIDTH = 190f
+    const val CLOUD_SMALL_WIDTH = 130f
+    const val CLOUD_X = 0.3f
+    const val CLOUD_Y = 0.3f
+    const val CLOUD_SMALL_X = 0.72f
+    const val CLOUD_SMALL_Y = 0.62f
+    const val CLOUD_SHADOW_FACTOR = 1.6f
     const val OTHER_Y = 300.0
 }
 
@@ -98,7 +107,7 @@ private object PreviewData {
  * drawing one in Night here is how its scenery is checked against the Night palette.
  */
 @Composable
-private fun FieldPreview(level: LevelConfig, theme: LevelTheme = level.theme) {
+private fun FieldPreview(level: LevelConfig, theme: LevelTheme = level.theme, clouds: Boolean = false) {
     FaTheme(night = theme == LevelTheme.Night, dawn = theme == LevelTheme.Dawn) {
         val colors = FaTheme.colors
         val measurer = rememberTextMeasurer()
@@ -112,9 +121,24 @@ private fun FieldPreview(level: LevelConfig, theme: LevelTheme = level.theme) {
         Canvas(Modifier.fillMaxSize()) {
             val viewport = WorldViewport(level.world.width, level.world.height, size.width.toDouble(), size.height.toDouble())
             drawField(level, ambient, viewport, colors, measurer, numberStyle, letterStyle)
+            if (clouds) {
+                // Clouds fly higher than aircraft, so their shadow falls further away.
+                val shadow = Offset(FaShadows.floatOffsetX.toPx(), FaShadows.floatOffsetY.toPx()) * PreviewData.CLOUD_SHADOW_FACTOR
+                drawCloud(Offset(size.width * PreviewData.CLOUD_X, size.height * PreviewData.CLOUD_Y), PreviewData.CLOUD_WIDTH.dp.toPx(), colors, shadow)
+                drawCloud(Offset(size.width * PreviewData.CLOUD_SMALL_X, size.height * PreviewData.CLOUD_SMALL_Y), PreviewData.CLOUD_SMALL_WIDTH.dp.toPx(), colors, shadow)
+            }
         }
     }
 }
+
+/** The meadow with two clouds over it, in Day and in Night, next to the showcase's cloud. */
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun CloudsOverMeadowPreview() = FieldPreview(Levels.meadowField, clouds = true)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun CloudsOverMeadowNightPreview() = FieldPreview(Levels.meadowField, LevelTheme.Night, clouds = true)
 
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
 @Composable
