@@ -58,21 +58,6 @@ class LevelMiniatureTest {
     }
 
     @Test
-    fun theViewMapsTheCropsTopLeftToPixelZeroAndItsSideToTheWholeTile() {
-        val tile = 168f
-        Levels.all.forEach { level ->
-            val crop = miniatureCrop(level)
-            val view = miniatureView(crop, tile)
-            val topLeft = view.toTile(Vec2(crop.left, crop.top))
-            val bottomRight = view.toTile(Vec2(crop.right, crop.bottom))
-            assertEquals(0f, topLeft.x, 1e-3f, level.id)
-            assertEquals(0f, topLeft.y, 1e-3f, level.id)
-            assertEquals(tile, bottomRight.x, 1e-2f, level.id)
-            assertEquals(tile, bottomRight.y, 1e-2f, level.id)
-        }
-    }
-
-    @Test
     fun aWideArtAreaShowsTheWholeCropAndStaysInsideTheWorld() {
         val width = 184f
         val height = 120f

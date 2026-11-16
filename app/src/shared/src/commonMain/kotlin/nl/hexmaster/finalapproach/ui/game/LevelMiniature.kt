@@ -89,12 +89,6 @@ internal class MiniatureView(val pxPerUnit: Float, val originX: Float, val origi
     fun toTile(point: Vec2): Offset = Offset(originX + point.x.toFloat() * pxPerUnit, originY + point.y.toFloat() * pxPerUnit)
 }
 
-/** The [MiniatureView] that shows [crop] on a square tile of [tilePx] pixels. */
-internal fun miniatureView(crop: MiniatureCrop, tilePx: Float): MiniatureView {
-    val pxPerUnit = tilePx / crop.side.toFloat()
-    return MiniatureView(pxPerUnit, (-crop.left).toFloat() * pxPerUnit, (-crop.top).toFloat() * pxPerUnit)
-}
-
 /**
  * How a crop is laid onto an art area of [widthPx] by [heightPx] pixels: the whole crop square fits
  * the shorter side, and the longer side shows more of the world around it, centred on the crop and

@@ -7,7 +7,7 @@ The tile of a locked level SHALL show a lock icon, the unlock condition in words
 
 #### Scenario: Locked tile content
 - **WHEN** Island airport is locked and the player has landed 412 aircraft on Meadow field
-- **THEN** its tile shows a lock icon and "Land 1,000 aircraft on Meadow field to open Island airport." with "412 of 1,000 landings"
+- **THEN** its tile shows a lock icon and "Land 1 001 aircraft on Meadow Field to open Island." with "412 of 1 001 landings" (the target is the first count that opens the level, in the HUD's thin-space grouping)
 
 #### Scenario: Tap does nothing
 - **WHEN** the player taps a locked tile
@@ -15,7 +15,7 @@ The tile of a locked level SHALL show a lock icon, the unlock condition in words
 
 #### Scenario: Points progress
 - **WHEN** Savanna dawn is locked and the player has earned 12,500 points on Island airport
-- **THEN** its tile shows "12,500 of 30,000 points"
+- **THEN** its tile shows "12 500 of 30 000 points"
 
 ### Requirement: Unlocked tiles are unchanged
 The tile of an unlocked level SHALL look and behave as before, and the level name SHALL stay readable on every tile.
