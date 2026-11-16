@@ -13,7 +13,8 @@ import kotlin.math.abs
  * same runway in the same direction never collide with each other. A helicopter in its landing
  * sequence collides with nothing. Every aircraft in the list counts, rolling ones
  * included; aircraft removed after landing are simply not in it. Distance alone is never a
- * collision.
+ * collision. [canCollide] is the one rule for which pairs may collide, shared with the proximity
+ * warning.
  *
  * Each aircraft is taken to move in a straight line from its position at the start of the step
  * to its position at the end, with its end heading, so two aircraft that pass through each other
@@ -34,14 +35,23 @@ object Collisions {
         for (i in aircraft.indices) for (j in i + 1 until aircraft.size) {
             val a = aircraft[i]
             val b = aircraft[j]
-            if (a.altitude != b.altitude) continue
-            if (a.status is AircraftStatus.Landing || b.status is AircraftStatus.Landing) continue
-            if (rollingTogether(a, b)) continue
+            if (!canCollide(a, b)) continue
             if (touched(a, previous[a.id] ?: a.position, b, previous[b.id] ?: b.position, specs)) {
                 add(minOf(a.id, b.id) to maxOf(a.id, b.id))
             }
         }
     }
+
+    /**
+     * True when the rules allow [a] and [b] to collide at all: the same altitude state, neither a
+     * helicopter in its landing sequence, and not [rollingTogether]. Collision detection and the
+     * proximity warning both use it, so the ring only shows for pairs that can collide.
+     */
+    fun canCollide(a: Aircraft, b: Aircraft): Boolean =
+        a.altitude == b.altitude &&
+            a.status !is AircraftStatus.Landing &&
+            b.status !is AircraftStatus.Landing &&
+            !rollingTogether(a, b)
 
     /** Rollout directions closer than this, in radians, count as the same direction. */
     const val SAME_DIRECTION_TOLERANCE = 0.1

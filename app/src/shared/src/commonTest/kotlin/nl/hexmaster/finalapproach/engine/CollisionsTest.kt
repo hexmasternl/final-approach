@@ -117,6 +117,19 @@ class CollisionsTest {
     }
 
     @Test
+    fun canCollideFollowsThePairRules() {
+        assertTrue(Collisions.canCollide(jet(1, 100.0), jet(2, 120.0)))
+        val landed = jet(2, 120.0).copy(altitude = AltitudeState.Landed)
+        assertFalse(Collisions.canCollide(jet(1, 100.0), landed))
+        assertFalse(Collisions.canCollide(rolling(1, 100.0, PI / 2), rolling(2, 120.0, PI / 2)))
+        assertFalse(Collisions.canCollide(rolling(1, 100.0, PI / 2), rolling(2, 120.0, PI / 2, fade = 0.2)))
+        assertTrue(Collisions.canCollide(rolling(1, 100.0, PI / 2), rolling(2, 120.0, -PI / 2)))
+        assertTrue(Collisions.canCollide(rolling(1, 100.0, PI / 2), rolling(2, 120.0, PI / 2, runway = "s")))
+        val helicopter = Aircraft(3, AircraftType.Helicopter, Vec2(100.0, 300.0), 0.0, status = AircraftStatus.Landing())
+        assertFalse(Collisions.canCollide(helicopter, jet(4, 100.0)))
+    }
+
+    @Test
     fun aDefaultSpecTypeWithoutATracedShapeIsADisc() {
         val spec = AircraftTypeSpec(speed = 1.0, turnRate = 1.0, landingPoints = 1, radius = 10.0)
         assertEquals(10.0, spec.shape.boundingRadius)
