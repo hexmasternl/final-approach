@@ -13,8 +13,8 @@
 
 ## 3. Privacy policy
 
-- [ ] 3.1 Rewrite `docs/privacy-policy.md` from the outline in the proposal. Cover ads and consent, the data Google may collect (with a link to https://policies.google.com/technologies/partner-sites), internet and permissions, data on the device, children, third parties, changes (pointing to the public URL) and contact. Set "Last updated" to the release date. Verify each requirement of the `privacy-policy` spec against the text, and that nothing contradicts the code after group 2.
-- [ ] 3.2 Add the privacy policy URL, the target audience and the Families declarations to the Play Console steps in `docs/deployment.md`. Verify that the URL there is exactly https://github.com/hexmasternl/final-approach/blob/main/docs/privacy-policy.md.
+- [x] 3.1 Rewrite `docs/privacy-policy.md` from the outline in the proposal. Cover ads and consent, the data Google may collect (with a link to https://policies.google.com/technologies/partner-sites), internet and permissions, data on the device, children, third parties, changes (pointing to the public URL) and contact. Set "Last updated" to the release date. Verify each requirement of the `privacy-policy` spec against the text, and that nothing contradicts the code after group 2.
+- [x] 3.2 Add the privacy policy URL, the target audience and the Families declarations to the Play Console steps in `docs/deployment.md`. Verify that the URL there is exactly https://github.com/hexmasternl/final-approach/blob/main/docs/privacy-policy.md.
 
 ## 4. Checks
 
