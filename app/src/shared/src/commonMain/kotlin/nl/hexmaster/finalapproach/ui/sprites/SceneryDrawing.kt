@@ -14,15 +14,13 @@ import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaOpacity
 
 /**
- * The cloud's silhouette: the first shape of the generated cloud, a lobed outline in one piece.
- * Its shadow and the cut-out of that shadow are made from it.
+ * The cloud's silhouette, a lobed outline in one piece. Its shadow and the cut-out of that
+ * shadow are made from it. The generator finds it in the cloud's art and fails when it is missing.
  */
-private val cloudSilhouette: Path by lazy { parsePath((sceneryCloud.nodes.first() as SceneryShape).pathData) }
+private val cloudSilhouette: Path by lazy { parsePath(sceneryCloudSilhouette) }
 
-/** The width of the outline the cloud is drawn with, in the cloud's own units: the last stroke of its art. */
-private val cloudOutlineUnits: Float by lazy {
-    sceneryCloud.nodes.filterIsInstance<SceneryShape>().last { it.stroke == SceneryPaint.Outline }.strokeWidth
-}
+/** The width of the outline the cloud is drawn with, in the cloud's own units. */
+private const val cloudOutlineUnits: Float = sceneryCloudOutlineWidth
 
 /**
  * Draws a cloud with its ground shadow. The cloud is the one of the design system (generated from

@@ -299,6 +299,12 @@ const parsedDetails = Object.entries(FA.DETAILS).map(([name, svg]) => {
 });
 const cloud = parseArt('cloud', FA.cloudMarkup(), FA.worldPaint);
 cloud.tokens.forEach(tk => checkToken('scenery cloud', tk));
+// The cloud's shadow and its cut-out are made from its silhouette, and it is drawn with its outline width:
+// find both here, so a change to cloudMarkup that loses one fails the generator, not the first frame.
+const cloudSilhouette = cloud.nodes.find(n => n.shape && n.fill === 'cloud' && !n.stroke);
+const cloudOutline = [...cloud.nodes].reverse().find(n => n.shape && n.stroke === 'outline');
+if (!cloudSilhouette) throw new Error('scenery cloud: no top-level silhouette shape filled with the cloud tone');
+if (!cloudOutline) throw new Error('scenery cloud: no top-level outline stroke');
 const paintTokens = [...new Set([...parsedSprites, ...parsedDetails, { art: cloud }].flatMap(x => x.art.tokens))].sort();
 const mat = m => m ? `listOf(${m.map(kf).join(', ')})` : 'null';
 const emitNode = (n, ind) => {
@@ -401,6 +407,12 @@ ${parsedDetails.map(({ name }) => `    ${pascal(name)}(::${fnName('detail-' + na
 
 /** The cloud, a flat silhouette in three tones with its outline, drawn around its origin. */
 internal val sceneryCloud: SceneryArt by lazy(::artCloud)
+
+/** The cloud's silhouette as path data: one lobed outline in a piece. Its shadow is made from it. */
+internal const val sceneryCloudSilhouette = ${ks(cloudSilhouette.d)}
+
+/** The width of the cloud's outline, in the cloud's own units. */
+internal const val sceneryCloudOutlineWidth = ${kf(cloudOutline.width)}
 
 ${parsedSprites.map(({ name, art }) => `private fun ${fnName(name)}() = ${emitArt(art.nodes, '')}\n`).join('\n')}
 ${parsedDetails.map(({ name, art }) => `private fun ${fnName('detail-' + name)}() = ${emitArt(art.nodes, '')}\n`).join('\n')}

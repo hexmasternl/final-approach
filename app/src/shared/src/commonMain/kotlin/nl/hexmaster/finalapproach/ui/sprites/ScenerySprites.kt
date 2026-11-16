@@ -434,6 +434,12 @@ internal enum class SceneryDetail(artOf: () -> SceneryArt) {
 /** The cloud, a flat silhouette in three tones with its outline, drawn around its origin. */
 internal val sceneryCloud: SceneryArt by lazy(::artCloud)
 
+/** The cloud's silhouette as path data: one lobed outline in a piece. Its shadow is made from it. */
+internal const val sceneryCloudSilhouette = "M -58 20 a 22 22 0 0 1 4 -43 a 34 34 0 0 1 62 -12 a 26 26 0 0 1 44 16 a 20 20 0 0 1 4 39 z"
+
+/** The width of the cloud's outline, in the cloud's own units. */
+internal const val sceneryCloudOutlineWidth = 3f
+
 private fun artTree() = SceneryArt(listOf(
     SceneryShape(SceneryPaint.Wood500, SceneryPaint.Outline, 2.2f, "M -1 14 H 1 A 3 3 0 0 1 4 17 V 27 A 3 3 0 0 1 1 30 H -1 A 3 3 0 0 1 -4 27 V 17 A 3 3 0 0 1 -1 14 Z"),
     SceneryShape(SceneryPaint.Wood700, null, 0f, "M 1.7 15 H 1.8 A 1.2 1.2 0 0 1 3 16.2 V 27.8 A 1.2 1.2 0 0 1 1.8 29 H 1.7 A 1.2 1.2 0 0 1 0.5 27.8 V 16.2 A 1.2 1.2 0 0 1 1.7 15 Z"),
