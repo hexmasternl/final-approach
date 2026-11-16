@@ -4,8 +4,10 @@ package nl.hexmaster.finalapproach.domain
  * What a piece of decoration is; the renderer picks its look from this. A [ground] kind lies
  * flat (asphalt, soil, water, planks): it is drawn under the runways and may lie under the HUD
  * band. Every other kind stands on the ground and must stay out of that band.
+ * A [standing] kind (a building, a tree, the windsock) shows a south wall and never rotates: its
+ * sprite has `rotates` off in the design system, and the level validator rejects a rotation on it.
  */
-enum class SceneryKind(val ground: Boolean = false) {
+enum class SceneryKind(val ground: Boolean = false, val standing: Boolean = false) {
     Taxiway(ground = true),
     Apron(ground = true),
     Field(ground = true),
@@ -13,22 +15,22 @@ enum class SceneryKind(val ground: Boolean = false) {
     Pond(ground = true),
     Waterhole(ground = true),
     Jetty(ground = true),
-    Terminal,
-    Tower,
-    Hangar,
-    Windsock,
+    Terminal(standing = true),
+    Tower(standing = true),
+    Hangar(standing = true),
+    Windsock(standing = true),
     Car,
     FuelTruck,
     BaggageCart,
     ParkedAircraft,
-    Tree,
+    Tree(standing = true),
     ForestEdge,
     Hedge,
     Fence,
-    Farmhouse,
-    Barn,
-    Palm,
-    Acacia,
+    Farmhouse(standing = true),
+    Barn(standing = true),
+    Palm(standing = true),
+    Acacia(standing = true),
     Bush,
     Rock,
     Zebra,

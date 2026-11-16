@@ -19,6 +19,7 @@ object LevelConfigValidator {
         config.scenery.forEachIndexed { index, item ->
             val name = "Scenery ${index + 1} (${item.kind})"
             if (item.width <= 0.0 || item.height <= 0.0) add("$name needs a positive width and height")
+            if (item.kind.standing && item.rotation != 0.0) add("$name stands and does not rotate; its rotation must be 0")
             val shape = item.shape
             config.runways.filter { Overlap.rects(shape, it.shape) }
                 .forEach { add("$name covers runway '${it.id}'") }

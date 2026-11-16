@@ -206,7 +206,7 @@ private const val HELIPAD_LETTER = "H"
 private const val THRESHOLD_BARS = 4
 
 /** The sprite of every kind of scenery that is drawn as one sprite, fitted into the item. */
-private val SPRITES: Map<SceneryKind, ScenerySprite> = mapOf(
+internal val scenerySprites: Map<SceneryKind, ScenerySprite> = mapOf(
     SceneryKind.Jetty to ScenerySprite.Jetty,
     SceneryKind.Terminal to ScenerySprite.Terminal,
     SceneryKind.Tower to ScenerySprite.Tower,
@@ -245,7 +245,7 @@ internal fun DrawScope.drawScenery(
     val widthPx = viewport.px(item.width)
     val lengthPx = viewport.px(item.height)
     val degrees = degreesOf(item.rotation)
-    val sprite = SPRITES[item.kind]
+    val sprite = scenerySprites[item.kind]
     if (sprite != null) {
         drawScenerySprite(sprite, center, widthPx, lengthPx, degrees, colors)
         return
