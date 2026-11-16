@@ -1,7 +1,10 @@
 package nl.hexmaster.finalapproach.ui.game
 
 import nl.hexmaster.finalapproach.domain.Levels
+import nl.hexmaster.finalapproach.domain.RunwayConfig
+import nl.hexmaster.finalapproach.domain.Vec2
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class LevelMiniatureTest {
@@ -39,6 +42,33 @@ class LevelMiniatureTest {
             val world = minOf(level.world.width, level.world.height)
             assertTrue(crop.side <= wide + 2.0 * MiniatureDefaults.MARGIN + epsilon || crop.side <= world + epsilon, level.id)
             assertTrue(crop.side >= minOf(wide, world) - epsilon, "${level.id}: a smaller square would not hold the zones")
+        }
+    }
+
+    @Test
+    fun aLandingZoneWiderThanTheWorldsShortSideShowsAsMuchAsFits() {
+        val base = Levels.all.first()
+        val centre = Vec2(base.world.width / 2.0, base.world.height / 2.0)
+        val level = base.copy(runways = listOf(RunwayConfig("long", centre, 0.0, length = 2.0 * base.world.height)), helipads = emptyList())
+        val crop = miniatureCrop(level)
+        val shortSide = minOf(level.world.width, level.world.height)
+        assertEquals(shortSide, crop.side, epsilon)
+        assertTrue(crop.left >= -epsilon && crop.top >= -epsilon, "the crop starts inside the world")
+        assertTrue(crop.right <= level.world.width + epsilon && crop.bottom <= level.world.height + epsilon, "the crop ends inside the world")
+    }
+
+    @Test
+    fun theViewMapsTheCropsTopLeftToPixelZeroAndItsSideToTheWholeTile() {
+        val tile = 168f
+        Levels.all.forEach { level ->
+            val crop = miniatureCrop(level)
+            val view = miniatureView(crop, tile)
+            val topLeft = view.toTile(Vec2(crop.left, crop.top))
+            val bottomRight = view.toTile(Vec2(crop.right, crop.bottom))
+            assertEquals(0f, topLeft.x, 1e-3f, level.id)
+            assertEquals(0f, topLeft.y, 1e-3f, level.id)
+            assertEquals(tile, bottomRight.x, 1e-2f, level.id)
+            assertEquals(tile, bottomRight.y, 1e-2f, level.id)
         }
     }
 }

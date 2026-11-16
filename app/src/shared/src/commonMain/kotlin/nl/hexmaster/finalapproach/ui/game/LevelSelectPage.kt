@@ -90,7 +90,7 @@ internal fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // The miniature is the level's own field, in the palette of the level's own theme.
-            Box(Modifier.size(FaDimens.levelTileArt).levelMiniature(level, levelPalette(level), measurer, type.titleMd, art))
+            LevelMiniature(level, levelPalette(level), measurer, type.titleMd, art, Modifier.size(FaDimens.levelTileArt))
             BasicText(level.name, style = type.titleSm.copy(color = colors.ink, textAlign = TextAlign.Center))
         }
     }

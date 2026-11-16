@@ -1,14 +1,20 @@
 package nl.hexmaster.finalapproach.ui.game
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.CacheDrawScope
+import androidx.compose.ui.draw.DrawResult
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import nl.hexmaster.finalapproach.domain.Bounds
 import nl.hexmaster.finalapproach.domain.LevelConfig
@@ -21,7 +27,6 @@ import nl.hexmaster.finalapproach.ui.theme.DawnColors
 import nl.hexmaster.finalapproach.ui.theme.DayColors
 import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.NightColors
-import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -76,35 +81,58 @@ internal fun miniatureCrop(level: LevelConfig): MiniatureCrop {
 }
 
 /**
- * Draws [level]'s own field, cropped to [miniatureCrop], into the square this modifier is
- * applied to: the same code the game draws with ([drawFieldStatic]), in [colors], the palette of
- * the level's own theme. The field is drawn once into a bitmap at the pixel size of the tile and
- * kept; the cache is rebuilt only when the size changes.
+ * How a crop is laid onto a tile of [tilePx] pixels: [pxPerUnit] pixels per world unit, and the
+ * tile position of the world origin, so the crop's top-left corner lands on pixel 0,0 and its
+ * side on the whole tile.
  */
-internal fun Modifier.levelMiniature(
+internal class MiniatureView(val pxPerUnit: Float, val originX: Float, val originY: Float) {
+    fun toTile(point: Vec2): Offset = Offset(originX + point.x.toFloat() * pxPerUnit, originY + point.y.toFloat() * pxPerUnit)
+}
+
+/** The [MiniatureView] that shows [crop] on a square tile of [tilePx] pixels. */
+internal fun miniatureView(crop: MiniatureCrop, tilePx: Float): MiniatureView {
+    val pxPerUnit = tilePx / crop.side.toFloat()
+    return MiniatureView(pxPerUnit, (-crop.left).toFloat() * pxPerUnit, (-crop.top).toFloat() * pxPerUnit)
+}
+
+/**
+ * [level]'s own field, cropped to [miniatureCrop], in a square: the same code the game draws
+ * with ([drawFieldStatic]), in [colors], the palette of the level's own theme. Only the crop is
+ * drawn, once, into a bitmap the size of the tile. The bitmap is rebuilt when the size changes or
+ * when the level, palette, text styles or ground art change, and not on any other recomposition.
+ */
+@Composable
+internal fun LevelMiniature(
     level: LevelConfig,
     colors: FaColors,
     measurer: TextMeasurer,
     numberStyle: TextStyle,
     art: GroundArt,
-): Modifier = drawWithCache {
-    val crop = miniatureCrop(level)
-    val tile = min(size.width, size.height)
-    val pxPerUnit = tile / crop.side.toFloat()
-    val width = max(1, ceil(level.world.width * pxPerUnit).toInt())
-    val height = max(1, ceil(level.world.height * pxPerUnit).toInt())
-    val bitmap = ImageBitmap(width, height)
-    CanvasDrawScope().draw(this, layoutDirection, Canvas(bitmap), Size(width.toFloat(), height.toFloat())) {
-        val viewport = WorldViewport(level.world.width, level.world.height, width.toDouble(), height.toDouble())
-        drawFieldStatic(level, viewport, colors, measurer, numberStyle, art)
+    modifier: Modifier = Modifier,
+) {
+    val record = remember(level, colors, measurer, numberStyle, art) { miniatureRecorder(level, colors, measurer, numberStyle, art) }
+    Spacer(modifier.drawWithCache(record))
+}
+
+private fun miniatureRecorder(
+    level: LevelConfig,
+    colors: FaColors,
+    measurer: TextMeasurer,
+    numberStyle: TextStyle,
+    art: GroundArt,
+): CacheDrawScope.() -> DrawResult = {
+    val tile = max(1, min(size.width, size.height).roundToInt())
+    val view = miniatureView(miniatureCrop(level), tile.toFloat())
+    val bitmap = ImageBitmap(tile, tile)
+    CanvasDrawScope().draw(this, layoutDirection, Canvas(bitmap), Size(tile.toFloat(), tile.toFloat())) {
+        val worldPx = Size(level.world.width.toFloat() * view.pxPerUnit, level.world.height.toFloat() * view.pxPerUnit)
+        val viewport = WorldViewport(level.world.width, level.world.height, worldPx.width.toDouble(), worldPx.height.toDouble())
+        translate(view.originX, view.originY) {
+            drawFieldStatic(level, viewport, colors, measurer, numberStyle, art)
+        }
     }
-    val side = min(tile.roundToInt(), min(width, height))
-    val source = IntOffset(
-        (crop.left * pxPerUnit).roundToInt().coerceIn(0, width - side),
-        (crop.top * pxPerUnit).roundToInt().coerceIn(0, height - side),
-    )
     onDrawBehind {
-        drawImage(bitmap, srcOffset = source, srcSize = IntSize(side, side), dstSize = IntSize(size.width.roundToInt(), size.height.roundToInt()))
+        drawImage(bitmap, dstSize = IntSize(size.width.roundToInt(), size.height.roundToInt()))
     }
 }
 
