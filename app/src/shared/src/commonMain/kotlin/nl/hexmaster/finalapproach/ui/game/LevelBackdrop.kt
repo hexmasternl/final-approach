@@ -57,7 +57,6 @@ private object Backdrop {
  * Ground.md: flat ground, flat scenery, helipads and runways, then the one layer of hard
  * shadows, then everything with height from north to south, then the ambient life.
  */
-@Suppress("UNUSED_PARAMETER")
 internal fun DrawScope.drawField(
     level: LevelConfig,
     ambient: AmbientLife,
@@ -65,7 +64,6 @@ internal fun DrawScope.drawField(
     colors: FaColors,
     measurer: TextMeasurer,
     numberStyle: TextStyle,
-    letterStyle: TextStyle,
     art: GroundArt = groundArtOf(level),
 ) {
     drawFieldStatic(level, viewport, colors, measurer, numberStyle, art, ambient)

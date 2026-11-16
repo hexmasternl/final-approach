@@ -115,7 +115,6 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     val currentDensity by rememberUpdatedState(density)
     val measurer = rememberTextMeasurer()
     val numberStyle = FaTheme.type.titleMd
-    val letterStyle = FaTheme.type.titleLg
 
     DisposableEffect(host) {
         host.lockLandscape(true)
@@ -241,7 +240,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
                 }
             },
     ) {
-        drawField(level, ambient, viewport, colors, measurer, numberStyle, letterStyle)
+        drawField(level, ambient, viewport, colors, measurer, numberStyle)
         // Layers: zone glows (the tutorial highlight), paths (the drag demo's dots), aircraft, effects (its finger).
         state.tutorial?.highlight?.let { drawTutorialHighlight(it, level, viewport, colors, clock, reduceMotion) }
         drawPaths(state, viewport, colors, reduceMotion)

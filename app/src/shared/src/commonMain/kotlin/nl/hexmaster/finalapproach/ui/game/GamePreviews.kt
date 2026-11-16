@@ -112,7 +112,6 @@ private fun FieldPreview(level: LevelConfig, theme: LevelTheme = level.theme, cl
         val colors = FaTheme.colors
         val measurer = rememberTextMeasurer()
         val numberStyle = FaTheme.type.titleMd
-        val letterStyle = FaTheme.type.titleLg
         val ambient = remember(level) {
             AmbientLife(level, seed = level.id.hashCode().toLong()).apply {
                 repeat((PreviewData.AMBIENT_SECONDS / PreviewData.AMBIENT_STEP).toInt()) { update(PreviewData.AMBIENT_STEP) }
@@ -120,7 +119,7 @@ private fun FieldPreview(level: LevelConfig, theme: LevelTheme = level.theme, cl
         }
         Canvas(Modifier.fillMaxSize()) {
             val viewport = WorldViewport(level.world.width, level.world.height, size.width.toDouble(), size.height.toDouble())
-            drawField(level, ambient, viewport, colors, measurer, numberStyle, letterStyle)
+            drawField(level, ambient, viewport, colors, measurer, numberStyle)
             if (clouds) {
                 // Clouds fly higher than aircraft, so their shadow falls further away.
                 val shadow = Offset(FaShadows.floatOffsetX.toPx(), FaShadows.floatOffsetY.toPx()) * PreviewData.CLOUD_SHADOW_FACTOR
