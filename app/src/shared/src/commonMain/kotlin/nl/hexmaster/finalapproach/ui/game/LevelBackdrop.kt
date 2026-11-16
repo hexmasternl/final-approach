@@ -111,9 +111,9 @@ internal fun DrawScope.drawFieldStatic(
     drawShadowLayer(level, raised, art.decoration.trees, ambient, viewport, colors)
     // Everything with height, from north to south: the level's scenery and the trees of its woods.
     val standing = raised.map { it.position.y to { drawScenery(it, viewport, colors) } } +
-        art.decoration.trees.map { it.position.y to { drawTree(it, viewport, colors) } }
+        art.decoration.trees.map { it.position.y to { drawTree(it, viewport, colors) } } +
+        level.paddock?.let { paddock -> paddockFence(paddock, viewport).map { it.sortY to { it.draw(this, colors) } } }.orEmpty()
     standing.sortedBy { it.first }.forEach { it.second() }
-    level.paddock?.let { drawPaddockFence(it, viewport, colors) }
 }
 
 /**
@@ -157,8 +157,11 @@ internal fun DrawScope.drawLevelGround(level: LevelConfig, viewport: WorldViewpo
     level.paddock?.let { drawPaddockGround(it, viewport, colors) }
 }
 
-/** One side of the paddock fence: a row of fence pieces along a strip. */
-private class FenceSide(val center: Offset, val lengthPx: Float, val widthPx: Float, val degrees: Float) {
+/**
+ * One side of the paddock fence: a row of fence pieces along a strip. [sortY] is its place in the
+ * north-to-south order of everything with height: the y of the side's northern end.
+ */
+private class FenceSide(val center: Offset, val lengthPx: Float, val widthPx: Float, val degrees: Float, val sortY: Double) {
     fun draw(scope: DrawScope, colors: FaColors) =
         scope.drawSceneryRow(ScenerySprite.Fence, center, widthPx, lengthPx, degrees, colors)
 
@@ -172,12 +175,11 @@ private fun paddockFence(paddock: Bounds, viewport: WorldViewport): List<FenceSi
     val size = Size(viewport.px(paddock.width), viewport.px(paddock.height))
     val fence = viewport.px(ScenerySprite.Fence.width.toDouble())
     val middle = Offset(topLeft.x + size.width / 2f, topLeft.y + size.height / 2f)
-    return listOf(topLeft.x, topLeft.x + size.width).map { FenceSide(Offset(it, middle.y), size.height, fence, 0f) } +
-        listOf(topLeft.y, topLeft.y + size.height).map { FenceSide(Offset(middle.x, it), size.width, fence, Backdrop.QUARTER_TURN_DEGREES) }
+    return listOf(topLeft.x, topLeft.x + size.width).map { FenceSide(Offset(it, middle.y), size.height, fence, 0f, paddock.top) } +
+        listOf(paddock.top, paddock.bottom).mapIndexed { index, sortY ->
+            FenceSide(Offset(middle.x, topLeft.y + index * size.height), size.width, fence, Backdrop.QUARTER_TURN_DEGREES, sortY)
+        }
 }
-
-private fun DrawScope.drawPaddockFence(paddock: Bounds, viewport: WorldViewport, colors: FaColors) =
-    paddockFence(paddock, viewport).forEach { it.draw(this, colors) }
 
 /**
  * The moving and glowing details of a level: cows and farmer, the flock, boats with their wake,
