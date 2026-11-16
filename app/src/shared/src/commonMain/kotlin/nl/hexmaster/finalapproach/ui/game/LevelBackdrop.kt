@@ -64,7 +64,7 @@ internal fun DrawScope.drawField(
     colors: FaColors,
     measurer: TextMeasurer,
     numberStyle: TextStyle,
-    art: GroundArt = groundArtOf(level),
+    art: GroundArt,
 ) {
     drawFieldStatic(level, viewport, colors, measurer, numberStyle, art, ambient)
     drawAmbient(level, ambient, viewport, colors)
@@ -81,7 +81,7 @@ internal fun DrawScope.drawFieldStatic(
     colors: FaColors,
     measurer: TextMeasurer,
     numberStyle: TextStyle,
-    art: GroundArt = groundArtOf(level),
+    art: GroundArt,
     ambient: AmbientLife? = null,
 ) {
     drawLevelGround(level, viewport, colors)

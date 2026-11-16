@@ -86,6 +86,7 @@ internal fun Modifier.levelMiniature(
     colors: FaColors,
     measurer: TextMeasurer,
     numberStyle: TextStyle,
+    art: GroundArt,
 ): Modifier = drawWithCache {
     val crop = miniatureCrop(level)
     val tile = min(size.width, size.height)
@@ -95,7 +96,7 @@ internal fun Modifier.levelMiniature(
     val bitmap = ImageBitmap(width, height)
     CanvasDrawScope().draw(this, layoutDirection, Canvas(bitmap), Size(width.toFloat(), height.toFloat())) {
         val viewport = WorldViewport(level.world.width, level.world.height, width.toDouble(), height.toDouble())
-        drawFieldStatic(level, viewport, colors, measurer, numberStyle)
+        drawFieldStatic(level, viewport, colors, measurer, numberStyle, art)
     }
     val side = min(tile.roundToInt(), min(width, height))
     val source = IntOffset(

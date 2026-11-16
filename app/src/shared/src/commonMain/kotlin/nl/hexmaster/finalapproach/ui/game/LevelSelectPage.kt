@@ -76,6 +76,7 @@ internal fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
     val colors = FaTheme.colors
     val type = FaTheme.type
     val measurer = rememberTextMeasurer()
+    val art = rememberGroundArt(level)
     FaMoulded(
         onClick = onClick,
         tone = colors.tonePaper,
@@ -89,7 +90,7 @@ internal fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // The miniature is the level's own field, in the palette of the level's own theme.
-            Box(Modifier.size(FaDimens.levelTileArt).levelMiniature(level, levelPalette(level), measurer, type.titleMd))
+            Box(Modifier.size(FaDimens.levelTileArt).levelMiniature(level, levelPalette(level), measurer, type.titleMd, art))
             BasicText(level.name, style = type.titleSm.copy(color = colors.ink, textAlign = TextAlign.Center))
         }
     }

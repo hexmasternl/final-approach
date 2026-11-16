@@ -1,5 +1,7 @@
 package nl.hexmaster.finalapproach.ui.game
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -90,13 +92,12 @@ internal class GroundArt(val decoration: LevelDecoration) {
     val patchPaths: List<Path> = decoration.patches.map { smoothClosedPath(it.outline) }
 }
 
-private var cachedArt: Pair<LevelConfig, GroundArt>? = null
+/** Builds the ground art of [level]. Whoever draws the level holds it, see [rememberGroundArt]. */
+internal fun groundArtOf(level: LevelConfig): GroundArt = GroundArt(levelDecoration(level))
 
-/** The ground art of [level], built the first time it is asked for and kept while the same level is drawn. */
-internal fun groundArtOf(level: LevelConfig): GroundArt {
-    cachedArt?.let { (cachedLevel, art) -> if (cachedLevel === level) return art }
-    return GroundArt(levelDecoration(level)).also { cachedArt = level to it }
-}
+/** The ground art of [level], built once per level while the composable that draws it stays. */
+@Composable
+internal fun rememberGroundArt(level: LevelConfig): GroundArt = remember(level) { groundArtOf(level) }
 
 /** A smooth closed curve through [points]: the design system's `smooth`, a Catmull-Rom spline as cubic curves. */
 internal fun smoothClosedPath(points: List<Vec2>): Path {

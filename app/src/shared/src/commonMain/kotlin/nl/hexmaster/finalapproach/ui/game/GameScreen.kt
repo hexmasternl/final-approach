@@ -106,6 +106,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     var collision by remember(engine) { mutableStateOf<CollisionSequence?>(null) }
     val colors = FaTheme.colors
     val reduceMotion = FaTheme.reduceMotion
+    val art = rememberGroundArt(level)
     val ambient = remember(engine, reduceMotion) { AmbientLife(level, seed = level.id.hashCode().toLong(), reduceMotion = reduceMotion) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -240,7 +241,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
                 }
             },
     ) {
-        drawField(level, ambient, viewport, colors, measurer, numberStyle)
+        drawField(level, ambient, viewport, colors, measurer, numberStyle, art)
         // Layers: zone glows (the tutorial highlight), paths (the drag demo's dots), aircraft, effects (its finger).
         state.tutorial?.highlight?.let { drawTutorialHighlight(it, level, viewport, colors, clock, reduceMotion) }
         drawPaths(state, viewport, colors, reduceMotion)

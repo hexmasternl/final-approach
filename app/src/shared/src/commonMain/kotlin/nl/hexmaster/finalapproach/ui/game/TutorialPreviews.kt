@@ -59,11 +59,12 @@ private fun TutorialStepPreview(step: TutorialStep, phase: TutorialPhase? = null
         val colors = FaTheme.colors
         val measurer = rememberTextMeasurer()
         val numberStyle = FaTheme.type.titleMd
+        val art = rememberGroundArt(level)
         val ambient = remember(level) { AmbientLife(level, seed = level.id.hashCode().toLong(), reduceMotion = true) }
         Box(Modifier.fillMaxSize()) {
             Canvas(Modifier.fillMaxSize()) {
                 val viewport = WorldViewport(level.world.width, level.world.height, size.width.toDouble(), size.height.toDouble())
-                drawField(level, ambient, viewport, colors, measurer, numberStyle)
+                drawField(level, ambient, viewport, colors, measurer, numberStyle, art)
                 tutorial.highlight?.let { drawTutorialHighlight(it, level, viewport, colors, 0.0, reduceMotion = true) }
                 tutorial.demo?.let {
                     drawTutorialDemoPath(it, viewport, colors)
