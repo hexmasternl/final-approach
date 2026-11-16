@@ -232,7 +232,7 @@ private fun OverlappingTreeShadowsPreview() = FieldPreview(
 @Composable
 private fun SavannaDawnPreview() = FieldPreview(Levels.savannaDawn)
 
-// Every level in Day and in Night, for the design review of its scenery. Debug only: the game
+// Every level in its own theme and in the other two, for the design review of its scenery. Debug only: the game
 // never offers these palettes as a setting.
 
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
@@ -242,6 +242,14 @@ private fun MeadowFieldNightPreview() = FieldPreview(Levels.meadowField, LevelTh
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
 @Composable
 private fun IslandAirportNightPreview() = FieldPreview(Levels.islandAirport, LevelTheme.Night)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun MeadowFieldDawnPreview() = FieldPreview(Levels.meadowField, LevelTheme.Dawn)
+
+@Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
+@Composable
+private fun IslandAirportDawnPreview() = FieldPreview(Levels.islandAirport, LevelTheme.Dawn)
 
 @Preview(widthDp = PreviewData.PHONE_WIDTH, heightDp = PreviewData.PHONE_HEIGHT)
 @Composable
