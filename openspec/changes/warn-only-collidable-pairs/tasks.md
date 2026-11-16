@@ -3,7 +3,7 @@
 ## 1. Shared pair rule
 
 - [x] 1.1 Add `Collisions.canCollide(a, b)` in `engine/Collisions.kt` (design decision 1) and make `Collisions.find` use it instead of its three inline exclusions; update the KDoc of the object. Verify: `./gradlew :shared:allTests` passes with `CollisionsTest` unchanged, so no collision outcome changed.
-- [ ] 1.2 Add `CollisionsTest` cases for `canCollide`: two In Flight (true), In Flight and Landed (false), same runway same direction (false), one of those fading (false), same runway opposite directions (true), different runways (true), a helicopter in status `Landing` with any other aircraft (false). Verify: `./gradlew :shared:allTests` passes.
+- [x] 1.2 Add `CollisionsTest` cases for `canCollide`: two In Flight (true), In Flight and Landed (false), same runway same direction (false), one of those fading (false), same runway opposite directions (true), different runways (true), a helicopter in status `Landing` with any other aircraft (false). Verify: `./gradlew :shared:allTests` passes.
 
 ## 2. Warning follows the pair rule
 
