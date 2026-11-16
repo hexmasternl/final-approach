@@ -1,12 +1,30 @@
 package nl.hexmaster.finalapproach.ui.game
 
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import nl.hexmaster.finalapproach.domain.Bounds
 import nl.hexmaster.finalapproach.domain.LevelConfig
+import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.OrientedRect
 import nl.hexmaster.finalapproach.domain.Vec2
+import nl.hexmaster.finalapproach.input.WorldViewport
 import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics
+import nl.hexmaster.finalapproach.ui.theme.DawnColors
+import nl.hexmaster.finalapproach.ui.theme.DayColors
+import nl.hexmaster.finalapproach.ui.theme.FaColors
+import nl.hexmaster.finalapproach.ui.theme.NightColors
+import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /** Tunable values of the level tile's miniature, in world units. */
 internal object MiniatureDefaults {
@@ -55,4 +73,43 @@ internal fun miniatureCrop(level: LevelConfig): MiniatureCrop {
     val left = (centreX - side / 2.0).coerceIn(world.left, world.right - side)
     val top = (centreY - side / 2.0).coerceIn(world.top, world.bottom - side)
     return MiniatureCrop(left, top, side)
+}
+
+/**
+ * Draws [level]'s own field, cropped to [miniatureCrop], into the square this modifier is
+ * applied to: the same code the game draws with ([drawFieldStatic]), in [colors], the palette of
+ * the level's own theme. The field is drawn once into a bitmap at the pixel size of the tile and
+ * kept; the cache is rebuilt only when the size changes.
+ */
+internal fun Modifier.levelMiniature(
+    level: LevelConfig,
+    colors: FaColors,
+    measurer: TextMeasurer,
+    numberStyle: TextStyle,
+): Modifier = drawWithCache {
+    val crop = miniatureCrop(level)
+    val tile = min(size.width, size.height)
+    val pxPerUnit = tile / crop.side.toFloat()
+    val width = max(1, ceil(level.world.width * pxPerUnit).toInt())
+    val height = max(1, ceil(level.world.height * pxPerUnit).toInt())
+    val bitmap = ImageBitmap(width, height)
+    CanvasDrawScope().draw(this, layoutDirection, Canvas(bitmap), Size(width.toFloat(), height.toFloat())) {
+        val viewport = WorldViewport(level.world.width, level.world.height, width.toDouble(), height.toDouble())
+        drawFieldStatic(level, viewport, colors, measurer, numberStyle)
+    }
+    val side = min(tile.roundToInt(), min(width, height))
+    val source = IntOffset(
+        (crop.left * pxPerUnit).roundToInt().coerceIn(0, width - side),
+        (crop.top * pxPerUnit).roundToInt().coerceIn(0, height - side),
+    )
+    onDrawBehind {
+        drawImage(bitmap, srcOffset = source, srcSize = IntSize(side, side), dstSize = IntSize(size.width.roundToInt(), size.height.roundToInt()))
+    }
+}
+
+/** The palette a level is drawn in: its own theme's, whatever palette the page around it uses. */
+internal fun levelPalette(level: LevelConfig): FaColors = when (level.theme) {
+    LevelTheme.Day -> DayColors
+    LevelTheme.Night -> NightColors
+    LevelTheme.Dawn -> DawnColors
 }

@@ -68,6 +68,24 @@ internal fun DrawScope.drawField(
     letterStyle: TextStyle,
     art: GroundArt = groundArtOf(level),
 ) {
+    drawFieldStatic(level, viewport, colors, measurer, numberStyle, art, ambient)
+    drawAmbient(level, ambient, viewport, colors)
+}
+
+/**
+ * The part of the field that does not move: everything [drawField] draws except the ambient
+ * life and the animated lights. Ambient shadows are drawn only when [ambient] is given. The
+ * level tile's miniature draws this, in a bitmap the size of the world, and shows a crop of it.
+ */
+internal fun DrawScope.drawFieldStatic(
+    level: LevelConfig,
+    viewport: WorldViewport,
+    colors: FaColors,
+    measurer: TextMeasurer,
+    numberStyle: TextStyle,
+    art: GroundArt = groundArtOf(level),
+    ambient: AmbientLife? = null,
+) {
     drawLevelGround(level, viewport, colors)
     drawPatches(level, art, viewport, colors)
     drawRoadsAndTracks(level, viewport, colors)
@@ -86,7 +104,6 @@ internal fun DrawScope.drawField(
         art.decoration.trees.map { it.position.y to { drawTree(it, viewport, colors) } }
     standing.sortedBy { it.first }.forEach { it.second() }
     level.paddock?.let { drawPaddockFence(it, viewport, colors) }
-    drawAmbient(level, ambient, viewport, colors)
 }
 
 /**
@@ -99,7 +116,7 @@ private fun DrawScope.drawShadowLayer(
     level: LevelConfig,
     raised: List<SceneryItem>,
     trees: List<DecorationTree>,
-    ambient: AmbientLife,
+    ambient: AmbientLife?,
     viewport: WorldViewport,
     colors: FaColors,
 ) {
@@ -108,7 +125,7 @@ private fun DrawScope.drawShadowLayer(
         raised.forEach { drawSceneryItemShadow(it, viewport, colors.shadowCast) }
         trees.forEach { drawTreeShadow(it, viewport, colors.shadowCast) }
         level.paddock?.let { paddock -> paddockFence(paddock, viewport).forEach { it.shadow(this, colors.shadowCast) } }
-        drawAmbientShadows(ambient, viewport, colors.shadowCast)
+        ambient?.let { drawAmbientShadows(it, viewport, colors.shadowCast) }
         canvas.restore()
     }
 }

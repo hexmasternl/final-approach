@@ -44,7 +44,7 @@ The visual reference for every task is `docs/design-system/showcase.html` (secti
 ## 7. Level select
 
 - [x] 7.1 Add the pure miniature-crop function (design Decision 9); verify with a unit test that for each level the crop is square, lies inside the world and holds every runway and helipad shape
-- [ ] 7.2 Split the static part out of `drawField` and draw the level tile's miniature with it, in the level's own palette, recorded once per size and palette; remove `DAWN_ALPHA`, `RUNWAY_STROKE_FRACTION`, `sky300` and `sky700` from `LevelSelectPage.kt`; verify previews of the page in Day and Night: the island's sea is water in both, tiles are square, and the `level-selection` scenarios hold
+- [x] 7.2 Split the static part out of `drawField` and draw the level tile's miniature with it, in the level's own palette, recorded once per size and palette; remove `DAWN_ALPHA`, `RUNWAY_STROKE_FRACTION`, `sky300` and `sky700` from `LevelSelectPage.kt`; verify previews of the page in Day and Night: the island's sea is water in both, tiles are square, and the `level-selection` scenarios hold
 - [ ] 7.3 Update `CLAUDE.md`, `.github/copilot-instructions.md` and the Compose note of `components/LevelCard.md`: the app's world renders version 2, and the rule against v1 tokens in new code stays until the token follow-up; verify the two instruction files say the same
 
 ## 8. Review and wrap-up
