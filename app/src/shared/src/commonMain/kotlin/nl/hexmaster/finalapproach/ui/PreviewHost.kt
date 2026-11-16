@@ -3,6 +3,7 @@ package nl.hexmaster.finalapproach.ui
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.platform.BackDispatcher
 import nl.hexmaster.finalapproach.platform.InMemoryHighScoreStore
+import nl.hexmaster.finalapproach.platform.InMemoryLevelProgressStore
 import nl.hexmaster.finalapproach.platform.InMemorySettingsStore
 import nl.hexmaster.finalapproach.platform.InMemoryTutorialStore
 
@@ -12,6 +13,7 @@ internal object PreviewAppHost : AppHost {
     override val reduceMotion = false
     override val back = BackDispatcher()
     override val highScores = InMemoryHighScoreStore()
+    override val levelProgress = InMemoryLevelProgressStore()
     override val settings = InMemorySettingsStore()
     override val tutorials = InMemoryTutorialStore()
     override fun quit() = Unit
