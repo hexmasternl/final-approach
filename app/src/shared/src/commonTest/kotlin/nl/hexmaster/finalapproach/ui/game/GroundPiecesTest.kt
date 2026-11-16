@@ -5,6 +5,7 @@ import nl.hexmaster.finalapproach.domain.SceneryDefaults
 import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.ui.sprites.GroundMetrics
+import kotlin.math.PI
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -25,7 +26,7 @@ class GroundPiecesTest {
     @Test
     fun theHoldShortBarsFollowTheTaxiwayWhenItIsTurned() {
         val level = Levels.meadowField
-        val turned = taxiwayOf(level).copy(rotation = Math.PI)
+        val turned = taxiwayOf(level).copy(rotation = PI)
         assertEquals(-1f, towardsRunway(turned, level))
     }
 
