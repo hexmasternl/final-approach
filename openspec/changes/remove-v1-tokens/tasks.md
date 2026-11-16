@@ -2,8 +2,8 @@
 
 - [x] 1.1 `FlightPathDrawing`, `ProximityRing`, `GameScreen` and `SplashPage`: replace v1 line widths with the v2 ranks named in `tokens.json`. Verify: search finds no `FaDimens.line1` to `line4` or `lineFine` there; `:shared:allTests` passes.
 - [x] 1.2 `TutorialDrawing` (highlight and drag demo): replace `line1`, `line3`, `line4` and `radiusMd`. Verify: search clean; preview unchanged.
-- [ ] 1.3 `SplashScene`: replace `surface`, `line2`, `line3`, `radiusMd`. Verify: search clean; splash preview in Day, Night and Dawn unchanged.
-- [ ] 1.4 Selection ring and any other reader the search of `app/src` (previews and tests included) turns up. Verify: a search for every deprecated name returns only theme files.
+- [x] 1.3 `SplashScene`: replace `surface`, `line2`, `line3`, `radiusMd`. Verify: search clean; splash preview in Day, Night and Dawn unchanged.
+- [x] 1.4 Selection ring and any other reader the search of `app/src` (previews and tests included) turns up. Verify: a search for every deprecated name returns only theme files.
 - [x] 1.5 Where a replacement does not keep the look, add the v2 token to the design system first, then use it. Verify: design review accepts Day, Night and Dawn.
 
 ## 2. Remove the tokens
