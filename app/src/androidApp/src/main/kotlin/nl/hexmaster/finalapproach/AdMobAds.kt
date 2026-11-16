@@ -17,6 +17,7 @@ import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.ump.ConsentRequestParameters
@@ -30,6 +31,10 @@ private const val TAG = "AdMobAds"
  * AdMob behind the shared [Ads] interface. Nothing is requested until the User Messaging
  * Platform consent flow has resolved and allows ad requests; when it fails, there are no ads
  * in this session and the game plays on.
+ *
+ * Every player is treated as a child (Google Play Families policy): all requests are tagged
+ * child-directed and under the age of consent, capped at rating G, and never personalised. The
+ * tags are set once for the whole SDK, so a new ad format cannot miss them.
  */
 class AdMobAds(private val activity: ComponentActivity) : Ads {
     // Read by the banner composable, so it appears as soon as consent allows ads.
@@ -45,7 +50,7 @@ class AdMobAds(private val activity: ComponentActivity) : Ads {
         val consent = UserMessagingPlatform.getConsentInformation(activity)
         consent.requestConsentInfoUpdate(
             activity,
-            ConsentRequestParameters.Builder().build(),
+            ConsentRequestParameters.Builder().setTagForUnderAgeOfConsent(true).build(),
             {
                 UserMessagingPlatform.loadAndShowConsentFormIfRequired(activity) { formError ->
                     when {
@@ -60,6 +65,8 @@ class AdMobAds(private val activity: ComponentActivity) : Ads {
     }
 
     private fun startSdk() {
+        MobileAds.setRequestConfiguration(childDirectedConfiguration())
+        Log.i(TAG, "Child-directed request configuration applied")
         MobileAds.initialize(activity) {
             canRequestAds = true
             preload()
@@ -132,3 +139,10 @@ class AdMobAds(private val activity: ComponentActivity) : Ads {
         }
     }
 }
+
+/** The request configuration of the whole SDK: child-directed, under the age of consent, rated G at most. */
+internal fun childDirectedConfiguration(): RequestConfiguration = RequestConfiguration.Builder()
+    .setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
+    .setTagForUnderAgeOfConsent(RequestConfiguration.TAG_FOR_UNDER_AGE_OF_CONSENT_TRUE)
+    .setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_G)
+    .build()
