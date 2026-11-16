@@ -104,7 +104,9 @@ internal enum class SceneryTier { Flat, Small, Medium, Large }
 
 /**
  * The scenery sprites of the design system, each drawn around its own origin in world units.
- * [width] and [height] are the size of its picture including the shadow; [rotates] is false
+ * [width] and [height] are the size of its picture including the shadow; [bodyWidth] and
+ * [bodyHeight] are the size of its own shapes, strokes and shadow left out, which is the size a
+ * level gives it as a footprint (the renderer fits these bounds into the footprint); [rotates] is false
  * for everything that stands (buildings, trees, the silo, the windsock). The shadow is
  * [shadow] thrown by ([shadowX], [shadowY]) world units, down and to the right.
  */
@@ -114,69 +116,71 @@ internal enum class ScenerySprite(
     val rotates: Boolean,
     val width: Float,
     val height: Float,
+    val bodyWidth: Float,
+    val bodyHeight: Float,
     val shadowX: Float,
     val shadowY: Float,
     val shadow: List<ShadowShape>,
     artOf: () -> SceneryArt,
 ) {
     Tree(
-        "Tree", SceneryTier.Large, false, 86f, 86f, 10.9f, 13f,
+        "Tree", SceneryTier.Large, false, 86f, 86f, 60.9f, 67.3f, 10.9f, 13f,
         listOf(
             ShadowShape("M -26 -2 A 26 24.4 0 1 0 26 -2 A 26 24.4 0 1 0 -26 -2 Z"),
         ),
         ::artTree,
     ),
     TreeSmall(
-        "Small tree", SceneryTier.Large, false, 76f, 76f, 8.8f, 10.5f,
+        "Small tree", SceneryTier.Large, false, 76f, 76f, 48.4f, 54.7f, 8.8f, 10.5f,
         listOf(
             ShadowShape("M -21 -2 A 21 19.7 0 1 0 21 -2 A 21 19.7 0 1 0 -21 -2 Z"),
         ),
         ::artTreeSmall,
     ),
     TreeOak(
-        "Old oak", SceneryTier.Large, false, 94f, 94f, 12.6f, 15f,
+        "Old oak", SceneryTier.Large, false, 94f, 94f, 71.9f, 75.3f, 12.6f, 15f,
         listOf(
             ShadowShape("M -30 -2 A 30 28.2 0 1 0 30 -2 A 30 28.2 0 1 0 -30 -2 Z"),
         ),
         ::artTreeOak,
     ),
     Pine(
-        "Pine", SceneryTier.Large, false, 82f, 82f, 11.5f, 13.8f,
+        "Pine", SceneryTier.Large, false, 82f, 82f, 44.8f, 45.3f, 11.5f, 13.8f,
         listOf(
             ShadowShape("M 21.4 8.3 L 12.8 11.2 L 11.1 20.2 L 2.6 16.8 L -4.5 22.6 L -8.8 14.6 L -17.9 14.4 L -16.1 5.5 L -23 -0.5 L -15.9 -6.2 L -17.3 -15.1 L -8.2 -14.9 L -3.5 -22.7 L 3.3 -16.7 L 11.9 -19.7 L 13.3 -10.7 L 21.8 -7.4 L 17 0.4 Z"),
         ),
         ::artPine,
     ),
     PineSmall(
-        "Small pine", SceneryTier.Large, false, 72f, 72f, 9f, 10.8f,
+        "Small pine", SceneryTier.Large, false, 72f, 72f, 35.2f, 35.4f, 9f, 10.8f,
         listOf(
             ShadowShape("M 13.3 12.1 L 6.2 11.8 L 2.4 17.8 L -2.9 13 L -9.6 15.2 L -10.6 8.1 L -17.2 5.4 L -13.3 -0.6 L -16.6 -6.9 L -9.8 -9 L -8.3 -16 L -1.8 -13.2 L 3.9 -17.6 L 7.1 -11.2 L 14.3 -11 L 12.7 -4 L 18 0.8 L 12.3 5.1 Z"),
         ),
         ::artPineSmall,
     ),
     Bush(
-        "Bush", SceneryTier.Small, true, 56f, 56f, 3f, 4f,
+        "Bush", SceneryTier.Small, true, 56f, 56f, 27.3f, 27f, 3f, 4f,
         listOf(
             ShadowShape("M -11 0 A 11 11 0 1 0 11 0 A 11 11 0 1 0 -11 0 Z"),
         ),
         ::artBush,
     ),
     Hedge(
-        "Hedge (one piece of a row)", SceneryTier.Small, true, 44f, 44f, 4f, 5f,
+        "Hedge (one piece of a row)", SceneryTier.Small, true, 44f, 44f, 19f, 19f, 4f, 5f,
         listOf(
             ShadowShape("M -9.5 0 A 9.5 9.5 0 1 0 9.5 0 A 9.5 9.5 0 1 0 -9.5 0 Z"),
         ),
         ::artHedge,
     ),
     Acacia(
-        "Acacia", SceneryTier.Large, false, 100f, 96f, 14f, 16f,
+        "Acacia", SceneryTier.Large, false, 100f, 96f, 68.6f, 70.9f, 14f, 16f,
         listOf(
             ShadowShape("M -31 -6 A 31 23 0 1 0 31 -6 A 31 23 0 1 0 -31 -6 Z"),
         ),
         ::artAcacia,
     ),
     Palm(
-        "Palm", SceneryTier.Large, false, 96f, 96f, 13f, 15f,
+        "Palm", SceneryTier.Large, false, 96f, 96f, 49.5f, 51.4f, 13f, 15f,
         listOf(
             ShadowShape("M 0 -14 Q 9 -22.5 4.2 -33.4 Q -4.8 -24.9 0 -14 Z"),
             ShadowShape("M 0 -14 Q 15.2 -13.5 23.4 -25.1 Q 8.2 -25.6 0 -14 Z"),
@@ -189,7 +193,7 @@ internal enum class ScenerySprite(
         ::artPalm,
     ),
     Rock(
-        "Rock", SceneryTier.Small, true, 64f, 56f, 3f, 4f,
+        "Rock", SceneryTier.Small, true, 64f, 56f, 31.5f, 25.5f, 3f, 4f,
         listOf(
             ShadowShape("M -13 2 L -9 -9 L 3 -12 L 12 -5 L 14 6 L 5 11 L -7 10 Z"),
             ShadowShape("M 9 9 A 5 5 0 1 0 19 9 A 5 5 0 1 0 9 9 Z"),
@@ -197,42 +201,42 @@ internal enum class ScenerySprite(
         ::artRock,
     ),
     HayBale(
-        "Hay bale", SceneryTier.Small, true, 48f, 48f, 3f, 4f,
+        "Hay bale", SceneryTier.Small, true, 48f, 48f, 20f, 20.5f, 3f, 4f,
         listOf(
             ShadowShape("M -9 0 A 9 9 0 1 0 9 0 A 9 9 0 1 0 -9 0 Z"),
         ),
         ::artHayBale,
     ),
     Fence(
-        "Fence (one piece of a row)", SceneryTier.Small, true, 40f, 40f, 2.5f, 3.5f,
+        "Fence (one piece of a row)", SceneryTier.Small, true, 40f, 40f, 22f, 6f, 2.5f, 3.5f,
         listOf(
             ShadowShape("M -8 0 h 16", strokeWidth = 3f),
         ),
         ::artFence,
     ),
     Farmhouse(
-        "Farmhouse", SceneryTier.Medium, false, 150f, 126f, 0f, 0f,
+        "Farmhouse", SceneryTier.Medium, false, 150f, 126f, 92f, 73f, 0f, 0f,
         listOf(
             ShadowShape("M 46 -38 L 58 -24 L 58 44 L -34 44 L -46 30 Z"),
         ),
         ::artFarmhouse,
     ),
     Barn(
-        "Barn", SceneryTier.Medium, false, 138f, 126f, 0f, 0f,
+        "Barn", SceneryTier.Medium, false, 138f, 126f, 80f, 74f, 0f, 0f,
         listOf(
             ShadowShape("M 40 -44 L 54 -28 L 54 46 L -26 46 L -40 30 Z"),
         ),
         ::artBarn,
     ),
     Silo(
-        "Silo", SceneryTier.Large, false, 76f, 76f, 13f, 15f,
+        "Silo", SceneryTier.Large, false, 76f, 76f, 31f, 31.5f, 13f, 15f,
         listOf(
             ShadowShape("M -14 0 A 14 14 0 1 0 14 0 A 14 14 0 1 0 -14 0 Z"),
         ),
         ::artSilo,
     ),
     Tower(
-        "Control tower", SceneryTier.Large, false, 132f, 150f, 0f, 0f,
+        "Control tower", SceneryTier.Large, false, 132f, 150f, 48f, 99.3f, 0f, 0f,
         listOf(
             ShadowShape("M 24 -6 L 36 8 L 36 56 L -12 56 L -24 42 Z"),
             ShadowShape("M 50.3 8.4 L 38.4 20.3 L 21.6 20.3 L 9.7 8.4 L 9.7 -8.4 L 21.6 -20.3 L 38.4 -20.3 L 50.3 -8.4 Z"),
@@ -241,21 +245,21 @@ internal enum class ScenerySprite(
         ::artTower,
     ),
     Terminal(
-        "Terminal", SceneryTier.Medium, false, 206f, 126f, 0f, 0f,
+        "Terminal", SceneryTier.Medium, false, 206f, 126f, 164f, 76f, 0f, 0f,
         listOf(
             ShadowShape("M 76 -34 L 88 -20 L 88 50 L -64 50 L -76 36 Z"),
         ),
         ::artTerminal,
     ),
     Hangar(
-        "Hangar", SceneryTier.Medium, false, 166f, 140f, 0f, 0f,
+        "Hangar", SceneryTier.Medium, false, 166f, 140f, 112f, 84f, 0f, 0f,
         listOf(
             ShadowShape("M 56 -40 L 69 -25 L 69 59 L -43 59 L -56 44 Z"),
         ),
         ::artHangar,
     ),
     Windsock(
-        "Windsock", SceneryTier.Large, false, 84f, 76f, 9f, 11f,
+        "Windsock", SceneryTier.Large, false, 84f, 76f, 38f, 35.8f, 9f, 11f,
         listOf(
             ShadowShape("M 0 0 v -26", strokeWidth = 3f),
             ShadowShape("M 0 -31 L 34 -27.5 L 34 -22.5 L 0 -21 Z", matrix = listOf(0.97f, 0.242f, -0.242f, 0.97f, -6.29f, -0.772f)),
@@ -263,21 +267,21 @@ internal enum class ScenerySprite(
         ::artWindsock,
     ),
     Car(
-        "Car", SceneryTier.Small, true, 56f, 72f, 3f, 4f,
+        "Car", SceneryTier.Small, true, 56f, 72f, 25f, 38f, 3f, 4f,
         listOf(
             ShadowShape("M -3 -19 H 3 A 7 7 0 0 1 10 -12 V 12 A 7 7 0 0 1 3 19 H -3 A 7 7 0 0 1 -10 12 V -12 A 7 7 0 0 1 -3 -19 Z"),
         ),
         ::artCar,
     ),
     FuelTruck(
-        "Fuel truck", SceneryTier.Small, true, 60f, 92f, 4f, 5f,
+        "Fuel truck", SceneryTier.Small, true, 60f, 92f, 26f, 56f, 4f, 5f,
         listOf(
             ShadowShape("M -5 -28 H 5 A 6 6 0 0 1 11 -22 V 22 A 6 6 0 0 1 5 28 H -5 A 6 6 0 0 1 -11 22 V -22 A 6 6 0 0 1 -5 -28 Z"),
         ),
         ::artFuelTruck,
     ),
     BaggageCart(
-        "Baggage cart", SceneryTier.Small, true, 52f, 96f, 3f, 4f,
+        "Baggage cart", SceneryTier.Small, true, 52f, 96f, 21f, 68f, 3f, 4f,
         listOf(
             ShadowShape("M -4 -34 H 4 A 4 4 0 0 1 8 -30 V -22 A 4 4 0 0 1 4 -18 H -4 A 4 4 0 0 1 -8 -22 V -30 A 4 4 0 0 1 -4 -34 Z"),
             ShadowShape("M -6 -12 H 6 A 2 2 0 0 1 8 -10 V 6 A 2 2 0 0 1 6 8 H -6 A 2 2 0 0 1 -8 6 V -10 A 2 2 0 0 1 -6 -12 Z"),
@@ -286,7 +290,7 @@ internal enum class ScenerySprite(
         ::artBaggageCart,
     ),
     ParkedAircraft(
-        "Parked aircraft", SceneryTier.Small, true, 92f, 88f, 4f, 5f,
+        "Parked aircraft", SceneryTier.Small, true, 92f, 88f, 60f, 60f, 4f, 5f,
         listOf(
             ShadowShape("M -24 -12 H 24 A 6 6 0 0 1 30 -6 V -5 A 6 6 0 0 1 24 1 H -24 A 6 6 0 0 1 -30 -5 V -6 A 6 6 0 0 1 -24 -12 Z"),
             ShadowShape("M 0 -29 c 5 0 6 10 6 20 l -2 32 h -8 l -2 -32 c 0 -10 1 -20 6 -20 z"),
@@ -295,7 +299,7 @@ internal enum class ScenerySprite(
         ::artParkedAircraft,
     ),
     Cow(
-        "Cow", SceneryTier.Small, true, 64f, 86f, 4f, 5f,
+        "Cow", SceneryTier.Small, true, 64f, 86f, 24.9f, 56.8f, 4f, 5f,
         listOf(
             ShadowShape("M -11.5 2 A 11.5 19 0 1 0 11.5 2 A 11.5 19 0 1 0 -11.5 2 Z"),
             ShadowShape("M -7 -19 A 7 8 0 1 0 7 -19 A 7 8 0 1 0 -7 -19 Z"),
@@ -303,7 +307,7 @@ internal enum class ScenerySprite(
         ::artCow,
     ),
     Zebra(
-        "Zebra", SceneryTier.Small, true, 64f, 90f, 4f, 5f,
+        "Zebra", SceneryTier.Small, true, 64f, 90f, 24.9f, 61.2f, 4f, 5f,
         listOf(
             ShadowShape("M -11.5 2 A 11.5 19 0 1 0 11.5 2 A 11.5 19 0 1 0 -11.5 2 Z"),
             ShadowShape("M -7 -19 A 7 8 0 1 0 7 -19 A 7 8 0 1 0 -7 -19 Z"),
@@ -311,7 +315,7 @@ internal enum class ScenerySprite(
         ::artZebra,
     ),
     Elephant(
-        "Elephant", SceneryTier.Small, true, 104f, 132f, 6f, 7f,
+        "Elephant", SceneryTier.Small, true, 104f, 132f, 63.2f, 99.9f, 6f, 7f,
         listOf(
             ShadowShape("M -19 4 A 19 28 0 1 0 19 4 A 19 28 0 1 0 -19 4 Z"),
             ShadowShape("M -32 -24 A 13 15 0 1 0 -6 -24 A 13 15 0 1 0 -32 -24 Z"),
@@ -321,7 +325,7 @@ internal enum class ScenerySprite(
         ::artElephant,
     ),
     Farmer(
-        "Farmer", SceneryTier.Small, true, 60f, 64f, 3f, 4f,
+        "Farmer", SceneryTier.Small, true, 60f, 64f, 35.3f, 32f, 3f, 4f,
         listOf(
             ShadowShape("M -12 2 A 12 7 0 1 0 12 2 A 12 7 0 1 0 -12 2 Z"),
             ShadowShape("M -8.5 -1 A 8.5 8.5 0 1 0 8.5 -1 A 8.5 8.5 0 1 0 -8.5 -1 Z"),
@@ -329,7 +333,7 @@ internal enum class ScenerySprite(
         ::artFarmer,
     ),
     BirdUp(
-        "Bird, wings out", SceneryTier.Small, true, 48f, 40f, 7f, 9f,
+        "Bird, wings out", SceneryTier.Small, true, 48f, 40f, 30f, 19.2f, 7f, 9f,
         listOf(
             ShadowShape("M 0 -2 q -8 -6 -15 -2 q 4 1 6 5 q 5 -1 9 2 q 4 -3 9 -2 q 2 -4 6 -5 q -7 -4 -15 2 z"),
             ShadowShape("M -3.2 0 A 3.2 6.5 0 1 0 3.2 0 A 3.2 6.5 0 1 0 -3.2 0 Z"),
@@ -337,7 +341,7 @@ internal enum class ScenerySprite(
         ::artBirdUp,
     ),
     BirdDown(
-        "Bird, wings in", SceneryTier.Small, true, 48f, 40f, 7f, 9f,
+        "Bird, wings in", SceneryTier.Small, true, 48f, 40f, 18f, 19.2f, 7f, 9f,
         listOf(
             ShadowShape("M 0 -2 q -6 -1 -9 5 q 3 0 5 3 q 2 -3 4 -2 q 2 -1 4 2 q 2 -3 5 -3 q -3 -6 -9 -5 z"),
             ShadowShape("M -3.2 0 A 3.2 6.5 0 1 0 3.2 0 A 3.2 6.5 0 1 0 -3.2 0 Z"),
@@ -345,63 +349,63 @@ internal enum class ScenerySprite(
         ::artBirdDown,
     ),
     Sailboat(
-        "Sailboat", SceneryTier.Small, true, 60f, 92f, 3f, 4f,
+        "Sailboat", SceneryTier.Small, true, 60f, 92f, 22f, 62f, 3f, 4f,
         listOf(
             ShadowShape("M 0 -30 C 8 -22 10 -8 10 6 V 24 q 0 4 -4 4 H -6 q -4 0 -4 -4 V 6 C -10 -8 -8 -22 0 -30 Z"),
         ),
         ::artSailboat,
     ),
     Yacht(
-        "Yacht", SceneryTier.Small, true, 72f, 110f, 4f, 5f,
+        "Yacht", SceneryTier.Small, true, 72f, 110f, 30f, 80f, 4f, 5f,
         listOf(
             ShadowShape("M 0 -40 C 11 -30 14 -12 14 6 V 30 q 0 6 -6 6 H -8 q -6 0 -6 -6 V 6 C -14 -12 -11 -30 0 -40 Z"),
         ),
         ::artYacht,
     ),
     ContainerVessel(
-        "Container vessel", SceneryTier.Small, true, 96f, 176f, 6f, 7f,
+        "Container vessel", SceneryTier.Small, true, 96f, 176f, 46f, 152f, 6f, 7f,
         listOf(
             ShadowShape("M -22 -70 q 22 -16 44 0 V 62 q 0 8 -8 8 H -14 q -8 0 -8 -8 Z"),
         ),
         ::artContainerVessel,
     ),
     Jetty(
-        "Jetty", SceneryTier.Small, true, 60f, 120f, 3f, 4f,
+        "Jetty", SceneryTier.Small, true, 60f, 120f, 24f, 88f, 3f, 4f,
         listOf(
             ShadowShape("M -7 -44 H 7 A 2 2 0 0 1 9 -42 V 42 A 2 2 0 0 1 7 44 H -7 A 2 2 0 0 1 -9 42 V -42 A 2 2 0 0 1 -7 -44 Z"),
         ),
         ::artJetty,
     ),
     Wave(
-        "Wave", SceneryTier.Flat, true, 48f, 24f, 0f, 0f,
+        "Wave", SceneryTier.Flat, true, 48f, 24f, 28f, 6f, 0f, 0f,
         listOf(
 
         ),
         ::artWave,
     ),
     Wake(
-        "Wake", SceneryTier.Flat, true, 56f, 64f, 0f, 0f,
+        "Wake", SceneryTier.Flat, true, 56f, 64f, 28f, 40f, 0f, 0f,
         listOf(
 
         ),
         ::artWake,
     ),
     CropField(
-        "Crop field, green (one tile)", SceneryTier.Flat, true, 84f, 68f, 0f, 0f,
+        "Crop field, green (one tile)", SceneryTier.Flat, true, 84f, 68f, 72f, 56f, 0f, 0f,
         listOf(
 
         ),
         ::artCropField,
     ),
     CropWheat(
-        "Crop field, wheat (one tile)", SceneryTier.Flat, true, 84f, 68f, 0f, 0f,
+        "Crop field, wheat (one tile)", SceneryTier.Flat, true, 84f, 68f, 72f, 56f, 0f, 0f,
         listOf(
 
         ),
         ::artCropWheat,
     ),
     CropPlough(
-        "Crop field, ploughed (one tile)", SceneryTier.Flat, true, 84f, 68f, 0f, 0f,
+        "Crop field, ploughed (one tile)", SceneryTier.Flat, true, 84f, 68f, 72f, 56f, 0f, 0f,
         listOf(
 
         ),

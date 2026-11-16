@@ -13,7 +13,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class LevelDecorationTest {
-    private val fields = setOf(SceneryKind.Field, SceneryKind.FieldWheat, SceneryKind.FieldGreen, SceneryKind.FieldPlough)
+    private val fields = setOf(SceneryKind.FieldWheat, SceneryKind.FieldGreen, SceneryKind.FieldPlough)
 
     private fun everyPoint(level: LevelConfig): List<Vec2> {
         val d = levelDecoration(level)

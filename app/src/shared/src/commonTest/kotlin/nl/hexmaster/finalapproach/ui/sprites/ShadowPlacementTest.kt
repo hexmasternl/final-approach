@@ -50,7 +50,7 @@ class ShadowPlacementTest {
     @Test
     fun flatSpritesAndGroundKindsAreDrawnOnTheGroundAndTheRestStandsUp() {
         fun item(kind: SceneryKind) = SceneryItem(kind, Vec2(0.0, 0.0), 10.0, 10.0)
-        listOf(SceneryKind.Taxiway, SceneryKind.Apron, SceneryKind.Field, SceneryKind.Road, SceneryKind.Pond)
+        listOf(SceneryKind.Taxiway, SceneryKind.Apron, SceneryKind.Road, SceneryKind.Pond)
             .forEach { assertTrue(item(it).drawsOnGround, "$it") }
         listOf(SceneryKind.Tree, SceneryKind.Terminal, SceneryKind.Car, SceneryKind.Hedge, SceneryKind.ForestEdge, SceneryKind.Jetty)
             .forEach { assertFalse(item(it).drawsOnGround, "$it") }

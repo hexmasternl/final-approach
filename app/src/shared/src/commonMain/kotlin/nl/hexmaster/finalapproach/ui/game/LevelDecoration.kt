@@ -320,7 +320,7 @@ private class OpenGround(private val level: LevelConfig) {
         val band = when (item.kind) {
             SceneryKind.Road -> GroundMetrics.Ground.Road.clearance - GroundMetrics.Ground.Road.verge / 2f
             SceneryKind.Track -> GroundMetrics.Ground.Track.clearance
-            SceneryKind.Field, SceneryKind.FieldWheat, SceneryKind.FieldGreen, SceneryKind.FieldPlough -> GroundMetrics.Ground.Field.margin * 2f
+            SceneryKind.FieldWheat, SceneryKind.FieldGreen, SceneryKind.FieldPlough -> GroundMetrics.Ground.Field.margin * 2f
             SceneryKind.Pond, SceneryKind.Waterhole -> GroundMetrics.Ground.Pond.shore / 2f
             SceneryKind.Apron, SceneryKind.CarPark, SceneryKind.Taxiway -> GroundMetrics.Ground.Apron.margin
             else -> 0f

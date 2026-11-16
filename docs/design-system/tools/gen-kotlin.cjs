@@ -277,7 +277,7 @@ console.log(`generated: assets/scenery (${worldEntries.length} v2 sprites)`);
 // ---------- scenery sprite data and ground metrics for the app's world (design system v2)
 // ui/sprites/ScenerySprites.kt: every sprite of FA.WORLD, FA.DETAILS and the cloud as a shape tree.
 // ui/sprites/GroundMetrics.kt: FA.METRICS, the sizes of runways, helipads and ground pieces.
-const { parseArt } = require('./scenery-shapes.cjs');
+const { parseArt, boundsOf } = require('./scenery-shapes.cjs');
 const pascal = n => n.replace(/(^|-)(\w)/g, (_, __, c) => c.toUpperCase());
 const kf = v => num(v) + 'f';
 const ks = s => '"' + s.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
@@ -289,7 +289,8 @@ const parsedSprites = worldEntries.map(([name, a]) => {
   const art = parseArt(name, a.svg, FA.worldPaint);
   art.tokens.forEach(tk => checkToken(`scenery ${name}`, tk));
   const shadow = a.sh ? parseArt(name + ' (shadow)', a.sh, FA.worldPaint, true).nodes : [];
-  return { name, a, art, shadow };
+  const [bx0, by0, bx1, by1] = boundsOf(art.nodes);
+  return { name, a, art, shadow, body: [+(bx1 - bx0).toFixed(1), +(by1 - by0).toFixed(1)] };
 });
 const parsedDetails = Object.entries(FA.DETAILS).map(([name, svg]) => {
   const art = parseArt('detail ' + name, svg, FA.worldPaint);
@@ -358,7 +359,9 @@ internal enum class SceneryTier { Flat, Small, Medium, Large }
 
 /**
  * The scenery sprites of the design system, each drawn around its own origin in world units.
- * [width] and [height] are the size of its picture including the shadow; [rotates] is false
+ * [width] and [height] are the size of its picture including the shadow; [bodyWidth] and
+ * [bodyHeight] are the size of its own shapes, strokes and shadow left out, which is the size a
+ * level gives it as a footprint (the renderer fits these bounds into the footprint); [rotates] is false
  * for everything that stands (buildings, trees, the silo, the windsock). The shadow is
  * [shadow] thrown by ([shadowX], [shadowY]) world units, down and to the right.
  */
@@ -368,13 +371,15 @@ internal enum class ScenerySprite(
     val rotates: Boolean,
     val width: Float,
     val height: Float,
+    val bodyWidth: Float,
+    val bodyHeight: Float,
     val shadowX: Float,
     val shadowY: Float,
     val shadow: List<ShadowShape>,
     artOf: () -> SceneryArt,
 ) {
-${parsedSprites.map(({ name, a, shadow }) => `    ${pascal(name)}(
-        ${ks(a.label)}, SceneryTier.${tierName[a.tier]}, ${a.rotates ? 'true' : 'false'}, ${kf(a.w)}, ${kf(a.h)}, ${kf(a.off[0])}, ${kf(a.off[1])},
+${parsedSprites.map(({ name, a, shadow, body }) => `    ${pascal(name)}(
+        ${ks(a.label)}, SceneryTier.${tierName[a.tier]}, ${a.rotates ? 'true' : 'false'}, ${kf(a.w)}, ${kf(a.h)}, ${kf(body[0])}, ${kf(body[1])}, ${kf(a.off[0])}, ${kf(a.off[1])},
         listOf(
 ${emitShadow(shadow, '            ')}
         ),

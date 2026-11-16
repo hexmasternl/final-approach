@@ -10,7 +10,6 @@ package nl.hexmaster.finalapproach.domain
 enum class SceneryKind(val ground: Boolean = false, val standing: Boolean = false) {
     Taxiway(ground = true),
     Apron(ground = true),
-    Field(ground = true),
     FieldWheat(ground = true),
     FieldGreen(ground = true),
     FieldPlough(ground = true),
@@ -29,6 +28,10 @@ enum class SceneryKind(val ground: Boolean = false, val standing: Boolean = fals
     BaggageCart,
     ParkedAircraft,
     Tree(standing = true),
+    Oak(standing = true),
+    Pine(standing = true),
+    Silo(standing = true),
+    HayBale,
     ForestEdge,
     Hedge,
     Fence,
@@ -71,7 +74,7 @@ object SceneryDefaults {
      * fits its apron and is always much smaller than any aircraft in play, which is never taken
      * for one of them.
      */
-    const val PARKED_AIRCRAFT_SIZE = 67.5
+    const val PARKED_AIRCRAFT_SIZE = 60.0
 
     /** Width of the beach around an island. */
     const val BEACH_WIDTH = 26.0

@@ -191,7 +191,7 @@ private fun DrawScope.drawTracks(tracks: List<SceneryItem>, colors: FaColors) {
 
 /** The crop fields: rows, edge line and verge, in the material of their variant. */
 internal fun DrawScope.drawFields(level: LevelConfig, viewport: WorldViewport, colors: FaColors) {
-    val fields = level.scenery.of(SceneryKind.Field, SceneryKind.FieldWheat, SceneryKind.FieldGreen, SceneryKind.FieldPlough)
+    val fields = level.scenery.of(SceneryKind.FieldWheat, SceneryKind.FieldGreen, SceneryKind.FieldPlough)
     inWorld(viewport) { fields.forEach { drawCropField(it, colors) } }
 }
 
@@ -200,7 +200,6 @@ private class Crop(val fill: Color, val rows: Color, val edge: Color, val rowWid
 private fun cropOf(kind: SceneryKind, colors: FaColors): Crop = when (kind) {
     SceneryKind.FieldGreen -> Crop(colors.soil500, colors.leaf300, colors.soil700, Ground.Lines.cropRows)
     SceneryKind.FieldPlough -> Crop(colors.soil500, colors.soil700, colors.soil700, Ground.Lines.ploughRows)
-    // The plain field of the first version of the levels is wheat.
     else -> Crop(colors.straw300, colors.straw500, colors.straw700, Ground.Lines.cropRows)
 }
 
@@ -486,7 +485,7 @@ private fun DrawScope.drawWaves(island: Island, viewport: WorldViewport, colors:
 
 /** The kinds of scenery that have their own ground drawing above and so are not drawn as a sprite. */
 internal val groundPieceKinds: Set<SceneryKind> = setOf(
-    SceneryKind.Road, SceneryKind.Track, SceneryKind.Field, SceneryKind.FieldWheat, SceneryKind.FieldGreen,
+    SceneryKind.Road, SceneryKind.Track, SceneryKind.FieldWheat, SceneryKind.FieldGreen,
     SceneryKind.FieldPlough, SceneryKind.Pond, SceneryKind.Waterhole, SceneryKind.Apron, SceneryKind.CarPark,
     SceneryKind.Taxiway,
 )

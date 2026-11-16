@@ -156,7 +156,7 @@ class LevelLayoutsTest {
 
     @Test
     fun parkedAircraftAreSmallerThanAnyAircraftInPlay() {
-        assertEquals(67.5, SceneryDefaults.PARKED_AIRCRAFT_SIZE)
+        assertEquals(60.0, SceneryDefaults.PARKED_AIRCRAFT_SIZE)
         val smallestInPlay = DefaultAircraftSpecs.all.values.minOf { it.spriteSize }
         Levels.all.forEach { level ->
             level.scenery.filter { it.kind == SceneryKind.ParkedAircraft }.forEach {
@@ -182,8 +182,8 @@ class LevelLayoutsTest {
 
     @Test
     fun animalsPeopleAndVehiclesAreLargeEnoughToReadOnAPhone() {
-        // 10dp on the 800 by 360dp reference phone, where a world unit is 0.2dp.
-        val minimum = 50.0
+        // 10dp on the 800 by 360dp reference phone, where a world unit is 0.333dp; the sprites are drawn at their natural size.
+        val minimum = 30.0
         val kinds = setOf(
             SceneryKind.Car, SceneryKind.FuelTruck, SceneryKind.BaggageCart, SceneryKind.ParkedAircraft,
             SceneryKind.Zebra, SceneryKind.Elephant,
@@ -201,7 +201,7 @@ class LevelLayoutsTest {
         assertTrue(islandKinds.containsAll(setOf(SceneryKind.Palm, SceneryKind.Jetty)), "$islandKinds")
         val savannaKinds = three.scenery.map { it.kind }.toSet()
         val expected = setOf(
-            SceneryKind.Acacia, SceneryKind.Bush, SceneryKind.Rock, SceneryKind.Road,
+            SceneryKind.Acacia, SceneryKind.Bush, SceneryKind.Rock, SceneryKind.Track,
             SceneryKind.Waterhole, SceneryKind.Zebra, SceneryKind.Elephant,
         )
         assertTrue(savannaKinds.containsAll(expected), "missing ${expected - savannaKinds}")
