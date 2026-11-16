@@ -23,8 +23,8 @@ Decoration that makes a level read as a place: the airfield's buildings and vehi
 | `farmhouse` | M | No | A tiled `roof` over a cream `wall` with a door, shutters and windows; a `stone` chimney and doorstep. |
 | `barn` | M | No | A curved `tin` roof over a `roof`-red wall with a cross-braced door. |
 | `silo` | L | No | A round `tin` drum seen from above. |
-| `tower` | L | No | A `wall` base, a `tin` block, a `wall` shaft and an eight-sided `glass` cab under a `cherry` roof with a `beacon`. |
-| `terminal` | M | No | A `tin` roof with a skylight over a glazed front in `window`, with an awning. |
+| `tower` | L | No | A `wall` base, a `tin` block, a `wall` shaft and an eight-sided `glass` cab under a `cherry` roof with a `beacon`. The cab is glass seen from above, not a lit window, so it stays `glass` in Night and Dawn; the wall windows of the base use `window`. |
+| `terminal` | M | No | A `tin` roof with a skylight over a glazed front in `window`, with an awning. The roof band is a skylight in `glass`, seen from above, and stays `glass` in Night and Dawn; the glazed front is `window` and lights up. |
 | `hangar` | M | No | A vaulted `tin` roof over an open door with a nose showing. |
 | `windsock` | L | No | See `Windsock.md`. |
 | `car`, `fuel-truck`, `baggage-cart` | S | Yes | Top-down, front up: a `denim` car, a `tin` tanker behind a `roof`-red cab, a tug with two carts. |
