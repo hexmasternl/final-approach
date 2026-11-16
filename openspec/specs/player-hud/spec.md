@@ -84,25 +84,25 @@ The HUD SHALL be a single row at the top of the screen: the best score and then 
 - **THEN** the HUD shows no counter, silhouette or chip per aircraft type
 
 ### Requirement: HUD spacing and size
-Every HUD item SHALL be as tall as the design-system HUD chip; the row SHALL be inset from the screen edges by `space-4` and its items SHALL be `space-3` apart, as in the design-system Hud Bar.
+Every HUD item SHALL be as tall as the design-system flight strip; the row SHALL be inset from the screen edges by `space-4` and its items SHALL be `space-3` apart, as in the design-system Hud Bar.
 
 #### Scenario: Matches the Hud Bar
 - **WHEN** the HUD is compared with the Hud Bar in the design-system showcase
-- **THEN** the edge inset, the gap between chips and the chip height are the same
+- **THEN** the edge inset, the gap between strips and the strip height are the same
 
 ### Requirement: Score chip
-The current score SHALL be shown as the design-system Score Counter: the label `Score` above the value, the label in the HUD chip label style and the value in the score style.
+The current score SHALL be shown as a design-system flight strip: the label `Score` in the sun label cell left of the value, the label in the strip label style and the value in the strip value style.
 
 #### Scenario: Score chip content
 - **WHEN** the HUD is shown
-- **THEN** the score chip shows `SCORE` in small uppercase text above the current score in the large display font
+- **THEN** the score strip shows `SCORE` in small uppercase text in a yellow cell, left of the current score in the display font
 
 ### Requirement: Compact best score chip
-The best score SHALL be shown as the compact Score Counter: a star icon, the label `Best` above the value, and a value smaller than the current score value.
+The best score SHALL be shown as a design-system flight strip: a star icon and the label `Best` in the paper label cell left of the value. The star and the paper cell, not a smaller value, set it apart from the current score.
 
 #### Scenario: Best chip content
 - **WHEN** the HUD is shown
-- **THEN** the best chip shows a star icon and `BEST` above the best score, and its value is visibly smaller than the score value
+- **THEN** the best strip shows a star icon and `BEST` in a paper cell left of the best score, and the score strip has no star and a yellow cell
 
 ### Requirement: Score grouping
 Score and best score values of 1000 or more SHALL group thousands with a thin space.

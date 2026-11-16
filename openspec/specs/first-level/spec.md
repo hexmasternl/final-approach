@@ -6,7 +6,7 @@ TBD - created by archiving change first-level. Update Purpose after archive.
 ## Requirements
 
 ### Requirement: Take off opens the first level
-Tapping Take off on the main page SHALL open the game screen with the Meadow Field level. For a player who has not completed the tutorial, the level SHALL start with the tutorial's first step; otherwise aircraft SHALL start to arrive as usual. Back SHALL return to the main page.
+Tapping Take off on the main page SHALL open the game screen with the Meadow Field level. For a player who has not completed the tutorial, the level SHALL start with the tutorial's first step; otherwise aircraft SHALL start to arrive as usual. Back during the level SHALL pause it and open the options panel; it SHALL NOT leave the game screen.
 
 #### Scenario: Take off
 - **WHEN** a player who has completed the tutorial taps Take off
@@ -17,8 +17,8 @@ Tapping Take off on the main page SHALL open the game screen with the Meadow Fie
 - **THEN** the game screen shows Meadow Field with the tutorial's goal step and no aircraft
 
 #### Scenario: Back
-- **WHEN** the player presses back on the game screen
-- **THEN** the main page is shown
+- **WHEN** the player presses back on the game screen during a running level
+- **THEN** the level pauses, the options panel opens and the game screen stays shown
 
 ### Requirement: Landscape while playing
 The game screen SHALL lock the app in landscape for as long as it is shown, through `AppHost`, and SHALL release the lock when it is left.

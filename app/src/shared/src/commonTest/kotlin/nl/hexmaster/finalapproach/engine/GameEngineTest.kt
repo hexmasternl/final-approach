@@ -285,6 +285,113 @@ class GameEngineTest {
         )
         assertEquals(setOf(1, 2, 3), engine.state.value.warnedAircraft)
     }
+
+    private fun rolling(id: Int, position: Vec2, direction: Double, runway: String = "r", fade: Double = 0.0) =
+        jet(id, position, direction).copy(
+            altitude = AltitudeState.Landed,
+            status = AircraftStatus.RollingOut(direction, if (fade > 0.0) 0.0 else 500.0, runway, fadeElapsed = fade),
+        )
+
+    private fun warnedAfterPlacing(vararg aircraft: Aircraft): Set<Int> {
+        val engine = GameEngine(quiet, seed = 1)
+        engine.place(aircraft.toList())
+        return engine.state.value.warnedAircraft
+    }
+
+    @Test
+    fun rolloutsOnOneRunwayInTheSameDirectionAreNotWarned() {
+        val close = Vec2(300.0, 300.0)
+        assertEquals(
+            emptySet(),
+            warnedAfterPlacing(rolling(1, close, PI / 2), rolling(2, close + Vec2(40.0 * zoom, 0.0), PI / 2)),
+        )
+    }
+
+    @Test
+    fun anAirplaneRollingBehindAFadingOneIsNotWarned() {
+        val close = Vec2(300.0, 300.0)
+        assertEquals(
+            emptySet(),
+            warnedAfterPlacing(rolling(1, close, PI / 2, fade = 0.3), rolling(2, close + Vec2(40.0 * zoom, 0.0), PI / 2)),
+        )
+    }
+
+    @Test
+    fun aFlyingAircraftOverALandedAirplaneIsNotWarned() {
+        val spot = Vec2(300.0, 300.0)
+        assertEquals(emptySet(), warnedAfterPlacing(rolling(1, spot, PI / 2), jet(2, spot + Vec2(20.0 * zoom, 0.0))))
+    }
+
+    @Test
+    fun rolloutsInOppositeDirectionsOnOneRunwayAreWarned() {
+        val close = Vec2(300.0, 300.0)
+        assertEquals(
+            setOf(1, 2),
+            warnedAfterPlacing(rolling(1, close, PI / 2), rolling(2, close + Vec2(40.0 * zoom, 0.0), -PI / 2)),
+        )
+    }
+
+    @Test
+    fun rolloutsOnDifferentRunwaysAreWarned() {
+        val close = Vec2(300.0, 300.0)
+        assertEquals(
+            setOf(1, 2),
+            warnedAfterPlacing(rolling(1, close, PI / 2), rolling(2, close + Vec2(40.0 * zoom, 0.0), PI / 2, runway = "s")),
+        )
+    }
+
+    @Test
+    fun inAMixedGroupOnlyThePairsThatCanCollideAreWarned() {
+        val first = Vec2(300.0, 300.0)
+        assertEquals(
+            setOf(1, 3),
+            warnedAfterPlacing(
+                rolling(1, first, PI / 2),
+                rolling(2, first + Vec2(-100.0 * zoom, 0.0), PI / 2),
+                rolling(3, first + Vec2(80.0 * zoom, 0.0), PI / 2, runway = "s"),
+            ),
+        )
+    }
+
+    @Test
+    fun aFlyingAircraftOverARolloutPairIsOnlyWarnedWithTheRolloutsThatCanCollide() {
+        val spot = Vec2(300.0, 300.0)
+        assertEquals(
+            setOf(1, 2),
+            warnedAfterPlacing(
+                rolling(1, spot, PI / 2),
+                rolling(2, spot + Vec2(40.0 * zoom, 0.0), -PI / 2),
+                jet(3, spot + Vec2(20.0 * zoom, 0.0)),
+            ),
+        )
+    }
+
+    @Test
+    fun anAirplaneOnFinalIsWarnedOfARolloutTowardsItOnlyFromTouchdown() {
+        val wide = quiet.copy(world = quiet.world.copy(warningDistance = 2000.0))
+        val engine = GameEngine(wide, seed = 1)
+        val approaching = jet(1, meadow(150.0, 400.0), PI / 2).copy(hasEnteredViewport = true)
+        engine.place(listOf(approaching, rolling(2, meadow(900.0, 400.0), -PI / 2)))
+        engine.beginPath(1)
+        engine.extendPath(1, meadow(250.0, 400.0))
+        engine.extendPath(1, meadow(400.0, 400.0))
+        assertIs<AircraftStatus.ClearedToLand>(engine.aircraft(1).status)
+        var touchedDown = false
+        repeat(400) {
+            if (touchedDown) return@repeat
+            engine.update(0.02)
+            val plane = engine.state.value.aircraft.firstOrNull { it.id == 1 } ?: return@repeat
+            val warned = engine.state.value.warnedAircraft
+            if (plane.altitude == AltitudeState.Landed) {
+                touchedDown = true
+                assertEquals(setOf(1, 2), warned, "warned from the update of the touchdown")
+            } else {
+                assertEquals(emptySet(), warned, "no warning before the touchdown")
+            }
+        }
+        assertTrue(touchedDown, "the jet touched down")
+    }
+
     @Test
     fun liveriesTakeTheNextFreeColour() {
         val engine = GameEngine(level, seed = 9)

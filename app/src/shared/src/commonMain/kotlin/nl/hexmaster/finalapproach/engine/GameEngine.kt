@@ -25,7 +25,7 @@ import kotlin.random.Random
  * @param selectedId the aircraft the player last picked, if it is still in play
  * @param events what happened during the last update
  * @param status playing, or game over with its reason; once over, nothing moves any more
- * @param warnedAircraft aircraft within the warning distance of another aircraft
+ * @param warnedAircraft aircraft within the warning distance of another aircraft they can collide with
  * @param spawnedByType how many aircraft of each type have spawned in this run
  * @param landedByType how many aircraft of each type have landed in this run
  * @param paused true while the player has paused the level; nothing moves or spawns
@@ -368,13 +368,17 @@ class GameEngine(
         return GameStatus.Playing
     }
 
-    /** Ids of aircraft whose centre is closer than the warning distance to another one; a landing helicopter is ignored. */
+    /**
+     * Ids of aircraft whose centre is closer than the warning distance to another aircraft they
+     * can collide with ([Collisions.canCollide]); a landing helicopter is never in the set.
+     */
     private fun warned(aircraft: List<Aircraft>): Set<Int> = buildSet {
-        val candidates = aircraft.filter { it.status !is AircraftStatus.Landing }
-        for (i in candidates.indices) for (j in i + 1 until candidates.size) {
-            if (candidates[i].position.distanceTo(candidates[j].position) < level.world.warningDistance) {
-                add(candidates[i].id)
-                add(candidates[j].id)
+        for (i in aircraft.indices) for (j in i + 1 until aircraft.size) {
+            val a = aircraft[i]
+            val b = aircraft[j]
+            if (Collisions.canCollide(a, b) && a.position.distanceTo(b.position) < level.world.warningDistance) {
+                add(a.id)
+                add(b.id)
             }
         }
     }
