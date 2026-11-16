@@ -228,74 +228,6 @@ ${partsOf(side.svg, '    ')}
 `;
 w('sprites/AircraftSprites.kt', sprites);
 
-// ---------- scenery sprites for the app's v1 world
-// The app's world is not ported to v2 yet, so its sprite data is still generated from the v1
-// sprites in tools/scenery-v1.js. Port the world, then generate this from FA.WORLD instead.
-const V1 = require(path.join(__dirname, 'scenery-v1.js'));
-const pascal = n => n.replace(/(^|-)(\w)/g, (_, __, c) => c.toUpperCase());
-const sceneryRoles = Object.keys(V1.SCENERY_FILL);
-const roleOfToken = Object.fromEntries(sceneryRoles.map(r => [V1.SCENERY_FILL[r], r]));
-const strokeName = { outline: 'Outline', fine: 'Fine' };
-const lineOf = n => parseFloat(tok('line', n));
-const sceneryShapes = (name, a) => {
-  const shapes = [];
-  const re = /<(rect|path|circle|ellipse) \{\{([a-z-]+)\}\}([^>]*)\/>/g;
-  let m;
-  while ((m = re.exec(a.svg))) shapes.push({ tag: m[1], key: m[2], attrs: m[3], paint: V1.sceneryPaint(m[2]) });
-  if (shapes.length !== (a.svg.match(/<(rect|path|circle|ellipse)\b/g) || []).length) throw new Error(`scenery ${name}: a shape has no paint key`);
-  // The rules of world.md, checked here so a sprite that breaks them never reaches the game.
-  const fills = new Set(shapes.map(x => x.paint.fill).filter(Boolean));
-  if (fills.size > V1.SCENERY_MAX_FILLS) throw new Error(`scenery ${name}: ${fills.size} fill colours (${[...fills].join(', ')}), at most ${V1.SCENERY_MAX_FILLS}`);
-  for (const x of shapes) for (const token of [x.paint.fill, x.paint.stroke && x.paint.strokeColor]) {
-    if (!token) continue;
-    const resolved = [token]; let v = cmap[token];
-    while (typeof v === 'string' && /^\{(.+)\}$/.test(v)) { resolved.push(v.slice(1, -1)); v = cmap[v.slice(1, -1)]; }
-    const pathColours = V1.SCENERY_BANNED.filter(b => resolved.includes(b) || (typeof cmap[b] === 'string' && resolved.includes(cmap[b].slice(1, -1))));
-    if (pathColours.length && V1.SCENERY_ACCENT[name] !== token) throw new Error(`scenery ${name}: ${token} is not a scenery colour (${pathColours.join(', ')})`);
-  }
-  return shapes;
-};
-const sceneryEntries = Object.entries(V1.SCENERY).map(([name, a]) => ({ name, a, shapes: sceneryShapes(name, a) }));
-w('sprites/ScenerySprites.kt', `// Generated from the design system scenery sprites (components/bundle.js). Do not edit by hand.
-package nl.hexmaster.finalapproach.ui.sprites
-
-import androidx.compose.ui.graphics.Color
-import nl.hexmaster.finalapproach.ui.theme.FaColors
-
-/** The colour roles scenery is painted with. Colours come from the theme at draw time. */
-internal enum class SceneryPaint { ${sceneryRoles.map(pascal).join(', ')} }
-
-/** The theme colour of a scenery paint role. */
-internal fun FaColors.scenery(paint: SceneryPaint): Color = when (paint) {
-${sceneryRoles.map(r => `    SceneryPaint.${pascal(r)} -> ${camel(V1.SCENERY_FILL[r])}`).join('\n')}
-}
-
-/** How a scenery shape is stroked: not at all, with the scenery outline (\`${V1.SCENERY_STROKE.outline}\`) or with the detail line (\`${V1.SCENERY_STROKE.fine}\`). */
-internal enum class SceneryStroke { None, Outline, Fine }
-
-/** One shape of a scenery sprite, as SVG path data on the sprite's grid. A null [fill] is a stroke only. */
-internal class SceneryPart(
-    val fill: SceneryPaint?,
-    val stroke: SceneryStroke,
-    val pathData: String,
-    val strokePaint: SceneryPaint = SceneryPaint.Dark,
-)
-
-/**
- * The scenery sprites of the design system: top-down, front up, each on its own grid of
- * [width] by [height] units. One unit is one world unit at the size the sprite is drawn for.
- */
-internal enum class ScenerySprite(val width: Float, val height: Float, val parts: List<SceneryPart>) {
-${sceneryEntries.map(({ name, a, shapes }) => `    ${pascal(name)}(
-        ${a.width}f, ${a.height}f,
-        listOf(
-${shapes.map(x => `            SceneryPart(${x.paint.fill ? 'SceneryPaint.' + pascal(roleOfToken[x.paint.fill]) : 'null'}, SceneryStroke.${x.paint.stroke ? strokeName[x.paint.stroke] : 'None'}, "${shapePath(x.tag, x.attrs)}"${x.paint.stroke && x.paint.strokeColor !== 'outline' ? `, SceneryPaint.${pascal(roleOfToken[x.paint.strokeColor])}` : ''}),`).join('\n')}
-        ),
-    ),`).join('\n')}
-}
-`);
-console.log(`generated: sprites/ScenerySprites.kt (${sceneryEntries.length} v1 sprites)`);
-
 // ---------- scenery sprites of design system v2: rule checks and SVG assets
 // The world rules of world.md, checked here so a sprite that breaks them never reaches the kit.
 const material = tk => { const m = /^([a-z]+)-\d+$/.exec(tk); return m ? m[1] : tk; };
@@ -341,6 +273,161 @@ const castOpacity = tok('opacity', 'opacity-shadow-cast');
 for (const [name, a] of worldEntries)
   fs.writeFileSync(path.join(sceneryDir, name + '.svg'), FA.worldSvg(name, literal, { shadowAttr: `fill="${resolve('shadow-cast', 'light')}" opacity="${castOpacity}"` }).replace(' aria-hidden="true"', ` width="${a.w}" height="${a.h}"`) + '\n');
 console.log(`generated: assets/scenery (${worldEntries.length} v2 sprites)`);
+
+// ---------- scenery sprite data and ground metrics for the app's world (design system v2)
+// ui/sprites/ScenerySprites.kt: every sprite of FA.WORLD, FA.DETAILS and the cloud as a shape tree.
+// ui/sprites/GroundMetrics.kt: FA.METRICS, the sizes of runways, helipads and ground pieces.
+const { parseArt } = require('./scenery-shapes.cjs');
+const pascal = n => n.replace(/(^|-)(\w)/g, (_, __, c) => c.toUpperCase());
+const kf = v => num(v) + 'f';
+const ks = s => '"' + s.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+const checkToken = (where, tk) => {
+  if (!cmap[tk]) throw new Error(`${where}: unknown colour token ${tk}`);
+  if (ctok[tk].deprecated) throw new Error(`${where}: ${tk} is a v1 token`);
+};
+const parsedSprites = worldEntries.map(([name, a]) => {
+  const art = parseArt(name, a.svg, FA.worldPaint);
+  art.tokens.forEach(tk => checkToken(`scenery ${name}`, tk));
+  const shadow = a.sh ? parseArt(name + ' (shadow)', a.sh, FA.worldPaint, true).nodes : [];
+  return { name, a, art, shadow };
+});
+const parsedDetails = Object.entries(FA.DETAILS).map(([name, svg]) => {
+  const art = parseArt('detail ' + name, svg, FA.worldPaint);
+  art.tokens.forEach(tk => checkToken(`scenery detail ${name}`, tk));
+  return { name, art };
+});
+const cloud = parseArt('cloud', FA.cloudMarkup(), FA.worldPaint);
+cloud.tokens.forEach(tk => checkToken('scenery cloud', tk));
+const paintTokens = [...new Set([...parsedSprites, ...parsedDetails, { art: cloud }].flatMap(x => x.art.tokens))].sort();
+const mat = m => m ? `listOf(${m.map(kf).join(', ')})` : 'null';
+const emitNode = (n, ind) => {
+  if (n.shape) {
+    const extra = (n.opacity !== 1 ? `, opacity = ${kf(n.opacity)}` : '') + (n.nonScaling ? ', nonScalingStroke = true' : '') + (n.matrix ? `, matrix = ${mat(n.matrix)}` : '');
+    return `${ind}SceneryShape(${n.fill ? 'SceneryPaint.' + pascal(n.fill) : 'null'}, ${n.stroke ? 'SceneryPaint.' + pascal(n.stroke) : 'null'}, ${kf(n.width)}, ${ks(n.d)}${extra}),`;
+  }
+  return `${ind}SceneryGroup(${n.clip ? ks(n.clip) : 'null'}, ${mat(n.matrix)}, listOf(\n${n.children.map(c => emitNode(c, ind + '    ')).join('\n')}\n${ind})),`;
+};
+const emitArt = (nodes, ind) => `SceneryArt(listOf(\n${nodes.map(n => emitNode(n, ind + '    ')).join('\n')}\n${ind}))`;
+const emitShadow = (nodes, ind) => nodes.map(n => `${ind}ShadowShape(${ks(n.d)}${n.width ? `, strokeWidth = ${kf(n.width)}` : ''}${n.matrix ? `, matrix = ${mat(n.matrix)}` : ''}),`).join('\n');
+const tierName = { flat: 'Flat', S: 'Small', M: 'Medium', L: 'Large' };
+const fnName = n => 'art' + pascal(n).replace(/[^A-Za-z0-9]/g, '');
+w('sprites/ScenerySprites.kt', `// Generated from the design system scenery sprites (docs/design-system/bundle.js: WORLD, DETAILS and the cloud). Do not edit by hand.
+package nl.hexmaster.finalapproach.ui.sprites
+
+import androidx.compose.ui.graphics.Color
+import nl.hexmaster.finalapproach.ui.theme.FaColors
+
+/** The colour tokens scenery is painted with. Colours come from the theme at draw time. */
+internal enum class SceneryPaint { ${paintTokens.map(pascal).join(', ')} }
+
+/** The theme colour of a scenery paint. */
+internal fun FaColors.scenery(paint: SceneryPaint): Color = when (paint) {
+${paintTokens.map(tk => `    SceneryPaint.${pascal(tk)} -> ${camel(tk)}`).join('\n')}
+}
+
+/** A node of a sprite: one shape, or a group that clips and transforms its children. */
+internal sealed class SceneryNode
+
+/**
+ * One shape, as SVG path data. A null [fill] is a stroke only, a null [stroke] a fill only.
+ * [strokeWidth] is in the sprite's own units, so it grows and shrinks with the sprite. A
+ * [nonScalingStroke] keeps its width when the shape's own [matrix] squashes it. [matrix] is
+ * \`[a, b, c, d, e, f]\` as in SVG.
+ */
+internal class SceneryShape(
+    val fill: SceneryPaint?,
+    val stroke: SceneryPaint?,
+    val strokeWidth: Float,
+    val pathData: String,
+    val opacity: Float = 1f,
+    val nonScalingStroke: Boolean = false,
+    val matrix: List<Float>? = null,
+) : SceneryNode()
+
+/** Children drawn inside an optional clip (path data in the group's own space) and matrix. */
+internal class SceneryGroup(val clip: String?, val matrix: List<Float>?, val children: List<SceneryNode>) : SceneryNode()
+
+/** The silhouette of a cast shadow, filled in one colour; a [strokeWidth] above zero makes it a line of that width. */
+internal class ShadowShape(val pathData: String, val strokeWidth: Float = 0f, val matrix: List<Float>? = null)
+
+/** What a sprite is drawn from. */
+internal class SceneryArt(val nodes: List<SceneryNode>)
+
+/** How high a sprite stands (world.md, W5). Flat things lie on the ground and cast no shadow. */
+internal enum class SceneryTier { Flat, Small, Medium, Large }
+
+/**
+ * The scenery sprites of the design system, each drawn around its own origin in world units.
+ * [width] and [height] are the size of its picture including the shadow; [rotates] is false
+ * for everything that stands (buildings, trees, the silo, the windsock). The shadow is
+ * [shadow] thrown by ([shadowX], [shadowY]) world units, down and to the right.
+ */
+internal enum class ScenerySprite(
+    val label: String,
+    val tier: SceneryTier,
+    val rotates: Boolean,
+    val width: Float,
+    val height: Float,
+    val shadowX: Float,
+    val shadowY: Float,
+    val shadow: List<ShadowShape>,
+    artOf: () -> SceneryArt,
+) {
+${parsedSprites.map(({ name, a, shadow }) => `    ${pascal(name)}(
+        ${ks(a.label)}, SceneryTier.${tierName[a.tier]}, ${a.rotates ? 'true' : 'false'}, ${kf(a.w)}, ${kf(a.h)}, ${kf(a.off[0])}, ${kf(a.off[1])},
+        listOf(
+${emitShadow(shadow, '            ')}
+        ),
+        ::${fnName(name)},
+    ),`).join('\n')}
+    ;
+
+    /** The sprite's shapes. Built on first use. */
+    val art: SceneryArt by lazy(artOf)
+}
+
+/** Small things scattered on open ground: tufts, flowers, reeds, a lily pad, a duck. */
+internal enum class SceneryDetail(artOf: () -> SceneryArt) {
+${parsedDetails.map(({ name }) => `    ${pascal(name)}(::${fnName('detail-' + name)}),`).join('\n')}
+    ;
+
+    val art: SceneryArt by lazy(artOf)
+}
+
+/** The cloud, a flat silhouette in three tones with its outline, drawn around its origin. */
+internal val sceneryCloud: SceneryArt by lazy(::artCloud)
+
+${parsedSprites.map(({ name, art }) => `private fun ${fnName(name)}() = ${emitArt(art.nodes, '')}\n`).join('\n')}
+${parsedDetails.map(({ name, art }) => `private fun ${fnName('detail-' + name)}() = ${emitArt(art.nodes, '')}\n`).join('\n')}
+private fun artCloud() = ${emitArt(cloud.nodes, '')}
+`);
+console.log(`generated: sprites/ScenerySprites.kt (${parsedSprites.length} sprites, ${parsedDetails.length} details, the cloud)`);
+
+// The ground metrics, as nested objects of constants. A "a b" string is a list of numbers.
+const metricsKt = (obj, ind) => Object.entries(obj).map(([key, v]) => {
+  const nm = camel(key);
+  if (Array.isArray(v)) {
+    const lst = a => Array.isArray(a) ? `listOf(${a.map(lst).join(', ')})` : kf(a);
+    return `${ind}val ${nm} = ${lst(v)}`;
+  }
+  if (typeof v === 'string') return `${ind}val ${nm} = listOf(${v.split(' ').map(kf).join(', ')})`;
+  if (typeof v === 'object') return `${ind}object ${pascal(key)} {\n${metricsKt(v, ind + '    ')}\n${ind}}`;
+  if (key === 'count' || key === 'red') return `${ind}const val ${nm} = ${v}`;
+  return `${ind}const val ${nm} = ${kf(v)}`;
+}).join('\n');
+w('sprites/GroundMetrics.kt', `// Generated from the design system (docs/design-system/bundle.js: METRICS). Do not edit by hand.
+package nl.hexmaster.finalapproach.ui.sprites
+
+/**
+ * The sizes of runways, helipads and ground pieces, in world units. Across a runway they belong to
+ * its 64-unit width (scale them by \`width / 64\`); along it they are plain world units. The game
+ * draws from this table, so it cannot drift from the showcase.
+ */
+internal object GroundMetrics {
+${metricsKt(FA.METRICS, '    ')}
+}
+`);
+console.log('generated: sprites/GroundMetrics.kt');
 
 // ---------- airport silhouette
 const sil = FA.SILHOUETTE;

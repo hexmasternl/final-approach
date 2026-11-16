@@ -33,7 +33,6 @@ import nl.hexmaster.finalapproach.ui.game.ambient.AmbientLife
 import nl.hexmaster.finalapproach.ui.sprites.FaIcon
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
-import nl.hexmaster.finalapproach.ui.sprites.sceneryLines
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaMotion
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
@@ -131,7 +130,6 @@ private fun ScenerySheet(theme: LevelTheme) {
         val colors = FaTheme.colors
         Canvas(Modifier.fillMaxSize()) {
             drawRect(colors.grass500)
-            val lines = sceneryLines(density)
             val gap = FaDimens.space4.toPx()
             var x = gap
             var y = gap
@@ -144,7 +142,7 @@ private fun ScenerySheet(theme: LevelTheme) {
                     y += rowHeight + gap
                     rowHeight = 0f
                 }
-                drawScenerySprite(sprite, Offset(x + width / 2f, y + height / 2f), width, height, 0f, colors, lines)
+                drawScenerySprite(sprite, Offset(x + width / 2f, y + height / 2f), width, height, 0f, colors)
                 x += width + gap
                 rowHeight = maxOf(rowHeight, height)
             }

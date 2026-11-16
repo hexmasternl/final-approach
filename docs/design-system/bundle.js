@@ -1059,7 +1059,7 @@
     AIRCRAFT: AIRCRAFT, SIDE_AIRCRAFT: SIDE_AIRCRAFT, SILHOUETTE: SILHOUETTE, SUNSET: SUNSET, ICONS: ICONS, paint: paint,
     sideAircraftSvg: sideAircraftSvg, silhouetteSvg: silhouetteSvg,
     aircraftSvg: aircraftSvg, iconSvg: iconSvg, runwaySvg: runwaySvg, helipadSvg: helipadSvg,
-    cloudSvg: cloudSvg, windsockSvg: windsockSvg, burstSvg: burstSvg,
+    cloudSvg: cloudSvg, cloudMarkup: cloudMarkup, windsockSvg: windsockSvg, burstSvg: burstSvg,
     WORLD: WORLD, DETAILS: DETAILS, WORLD_MAX_MATERIALS: WORLD_MAX_MATERIALS, WORLD_BANNED: WORLD_BANNED, WORLD_ACCENT: WORLD_ACCENT,
     METRICS: METRICS, WORLD_TRIM: WORLD_TRIM, TIER_SHADOW: TIER_SHADOW, worldPaint: worldPaint, worldSvg: worldSvg, SCENES: Object.keys(SCENES), sceneSvg: sceneSvg
   };

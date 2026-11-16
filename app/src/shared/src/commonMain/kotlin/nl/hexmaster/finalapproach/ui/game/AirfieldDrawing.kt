@@ -26,7 +26,6 @@ import nl.hexmaster.finalapproach.domain.SceneryItem
 import nl.hexmaster.finalapproach.domain.SceneryKind
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.input.WorldViewport
-import nl.hexmaster.finalapproach.ui.sprites.SceneryLines
 import nl.hexmaster.finalapproach.ui.sprites.ScenerySprite
 import nl.hexmaster.finalapproach.ui.sprites.drawSceneryRow
 import nl.hexmaster.finalapproach.ui.sprites.drawScenerySprite
@@ -240,7 +239,7 @@ internal fun DrawScope.drawScenery(
     landscape: LevelScenery,
     viewport: WorldViewport,
     colors: FaColors,
-    lines: SceneryLines,
+    lines: GroundLines,
 ) {
     val center = viewport.offsetOf(item.position)
     val widthPx = viewport.px(item.width)
@@ -248,12 +247,12 @@ internal fun DrawScope.drawScenery(
     val degrees = degreesOf(item.rotation)
     val sprite = SPRITES[item.kind]
     if (sprite != null) {
-        drawScenerySprite(sprite, center, widthPx, lengthPx, degrees, colors, lines)
+        drawScenerySprite(sprite, center, widthPx, lengthPx, degrees, colors)
         return
     }
     when (item.kind) {
-        SceneryKind.Hedge -> drawSceneryRow(ScenerySprite.Hedge, center, widthPx, lengthPx, degrees, colors, lines)
-        SceneryKind.Fence -> drawSceneryRow(ScenerySprite.Fence, center, widthPx, lengthPx, degrees, colors, lines)
+        SceneryKind.Hedge -> drawSceneryRow(ScenerySprite.Hedge, center, widthPx, lengthPx, degrees, colors)
+        SceneryKind.Fence -> drawSceneryRow(ScenerySprite.Fence, center, widthPx, lengthPx, degrees, colors)
         SceneryKind.ForestEdge -> drawSceneryRow(
             ScenerySprite.Tree,
             center,
@@ -261,7 +260,6 @@ internal fun DrawScope.drawScenery(
             lengthPx,
             degrees,
             colors,
-            lines,
             overlap = SceneryDefaults.FOREST_OVERLAP.toFloat(),
             stagger = SceneryDefaults.FOREST_STAGGER.toFloat(),
         )
@@ -292,7 +290,7 @@ internal fun DrawScope.drawScenery(
  * any road's surface, so where two roads meet no outline crosses the junction. A road's ends are
  * left open by its surface: end a road under an apron, inside another road or at the world's edge.
  */
-internal fun DrawScope.drawRoadEdge(item: SceneryItem, landscape: LevelScenery, viewport: WorldViewport, colors: FaColors, lines: SceneryLines) {
+internal fun DrawScope.drawRoadEdge(item: SceneryItem, landscape: LevelScenery, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
     inFrame(viewport.offsetOf(item.position), item.rotation, viewport.px(item.width), viewport.px(item.height)) { rect ->
         drawRect(roadColor(landscape, colors), rect.topLeft, rect.size)
         drawRect(colors.outline, rect.topLeft, rect.size, style = sceneryStroke(lines.outline))
@@ -304,7 +302,7 @@ private fun roadColor(landscape: LevelScenery, colors: FaColors): Color =
     if (landscape == LevelScenery.Savanna) colors.sand300 else colors.asphalt300
 
 /** The surface of a road inside its edge: a dashed centre line, or the two ruts of a dirt road. */
-private fun DrawScope.drawRoadSurface(rect: Rect, landscape: LevelScenery, viewport: WorldViewport, colors: FaColors, lines: SceneryLines) {
+private fun DrawScope.drawRoadSurface(rect: Rect, landscape: LevelScenery, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
     val inside = rect.deflate(lines.outline / 2f)
     drawRect(roadColor(landscape, colors), Offset(inside.left, rect.top), Size(inside.width, rect.height))
     if (landscape == LevelScenery.Savanna) {
@@ -324,14 +322,14 @@ private fun DrawScope.drawRoadSurface(rect: Rect, landscape: LevelScenery, viewp
 }
 
 /** A flat slab of asphalt with the scenery outline. */
-private fun DrawScope.slab(rect: Rect, fill: Color, colors: FaColors, lines: SceneryLines) {
+private fun DrawScope.slab(rect: Rect, fill: Color, colors: FaColors, lines: GroundLines) {
     val radius = CornerRadius(lines.corner)
     drawRoundRect(fill, rect.topLeft, rect.size, radius)
     drawRoundRect(colors.outline, rect.topLeft, rect.size, radius, style = sceneryStroke(lines.outline))
 }
 
 /** A crop field: soil with furrows and crop rows along its length, like the crop-field tile. */
-private fun DrawScope.drawCropField(rect: Rect, viewport: WorldViewport, colors: FaColors, lines: SceneryLines) {
+private fun DrawScope.drawCropField(rect: Rect, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
     val radius = CornerRadius(lines.corner)
     drawRoundRect(colors.soil500, rect.topLeft, rect.size, radius)
     val spacing = viewport.px(SceneryDefaults.FIELD_ROW_SPACING)
@@ -360,7 +358,7 @@ private fun DrawScope.drawCropField(rect: Rect, viewport: WorldViewport, colors:
  * A pond or waterhole filling [rect] as an oval: water with two ripples, inside a sand [bank]
  * that many pixels wide when it has one.
  */
-private fun DrawScope.drawWater(rect: Rect, bank: Float, viewport: WorldViewport, colors: FaColors, lines: SceneryLines) {
+private fun DrawScope.drawWater(rect: Rect, bank: Float, viewport: WorldViewport, colors: FaColors, lines: GroundLines) {
     val water = rect.deflate(bank)
     if (bank > 0f) {
         drawOval(colors.sand300, rect.topLeft, rect.size)
@@ -373,9 +371,31 @@ private fun DrawScope.drawWater(rect: Rect, bank: Float, viewport: WorldViewport
     // One ripple in the upper left of the water, one in the lower right.
     for (side in listOf(-1f, 1f)) {
         val at = water.center + Offset(side * water.width / RIPPLE_SPREAD, side * water.height / RIPPLE_SPREAD)
-        drawScenerySprite(ScenerySprite.Wave, at, wave, waveLength, 0f, colors, lines)
+        drawScenerySprite(ScenerySprite.Wave, at, wave, waveLength, 0f, colors)
     }
 }
 
 /** Ripples lie this fraction of the water's size from its middle: one over this number. */
 private const val RIPPLE_SPREAD = 6f
+
+/**
+ * The strokes and corner the ground pieces of the app's world still draw with, in pixels: the
+ * [outline] (`line-2`), the [fine] detail line (`line-fine`) and the [corner] radius of flat
+ * scenery (`radius-sm`). Interim, version 1: the ground pieces move to the design system's
+ * ground metrics in tasks 5.2 and 5.3 of the `world-v2-port` change, and this goes with them.
+ * Sprites no longer use it.
+ */
+internal class GroundLines(val outline: Float, val fine: Float, val corner: Float)
+
+/** The ground lines for a world drawn at [pxPerWorldUnit]: world lengths that shrink with the field. */
+internal fun DrawScope.groundLines(pxPerWorldUnit: Float): GroundLines {
+    val pxPerUnit = pxPerWorldUnit * GROUND_UNITS_PER_DP
+    fun shrinking(token: Dp): Float = minOf(token.toPx(), token.value * pxPerUnit)
+    return GroundLines(
+        outline = shrinking(FaDimens.line2),
+        fine = shrinking(FaDimens.lineFine),
+        corner = shrinking(FaDimens.radiusSm),
+    )
+}
+
+private const val GROUND_UNITS_PER_DP = 0.8f

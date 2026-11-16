@@ -4,7 +4,7 @@ The game renders with Compose Multiplatform. The HTML and CSS in this system are
 
 ## Where the app stands
 
-The app's UI components are version 2. The app's world is not yet: scenery sprites, runway and helipad drawing and level backdrops still render version 1. Until that port lands, the generator builds the app's scenery sprite data from the version 1 sprites kept in `tools/scenery-v1.js`, not from the version 2 sprites in `bundle.js`. Everything in `world.md` describes the design system; the port brings the app to it and then removes the version 1 tokens.
+The app's UI components are version 2. The app's world is not yet: scenery sprites, runway and helipad drawing and level backdrops still render version 1. The generator already builds the app's scenery sprite data from the version 2 sprites in `bundle.js`. Everything in `world.md` describes the design system; the port brings the app to it and then removes the version 1 tokens.
 
 ## Mapping tokens to the theme
 
