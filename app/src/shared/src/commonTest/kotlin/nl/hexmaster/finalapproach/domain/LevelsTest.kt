@@ -124,7 +124,7 @@ class LevelsTest {
     fun meadowFieldLiesInFarmland() {
         val kinds = Levels.meadowField.scenery.map { it.kind }.toSet()
         val surroundings = setOf(
-            SceneryKind.Field, SceneryKind.Hedge, SceneryKind.Fence, SceneryKind.Farmhouse,
+            SceneryKind.FieldWheat, SceneryKind.Hedge, SceneryKind.Fence, SceneryKind.Farmhouse, SceneryKind.Silo, SceneryKind.Oak,
             SceneryKind.Barn, SceneryKind.Road, SceneryKind.Pond, SceneryKind.ForestEdge,
         )
         assertTrue(kinds.containsAll(surroundings), "missing ${surroundings - kinds}")

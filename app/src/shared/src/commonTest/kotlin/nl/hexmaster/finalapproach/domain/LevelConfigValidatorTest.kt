@@ -217,7 +217,8 @@ class LevelConfigValidatorTest {
         val flat = SceneryKind.entries.filter { it.ground }
         assertEquals(
             setOf(
-                SceneryKind.Taxiway, SceneryKind.Apron, SceneryKind.Field, SceneryKind.Road,
+                SceneryKind.Taxiway, SceneryKind.Apron, SceneryKind.FieldWheat, SceneryKind.FieldGreen,
+                SceneryKind.FieldPlough, SceneryKind.Track, SceneryKind.CarPark, SceneryKind.Road,
                 SceneryKind.Pond, SceneryKind.Waterhole, SceneryKind.Jetty,
             ),
             flat.toSet(),
@@ -250,5 +251,18 @@ class LevelConfigValidatorTest {
     fun theHelicopterLandingSequenceMustHaveALength() {
         assertEquals(3.0, LandingConfig().helicopterLandingSeconds)
         assertProblem(valid().copy(landing = LandingConfig(helicopterLandingSeconds = 0.0)), "helicopter", "landing")
+    }
+
+    @Test
+    fun aRotatedStandingItemIsRejected() {
+        val turned = SceneryItem(SceneryKind.Terminal, Vec2(100.0, 500.0), 40.0, 40.0, rotation = PI)
+        assertProblem(valid().copy(scenery = listOf(turned)), "scenery 1 (terminal)", "does not rotate")
+    }
+
+    @Test
+    fun anUnrotatedStandingItemAndARotatedTopDownItemPass() {
+        val standing = SceneryItem(SceneryKind.Windsock, Vec2(100.0, 500.0), 40.0, 40.0)
+        val topDown = SceneryItem(SceneryKind.Car, Vec2(200.0, 500.0), 30.0, 50.0, rotation = east)
+        assertEquals(emptyList(), problems(valid().copy(scenery = listOf(standing, topDown))))
     }
 }

@@ -10,4 +10,4 @@ Drawn at `opacity-cloud` on `z-clouds` so aircraft stay visible underneath. A cl
 
 Clouds are decoration. **Do** keep at most three on screen. **Don't** spawn one over a landing zone threshold, and don't give a cloud a hard ground shadow.
 
-**Compose.** Clouds are drawn with the app's world and menu backdrop, which still render version 1 until the port.
+**Compose.** `drawCloud` in `ui/sprites/SceneryDrawing.kt` draws the cloud generated from `cloudMarkup` (`sceneryCloud` in `ScenerySprites.kt`): the silhouette in three tones with its `line-zone` outline, at `opacity-cloud`. Its shadow is the same silhouette, offset and in `shadow-ground`, cut out of the cloud's own shape so it does not show through. Compose draws that shadow as a flat offset silhouette: it is not blurred by `shadow-cloud-blur`, and it does not darken where shadows overlap. A soft, blurred airborne shadow is left for a later change. The main page backdrop (`menu/MenuBackdrop.kt`) is the only caller; `CloudsOverMeadowPreview` in `GamePreviews.kt` shows two clouds over a level, in Day and Night.

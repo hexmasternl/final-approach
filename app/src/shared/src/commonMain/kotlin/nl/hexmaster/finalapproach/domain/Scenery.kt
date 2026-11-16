@@ -4,31 +4,41 @@ package nl.hexmaster.finalapproach.domain
  * What a piece of decoration is; the renderer picks its look from this. A [ground] kind lies
  * flat (asphalt, soil, water, planks): it is drawn under the runways and may lie under the HUD
  * band. Every other kind stands on the ground and must stay out of that band.
+ * A [standing] kind (a building, a tree, the windsock) shows a south wall and never rotates: its
+ * sprite has `rotates` off in the design system, and the level validator rejects a rotation on it.
  */
-enum class SceneryKind(val ground: Boolean = false) {
+enum class SceneryKind(val ground: Boolean = false, val standing: Boolean = false) {
     Taxiway(ground = true),
     Apron(ground = true),
-    Field(ground = true),
+    FieldWheat(ground = true),
+    FieldGreen(ground = true),
+    FieldPlough(ground = true),
+    Track(ground = true),
+    CarPark(ground = true),
     Road(ground = true),
     Pond(ground = true),
     Waterhole(ground = true),
     Jetty(ground = true),
-    Terminal,
-    Tower,
-    Hangar,
-    Windsock,
+    Terminal(standing = true),
+    Tower(standing = true),
+    Hangar(standing = true),
+    Windsock(standing = true),
     Car,
     FuelTruck,
     BaggageCart,
     ParkedAircraft,
-    Tree,
+    Tree(standing = true),
+    Oak(standing = true),
+    Pine(standing = true),
+    Silo(standing = true),
+    HayBale,
     ForestEdge,
     Hedge,
     Fence,
-    Farmhouse,
-    Barn,
-    Palm,
-    Acacia,
+    Farmhouse(standing = true),
+    Barn(standing = true),
+    Palm(standing = true),
+    Acacia(standing = true),
     Bush,
     Rock,
     Zebra,
@@ -64,30 +74,14 @@ object SceneryDefaults {
      * fits its apron and is always much smaller than any aircraft in play, which is never taken
      * for one of them.
      */
-    const val PARKED_AIRCRAFT_SIZE = 67.5
-
-    /** Distance between two crop rows of a field. */
-    const val FIELD_ROW_SPACING = 12.0
-
-    /** Length of a dash of a road's centre line, and of the gap after it. */
-    const val ROAD_DASH = 22.0
-    const val ROAD_GAP = 18.0
-
-    /** How far the ruts of a dirt road lie from its centre, as a fraction of its width. */
-    const val ROAD_RUT_FRACTION = 0.22
-
-    /** How far inside an apron its edge line is painted. */
-    const val APRON_LINE_INSET = 8.0
-
-    /** Width of the bank around a waterhole. */
-    const val WATERHOLE_BANK = 14.0
+    const val PARKED_AIRCRAFT_SIZE = 60.0
 
     /** Width of the beach around an island. */
     const val BEACH_WIDTH = 26.0
 
     /** Size of a wave, how far off the beach waves lie, and how far apart along the shore. */
     const val WAVE_WIDTH = 44.0
-    const val WAVE_OFFSET = 26.0
+    const val WAVE_OFFSET = 56.0
     const val WAVE_SPACING = 150.0
 
     /** The trees of a forest edge overlap by this fraction of their size, and alternate sides by that one. */

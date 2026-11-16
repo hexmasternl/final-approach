@@ -61,9 +61,6 @@ import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 /** Tunables of the game screen that are not design tokens. */
 internal object GameScreenDefaults {
-    /** Width of one lawn stripe. */
-    val lawnStripe = 64.dp
-
     /** A long frame (the app was paused) is cut to this, so aircraft do not jump. */
     const val MAX_FRAME_SECONDS = 0.1
 
@@ -109,6 +106,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     var collision by remember(engine) { mutableStateOf<CollisionSequence?>(null) }
     val colors = FaTheme.colors
     val reduceMotion = FaTheme.reduceMotion
+    val art = rememberGroundArt(level)
     val ambient = remember(engine, reduceMotion) { AmbientLife(level, seed = level.id.hashCode().toLong(), reduceMotion = reduceMotion) }
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
@@ -118,7 +116,6 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
     val currentDensity by rememberUpdatedState(density)
     val measurer = rememberTextMeasurer()
     val numberStyle = FaTheme.type.titleMd
-    val letterStyle = FaTheme.type.titleLg
 
     DisposableEffect(host) {
         host.lockLandscape(true)
@@ -244,7 +241,7 @@ private fun GameContent(host: AppHost, sounds: SoundPlayer, keepScreenOnSetting:
                 }
             },
     ) {
-        drawField(level, ambient, viewport, colors, measurer, numberStyle, letterStyle)
+        drawField(level, ambient, viewport, colors, measurer, numberStyle, art)
         // Layers: zone glows (the tutorial highlight), paths (the drag demo's dots), aircraft, effects (its finger).
         state.tutorial?.highlight?.let { drawTutorialHighlight(it, level, viewport, colors, clock, reduceMotion) }
         drawPaths(state, viewport, colors, reduceMotion)
