@@ -25,4 +25,4 @@ The halo's shape differs between the two states (solid versus dotted), so it doe
 
 **Do** keep the fringe clear of scenery and detail. **Don't** place two runways closer than 96 units apart without crossing them, don't put text other than the numbers on the asphalt, and don't outline a taxiway or an apron: they are flat ground (see `Ground.md`).
 
-**Compose.** The app's runway is drawn in `ui/game/AirfieldDrawing.kt` and still renders version 1 until the app's world is ported.
+**Compose.** `ui/game/RunwayPlan.kt` plans what a runway shows (`runwayPlan`: marked ends, bars, aiming blocks, touchdown marks, centre line, lights) as pure data; `drawRunway` in `ui/game/AirfieldDrawing.kt` paints that plan in the runway's own frame, in world units, from the generated `GroundMetrics` (`ui/sprites/GroundMetrics.kt`) and `FaColors`. The Dawn running light runs over the plan's edge lights (`LevelBackdrop.kt`). A level's runway keeps the position, length, width and heading of its level data.

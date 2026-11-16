@@ -175,3 +175,38 @@ object Overlap {
         return from + d * t
     }
 }
+
+/** Tests against a polygon given by its corners in order, in either direction. */
+object Polygons {
+    /** The convex hull of [points], in order around the points; fewer than three distinct points are returned as they are. */
+    fun convexHull(points: List<Vec2>): List<Vec2> {
+        val sorted = points.distinct().sortedWith(compareBy({ it.x }, { it.y }))
+        if (sorted.size < 3) return sorted
+        fun cross(o: Vec2, a: Vec2, b: Vec2) = (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
+        fun chain(source: List<Vec2>): MutableList<Vec2> {
+            val hull = mutableListOf<Vec2>()
+            for (p in source) {
+                while (hull.size >= 2 && cross(hull[hull.size - 2], hull.last(), p) <= 0.0) hull.removeAt(hull.size - 1)
+                hull.add(p)
+            }
+            hull.removeAt(hull.size - 1)
+            return hull
+        }
+        return chain(sorted) + chain(sorted.asReversed())
+    }
+
+    /** True when [point] lies inside [corners] (the even-odd rule); a polygon of fewer than three corners holds nothing. */
+    fun contains(corners: List<Vec2>, point: Vec2): Boolean {
+        if (corners.size < 3) return false
+        var inside = false
+        var previous = corners.last()
+        for (corner in corners) {
+            val crosses = (corner.y > point.y) != (previous.y > point.y)
+            if (crosses && point.x < (previous.x - corner.x) * (point.y - corner.y) / (previous.y - corner.y) + corner.x) {
+                inside = !inside
+            }
+            previous = corner
+        }
+        return inside
+    }
+}

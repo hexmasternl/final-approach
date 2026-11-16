@@ -18,31 +18,20 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import nl.hexmaster.finalapproach.domain.LevelConfig
-import nl.hexmaster.finalapproach.domain.LevelScenery
-import nl.hexmaster.finalapproach.domain.LevelTheme
 import nl.hexmaster.finalapproach.domain.Levels
 import nl.hexmaster.finalapproach.platform.AppHost
 import nl.hexmaster.finalapproach.ui.BackHandler
 import nl.hexmaster.finalapproach.ui.components.FaMoulded
 import nl.hexmaster.finalapproach.ui.components.tonePaper
 import nl.hexmaster.finalapproach.ui.sprites.drawSunburst
-import nl.hexmaster.finalapproach.ui.theme.FaColors
 import nl.hexmaster.finalapproach.ui.theme.FaDimens
 import nl.hexmaster.finalapproach.ui.theme.FaTheme
 
 private object LevelSelectText {
     const val TITLE = "Choose a level"
-}
-
-private object LevelSelectDefaults {
-    const val DAWN_ALPHA = 0.35f
-    const val RUNWAY_STROKE_FRACTION = 0.7f
 }
 
 /** The page after Take off: one square tile per level; tapping a tile starts that level. */
@@ -86,6 +75,8 @@ fun LevelSelectPage(
 internal fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
     val colors = FaTheme.colors
     val type = FaTheme.type
+    val measurer = rememberTextMeasurer()
+    val art = rememberGroundArt(level)
     FaMoulded(
         onClick = onClick,
         tone = colors.tonePaper,
@@ -98,52 +89,9 @@ internal fun LevelTile(level: LevelConfig, onClick: () -> Unit) {
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Canvas(Modifier.size(FaDimens.levelTileArt)) { drawLevelMiniature(level, colors) }
+            // The miniature is the level's own field, in the palette of the level's own theme.
+            LevelMiniature(level, levelPalette(level), measurer, type.titleMd, art, Modifier.size(FaDimens.levelTileArt))
             BasicText(level.name, style = type.titleSm.copy(color = colors.ink, textAlign = TextAlign.Center))
         }
-    }
-}
-
-/** Draws the layout of [level] scaled into the square draw area. */
-private fun DrawScope.drawLevelMiniature(level: LevelConfig, colors: FaColors) {
-    val world = level.world
-    val scale = minOf(size.width / world.width.toFloat(), size.height / world.height.toFloat())
-    val originX = (size.width - world.width.toFloat() * scale) / 2f
-    val originY = (size.height - world.height.toFloat() * scale) / 2f
-    fun at(x: Double, y: Double) = Offset(originX + x.toFloat() * scale, originY + y.toFloat() * scale)
-
-    val ground = when (level.landscape) {
-        LevelScenery.Island -> colors.sky300
-        else -> colors.grass500
-    }
-    drawRect(ground, topLeft = Offset(originX, originY), size = Size(world.width.toFloat() * scale, world.height.toFloat() * scale))
-    level.island?.let { island ->
-        drawOval(
-            colors.grass300,
-            topLeft = at(island.center.x - island.radiusX, island.center.y - island.radiusY),
-            size = Size(island.radiusX.toFloat() * 2f * scale, island.radiusY.toFloat() * 2f * scale),
-        )
-    }
-    if (level.theme == LevelTheme.Dawn) {
-        drawRect(
-            colors.sky700.copy(alpha = LevelSelectDefaults.DAWN_ALPHA),
-            topLeft = Offset(originX, originY),
-            size = Size(world.width.toFloat() * scale, world.height.toFloat() * scale),
-        )
-    }
-    level.runways.forEach { runway ->
-        val half = runway.length / 2.0
-        val dx = kotlin.math.sin(runway.orientation)
-        val dy = -kotlin.math.cos(runway.orientation)
-        drawLine(
-            colors.asphalt500,
-            at(runway.position.x - dx * half, runway.position.y - dy * half),
-            at(runway.position.x + dx * half, runway.position.y + dy * half),
-            strokeWidth = (runway.width * LevelSelectDefaults.RUNWAY_STROKE_FRACTION).toFloat() * scale * 2f,
-            cap = StrokeCap.Butt,
-        )
-    }
-    level.helipads.forEach { pad ->
-        drawCircle(colors.asphalt300, pad.radius.toFloat() * scale, at(pad.position.x, pad.position.y))
     }
 }

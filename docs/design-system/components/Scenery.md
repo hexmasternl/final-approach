@@ -23,8 +23,8 @@ Decoration that makes a level read as a place: the airfield's buildings and vehi
 | `farmhouse` | M | No | A tiled `roof` over a cream `wall` with a door, shutters and windows; a `stone` chimney and doorstep. |
 | `barn` | M | No | A curved `tin` roof over a `roof`-red wall with a cross-braced door. |
 | `silo` | L | No | A round `tin` drum seen from above. |
-| `tower` | L | No | A `wall` base, a `tin` block, a `wall` shaft and an eight-sided `glass` cab under a `cherry` roof with a `beacon`. |
-| `terminal` | M | No | A `tin` roof with a skylight over a glazed front in `window`, with an awning. |
+| `tower` | L | No | A `wall` base, a `tin` block, a `wall` shaft and an eight-sided `glass` cab under a `cherry` roof with a `beacon`. The cab is glass seen from above, not a lit window, so it stays `glass` in Night and Dawn; the wall windows of the base use `window`. |
+| `terminal` | M | No | A `tin` roof with a skylight over a glazed front in `window`, with an awning. The roof band is a skylight in `glass`, seen from above, and stays `glass` in Night and Dawn; the glazed front is `window` and lights up. |
 | `hangar` | M | No | A vaulted `tin` roof over an open door with a nose showing. |
 | `windsock` | L | No | See `Windsock.md`. |
 | `car`, `fuel-truck`, `baggage-cart` | S | Yes | Top-down, front up: a `denim` car, a `tin` tanker behind a `roof`-red cab, a tug with two carts. |
@@ -47,6 +47,6 @@ Decoration that makes a level read as a place: the airfield's buildings and vehi
 
 **Do** let trees overlap in a wood, and scale a sprite a little to vary a row. **Don't** use scenery to carry meaning: it never marks a landing zone, a hazard or a state. **Don't** give it a path colour, a livery or a soft shadow, and **don't** draw it heavier than an aircraft.
 
-**Compose.** In the app each item is a `SceneryItem` of a `SceneryKind`. The app's sprites (`ui/sprites/ScenerySprites.kt`) are still generated from the version 1 sprites in `tools/scenery-v1.js`; they move to these sprites when the app's world is ported.
+**Compose.** In the app each item is a `SceneryItem` of a `SceneryKind`. The app's sprites (`ui/sprites/ScenerySprites.kt`) are generated from these sprites by `tools/gen-kotlin.cjs`.
 
 A conifer and a round tank such as a silo show no trunk or wall: seen from above the top hides it. Their stacked tones and their long shadow carry the height (W5).

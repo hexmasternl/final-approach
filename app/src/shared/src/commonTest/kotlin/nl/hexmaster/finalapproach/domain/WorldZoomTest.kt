@@ -45,7 +45,7 @@ class WorldZoomTest {
         assertEquals(44.0, LevelDefaults.HELIPAD_ZONE_RADIUS)
         assertEquals(140.0, LevelDefaults.RUNWAY_ZONE_DEPTH)
         assertEquals(96.0, LevelDefaults.RUNWAY_ZONE_WIDTH)
-        assertEquals(67.5, SceneryDefaults.PARKED_AIRCRAFT_SIZE)
+        assertEquals(60.0, SceneryDefaults.PARKED_AIRCRAFT_SIZE)
     }
 
     @Test
