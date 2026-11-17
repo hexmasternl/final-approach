@@ -99,10 +99,10 @@ Level 1, **Meadow Field**, is played in landscape. One one-way runway, 27 (appro
 Levels 2 and 3 are set on an island (a beach with waves, palms and a jetty, and open sea all round) and a savanna at dawn (acacias, bushes, rocks, dirt roads, a waterhole, zebras and an elephant). Runways can carry an accepted-types list, and a level may allow crossing runways.
 
 ### Level unlocks
-Meadow Field is always open. **Island** opens once the player has landed more than 1,000 aircraft in total on Meadow Field; **Savanna** opens once the player has earned 30,000 points or more in total on Island. The thresholds are config (`LevelUnlockRules`).
+Meadow Field is always open. **Island** opens once the player has landed 500 or more aircraft in total on Meadow Field; **Savanna** opens once the player has earned 30,000 points or more in total on Island. The thresholds are config (`LevelUnlockRules`).
 - **Totals** are summed over all runs of a level and kept on the device (`LevelProgressStore`). A run is counted once, when it ends: the level is lost, or the player leaves it with Restart or Quit in the options panel. A run the system kills before it ends is not counted. Landings are the aircraft that landed; points are the run's score. Tutorial landings count, as they score.
 - **Unlocked stays unlocked.** A level that was opened is remembered. A level also counts as open when the device has a best score for it or for a later level, so players from before this rule lose nothing.
-- **The level select page** shows a locked level as a flat level card (see `LevelCard.md`): washed-out art under a lock badge, a plain chip with the progress ("412 of 1 001 landings"), and a line with the condition ("Land 1 001 aircraft on Meadow Field to open Island."). It cannot be started. The page is built again when the player comes back from a level, so a level opened by that run shows open at once.
+- **The level select page** shows a locked level as a flat level card (see `LevelCard.md`): washed-out art under a lock badge, a plain chip with the progress ("412 of 500 landings"), and a line with the condition ("Land 500 aircraft on Meadow Field to open Island."). It cannot be started. The page is built again when the player comes back from a level, so a level opened by that run shows open at once.
 
 ### Scenery
 Scenery is decoration only: no game rule reads it, and a seeded run plays out the same with a level's scenery removed. It is level data (`SceneryItem`: a kind, a centre, a size and a rotation, in world units) and is validated with the level:

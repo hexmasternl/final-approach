@@ -49,7 +49,7 @@ class RunTotalsTest {
     fun settlingKeepsAnOpenedLevelOpenWhenTheTotalsLaterDrop() {
         val unlocks = LevelUnlocks()
         val scores = InMemoryHighScoreStore()
-        store.add("meadow-field", landings = 1_001, points = 0)
+        store.add("meadow-field", landings = 500, points = 0)
         assertTrue("island-airport" in unlocks.settle(store, scores))
         assertTrue(store.isUnlocked("island-airport"))
         val fresh = LevelUnlocks(LevelUnlockRules(listOf(UnlockRule("island-airport", "meadow-field", UnlockMetric.Landings, 5_000, strict = true))))

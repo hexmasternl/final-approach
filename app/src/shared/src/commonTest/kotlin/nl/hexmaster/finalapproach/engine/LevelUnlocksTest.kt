@@ -27,10 +27,14 @@ class LevelUnlocksTest {
     fun meadowFieldIsAlwaysOpen() = assertTrue(open("meadow-field"))
 
     @Test
-    fun islandAirportIsLockedAtExactlyAThousandLandings() = assertFalse(open("island-airport", meadow = LevelTotals(landings = 1_000)))
+    fun islandAirportIsLockedAt499Landings() = assertFalse(open("island-airport", meadow = LevelTotals(landings = 499)))
 
     @Test
-    fun islandAirportOpensAtAThousandAndOneLandings() = assertTrue(open("island-airport", meadow = LevelTotals(landings = 1_001)))
+    fun islandAirportOpensAt500Landings() = assertTrue(open("island-airport", meadow = LevelTotals(landings = 500)))
+
+    @Test
+    fun aPlayerAlreadyPastTheThresholdFindsIslandOpenWithoutAFlag() =
+        assertTrue(open("island-airport", meadow = LevelTotals(landings = 750), flagged = false))
 
     @Test
     fun savannaDawnIsLockedAt29999Points() = assertFalse(open("savanna-dawn", island = LevelTotals(points = 29_999)))
@@ -46,7 +50,7 @@ class LevelUnlocksTest {
 
     @Test
     fun totalsSummedOverRunsOpenTheLevel() {
-        val total = LevelTotals(landings = 600) + LevelTotals(landings = 401)
+        val total = LevelTotals(landings = 300) + LevelTotals(landings = 200)
         assertTrue(open("island-airport", meadow = total))
     }
 
