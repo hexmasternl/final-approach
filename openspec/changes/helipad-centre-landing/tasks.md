@@ -12,5 +12,5 @@
 
 ## 3. Docs
 
-- [ ] 3.1 `docs/game-design.md`: the clearance rule says a helipad path continues from the entry point to the pad centre and ends there; the helicopter landing paragraph says the sequence takes place on the centre
-- [ ] 3.2 `CLAUDE.md` and `.github/copilot-instructions.md`: next to the runway snap, say a helipad path ends on the pad centre
+- [x] 3.1 `docs/game-design.md`: the clearance rule says a helipad path continues from the entry point to the pad centre and ends there; the helicopter landing paragraph says the sequence takes place on the centre
+- [x] 3.2 `CLAUDE.md` and `.github/copilot-instructions.md`: next to the runway snap, say a helipad path ends on the pad centre
