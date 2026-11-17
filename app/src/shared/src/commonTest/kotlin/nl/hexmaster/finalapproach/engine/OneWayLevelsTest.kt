@@ -29,10 +29,10 @@ class OneWayLevelsTest {
         )
 
     @Test
-    fun meadowRunwayLandsWestboundAndNotEastbound() {
+    fun meadowRunwayLandsEastboundAndNotWestbound() {
         val runway = Levels.meadowField.runways.single()
-        assertNotNull(approach(Levels.meadowField, runway, 3 * kotlin.math.PI / 2))
-        assertNull(approach(Levels.meadowField, runway, kotlin.math.PI / 2))
+        assertNotNull(approach(Levels.meadowField, runway, kotlin.math.PI / 2))
+        assertNull(approach(Levels.meadowField, runway, 3 * kotlin.math.PI / 2))
     }
 
     @Test

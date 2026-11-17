@@ -105,8 +105,8 @@ class LevelsTest {
         val level = Levels.meadowField
         assertEquals(1, level.runways.size)
         val runway = level.runways.single()
-        assertEquals(listOf(Angles.normalize(3 * kotlin.math.PI / 2)), runway.landingHeadings)
-        assertEquals("27", runway.numberFor(runway.landingHeadings.single()))
+        assertEquals(listOf(Angles.normalize(kotlin.math.PI / 2)), runway.landingHeadings)
+        assertEquals("09", runway.numberFor(runway.landingHeadings.single()))
         assertEquals(1, level.helipads.size)
     }
 

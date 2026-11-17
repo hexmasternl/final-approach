@@ -42,10 +42,10 @@ class TutorialEngineTest {
         acknowledgeTutorial()
     }
 
-    /** A path from the aircraft's side of the field into runway 27 from the east, lined up. */
+    /** A path from the aircraft's side of the field into runway 09 from the west, lined up. */
     private fun GameEngine.landPath(id: Int, vararg lead: Vec2) {
         beginPath(id)
-        (lead.toList() + listOf(Vec2(1520.0, 630.0), Vec2(1420.0, 630.0), Vec2(1320.0, 630.0), Vec2(1220.0, 630.0))).forEach { extendPath(id, it) }
+        (lead.toList() + listOf(Vec2(400.0, 630.0), Vec2(500.0, 630.0), Vec2(600.0, 630.0), Vec2(700.0, 630.0))).forEach { extendPath(id, it) }
         endPath(id)
     }
 
@@ -53,14 +53,14 @@ class TutorialEngineTest {
         toStep(TutorialStep.LightProp, TutorialPhase.Drawing)
         val plane = aircraft(AircraftType.LightProp)
         select(plane.position, 80.0)
-        landPath(plane.id, Vec2(1480.0, 400.0), Vec2(1530.0, 520.0))
+        landPath(plane.id, Vec2(440.0, 400.0), Vec2(390.0, 520.0))
     }
 
     private fun GameEngine.clearTurboprop() {
         acknowledgeTutorial()
         val plane = aircraft(AircraftType.Turboprop)
         select(plane.position, 80.0)
-        landPath(plane.id, Vec2(1600.0, 950.0), Vec2(1800.0, 900.0), Vec2(1850.0, 700.0), Vec2(1750.0, 560.0), Vec2(1650.0, 630.0))
+        landPath(plane.id, Vec2(320.0, 950.0), Vec2(120.0, 900.0), Vec2(70.0, 700.0), Vec2(170.0, 560.0), Vec2(270.0, 630.0))
     }
 
     @Test
@@ -114,7 +114,7 @@ class TutorialEngineTest {
         assertTrue(!engine.tutorial().touchEnabled)
         assertNull(engine.select(plane.position, 500.0))
         engine.beginPath(plane.id)
-        engine.extendPath(plane.id, Vec2(1500.0, 400.0))
+        engine.extendPath(plane.id, Vec2(420.0, 400.0))
         assertTrue(engine.aircraft(AircraftType.LightProp).path.points.isEmpty())
     }
 
@@ -142,8 +142,8 @@ class TutorialEngineTest {
         val plane = engine.aircraft(AircraftType.LightProp)
         engine.select(plane.position, 80.0)
         engine.beginPath(plane.id)
-        engine.extendPath(plane.id, Vec2(1500.0, 400.0))
-        engine.extendPath(plane.id, Vec2(1500.0, 300.0))
+        engine.extendPath(plane.id, Vec2(420.0, 400.0))
+        engine.extendPath(plane.id, Vec2(420.0, 300.0))
         engine.endPath(plane.id)
         assertEquals(TutorialPhase.Drawing, engine.tutorial().phase)
         assertEquals(TutorialStep.LightProp, engine.tutorial().step)

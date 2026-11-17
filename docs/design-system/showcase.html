@@ -77,8 +77,8 @@
 .fa-p-callsign { fill: var(--on-outline); font: 800 23px/1 var(--font-text); letter-spacing: .04em; }
 
 /* ---------- World elements ---------- */
-fa-aircraft, fa-side-aircraft, fa-silhouette, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst, fa-scenery, fa-scene { display: inline-block; flex: none; line-height: 0; }
-fa-aircraft svg, fa-side-aircraft svg, fa-silhouette svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg, fa-scenery svg, fa-scene svg { display: block; width: 100%; height: 100%; overflow: visible; }
+fa-aircraft, fa-side-aircraft, fa-rear-aircraft, fa-approach, fa-silhouette, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst, fa-scenery, fa-scene { display: inline-block; flex: none; line-height: 0; }
+fa-aircraft svg, fa-side-aircraft svg, fa-rear-aircraft svg, fa-approach svg, fa-silhouette svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg, fa-scenery svg, fa-scene svg { display: block; width: 100%; height: 100%; overflow: visible; }
 fa-scene { display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--grass-500); }
 fa-scene svg { overflow: hidden; }
 fa-aircraft { position: relative; width: var(--fa-size, 64px); height: var(--fa-size, 64px); filter: drop-shadow(5px 8px 3px var(--shadow-ground)); }
@@ -119,6 +119,10 @@ fa-scene .fa-zone { animation: none; opacity: .85; }
 fa-side-aircraft { width: var(--sprite-light-prop-side); aspect-ratio: 96 / 64; }
 .fa-prop-side { transform-box: fill-box; transform-origin: center; animation: fa-prop-side var(--dur-rotor) linear infinite; }
 fa-silhouette { display: block; width: 100%; }
+/* The approach view and its rear-view aircraft: illustrations, never gameplay. */
+fa-rear-aircraft { aspect-ratio: 160 / 96; }
+fa-approach { display: block; width: 100%; overflow: hidden; background: var(--bg-sky); }
+fa-approach svg { overflow: hidden; }
 
 /* ---------- Splash: sunset sky and banner ---------- */
 .fa-sunset { background: linear-gradient(180deg, var(--sunset-sky-top) 0 30%, var(--sunset-sky-upper) 30% 52%, var(--sunset-sky-lower) 52% 72%, var(--sunset-sky-horizon) 72% 100%); }
@@ -868,6 +872,22 @@ h1,h2,h3,h4,p{margin:0}
   <fa-side-aircraft type="light-prop" livery="1" style="position:absolute;left:689px;top:146px"></fa-side-aircraft>
 </div></div>
 </article>
+  <article class="sc-comp" id="c-ApproachView">
+  <header><h3>Approach View</h3><p>An illustration, never a screen of the game: the airfield as an aircraft on final approach sees it. The world rules hold in perspective.</p></header>
+  <div class="sc-demo sc-demo--screen"><div class="fa-stage" style="position:relative;display:block;width:960px;height:540px;min-height:0;padding:0;overflow:hidden"><fa-approach landscape="meadow" type="jumbo" livery="5" number="27" zone="ok" width="960" height="540" style="position:absolute;inset:0"></fa-approach></div></div>
+</article>
+  <article class="sc-comp" id="c-ApproachCockpit">
+  <header><h3>Approach View: cockpit</h3><p>The same picture from the cockpit of the light prop, over the savanna’s one-way runway.</p></header>
+  <div class="sc-demo sc-demo--screen"><div class="fa-stage" style="position:relative;display:block;width:960px;height:540px;min-height:0;padding:0;overflow:hidden"><fa-approach landscape="savanna" view="cockpit" type="light-prop" livery="1" number="27" one-way width="960" height="540" style="position:absolute;inset:0"></fa-approach></div></div>
+</article>
+  <article class="sc-comp" id="c-ApproachHelipad">
+  <header><h3>Approach View: helipad</h3><p>A helicopter over the island’s helipad, with the valid-landing halo.</p></header>
+  <div class="sc-demo sc-demo--screen"><div class="fa-stage" style="position:relative;display:block;width:960px;height:540px;min-height:0;padding:0;overflow:hidden"><fa-approach landscape="island" target="helipad" type="helicopter" livery="6" zone="ok" width="960" height="540" style="position:absolute;inset:0"></fa-approach></div></div>
+</article>
+  <article class="sc-comp" id="c-RearAircraft">
+  <header><h3>Rear-view aircraft</h3><p>The five types from behind with the gear down, for the approach view only.</p></header>
+  <div class="sc-demo fa-stage fa-stage--sky"><div class="fa-item"><fa-rear-aircraft type="light-prop" livery="1"></fa-rear-aircraft><span class="fa-note">Light prop</span></div><div class="fa-item"><fa-rear-aircraft type="turboprop" livery="2"></fa-rear-aircraft><span class="fa-note">Turboprop</span></div><div class="fa-item"><fa-rear-aircraft type="jet" livery="3"></fa-rear-aircraft><span class="fa-note">Jet</span></div><div class="fa-item"><fa-rear-aircraft type="jumbo" livery="5"></fa-rear-aircraft><span class="fa-note">Jumbo</span></div><div class="fa-item"><fa-rear-aircraft type="helicopter" livery="6"></fa-rear-aircraft><span class="fa-note">Helicopter</span></div></div>
+</article>
 </section>
 
 <section class="sc-section" id="night">
@@ -904,8 +924,9 @@ h1,h2,h3,h4,p{margin:0}
 </main>
 <script>
 /* Final Approach world kit. Vanilla custom elements, no dependencies.
-   window.FinalApproach = { AIRCRAFT, ICONS, WORLD, aircraftSvg, iconSvg, runwaySvg, helipadSvg, cloudSvg, windsockSvg, burstSvg, worldSvg, sceneSvg }
-   Elements: <fa-aircraft> <fa-side-aircraft> <fa-silhouette> <fa-icon> <fa-runway> <fa-helipad> <fa-cloud> <fa-windsock> <fa-burst> <fa-scenery> <fa-scene>
+   window.FinalApproach = { AIRCRAFT, ICONS, WORLD, aircraftSvg, iconSvg, runwaySvg, helipadSvg, cloudSvg, windsockSvg, burstSvg, worldSvg, sceneSvg, Scene,
+                            REAR_AIRCRAFT, FRONT, APPROACH, rearAircraftSvg, approachSvg }
+   Elements: <fa-aircraft> <fa-side-aircraft> <fa-rear-aircraft> <fa-approach> <fa-silhouette> <fa-icon> <fa-runway> <fa-helipad> <fa-cloud> <fa-windsock> <fa-burst> <fa-scenery> <fa-scene>
    Aircraft paint comes from bundle.css (.fa-p-*); world paint is written as token variables. Both follow the theme. */
 (function () {
   'use strict';
@@ -1985,8 +2006,443 @@ h1,h2,h3,h4,p{margin:0}
     return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" aria-hidden="true">' + s + '</svg>';
   }
 
+  /* ---------- Approach view (illustration only) ----------
+     The one picture that leaves the top-down view: the airfield as an aircraft on final approach
+     sees it, in one-point perspective along the runway centre line. It is for illustrations (the
+     social visuals, the store listing), never for gameplay, and the game does not port it.
+     The world rules still hold. One sun from the left: lit tones face left, shade tones right, and
+     hard shadows fall to the right and towards the viewer (W1). Flat tones only (W2). A navy
+     silhouette on everything with height, tinted lines inside (W3). Line weight is rank, and it
+     thins with distance (W4). Flat ground has no outline; the runway and the helipad keep theirs
+     (W6), with their shoulder and fringe (W7). Only the airfield is mown, and its stripes run to
+     the vanishing point (W8). The runway and the helipad are laid out from METRICS, so the
+     markings are the top-down ones, seen from the approach end. */
+
+  /* Rear-view sprites: an aircraft seen from behind with its gear down, on a 160 by 96 grid.
+     The same paint as the top-down sprites, so the tell-tale shapes stay: a high wing and a nose
+     propeller, two nacelles, two tail engines, four engines under a wide wing, a rotor and skids. */
+  var REAR_AIRCRAFT = {
+    'light-prop': {
+      label: 'Light prop, rear view', width: 160, height: 96,
+      svg:
+        '<circle {{blur}} cx="80" cy="54" r="33"/>' +
+        '<rect {{dark}} x="77" y="21" width="6" height="66" rx="3" transform="rotate(52 80 54)"/>' +
+        '<path {{line}} d="M70 64L55 82M90 64l15 18"/>' +
+        '<rect {{dark}} x="49" y="77" width="11" height="13" rx="4.500"/>' +
+        '<rect {{dark}} x="100" y="77" width="11" height="13" rx="4.500"/>' +
+        '<path {{line}} d="M44 40l27 21M116 40L89 61"/>' +
+        '<rect {{liv}} x="6" y="29" width="148" height="12" rx="6"/>' +
+        '<circle {{body}} cx="80" cy="54" r="15"/>' +
+        '<rect {{liv}} x="53" y="50" width="54" height="8" rx="4"/>' +
+        '<path {{liv}} d="M75.500 54l1.500-28q3-5 6 0l1.500 28z"/>'
+    },
+    turboprop: {
+      label: 'Turboprop, rear view', width: 160, height: 96,
+      svg:
+        '<circle {{blur}} cx="46" cy="45" r="26"/>' +
+        '<circle {{blur}} cx="114" cy="45" r="26"/>' +
+        '<rect {{dark}} x="43.500" y="19" width="5" height="52" rx="2.500" transform="rotate(38 46 45)"/>' +
+        '<rect {{dark}} x="111.500" y="19" width="5" height="52" rx="2.500" transform="rotate(38 114 45)"/>' +
+        '<path {{line}} d="M46 54v22M114 54v22"/>' +
+        '<rect {{dark}} x="40" y="73" width="12" height="13" rx="4.500"/>' +
+        '<rect {{dark}} x="108" y="73" width="12" height="13" rx="4.500"/>' +
+        '<rect {{body}} x="4" y="32" width="152" height="11" rx="5.500"/>' +
+        '<circle {{shade}} cx="46" cy="45" r="10"/>' +
+        '<circle {{shade}} cx="114" cy="45" r="10"/>' +
+        '<circle {{body}} cx="80" cy="51" r="16.500"/>' +
+        '<rect {{liv}} x="50" y="45" width="60" height="8" rx="4"/>' +
+        '<path {{liv}} d="M75 50l2-33q3-5 6 0l2 33z"/>'
+    },
+    jet: {
+      label: 'Jet, rear view', width: 160, height: 96,
+      svg:
+        '<path {{line}} d="M62 60v16M98 60v16M80 68v11"/>' +
+        '<rect {{dark}} x="56" y="73" width="12" height="13" rx="4.500"/>' +
+        '<rect {{dark}} x="92" y="73" width="12" height="13" rx="4.500"/>' +
+        '<rect {{dark}} x="76.500" y="77" width="7" height="10" rx="3.500"/>' +
+        '<path {{liv}} d="M80 67L10 52q-5-1-4-6t6-3.500L80 55l68-12.500q5-1.500 6 3.500t-4 6z"/>' +
+        '<circle {{body}} cx="80" cy="53" r="16"/>' +
+        '<circle {{shade}} cx="56" cy="45" r="9"/>' +
+        '<circle {{shade}} cx="104" cy="45" r="9"/>' +
+        '<circle {{dark}} cx="56" cy="45" r="3.500"/>' +
+        '<circle {{dark}} cx="104" cy="45" r="3.500"/>' +
+        '<path {{liv}} d="M75.500 51l2-34q2.500-5 5 0l2 34z"/>' +
+        '<rect {{liv}} x="55" y="20" width="50" height="8" rx="4"/>'
+    },
+    jumbo: {
+      label: 'Jumbo, rear view', width: 160, height: 96,
+      svg:
+        '<path {{line}} d="M63 68v12M97 68v12M75 70v12M85 70v12"/>' +
+        '<rect {{dark}} x="56" y="77" width="13" height="12" rx="4.500"/>' +
+        '<rect {{dark}} x="91" y="77" width="13" height="12" rx="4.500"/>' +
+        '<rect {{dark}} x="72" y="80" width="16" height="10" rx="4.500"/>' +
+        '<circle {{shade}} cx="27" cy="59" r="8"/>' +
+        '<circle {{shade}} cx="50" cy="66" r="8"/>' +
+        '<circle {{shade}} cx="110" cy="66" r="8"/>' +
+        '<circle {{shade}} cx="133" cy="59" r="8"/>' +
+        '<path {{body}} d="M80 69L7 50q-5-1.500-4-6.500t6-4L80 53l71-13.500q5-1 6 4t-4 6.500z"/>' +
+        '<circle {{body}} cx="80" cy="51" r="22"/>' +
+        '<path {{liv}} d="M80 53L44 45q-4-1-3.500-5t4.500-3.500L80 42l35-5.500q4-.500 4.500 3.500t-3.500 5z"/>' +
+        '<path {{liv}} d="M74 47l2.500-40q3.500-5 7 0l2.500 40z"/>'
+    },
+    helicopter: {
+      label: 'Helicopter, rear view', width: 160, height: 96,
+      svg:
+        '<ellipse {{blur}} cx="80" cy="20" rx="76" ry="11"/>' +
+        '<path {{line}} d="M68 72l-9 13M92 72l9 13"/>' +
+        '<rect {{dark}} x="50" y="82" width="16" height="7" rx="3.500"/>' +
+        '<rect {{dark}} x="94" y="82" width="16" height="7" rx="3.500"/>' +
+        '<ellipse {{liv}} cx="80" cy="55" rx="21" ry="22"/>' +
+        '<path {{glass}} d="M64 49q3-12 16-12t16 12q-16-6-32 0z"/>' +
+        '<path {{shine}} d="M71 44l3-3"/>' +
+        '<path {{liv}} d="M77 54h6l1.500 22h-9z"/>' +
+        '<rect {{liv}} x="67" y="71" width="26" height="7" rx="3.500"/>' +
+        '<rect {{dark}} x="93" y="62" width="4.500" height="22" rx="2.250"/>' +
+        '<path {{line}} d="M80 33V20"/>' +
+        '<rect {{dark}} x="8" y="17.500" width="144" height="5" rx="2.500"/>' +
+        '<circle {{dark}} cx="80" cy="20" r="5"/>'
+    }
+  };
+
+  /* Scenery seen from the front, for the approach view: it stands on its base at 0,0, y up is
+     negative, in world units. `half` is half its footprint and `height` its height, for the cast
+     shadow. Fills first, the navy silhouette last, so a shade tone never covers the outline. */
+  var FRONT = (function () {
+    function F(fill, d) { return '<path ' + k(fill) + ' d="' + d + '"/>'; }
+    function Ln(stroke, w, d) { return '<path ' + k('', stroke, w) + ' d="' + d + '"/>'; }
+    function dots(fill, cs) { return cs.map(function (c) { return '<circle ' + k(fill) + ' cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '"/>'; }).join(''); }
+    function rim(cs) { return cs.map(function (c) { return '<circle ' + k('', O, 5) + ' cx="' + c[0] + '" cy="' + c[1] + '" r="' + c[2] + '"/>'; }).join(''); }
+    function lit(cs, dx, dy, f) { return cs.map(function (c) { return [c[0] + dx, c[1] + dy, r1(c[2] * f)]; }); }
+    var crown = [[0, -48, 20], [-15, -38, 14], [15, -38, 14], [-8, -58, 13], [9, -57, 13]];
+    var shrub = [[-8, -7, 8], [2, -10, 10], [11, -6, 7]];
+    var canopy = [[-22, -42, 10], [-6, -45, 11], [10, -45, 11], [25, -42, 10]];
+    var frond = function (fill, a) { return '<ellipse ' + k(fill, O, 2.2) + ' cx="17" cy="0" rx="17" ry="5.500" transform="translate(5,-56) rotate(' + a + ')"/>'; };
+    return {
+      tower: {
+        label: 'Control tower, front view', half: 12, height: 112,
+        svg: F('wall-300', 'M-9 0V-78H9V0z') + F('wall-500', 'M3 0V-78H9V0z') + '<rect ' + k('wood-500', 'wood-900', 1.2) + ' x="-3.500" y="-13" width="7" height="13"/>' +
+          F('tin-500', 'M-16 -78h32v-6h-32z') + F('window', 'M-15 -84L-20 -104H20L15 -84z') + F('glass-700', 'M8 -84l3.500-20H20L15 -84z') + Ln('glass-700', 1.3, 'M-7 -84l-2-20M7 -84l2-20') + Ln('glass-shine', 2, 'M-14 -99l1.500 9') +
+          F('cherry-500', 'M-23 -104h46v-7q-23-7-46 0z') + Ln('cherry-200', 1.6, 'M-18 -108.500q7-2.500 13-3') +
+          Ln(O, 2, 'M0 -114V-128') + '<circle ' + k('beacon', O, 1.5) + ' cx="0" cy="-130" r="2.800"/>' +
+          Ln(O, 2.5, 'M-9 0V-78H9V0zM-16 -78h32v-6h-32zM-15 -84L-20 -104H20L15 -84zM-23 -104h46v-7q-23-7-46 0z')
+      },
+      terminal: {
+        label: 'Terminal, front view', half: 76, height: 43,
+        svg: F('wall-100', 'M-75 0V-34H75V0z') + F('wall-300', 'M46 0V-34H75V0z') +
+          F('window', 'M-66 -8V-27H38V-8z') + Ln('glass-700', 1.3, 'M-53 -8v-19M-40 -8v-19M-27 -8v-19M-14 -8v-19M-1 -8v-19M12 -8v-19M25 -8v-19M-66 -17.500H38') + Ln(O, 1.8, 'M-66 -8V-27H38V-8z') +
+          F('glass-700', 'M52 0v-19h14V0z') + Ln(O, 1.8, 'M52 0v-19h14V0') +
+          F('roof-500', 'M-80 -34v-9H80v9z') + F('roof-700', 'M46 -34v-9H80v9z') + Ln('roof-300', 1.4, 'M-75 -40.500H40') +
+          Ln(O, 2.5, 'M-75 0V-34H75V0zM-80 -34v-9H80v9z')
+      },
+      hangar: {
+        label: 'Hangar, front view', half: 55, height: 56,
+        svg: F('tin-500', 'M-55 0V-34Q0 -74 55 -34V0z') + F('tin-700', 'M32 0V-48Q45 -42 55 -34V0z') + Ln('tin-100', 1.6, 'M-46 -38Q-22 -53 -2 -54') +
+          F('asphalt-900', 'M-34 0V-30H34V0z') + F('tin-300', 'M-34 0V-30H-6V0z') + Ln('tin-700', 1.1, 'M-25 0v-30M-15 0v-30') + Ln(O, 1.8, 'M-34 0V-30H34V0') +
+          Ln(O, 2.5, 'M-55 0V-34Q0 -74 55 -34V0z')
+      },
+      barn: {
+        label: 'Barn, front view', half: 28, height: 46,
+        svg: F('roof-500', 'M-28 0V-28L0 -46L28 -28V0z') + F('roof-700', 'M17 0V-35L28 -28V0z') + Ln('roof-300', 1.4, 'M-24 -28.500L-2 -42.500') +
+          '<rect ' + k('wall-100', 'roof-900', 1.3) + ' x="-10" y="-19" width="20" height="19"/>' + Ln('roof-900', 1.3, 'M-10 -19L10 0M10 -19L-10 0') +
+          Ln(O, 2.5, 'M-28 0V-28L0 -46L28 -28V0z')
+      },
+      silo: {
+        label: 'Silo, front view', half: 9, height: 66,
+        svg: F('tin-300', 'M-9 0V-58Q0 -70 9 -58V0z') + F('tin-700', 'M4 0V-62.500Q7 -61 9 -58V0z') + Ln('tin-700', 0.9, 'M-9 -16H9M-9 -32H9M-9 -48H9') + Ln(O, 2.5, 'M-9 0V-58Q0 -70 9 -58V0z')
+      },
+      tree: {
+        label: 'Tree, front view', half: 14, height: 66,
+        svg: F('wood-500', 'M-4 0V-30h8V0z') + F('wood-700', 'M1 0V-30h3V0z') + Ln(O, 2.2, 'M-4 0V-30M4 -30V0') +
+          rim(crown) + dots('leaf-700', crown) + dots('leaf-500', lit(crown, -2.5, -2.5, 0.84)) + dots('leaf-300', [[-10, -58, 6], [-19, -42, 5]])
+      },
+      pine: {
+        label: 'Pine, front view', half: 13, height: 76,
+        svg: F('wood-500', 'M-3 0v-9h6v9z') + Ln(O, 2.2, 'M-3 0v-9M3 -9v9') +
+          Ln(O, 5, 'M0 -46L-25 -8H25zM0 -62L-19 -30H19zM0 -76L-13 -50H13z') +
+          F('pine-500', 'M0 -46L-25 -8H25z') + F('pine-700', 'M0 -46L25 -8H4z') + F('pine-500', 'M0 -62L-19 -30H19z') + F('pine-700', 'M0 -62L19 -30H3z') + F('pine-300', 'M0 -76L-13 -50H13z') + F('pine-500', 'M0 -76L13 -50H2z') +
+          Ln('pine-900', 1.2, 'M-19 -30H19M-13 -50H13')
+      },
+      palm: {
+        label: 'Palm, front view', half: 8, height: 70,
+        svg: F('wood-500', 'M-3 0Q-6 -30 2 -57h6Q1 -30 4 0z') + Ln('wood-900', 1.1, 'M-3.500 -14h7M-3 -28h6.500M-1.500 -42h6.500') + Ln(O, 2.2, 'M-3 0Q-6 -30 2 -57M8 -57Q1 -30 4 0') +
+          frond('leaf-700', 28) + frond('leaf-700', -20) + frond('leaf-500', 152) + frond('leaf-500', -55) + frond('leaf-300', -160) + frond('leaf-300', -122) +
+          '<circle ' + k('wood-700', O, 1.6) + ' cx="3" cy="-54" r="3"/><circle ' + k('wood-700', O, 1.6) + ' cx="8" cy="-53" r="3"/>'
+      },
+      acacia: {
+        label: 'Acacia, front view', half: 20, height: 52,
+        svg: F('wood-500', 'M-3 0L-2 -22L-17 -38h6L0 -28L13 -40h6L3 -22V0z') + Ln(O, 2.2, 'M-3 0L-2 -22L-17 -38M19 -40L3 -22V0') +
+          rim(canopy) + dots('leaf-700', canopy) + dots('leaf-500', lit(canopy, -1.5, -2, 0.84)) + dots('leaf-300', [[-24, -45, 4], [-8, -49, 4.500]])
+      },
+      bush: {
+        label: 'Bush, front view', half: 14, height: 18,
+        svg: rim(shrub) + dots('leaf-700', shrub) + dots('leaf-500', lit(shrub, -1.5, -1.5, 0.82)) + dots('leaf-300', [[-9, -10, 3], [0, -15, 3.500]])
+      },
+      windsock: {
+        label: 'Windsock, front view', half: 3, height: 42,
+        svg: F('tin-300', 'M-1.300 0V-42h2.600V0z') + Ln(O, 1.4, 'M-1.300 0V-42h2.600V0') +
+          F('tangerine-500', 'M1.300 -42L29 -38v5L1.300 -29z') + F('foam', 'M8 -41L14 -40.200V-30.900L8 -30z') + F('foam', 'M20 -39.300L26 -38.400V-32.600L20 -31.700z') + Ln(O, 2, 'M1.300 -42L29 -38v5L1.300 -29z')
+      },
+      sailboat: {
+        label: 'Sailboat, front view', half: 13, height: 44,
+        svg: F('wood-300', 'M-15 -7H15L10 0H-10z') + Ln('wood-900', 1.2, 'M-13 -4H13') + Ln(O, 2.2, 'M-15 -7H15L10 0H-10zM0 -7V-46') +
+          '<path ' + k('wall-100', O, 1.8) + ' d="M2 -10V-44L19 -10z"/><path ' + k('wall-300', O, 1.8) + ' d="M-2 -11V-38L-13 -11z"/>'
+      }
+    };
+  })();
+
+  /* The approach view's own numbers: the default canvas, the camera and how the picture is laid
+     out. Sizes on the ground come from METRICS; these are only for the view. */
+  var APPROACH = {
+    width: 1080, height: 1080,
+    /* The horizon as a share of the height, the focal length in px at the default height, the eye
+       above the ground and its distance to the landing threshold, in world units. */
+    horizon: 0.4, focal: 900, eye: 52, threshold: 130,
+    /* The line unit in px when no aircraft sets it: a token width times this is the width on screen. */
+    line: 3, farLine: 0.3,
+    /* The mown airfield: half its width, and how far it runs beyond the far end. */
+    airfieldHalf: 430, airfieldBeyond: 170, airfieldRx: 60,
+    zoneWidth: 9, zoneDot: 20, haloOpacity: 0.85, foamOpacity: 0.55, propOpacity: 0.45, lineHero: 4, skyRays: 10, skyRay: 9, numberStretch: 1.5,
+    /* A standing thing's shadow: its height times `throw` to the right, and half of that towards the viewer. */
+    shadowThrow: 0.55, shadowBack: 0.5,
+    /* The aircraft in the chase view: its centre, and the width of a jumbo as a share of the canvas (the other
+       types keep their sprite size against it, so the jumbo stays the biggest), and its soft shadow. */
+    craft: { x: 0.5, y: 0.83, w: 0.56 }, craftShadow: { dx: 12, dy: 50, rx: 58, ry: 6 },
+    /* The cockpit view: the window's margin, top and corner, and where the glare shield starts. */
+    cockpit: { margin: 0.035, top: 0.04, corner: 0.1, dash: 0.82, hump: 0.035, cowl: 0.2, cowlRise: 0.1, prop: 0.23 }
+  };
+  var approachIds = 0;
+
+  /* opts: width, height; landscape "meadow", "island" or "savanna"; number (the landing end, "27");
+     oneWay; length; target "runway" or "helipad"; zone "ok" or "no"; view "chase", "cockpit" or
+     "none"; type and livery of the aircraft; horizon, focal, eye, threshold, line, craft {x, y, w};
+     sky "rays" or "plain"; clouds [[x share, y share, scale]]; seed. */
+  function approachSvg(opts) {
+    var o = opts || {}, AP = APPROACH, R = METRICS.runway, HP = METRICS.helipad, G = METRICS.ground;
+    var W = +o.width || AP.width, H = +o.height || AP.height, k1 = H / AP.height;
+    var land = o.landscape === 'island' || o.landscape === 'savanna' ? o.landscape : 'meadow';
+    var cx = W * (o.centre || 0.5), hy = Math.round(H * (o.horizon || AP.horizon)), f = (o.focal || AP.focal) * k1, eye = o.eye || AP.eye;
+    var T = o.threshold || AP.threshold, L = Math.max(R.minLength, +o.length || 760), full = L >= R.fullLength, oneWay = !!o.oneWay;
+    var heli = o.target === 'helipad', rwX = o.runwayX != null ? +o.runwayX : (heli ? -230 : 0), hpZ = T + (o.helipadAhead || 90);
+    var view = o.view || 'chase', type = REAR_AIRCRAFT[o.type] ? o.type : 'jet', livery = Math.min(6, Math.max(1, parseInt(o.livery, 10) || 1));
+    var C = Object.assign({}, AP.craft, o.craft || {}), rear = REAR_AIRCRAFT[type], kk = Math.min(W, H) * C.w / rear.width * AIRCRAFT[type].size / AIRCRAFT.jumbo.size;
+    var u = o.line || (view === 'chase' ? kk : AP.line * k1);
+    var zc = f * eye / (H * 1.35 - hy), sNear = f / T, rng = rnd(o.seed || 27), id = 'fa-ap-' + (approachIds++), i, x, z;
+    var sky = '', ground = '', shadows = '', standing = [], air = '';
+    function r3(v) { return Math.round(v * 1000) / 1000; }
+    function rand(a, b) { return a + rng() * (b - a); }
+    function P(X, Z) { Z = Math.max(Z, zc); return [r1(cx + f * X / Z), r1(hy + f * eye / Z)]; }
+    function pts(a) { return a.map(function (q) { return P(q[0], q[1]).join(','); }).join(' '); }
+    function css(t, op) { return 'style="fill:var(--' + t + ')' + (op ? ';opacity:' + op : '') + '"'; }
+    function pg(t, a, op) { return '<polygon ' + css(t, op) + ' points="' + pts(a) + '"/>'; }
+    /* A rounded rectangle on the ground, as points. */
+    function rr(x0, z0, x1, z1, r) {
+      var a = [], n = 10, j, q;
+      r = Math.max(0, Math.min(r || 0, (x1 - x0) / 2, (z1 - z0) / 2));
+      [[x1 - r, z0 + r, -90], [x1 - r, z1 - r, 0], [x0 + r, z1 - r, 90], [x0 + r, z0 + r, 180]].forEach(function (c) {
+        for (j = 0; j <= n; j++) { q = (c[2] + 90 * j / n) * Math.PI / 180; a.push([c[0] + r * Math.cos(q), c[1] + r * Math.sin(q)]); }
+      });
+      return a;
+    }
+    function circ(X, Z, r, n) { var a = []; for (var j = 0; j < (n || 40); j++) a.push([X + r * Math.cos(j * 2 * Math.PI / (n || 40)), Z + r * Math.sin(j * 2 * Math.PI / (n || 40))]); return a; }
+    /* A line on the ground, `w` units wide. */
+    function seg(x0, z0, x1, z1, w) {
+      var dx = x1 - x0, dz = z1 - z0, l = Math.hypot(dx, dz) || 1, nx = -dz / l * w / 2, nz = dx / l * w / 2;
+      return [[x0 + nx, z0 + nz], [x1 + nx, z1 + nz], [x1 - nx, z1 - nz], [x0 - nx, z0 - nz]];
+    }
+    function band(t, outer, inner, op) { return '<path ' + css(t, op) + ' fill-rule="evenodd" d="M' + pts(outer).split(' ').join('L') + 'ZM' + pts(inner).split(' ').join('L') + 'Z"/>'; }
+    /* The wrong-zone halo: dots along an outline, one every zoneDot units. */
+    function dotted(t, shape) {
+      var s = '', carry = 0, j, a, b, l;
+      for (j = 0; j < shape.length; j++) {
+        a = shape[j]; b = shape[(j + 1) % shape.length]; l = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        for (; carry <= l; carry += AP.zoneDot) s += pg(t, circ(a[0] + (b[0] - a[0]) * carry / l, a[1] + (b[1] - a[1]) * carry / l, AP.zoneWidth / 2, 12), AP.haloOpacity);
+        carry -= l;
+      }
+      return s;
+    }
+    /* How much a line thins at scale s: full weight at the threshold, a share of it far away. */
+    function thin(s) { return Math.max(AP.farLine, Math.min(1, Math.sqrt(s / sNear))); }
+    function lamp(t, X, Z, r) {
+      var p = P(X, Z), s = f / Math.max(Z, zc), rad = Math.max(1.5 * k1, r * s);
+      return '<circle style="fill:var(--' + t + ');stroke:var(--concrete-700);stroke-width:' + r1(Math.max(0.6, R.lines.light * u * thin(s) / 3)) + '" cx="' + p[0] + '" cy="' + r1(p[1] - rad * 0.5) + '" r="' + r1(rad) + '"/>';
+    }
+    /* A closed outline through its points, rounded: eight steps of a Catmull-Rom curve per side. */
+    function dense(a) {
+      var out = [], n = a.length, j, t, p0, p1, p2, p3;
+      for (j = 0; j < n; j++) {
+        p0 = a[(j + n - 1) % n]; p1 = a[j]; p2 = a[(j + 1) % n]; p3 = a[(j + 2) % n];
+        for (t = 0; t < 1; t += 0.125) out.push([0, 1].map(function (c) { return 0.5 * (2 * p1[c] + (p2[c] - p0[c]) * t + (2 * p0[c] - 5 * p1[c] + 4 * p2[c] - p3[c]) * t * t + (3 * p1[c] - p0[c] - 3 * p2[c] + p3[c]) * t * t * t); }));
+      }
+      return out;
+    }
+    function blobAt(X, Z, rx, rz) { return dense(organic(X, Z, rx, rz, G.patch.lobes, rng, G.patch.jitter)).map(function (q) { return [q[0], Math.max(q[1], zc)]; }); }
+    /* Something standing: its shadow goes to the one shadow layer, the sprite to the standing layer. */
+    function stand(name, X, Z, sc) {
+      var a = FRONT[name], m = sc || 1, s = f / Math.max(Z, zc) * m, p = P(X, Z), d = thin(s), hw = a.half * m, t = a.height * m * AP.shadowThrow;
+      shadows += '<polygon points="' + pts([[X - hw, Z], [X + hw, Z], [X + hw + t, Z - t * AP.shadowBack], [X - hw + t, Z - t * AP.shadowBack]]) + '"/>';
+      standing.push([Z, '<g transform="translate(' + p[0] + ',' + p[1] + ') scale(' + r3(s) + ')">' + paint(a.svg, function (key) {
+        var q = worldPaint(key);
+        return 'style="fill:' + (q.fill ? 'var(--' + q.fill + ')' : 'none') + (q.stroke ? ';stroke:var(--' + q.stroke + ');stroke-width:' + r3(q.width * u * d / s) : '') + '"';
+      }) + '</g>']);
+    }
+    /* The mown lawn: its soft boundary, its base and the stripes, which run to the vanishing point (W8). */
+    function airfield(shape, base) {
+      var s = '<polygon ' + css('grass-700', G.airfieldBoundaryOpacity) + ' points="' + pts(shape.map(function (q) { return [q[0] * 1.012, q[1] + (q[1] > T + L / 2 ? G.airfieldBoundary : -G.airfieldBoundary)]; })) + '"/>' +
+        '<clipPath id="' + id + '-af"><polygon points="' + pts(shape) + '"/></clipPath>' + pg(base, shape) + '<g clip-path="url(#' + id + '-af)">';
+      for (x = -G.stripePitch * 12 + rwX - G.stripe / 2; x < G.stripePitch * 12; x += G.stripePitch) s += pg('grass-600', [[x, zc], [x + G.stripe, zc], [x + G.stripe, 6000], [x, 6000]]);
+      return s + '</g>';
+    }
+    function strip(layers, x0, z0, x1, z1) { return layers.map(function (l) { return pg(l[0], seg(x0, z0, x1, z1, l[1])); }).join(''); }
+
+    /* --- sky: the menu sky, its rays fanning out of the vanishing point */
+    sky += '<rect ' + css('bg-sky') + ' x="0" y="0" width="' + W + '" height="' + (hy + 2) + '"/>';
+    if (o.sky !== 'plain') {
+      var far = W + H, step = 180 / AP.skyRays;
+      for (i = 0; i < AP.skyRays; i++) {
+        var a0 = (180 + step * i + (step - AP.skyRay) / 2) * Math.PI / 180, a1 = a0 + AP.skyRay * Math.PI / 180;
+        sky += '<polygon ' + css('sky-300') + ' points="' + cx + ',' + hy + ' ' + r1(cx + far * Math.cos(a0)) + ',' + r1(hy + far * Math.sin(a0)) + ' ' + r1(cx + far * Math.cos(a1)) + ',' + r1(hy + far * Math.sin(a1)) + '"/>';
+      }
+    }
+    var clouds = o.clouds || [[0.14, 0.11, 1.5], [0.86, 0.2, 1.15], [0.6, 0.06, 0.8]];
+    sky += '<g class="fa-clouds">' + clouds.map(function (c) { return '<g transform="translate(' + r1(W * c[0]) + ',' + r1(hy * c[1] / AP.horizon) + ') scale(' + r3(c[2] * k1) + ')">' + paint(cloudMarkup(), worldCss) + '</g>'; }).join('') + '</g>';
+
+    /* --- flat ground, from the horizon to the viewer */
+    var sea = land === 'island', dry = land === 'savanna', A = AP.airfieldHalf, zFar = T + L + AP.airfieldBeyond, isle, shape;
+    ground += '<rect ' + css(sea ? 'water-500' : dry ? 'grass-400' : 'grass-500') + ' x="0" y="' + hy + '" width="' + W + '" height="' + (H - hy) + '"/>';
+    /* the far edge of the world: a treeline, low hills, or open sea */
+    var edge = 'M-20 ' + (hy + 3), ex = -20, ew, eh, edgeLine = r1(G.lines.fieldEdge * u * AP.farLine);
+    while (ex < W + 20) { ew = rand(44, 96) * k1; eh = rand(sea ? 0 : dry ? 5 : 9, sea ? 0 : dry ? 16 : 22) * k1; edge += 'q' + r1(ew / 2) + ' ' + r1(-2 * eh) + ' ' + r1(ew) + ' 0'; ex += ew; }
+    if (sea) ground += '<rect ' + css('water-700') + ' x="0" y="' + hy + '" width="' + W + '" height="' + r1(7 * k1) + '"/>';
+    else ground += '<path style="fill:var(--' + (dry ? 'sand-500' : 'leaf-700') + ');stroke:var(--outline);stroke-width:' + edgeLine + '" d="' + edge + 'V' + (hy + 3) + 'z"/>';
+    if (sea) {
+      for (i = 0; i < 12; i++) ground += pg('water-700', blobAt(rand(-1500, 1500), rand(T + 200, 3200), rand(G.patch.seaRx[0], G.patch.seaRx[1]), rand(G.patch.seaRy[0], G.patch.seaRy[1]) * 2), G.patch.seaOpacity);
+      /* the island under the airfield: foam, shallows, the beach, then its grass (W7) */
+      isle = dense(organic(rwX / 2, T + L / 2 + 40, 360, L / 2 + 200, 14, rnd(31), 0.08));
+      var grown = function (fx) { return isle.map(function (q) { return [rwX / 2 + (q[0] - rwX / 2) * fx, Math.max(zc, T + L / 2 + 40 + (q[1] - T - L / 2 - 40) * fx)]; }); };
+      ground += pg('foam', grown(1.13), AP.foamOpacity) + pg('water-300', grown(1.09)) + pg('sand-500', grown(1.008)) + pg('sand-300', grown(1)) + pg('grass-700', grown(0.885)) + pg('grass-500', grown(0.87));
+      shape = grown(0.8);
+    } else {
+      for (i = 0; i < 26; i++) {
+        x = rand(A + 120, 2600) * (i % 2 ? 1 : -1); z = rand(T + 300, 3600);
+        ground += pg(i % 3 ? (dry ? 'grass-500' : 'grass-600') : (dry ? 'sand-300' : 'grass-400'), blobAt(x, z, rand(G.patch.rx[0], G.patch.rx[1]) * 1.6, rand(G.patch.ry[0], G.patch.ry[1]) * 3), i % 3 ? G.patch.darkOpacity : G.patch.lightOpacity);
+      }
+      for (i = 0; i < 9; i++) ground += pg(i % 3 ? (dry ? 'grass-500' : 'grass-600') : (dry ? 'sand-300' : 'grass-400'), blobAt(rand(-1400, 1400), rand(zFar + 260, 3600), rand(120, 260), rand(160, 420)), i % 3 ? G.patch.darkOpacity : G.patch.lightOpacity);
+      if (dry) {
+        /* a dirt track across the far ground */
+        ground += strip([['sand-500', G.track.width * 2 + G.track.edge], ['sand-300', G.track.width * 2]], -4000, zFar + 150, 4000, zFar + 210);
+      } else {
+        /* a public road beyond the airfield, and two crop fields beside it */
+        ground += strip([['grass-700', G.road.verge], ['road-700', G.road.kerb], ['road-500', G.road.surface]], -4000, zFar + 120, 4000, zFar + 170);
+        [[-760, zFar + 250, -330, zFar + 620, 'straw-300', 'straw-500', 'straw-700'], [300, zFar + 240, 820, zFar + 560, 'soil-500', 'leaf-300', 'soil-700']].forEach(function (q) {
+          ground += pg('grass-700', rr(q[0] - G.field.margin, q[1] - G.field.margin, q[2] + G.field.margin, q[3] + G.field.margin, G.field.outerRx)) + pg(q[6], rr(q[0], q[1], q[2], q[3], G.field.innerRx)) + pg(q[4], rr(q[0] + G.lines.fieldEdge, q[1] + G.lines.fieldEdge, q[2] - G.lines.fieldEdge, q[3] - G.lines.fieldEdge, G.field.innerRx));
+          for (x = q[0] + G.field.rowInset * 2; x < q[2] - G.field.rowInset; x += G.field.rowPitch * 3) ground += pg(q[5], seg(x, q[1] + 6, x, q[3] - 6, G.lines.cropRows * 1.5));
+        });
+      }
+      shape = rr(-A + rwX / 2, zc, A + rwX / 2, zFar, AP.airfieldRx);
+    }
+    ground += airfield(shape, 'grass-500');
+
+    /* --- hard surfaces: an apron and its taxiway to the left of the runway */
+    var apX0 = rwX - (sea ? 250 : 300), apX1 = rwX - 105, apZ0 = T + 330, apZ1 = T + 450, txZ = T + 372;
+    ground += pg('grass-700', seg(apX1 - 4, txZ, rwX - R.halfWidth, txZ, G.taxi.verge)) + pg('concrete-700', seg(apX1 - 4, txZ, rwX - R.halfWidth, txZ, G.taxi.kerb)) + pg('asphalt-300', seg(apX1 - 4, txZ, rwX - R.halfWidth, txZ, G.taxi.surface)) + pg('marking-warn', seg(apX1 - 4, txZ, rwX - R.shoulderHalf - 6, txZ, G.lines.taxiCentre));
+    ground += pg('grass-700', rr(apX0 - G.apron.margin, apZ0 - G.apron.margin, apX1 + G.apron.margin, apZ1 + G.apron.margin, G.apron.rx)) + pg('concrete-700', rr(apX0, apZ0, apX1, apZ1, G.apron.innerRx)) + pg('concrete-300', rr(apX0 + G.lines.apronSlab, apZ0 + G.lines.apronSlab, apX1 - G.lines.apronSlab, apZ1 - G.lines.apronSlab, G.apron.innerRx));
+    for (x = apX0 + G.apron.joint; x < apX1 - G.apron.jointEndRoom; x += G.apron.joint) ground += pg('concrete-500', seg(x, apZ0 + 2, x, apZ1 - 2, G.lines.apronJoint));
+
+    /* --- the runway, from METRICS: fringe, shoulder, asphalt, markings, lights */
+    function rw(a, d) { return [rwX + a, T + d]; }
+    function rect(t, a0, d0, a1, d1, r, op) { return pg(t, rr(rwX + a0, T + d0, rwX + a1, T + d1, r), op); }
+    var ol = R.lines.outline * u / sNear, zone = '', lights = '', B = R.bars, Am = R.aiming, Td = R.touchdown, Lt = R.lights, inset = full ? R.centreInsetFull : R.centreInsetShort;
+    ground += rect('grass-700', -R.fringeHalf, -R.fringe, R.fringeHalf, L + R.fringe, R.fringeRx) +
+      rect('concrete-700', -R.shoulderHalf - R.lines.shoulder, -R.shoulder - R.lines.shoulder, R.shoulderHalf + R.lines.shoulder, L + R.shoulder + R.lines.shoulder, R.shoulderRx) +
+      rect('concrete-500', -R.shoulderHalf, -R.shoulder, R.shoulderHalf, L + R.shoulder, R.shoulderRx);
+    if (o.zone === 'no' && !heli) zone += dotted('zone-no', rr(rwX - R.zoneHalf, T - R.zonePad, rwX + R.zoneHalf, T + L + R.zonePad, R.zoneRx));
+    else if (o.zone && !heli) zone += band('zone-ok', rr(rwX - R.zoneHalf - AP.zoneWidth / 2, T - R.zonePad - AP.zoneWidth / 2, rwX + R.zoneHalf + AP.zoneWidth / 2, T + L + R.zonePad + AP.zoneWidth / 2, R.zoneRx + AP.zoneWidth / 2), rr(rwX - R.zoneHalf + AP.zoneWidth / 2, T - R.zonePad + AP.zoneWidth / 2, rwX + R.zoneHalf - AP.zoneWidth / 2, T + L + R.zonePad - AP.zoneWidth / 2, R.zoneRx), AP.haloOpacity);
+    ground += zone + rect('outline', -R.halfWidth - ol, -ol, R.halfWidth + ol, L + ol, R.rx + ol) + rect('asphalt-500', -R.halfWidth, 0, R.halfWidth, L, R.rx);
+    [0, 1].forEach(function (endFar) {
+      if (endFar && oneWay) return;
+      /* d runs from the landing threshold; the far end is the same marks mirrored */
+      function along(d) { return endFar ? L - d : d; }
+      function mark(t, a0, d0, a1, d1) { return pg(t, [rw(a0, along(d0)), rw(a1, along(d0)), rw(a1, along(d1)), rw(a0, along(d1))]); }
+      if (full) R.rubber.forEach(function (m) { ground += mark('asphalt-700', m[1] - R.lines.rubber / 2, m[0], m[1] + R.lines.rubber / 2, m[0] + m[2]); });
+      for (i = 0; i < B.count; i++) ground += mark('marking', B.y0 + i * B.pitch, B.inset, B.y0 + i * B.pitch + B.width, B.inset + B.length);
+      if (full) Am.y.forEach(function (y) { ground += mark('marking', y, Am.inset, y + Am.width, Am.inset + Am.length); });
+      if (L >= R.touchdownLength) Td.y.forEach(function (y) { ground += mark('marking', y - R.lines.touchdown / 2, Td.inset, y + R.lines.touchdown / 2, Td.inset + Td.length); });
+      Lt.threshold.y.forEach(function (y) { var q = rw(y, along(-Lt.threshold.out)); lights += lamp('mint-500', q[0], q[1], Lt.threshold.r); });
+    });
+    [-1, 1].forEach(function (sd) { ground += pg('marking', seg(rwX + sd * R.edgeLine.y, T + R.edgeLine.inset, rwX + sd * R.edgeLine.y, T + L - R.edgeLine.inset, R.lines.edge)); });
+    if (oneWay) for (z = R.chevron.start; z < L - inset - R.chevron.endClearance; z += R.chevron.pitch) ground += pg('marking', seg(rwX - R.chevron.across, T + z, rwX, T + z + R.chevron.along, R.lines.chevron)) + pg('marking', seg(rwX + R.chevron.across, T + z, rwX, T + z + R.chevron.along, R.lines.chevron));
+    else { var dash = R.dash.split(' ').map(Number); for (z = inset; z < L - inset; z += dash[0] + dash[1]) ground += pg('marking', seg(rwX, T + z, rwX, T + Math.min(z + dash[0], L - inset), R.lines.centre)); }
+    /* the landing end's number, read from the approach: laid flat by the scale of the ground at that spot */
+    var nz = T + R.numberInset, np = P(rwX, nz);
+    ground += '<text class="fa-p-num" transform="translate(' + np[0] + ',' + np[1] + ') scale(' + r3(f / nz) + ',' + r3(f * eye / (nz * nz) * AP.numberStretch) + ')" text-anchor="middle" dominant-baseline="central">' + String(o.number || '27').replace(/[^0-9LRC]/g, '') + '</text>';
+    for (z = Lt.edge.inset; z <= L - Lt.edge.inset; z += Lt.edge.spacing) lights += lamp('beacon', rwX - Lt.edge.y, T + z, Lt.edge.r) + lamp('beacon', rwX + Lt.edge.y, T + z, Lt.edge.r);
+    /* the four approach lights stand side by side in the fringe, left of the landing end: two red, two white */
+    var Ap = Lt.approach, apZ = T + (full ? Ap.insetFull : Ap.insetShort), ps, pp;
+    for (i = 0; i < Ap.count; i++) {
+      x = rwX - Ap.y - (Ap.count - 1 - i) * Ap.pitch; ps = f / apZ; pp = P(x, apZ);
+      shadows += '<polygon points="' + pts([[x - Ap.w / 2, apZ], [x + Ap.w / 2, apZ], [x + Ap.w / 2 + Ap.h, apZ - Ap.h], [x - Ap.w / 2 + Ap.h, apZ - Ap.h]]) + '"/>';
+      lights += '<rect style="fill:var(--' + (i < Ap.red ? 'cherry-500' : 'foam') + ');stroke:var(--outline);stroke-width:' + r1(Math.max(0.8, R.lines.light * u * thin(ps) / 1.5)) + '" x="' + r1(pp[0] - Ap.w * ps / 2) + '" y="' + r1(pp[1] - Ap.h * ps) + '" width="' + r1(Ap.w * ps) + '" height="' + r1(Ap.h * ps) + '" rx="' + r1(Ap.rx * ps) + '"/>';
+    }
+
+    /* --- the helipad, from METRICS, straight ahead when it is the target and beside the apron otherwise */
+    var hx = heli ? 0 : rwX + (sea ? 185 : 215), hz = heli ? hpZ + HP.disc : T + 420, hol = HP.lines.outline * u / (f / hz);
+    function sq(t, half, r) { return pg(t, rr(hx - half, hz - half, hx + half, hz + half, r)); }
+    function ringOf(t, r, w, op) { return band(t, circ(hx, hz, r + w / 2), circ(hx, hz, r - w / 2), op); }
+    ground += sq('grass-700', HP.fringe.half, HP.fringe.rx) + sq('concrete-700', HP.pad.half, HP.pad.rx) + sq('concrete-300', HP.pad.half - HP.lines.pad, HP.pad.rx - HP.lines.pad) +
+      pg('concrete-500', seg(hx - HP.pad.half + 2, hz, hx + HP.pad.half - 2, hz, HP.lines.joint)) + pg('concrete-500', seg(hx, hz - HP.pad.half + 2, hx, hz + HP.pad.half - 2, HP.lines.joint));
+    if (o.zone && heli) ground += o.zone === 'no' ? dotted('zone-no', circ(hx, hz, HP.zoneRadius, 60)) : ringOf('zone-ok', HP.zoneRadius, AP.zoneWidth, AP.haloOpacity);
+    ground += pg('outline', circ(hx, hz, HP.disc + hol)) + pg('asphalt-500', circ(hx, hz, HP.disc)) + ringOf('asphalt-700', HP.wornRing, HP.lines.wornRing, HP.wornOpacity) + ringOf('marking-warn', HP.warnRing, HP.lines.warnRing) +
+      pg('marking', seg(hx - HP.h.x, hz - HP.h.y - HP.lines.h / 2, hx - HP.h.x, hz + HP.h.y + HP.lines.h / 2, HP.lines.h)) + pg('marking', seg(hx + HP.h.x, hz - HP.h.y - HP.lines.h / 2, hx + HP.h.x, hz + HP.h.y + HP.lines.h / 2, HP.lines.h)) + pg('marking', seg(hx - HP.h.x, hz, hx + HP.h.x, hz, HP.lines.h));
+    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(function (q) { lights += lamp('beacon', hx + q[0] * HP.cornerLight.at, hz + q[1] * HP.cornerLight.at, HP.cornerLight.r); });
+
+    /* --- standing scenery, far to near */
+    stand('tower', apX1 - 40, apZ1 + 40);
+    stand(dry ? 'hangar' : 'terminal', apX0 + 60, apZ1 + 60, sea ? 0.9 : 1);
+    if (!sea) stand('hangar', rwX + 330, T + 640, 0.9);
+    stand('windsock', rwX + (heli ? 330 : 82), T + 250);
+    var kinds = sea ? ['palm', 'palm', 'bush'] : dry ? ['acacia', 'bush', 'acacia'] : ['tree', 'pine', 'tree', 'bush'], placed = [];
+    for (i = 0; i < (sea ? 16 : 34); i++) {
+      if (sea) { var q = isle[Math.floor(rng() * isle.length)]; x = rwX / 2 + (q[0] - rwX / 2) * rand(0.8, 0.86); z = T + L / 2 + 40 + (q[1] - T - L / 2 - 40) * rand(0.8, 0.86); }
+      else if (i % 3) { x = rand(-1700, 1700); z = rand(zFar + 230, zFar + 1500); }
+      else { x = rand(A + 30, A + 420) * (i % 2 ? 1 : -1) + rwX / 2; z = rand(T + 420, zFar + 60); }
+      if (z < T + 160 || (Math.abs(x - rwX) < 150 && z < zFar) || placed.some(function (b) { return Math.hypot(b[0] - x, (b[1] - z) / 3) < 46; })) continue;
+      placed.push([x, z]); stand(kinds[i % kinds.length], x, z, rand(0.85, 1.2));
+    }
+    if (sea) { stand('sailboat', rwX + 620, T + 520, 1.5); stand('sailboat', -780, T + 1100, 1.5); stand('sailboat', 900, T + 1900, 1.6); }
+    else if (!dry) { stand('barn', 640, zFar + 300); stand('silo', 700, zFar + 290); }
+    standing.sort(function (a, b) { return b[0] - a[0]; });
+
+    /* --- the aircraft: seen from behind over its soft shadow, or its cockpit around the picture */
+    if (view === 'chase') {
+      var ax = W * C.x, ay = H * C.y, cs = AP.craftShadow;
+      air += '<ellipse class="fa-shadow-air" style="fill:var(--outline)" cx="' + r1(ax + cs.dx * kk) + '" cy="' + r1(ay + cs.dy * kk) + '" rx="' + r1(cs.rx * kk) + '" ry="' + r1(cs.ry * kk) + '"/>' +
+        '<g class="fa-rear" style="--fa-livery:var(--path-' + livery + ')" transform="translate(' + r1(ax - rear.width / 2 * kk) + ',' + r1(ay - rear.height / 2 * kk) + ') scale(' + r3(kk) + ')">' + paint(rear.svg, cls) + '</g>';
+    } else if (view === 'cockpit') {
+      var K = AP.cockpit, m = K.margin * W, tp = K.top * H, cr = K.corner * W, dy = K.dash * H, hump = K.hump * H, hero = 'stroke:var(--outline);stroke-width:' + r1(AP.lineHero * u) + ';stroke-linejoin:round';
+      if (type === 'light-prop') {
+        var cw = K.cowl * W, rise = K.cowlRise * H, pr = K.prop * W;
+        air += '<circle style="fill:var(--prop-blur);opacity:' + AP.propOpacity + '" cx="' + cx + '" cy="' + r1(dy - rise * 0.6) + '" r="' + r1(pr) + '"/>' +
+          '<rect style="fill:var(--outline)" x="' + r1(cx - pr) + '" y="' + r1(dy - rise * 0.6 - 3 * u) + '" width="' + r1(2 * pr) + '" height="' + r1(6 * u) + '" rx="' + r1(3 * u) + '" transform="rotate(-24 ' + cx + ' ' + r1(dy - rise * 0.6) + ')"/>' +
+          '<path style="fill:var(--fuselage);' + hero + '" d="M' + r1(cx - cw) + ' ' + (H + 40) + 'V' + r1(dy) + 'Q' + r1(cx - cw) + ' ' + r1(dy - rise) + ' ' + cx + ' ' + r1(dy - rise) + 'Q' + r1(cx + cw) + ' ' + r1(dy - rise) + ' ' + r1(cx + cw) + ' ' + r1(dy) + 'V' + (H + 40) + 'z"/>' +
+          '<rect style="fill:var(--path-' + livery + ');' + hero + '" x="' + r1(cx - cw * 0.16) + '" y="' + r1(dy - rise) + '" width="' + r1(cw * 0.32) + '" height="' + r1(H - dy + rise + 40) + '"/>' +
+          '<circle style="fill:var(--outline)" cx="' + cx + '" cy="' + r1(dy - rise * 0.6) + '" r="' + r1(6 * u) + '"/>';
+      }
+      air += '<path style="fill:var(--fuselage-shade);' + hero + '" fill-rule="evenodd" d="M-60 -60H' + (W + 60) + 'V' + (H + 60) + 'H-60ZM' + r1(m) + ' ' + (H + 30) + 'V' + r1(tp + cr) + 'Q' + r1(m) + ' ' + r1(tp) + ' ' + r1(m + cr) + ' ' + r1(tp) + 'H' + r1(W - m - cr) + 'Q' + r1(W - m) + ' ' + r1(tp) + ' ' + r1(W - m) + ' ' + r1(tp + cr) + 'V' + (H + 30) + 'Z"/>' +
+        '<path style="fill:var(--outline);' + hero + '" d="M-60 ' + (H + 60) + 'V' + r1(dy + hump) + 'Q' + cx + ' ' + r1(dy - hump) + ' ' + (W + 60) + ' ' + r1(dy + hump) + 'V' + (H + 60) + 'z"/>';
+    }
+
+    return '<svg xmlns="http://www.w3.org/2000/svg" class="fa-approach-svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid slice" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">' +
+      sky + '<g>' + ground + '</g><g class="fa-shadow-cast">' + shadows + '</g><g>' + lights + '</g><g>' + standing.map(function (s) { return s[1]; }).join('') + '</g>' + air + '</svg>';
+  }
+
+  function rearAircraftSvg(type, painter) {
+    var a = REAR_AIRCRAFT[type] || REAR_AIRCRAFT.jet;
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + a.width + ' ' + a.height + '" aria-hidden="true">' + paint(a.svg, painter || cls) + '</svg>';
+  }
+
   var api = {
     AIRCRAFT: AIRCRAFT, SIDE_AIRCRAFT: SIDE_AIRCRAFT, SILHOUETTE: SILHOUETTE, SUNSET: SUNSET, ICONS: ICONS, paint: paint,
+    REAR_AIRCRAFT: REAR_AIRCRAFT, FRONT: FRONT, APPROACH: APPROACH, rearAircraftSvg: rearAircraftSvg, approachSvg: approachSvg, Scene: Scene,
     sideAircraftSvg: sideAircraftSvg, silhouetteSvg: silhouetteSvg,
     aircraftSvg: aircraftSvg, iconSvg: iconSvg, runwaySvg: runwaySvg, helipadSvg: helipadSvg,
     cloudSvg: cloudSvg, cloudMarkup: cloudMarkup, windsockSvg: windsockSvg, burstSvg: burstSvg,
@@ -2028,6 +2484,23 @@ h1,h2,h3,h4,p{margin:0}
     var livery = Math.min(6, Math.max(1, parseInt(el.getAttribute('livery'), 10) || 1));
     el.style.setProperty('--fa-livery', 'var(--path-' + livery + ')');
     el.innerHTML = sideAircraftSvg(el.getAttribute('type'));
+  });
+  define('fa-rear-aircraft', ['type', 'livery'], function (el) {
+    var livery = Math.min(6, Math.max(1, parseInt(el.getAttribute('livery'), 10) || 1)), a = REAR_AIRCRAFT[el.getAttribute('type')] || REAR_AIRCRAFT.jet;
+    el.style.setProperty('--fa-livery', 'var(--path-' + livery + ')');
+    el.setAttribute('role', 'img');
+    el.setAttribute('aria-label', a.label);
+    el.style.width = Math.round(a.width * (AIRCRAFT[el.getAttribute('type')] || AIRCRAFT.jet).size / AIRCRAFT.jumbo.size) + 'px';
+    el.innerHTML = rearAircraftSvg(el.getAttribute('type'));
+  });
+  /* The approach view, an illustration: landscape, type, livery, view ("chase", "cockpit" or "none"),
+     number, target ("runway" or "helipad"), zone, one-way, and width and height of the picture. */
+  define('fa-approach', ['landscape', 'type', 'livery', 'view', 'number', 'target', 'zone', 'one-way', 'width', 'height'], function (el) {
+    var g = function (n) { return el.getAttribute(n) || undefined; };
+    el.setAttribute('role', 'img');
+    el.setAttribute('aria-label', 'On final approach to the ' + (g('landscape') || 'meadow') + ' airfield');
+    el.style.aspectRatio = (g('width') || APPROACH.width) + ' / ' + (g('height') || APPROACH.height);
+    el.innerHTML = approachSvg({ landscape: g('landscape'), type: g('type'), livery: g('livery'), view: g('view'), number: g('number'), target: g('target'), zone: g('zone'), oneWay: el.hasAttribute('one-way'), width: g('width'), height: g('height') });
   });
   define('fa-silhouette', [], function (el) { el.innerHTML = silhouetteSvg(); });
   define('fa-icon', ['name'], function (el) { el.innerHTML = iconSvg(el.getAttribute('name')); });

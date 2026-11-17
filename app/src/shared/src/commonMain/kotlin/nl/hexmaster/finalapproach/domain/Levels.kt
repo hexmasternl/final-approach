@@ -36,7 +36,9 @@ object Levels {
         ),
     )
 
+    private const val NORTH_EAST = PI / 4
     private const val EAST = PI / 2
+    private const val SOUTH_EAST = 3 * PI / 4
     private const val SOUTH = PI
     private const val WEST = 3 * PI / 2
     private const val SOUTH_WEST = 5 * PI / 4
@@ -267,17 +269,17 @@ object Levels {
 
     /**
      * The tutorial traffic of Meadow Field, entering outside the viewport. The airplanes come in from
-     * the east side, where an aligned westbound approach to runway 27 still fits; the helicopter
-     * comes from the west above the runway.
+     * the west side, where an aligned eastbound approach to runway 09 still fits; the helicopter
+     * comes from the east above the runway, on the helipad's side.
      */
     private val meadowTutorial = TutorialScript(
-        lightProp = ScriptedEntry(Vec2(1800.0, -LevelDefaults.SPAWN_MARGIN), SOUTH_WEST),
-        turboprop = ScriptedEntry(Vec2(1800.0, LevelDefaults.WORLD_HEIGHT + LevelDefaults.SPAWN_MARGIN), NORTH_WEST),
-        helicopter = ScriptedEntry(Vec2(-LevelDefaults.SPAWN_MARGIN, 300.0), EAST),
+        lightProp = ScriptedEntry(Vec2(120.0, -LevelDefaults.SPAWN_MARGIN), SOUTH_EAST),
+        turboprop = ScriptedEntry(Vec2(120.0, LevelDefaults.WORLD_HEIGHT + LevelDefaults.SPAWN_MARGIN), NORTH_EAST),
+        helicopter = ScriptedEntry(Vec2(LevelDefaults.WORLD_WIDTH + LevelDefaults.SPAWN_MARGIN, 300.0), WEST),
     )
 
     /**
-     * Level 1: one one-way runway (27, approached from the east) in the middle, one helipad on the right, a gentle build-up. The
+     * Level 1: one one-way runway (09, approached from the west) in the middle, one helipad on the right, a gentle build-up. The
      * airfield lies in farmland: crop fields, hedges, a farm, two roads, a pond and a forest edge.
      */
     val meadowField: LevelConfig = LevelConfig(
@@ -291,7 +293,7 @@ object Levels {
                 position = Vec2(960.0, 630.0),
                 orientation = EAST,
                 length = 640.0,
-                mode = RunwayMode.OneWay(WEST),
+                mode = RunwayMode.OneWay(EAST),
             ),
         ),
         helipads = listOf(HelipadConfig(id = "h1", position = Vec2(1430.0, 630.0))),

@@ -40,8 +40,8 @@
 .fa-p-callsign { fill: var(--on-outline); font: 800 23px/1 var(--font-text); letter-spacing: .04em; }
 
 /* ---------- World elements ---------- */
-fa-aircraft, fa-side-aircraft, fa-silhouette, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst, fa-scenery, fa-scene { display: inline-block; flex: none; line-height: 0; }
-fa-aircraft svg, fa-side-aircraft svg, fa-silhouette svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg, fa-scenery svg, fa-scene svg { display: block; width: 100%; height: 100%; overflow: visible; }
+fa-aircraft, fa-side-aircraft, fa-rear-aircraft, fa-approach, fa-silhouette, fa-icon, fa-runway, fa-helipad, fa-cloud, fa-windsock, fa-burst, fa-scenery, fa-scene { display: inline-block; flex: none; line-height: 0; }
+fa-aircraft svg, fa-side-aircraft svg, fa-rear-aircraft svg, fa-approach svg, fa-silhouette svg, fa-icon svg, fa-runway svg, fa-helipad svg, fa-cloud svg, fa-windsock svg, fa-burst svg, fa-scenery svg, fa-scene svg { display: block; width: 100%; height: 100%; overflow: visible; }
 fa-scene { display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; background: var(--grass-500); }
 fa-scene svg { overflow: hidden; }
 fa-aircraft { position: relative; width: var(--fa-size, 64px); height: var(--fa-size, 64px); filter: drop-shadow(5px 8px 3px var(--shadow-ground)); }
@@ -82,6 +82,10 @@ fa-scene .fa-zone { animation: none; opacity: .85; }
 fa-side-aircraft { width: var(--sprite-light-prop-side); aspect-ratio: 96 / 64; }
 .fa-prop-side { transform-box: fill-box; transform-origin: center; animation: fa-prop-side var(--dur-rotor) linear infinite; }
 fa-silhouette { display: block; width: 100%; }
+/* The approach view and its rear-view aircraft: illustrations, never gameplay. */
+fa-rear-aircraft { aspect-ratio: 160 / 96; }
+fa-approach { display: block; width: 100%; overflow: hidden; background: var(--bg-sky); }
+fa-approach svg { overflow: hidden; }
 
 /* ---------- Splash: sunset sky and banner ---------- */
 .fa-sunset { background: linear-gradient(180deg, var(--sunset-sky-top) 0 30%, var(--sunset-sky-upper) 30% 52%, var(--sunset-sky-lower) 52% 72%, var(--sunset-sky-horizon) 72% 100%); }
