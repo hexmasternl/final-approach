@@ -59,6 +59,23 @@ class ClearanceEventTest {
     }
 
     @Test
+    fun aHelipadClearanceIsReportedOnceAtTheCutOffAndTheLegToTheCentreAddsNone() {
+        val engine = engine()
+        val pad = level.helipads.single().position
+        engine.place(listOf(engine.plane(1, pad + Vec2(0.0, -300.0), PI, AircraftType.Helicopter)))
+        engine.draw(1, pad + Vec2(0.0, -200.0), pad + Vec2(0.0, -40.0), pad + Vec2(200.0, 0.0), pad + Vec2(0.0, 300.0))
+        val heli = engine.state.value.aircraft.single()
+        assertTrue(heli.path.locked)
+        assertEquals(pad, heli.path.points.last())
+        engine.update(dt)
+        assertEquals(listOf(1), engine.cleared().map { it.aircraftId })
+        repeat((2.0 / dt).toInt()) {
+            engine.update(dt)
+            assertEquals(emptyList(), engine.cleared())
+        }
+    }
+
+    @Test
     fun twoClearancesBeforeOneUpdateBothAreReported() {
         val engine = engine()
         val pad = level.helipads.single().position

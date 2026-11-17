@@ -8,6 +8,7 @@ import nl.hexmaster.finalapproach.domain.EffectiveAircraftSpecs
 import nl.hexmaster.finalapproach.domain.LandingZone
 import nl.hexmaster.finalapproach.domain.LandingZones
 import nl.hexmaster.finalapproach.domain.Levels
+import nl.hexmaster.finalapproach.domain.Overlap
 import nl.hexmaster.finalapproach.domain.Vec2
 import nl.hexmaster.finalapproach.domain.meadow
 import kotlin.math.PI
@@ -65,13 +66,48 @@ class PathDrawingTest {
         assertEquals(AircraftStatus.Flying, mid.status)
     }
 
+    private val helipad = zones.filterIsInstance<LandingZone.Helipad>().first()
+
     @Test
-    fun aHelipadPathStillEndsAtTheEntryPoint() {
-        val heli = Aircraft(1, AircraftType.Helicopter, meadow(900.0, 400.0), PI / 2)
-        val drawn = draw(heli, meadow(1000.0, 400.0), meadow(1200.0, 400.0))
-        val zone = assertIs<LandingZone.Helipad>(assertIs<AircraftStatus.ClearedToLand>(drawn.status).zone)
-        val last = drawn.path.points.last()
-        assertTrue(abs(last.distanceTo(zone.area.center) - zone.area.radius) < 1e-6, "$last")
+    fun aHelipadPathEndsOnThePadCentreFromEverySide() {
+        val centre = helipad.area.center
+        listOf(Vec2(0.0, -1.0), Vec2(1.0, 0.0), Vec2(0.0, 1.0), Vec2(-1.0, 0.0)).forEach { towards ->
+            val heli = Aircraft(1, AircraftType.Helicopter, centre - towards * 300.0, Angles.heading(towards))
+            val drawn = draw(heli, centre - towards * 200.0, centre - towards * (helipad.area.radius / 2.0))
+            val zone = assertIs<AircraftStatus.ClearedToLand>(drawn.status).zone
+            assertEquals(helipad.id, zone.id)
+            assertTrue(drawn.path.points.last().distanceTo(centre) < 1e-9, "from $towards: ${drawn.path.points.last()}")
+        }
+    }
+
+    @Test
+    fun aHelipadPathThatStartsInsideTheZoneGoesStraightToTheCentre() {
+        val centre = helipad.area.center
+        val heli = Aircraft(1, AircraftType.Helicopter, centre + Vec2(-helipad.area.radius / 2.0, 0.0), PI / 2)
+        val drawn = draw(heli, centre + Vec2(0.0, helipad.area.radius / 3.0))
+        assertIs<AircraftStatus.ClearedToLand>(drawn.status)
+        assertTrue(drawn.path.locked)
+        val points = drawn.path.points
+        assertTrue(points.last().distanceTo(centre) < 1e-9, "${points.last()}")
+        points.forEach { p ->
+            val d = Overlap.closestPointOnSegment(heli.position, centre, p).distanceTo(p)
+            assertTrue(d < 1e-6, "$p is off the straight line to the centre")
+        }
+    }
+
+    @Test
+    fun theLegToTheHelipadCentreHasNoSharpCorner() {
+        val centre = helipad.area.center
+        val offset = helipad.area.radius * 0.7
+        val heli = Aircraft(1, AircraftType.Helicopter, centre + Vec2(-300.0, -offset), PI / 2)
+        val drawn = draw(heli, centre + Vec2(-200.0, -offset), centre + Vec2(0.0, -offset))
+        assertIs<AircraftStatus.ClearedToLand>(drawn.status)
+        val line = listOf(heli.position) + drawn.path.points
+        val sharpest = line.windowed(3).maxOf { (a, b, c) ->
+            abs(Angles.difference(Angles.heading(b - a), Angles.heading(c - b)))
+        }
+        assertTrue(sharpest < MAX_TURN_PER_POINT, "sharpest turn $sharpest rad")
+        assertTrue(drawn.path.points.last().distanceTo(centre) < 1e-9)
     }
 
     @Test
@@ -131,5 +167,10 @@ class PathDrawingTest {
         val finished = PathDrawing.finish(drawn, EffectiveAircraftSpecs.Defaults, EngineConfig())
         assertTrue(finished.path.points.all { it.x > plane.position.x }, "${finished.path.points}")
         assertEquals(meadow(700.0, 100.0), finished.path.points.last())
+    }
+
+    private companion object {
+        /** The largest heading change between two consecutive path segments that is not a sharp corner. */
+        const val MAX_TURN_PER_POINT = PI / 6
     }
 }
