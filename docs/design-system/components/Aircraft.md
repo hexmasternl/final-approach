@@ -22,4 +22,6 @@ The five flying toys, drawn top-down with the nose pointing up at heading 0.
 
 **Don't** recolour the fuselage, mirror a sprite, or scale the jumbo down to match the others: the size difference is the point.
 
+**Other views.** Gameplay is top-down only. Two more views exist for pictures outside play: the side-view light prop that tows the Banner on the splash page, and the rear-view sprites of the Approach View (`ApproachView.md`), one per type. Neither is ever used on the field.
+
 **Compose.** Port each sprite as an `ImageVector` or draw it in a `DrawScope` at 96 units, then `rotate(heading)` and `scale` at the render boundary. SVG sources are in the Aircraft asset group.

@@ -213,6 +213,10 @@ What the three reference scenes in `bundle.js` contain:
 
 Birds flap between two wing frames and boats trail a wake; cows wander inside their fence. Waves and the savanna animals stand still. With reduced motion nothing moves: no bird or boat appears and cows stand where they are.
 
+## Approach view
+
+One picture leaves the top-down view: the approach view, the airfield as an aircraft on final approach sees it. It is an illustration for the social visuals and the store listing, never a screen of the game, and no rule reads it. It is drawn in one-point perspective along the runway centre line, and the world rules hold in it: the sun is on the left, so lit tones face left and hard shadows fall to the right and towards the viewer (W1); tones are flat (W2); silhouettes are navy and inner lines tinted (W3); lines thin with distance and the aircraft keeps the heaviest (W4); only the runway and the helipad are outlined on the ground (W6), with their shoulder and fringe (W7); and only the airfield is mown, its stripes running to the vanishing point (W8). The runway and the helipad are laid out from the same `METRICS` as the top-down ones. Aircraft appear in it from behind, as rear-view sprites, and scenery from the front. See `components/ApproachView.md`.
+
 ## Screen edges
 
 Aircraft enter from the viewport edges. Keep the top 88px free of entries so nothing spawns under the HUD, and announce each entry in the Next Aircraft Hint before it appears.
