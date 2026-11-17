@@ -11,7 +11,7 @@ import nl.hexmaster.finalapproach.ui.components.formatScore
  * Pure, so the copy is tested without a screen.
  */
 internal fun lockedInfo(level: LevelConfig, rule: UnlockRule, required: LevelConfig, totals: LevelTotals): LockedInfo {
-    // "More than 1,000" is shown as the number to reach: the first landing past it opens the level.
+    // A strict rule ("more than N") is shown as the number to reach: the first count past it opens the level.
     val target = if (rule.strict) rule.threshold + 1 else rule.threshold
     val shown = rule.valueOf(totals).coerceAtMost(target)
     val (verb, noun) = when (rule.metric) {

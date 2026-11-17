@@ -35,15 +35,15 @@ data class LevelUnlockRules(val rules: List<UnlockRule>) {
     fun ruleFor(levelId: String): UnlockRule? = rules.firstOrNull { it.levelId == levelId }
 
     companion object {
-        /** Landings on Meadow field that open Island airport: strictly more than this. */
-        const val ISLAND_LANDINGS = 1_000
+        /** Landings on Meadow field that open Island airport: this many or more. */
+        const val ISLAND_LANDINGS = 500
 
         /** Points on Island airport that open Savanna dawn: this many or more. */
         const val SAVANNA_POINTS = 30_000
 
         val Default = LevelUnlockRules(
             listOf(
-                UnlockRule("island-airport", "meadow-field", UnlockMetric.Landings, ISLAND_LANDINGS, strict = true),
+                UnlockRule("island-airport", "meadow-field", UnlockMetric.Landings, ISLAND_LANDINGS, strict = false),
                 UnlockRule("savanna-dawn", "island-airport", UnlockMetric.Points, SAVANNA_POINTS, strict = false),
             ),
         )

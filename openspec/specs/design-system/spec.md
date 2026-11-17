@@ -169,11 +169,23 @@ The app icon SHALL show the sun-yellow jet of the game in close-up at `line-hero
 - **THEN** the Android launcher foreground and background are rendered from the same SVG sources as the design system's icon, and the foreground has a transparent ground
 
 ### Requirement: The app keeps building
-Every token name that exists before this change SHALL still exist after it with the same value. Tokens that v2 no longer uses SHALL be marked deprecated with the name of their replacement.
+The design system SHALL define no token marked `deprecated`, and no code under `app/src` SHALL read a token that has been removed. Tokens that are still current SHALL keep their name and value.
+
+#### Scenario: No deprecated tokens
+- **WHEN** `check-tokens.cjs` is run and `tokens.json` and the generated theme are searched for `deprecated`
+- **THEN** the checker passes and neither contains a deprecated token
+
+#### Scenario: No reader of a removed token
+- **WHEN** `app/src` is searched for the names of the removed tokens (surface colours, deep shades, numbered line widths, old radii, v1 lips, HUD chip height, v1 toggle sizes, disabled opacity)
+- **THEN** there is no match
 
 #### Scenario: Regenerating the theme
-- **WHEN** the generator is run after this change and the shared module is built and tested
-- **THEN** the build and all tests pass without any change to hand-written app code
+- **WHEN** the generator is run and `./gradlew :shared:allTests :androidApp:assembleDebug` is run from `app/src`
+- **THEN** the build and all tests pass
+
+#### Scenario: Same look in every theme
+- **WHEN** the game screen, tutorial, splash and menu are reviewed in Day, Night and Dawn before and after this change
+- **THEN** the design review finds no visible difference in the flight path end dot, proximity ring, tutorial highlight and drag demo, selection ring, splash banner or shadows
 
 ### Requirement: Showcase
 `showcase.html` SHALL show the principles, tokens, every scenery sprite, landing zones, every component and reference screens (game screen, main menu, pause and game-over dialogs, level select) in v2, switchable between Day, Night and Dawn, and SHALL NOT show deprecated tokens. `showcase.pdf` SHALL match it.
