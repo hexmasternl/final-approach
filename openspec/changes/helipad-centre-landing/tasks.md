@@ -1,6 +1,6 @@
 ## 1. Engine
 
-- [ ] 1.1 In `engine/PathDrawing.kt`, on a helipad hit smooth `points + hit.entryPoint + zone.area.center` so the path ends on the helipad centre; keep the runway branch as it is and update the KDoc of `extend`
+- [x] 1.1 In `engine/PathDrawing.kt`, on a helipad hit smooth `points + hit.entryPoint + zone.area.center` so the path ends on the helipad centre; keep the runway branch as it is and update the KDoc of `extend`
 
 ## 2. Tests
 
