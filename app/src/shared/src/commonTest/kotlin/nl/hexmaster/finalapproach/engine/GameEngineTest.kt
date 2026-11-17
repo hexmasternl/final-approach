@@ -248,12 +248,12 @@ class GameEngineTest {
         engine.place(
             listOf(
                 Aircraft(1, AircraftType.Helicopter, pad + Vec2(0.0, -100.0), PI, hasEnteredViewport = true),
-                jet(2, pad + Vec2(0.0, 300.0), 0.0),
+                jet(2, pad + Vec2(0.0, 700.0), 0.0),
             ),
         )
         engine.beginPath(1)
         engine.extendPath(1, pad)
-        engine.run(5.0)
+        engine.run(9.0)
         assertEquals(GameStatus.Playing, engine.state.value.status)
         assertEquals(1, engine.state.value.landings)
         assertTrue(engine.state.value.aircraft.none { it.id == 1 })
@@ -444,7 +444,7 @@ class GameEngineTest {
         val aircraft = engine.aircraft(1)
         assertIs<AircraftStatus.ClearedToLand>(aircraft.status)
         assertTrue(aircraft.path.locked)
-        assertTrue(aircraft.path.points.last().y < helipad.y)
+        assertEquals(helipad, aircraft.path.points.last())
     }
 
     @Test
