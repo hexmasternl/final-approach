@@ -109,11 +109,11 @@ Each card SHALL be at least 48dp in both directions and identified by its level 
 - **THEN** each card is at least 48dp wide and high and shows its name
 
 ### Requirement: Locked levels show a locked tile
-The tile of a locked level SHALL show a lock icon, the unlock condition in words, and the player's progress towards it (for example "412 of 1,000 landings"). It SHALL be drawn in the disabled flat style and SHALL NOT start the level when tapped. Colour SHALL NOT be the only sign that it is locked.
+The tile of a locked level SHALL show a lock icon, the unlock condition in words, and the player's progress towards it (for example "412 of 500 landings"). It SHALL be drawn in the disabled flat style and SHALL NOT start the level when tapped. Colour SHALL NOT be the only sign that it is locked.
 
 #### Scenario: Locked tile content
 - **WHEN** Island airport is locked and the player has landed 412 aircraft on Meadow field
-- **THEN** its tile shows a lock icon and "Land 1 001 aircraft on Meadow Field to open Island." with "412 of 1 001 landings" (the target is the first count that opens the level, in the HUD's thin-space grouping)
+- **THEN** its tile shows a lock icon and "Land 500 aircraft on Meadow Field to open Island." with "412 of 500 landings" (the target is the first count that opens the level, in the HUD's thin-space grouping)
 
 #### Scenario: Tap does nothing
 - **WHEN** the player taps a locked tile
@@ -134,5 +134,5 @@ The tile of an unlocked level SHALL look and behave as before, and the level nam
 After a run that reaches an unlock threshold, the selection page SHALL show the newly unlocked level as open.
 
 #### Scenario: Unlock after a run
-- **WHEN** a run on Meadow field takes the total landings to 1,001 and the player returns to the selection page
+- **WHEN** a run on Meadow field takes the total landings to 500 and the player returns to the selection page
 - **THEN** the Island airport tile is open

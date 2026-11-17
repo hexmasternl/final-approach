@@ -12,20 +12,24 @@ The first level, Meadow field, SHALL always be unlocked.
 - **WHEN** the app is used for the first time
 - **THEN** Meadow field can be started
 
-### Requirement: Island airport needs more than 1,000 landings on Meadow field
-Island airport SHALL be locked until the total number of aircraft landed on Meadow field, summed over all runs, is greater than 1,000.
+### Requirement: Island airport needs 500 landings on Meadow field
+Island airport SHALL be locked until the total number of aircraft landed on Meadow field, summed over all runs, is 500 or more.
 
-#### Scenario: Exactly 1,000 landings
-- **WHEN** the total landings on Meadow field are 1,000
+#### Scenario: 499 landings
+- **WHEN** the total landings on Meadow field are 499
 - **THEN** Island airport is locked
 
-#### Scenario: 1,001 landings
-- **WHEN** the total landings on Meadow field are 1,001
+#### Scenario: 500 landings
+- **WHEN** the total landings on Meadow field are 500
 - **THEN** Island airport is unlocked
 
 #### Scenario: Summed over runs
-- **WHEN** the player has landed 600 aircraft in one run and 401 in another on Meadow field
+- **WHEN** the player has landed 300 aircraft in one run and 200 in another on Meadow field
 - **THEN** Island airport is unlocked
+
+#### Scenario: Already past the new threshold
+- **WHEN** the device holds 750 total landings on Meadow field from before this change, and Island airport was never marked unlocked
+- **THEN** Island airport is unlocked when the level selection page is opened, without another run
 
 ### Requirement: Savanna dawn needs 30,000 points on Island airport
 Savanna dawn SHALL be locked until the total points earned on Island airport, summed over all runs, are 30,000 or more.
