@@ -1,7 +1,7 @@
 ## 1. Rule
 
 - [x] 1.1 In `engine/LevelUnlocks.kt`, set `ISLAND_LANDINGS = 500`, make the Island rule `strict = false`, and update its KDoc to "this many or more"
-- [ ] 1.2 Update the comment in `ui/game/LevelUnlockCopy.kt` that mentions "More than 1,000"
+- [x] 1.2 Update the comment in `ui/game/LevelUnlockCopy.kt` that mentions "More than 1,000"
 
 ## 2. Tests
 
