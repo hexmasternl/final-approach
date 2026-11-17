@@ -4,11 +4,11 @@
 
 ## 2. Tests
 
-- [ ] 2.1 `PathDrawingTest`: helicopter paths entering one helipad zone from the north, east, south and west each end exactly on the helipad centre and clear the helicopter to land
-- [ ] 2.2 `PathDrawingTest`: a helicopter already inside the zone whose first drag point is inside it gets a path that ends on the centre and is cleared to land
-- [ ] 2.3 `PathDrawingTest`: a path entering at an angle to the line towards the centre has no sharp corner (no turn between consecutive segments above a small bound) on its final leg
-- [ ] 2.4 `PathDrawingTest` / `ClearanceEventTest`: the path is locked at the moment of entry and further points are ignored; the clearance event fires once
-- [ ] 2.5 Check that runway clearance tests (`RunwayLeadInTest`, the runway cases in `PathDrawingTest`) pass unchanged, refresh `SeededRunBaselineTest` only if it covers a helipad landing, and run `./gradlew :shared:allTests`
+- [x] 2.1 `PathDrawingTest`: helicopter paths entering one helipad zone from the north, east, south and west each end exactly on the helipad centre and clear the helicopter to land
+- [x] 2.2 `PathDrawingTest`: a helicopter already inside the zone whose first drag point is inside it gets a path that ends on the centre and is cleared to land
+- [x] 2.3 `PathDrawingTest`: a path entering at an angle to the line towards the centre has no sharp corner (no turn between consecutive segments above a small bound) on its final leg
+- [x] 2.4 `PathDrawingTest` / `ClearanceEventTest`: the path is locked at the moment of entry and further points are ignored; the clearance event fires once
+- [x] 2.5 Check that runway clearance tests (`RunwayLeadInTest`, the runway cases in `PathDrawingTest`) pass unchanged, refresh `SeededRunBaselineTest` only if it covers a helipad landing, and run `./gradlew :shared:allTests`
 
 ## 3. Docs
 

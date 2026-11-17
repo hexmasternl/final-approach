@@ -15,7 +15,10 @@ import kotlin.test.assertEquals
  * so these numbers must never change because of it.
  *
  * The Meadow Field rows were recorded again when its runway turned round to land eastbound (runway
- * 09): that is a change of the level's rules, so its runs differ. The other levels are as recorded.
+ * 09): that is a change of the level's rules, so its runs differ. The rows for Island airport seed 42
+ * and Savanna dawn seed 3 were recorded again when helicopter paths started ending on the helipad
+ * centre (OpenSpec change `helipad-centre-landing`): helicopters fly further before landing, so those
+ * runs play out differently. The other rows are as recorded.
  */
 class SeededRunBaselineTest {
     private val dt = 0.05
@@ -54,8 +57,8 @@ class SeededRunBaselineTest {
         ("meadow-field" to 42L) to "score=130 landings=7 status=GameOver spawned=[Helicopter=1,LightProp=8,Turboprop=1] landed=[Helicopter=1,LightProp=6]",
         ("island-airport" to 3L) to "score=20 landings=1 status=GameOver spawned=[Helicopter=1,LightProp=2,Turboprop=1] landed=[LightProp=1]",
         ("island-airport" to 11L) to "score=130 landings=7 status=GameOver spawned=[Helicopter=3,Jet=1,LightProp=5,Turboprop=1] landed=[Helicopter=2,LightProp=4,Turboprop=1]",
-        ("island-airport" to 42L) to "score=30 landings=2 status=GameOver spawned=[Helicopter=1,LightProp=2,Turboprop=1] landed=[Helicopter=1,LightProp=1]",
-        ("savanna-dawn" to 3L) to "score=220 landings=9 status=GameOver spawned=[Helicopter=3,Jet=2,Jumbo=1,LightProp=4,Turboprop=1] landed=[Helicopter=3,Jet=2,LightProp=3,Turboprop=1]",
+        ("island-airport" to 42L) to "score=80 landings=4 status=GameOver spawned=[Helicopter=1,LightProp=2,Turboprop=2] landed=[Helicopter=1,LightProp=2,Turboprop=1]",
+        ("savanna-dawn" to 3L) to "score=70 landings=3 status=GameOver spawned=[Helicopter=3,LightProp=3,Turboprop=1] landed=[LightProp=2,Turboprop=1]",
         ("savanna-dawn" to 11L) to "score=100 landings=5 status=GameOver spawned=[Helicopter=2,LightProp=4,Turboprop=2] landed=[Helicopter=1,LightProp=3,Turboprop=1]",
         ("savanna-dawn" to 42L) to "score=0 landings=0 status=GameOver spawned=[Helicopter=1,LightProp=2] landed=[]",
     )
@@ -63,10 +66,8 @@ class SeededRunBaselineTest {
     @Test
     fun everySeededRunMatchesTheBaseline() {
         assertEquals(Levels.all.map { it.id }.toSet(), recorded.keys.map { it.first }.toSet())
-        recorded.forEach { (key, expected) ->
-            val level = Levels.all.first { it.id == key.first }
-            assertEquals(expected, summary(level, key.second), "${key.first}, seed ${key.second}")
-        }
+        val actual = recorded.keys.associateWith { (id, seed) -> summary(Levels.all.first { it.id == id }, seed) }
+        assertEquals(recorded, actual)
     }
 
     private companion object {
