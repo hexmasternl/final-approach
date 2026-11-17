@@ -17,11 +17,27 @@ Each helipad SHALL have a round landing zone centred on the pad. The zone SHALL 
 - **THEN** that radius is used, and a helipad without one uses the default radius
 
 ### Requirement: A helicopter path entering a helipad zone clears it to land
-When the path being drawn for a helicopter enters a helipad landing zone, the path SHALL end at the point where it entered, further drag input for that path SHALL be ignored, and the helicopter SHALL be marked as cleared to land.
+When the path being drawn for a helicopter enters a helipad landing zone, the helicopter SHALL be marked as cleared to land and further drag input for that path SHALL be ignored, at the moment the path enters the zone. The path SHALL then continue from the point where it entered the zone to the centre of the helipad and end exactly on that centre, whatever side the path came from. The join between the drawn path and this final leg SHALL be smoothed like the rest of the path, without a sharp corner. A path that starts inside the zone SHALL go straight to the centre. The shown path SHALL be this finished path.
 
 #### Scenario: Path through the zone lands the helicopter
 - **WHEN** the player drags a helicopter path that enters a helipad zone
-- **THEN** the path ends at the zone entry point and the helicopter is cleared to land
+- **THEN** the helicopter is cleared to land and its path ends exactly on the helipad centre
+
+#### Scenario: Entry from any side ends on the centre
+- **WHEN** helicopter paths enter the same helipad zone from the north, east, south and west
+- **THEN** each path ends exactly on the helipad centre
+
+#### Scenario: Final leg has no sharp corner
+- **WHEN** a helicopter path enters a helipad zone at an angle to the line towards the centre
+- **THEN** the path turns from the drawn line onto the leg to the centre smoothly, without a sharp corner
+
+#### Scenario: Path that starts inside the zone
+- **WHEN** a helicopter that is already over the helipad zone is touched and a path is dragged from it
+- **THEN** the helicopter is cleared to land and its path goes straight to the helipad centre
+
+#### Scenario: Clearance moment is unchanged
+- **WHEN** a helicopter path enters a helipad zone
+- **THEN** the path flashes white and the success sound plays at that moment, once
 
 #### Scenario: Path that misses the zone
 - **WHEN** a helicopter path passes the helipad outside the zone
@@ -32,11 +48,11 @@ When the path being drawn for a helicopter enters a helipad landing zone, the pa
 - **THEN** no further points are added to that path
 
 ### Requirement: A cleared helicopter lands and is removed
-A helicopter that is cleared to land SHALL follow its path to the end and then perform a landing sequence of 3 seconds (configurable) on the spot, in which it descends and lands. When the sequence ends the helicopter SHALL count as landed and be removed from the game, with no rollout.
+A helicopter that is cleared to land SHALL follow its path to the end, on the helipad centre, and then perform a landing sequence of 3 seconds (configurable) there, in which it descends and lands. When the sequence ends the helicopter SHALL count as landed and be removed from the game, with no rollout.
 
 #### Scenario: Helicopter touches down
 - **WHEN** a cleared helicopter reaches the end of its path
-- **THEN** a 3 second landing sequence starts on the helipad, and when it ends the helicopter has landed and is removed
+- **THEN** a 3 second landing sequence starts on the helipad centre, and when it ends the helicopter has landed and is removed
 
 #### Scenario: Descent is visible
 - **WHEN** a helicopter is in its landing sequence
