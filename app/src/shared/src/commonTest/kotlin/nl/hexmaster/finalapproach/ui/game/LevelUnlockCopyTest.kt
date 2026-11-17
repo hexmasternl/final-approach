@@ -14,8 +14,8 @@ class LevelUnlockCopyTest {
     @Test
     fun islandAirportNamesTheConditionAndTheLandingProgress() {
         val info = lockedInfo(Levels.islandAirport, island, Levels.meadowField, LevelTotals(landings = 412))
-        assertEquals("${formatScore(412)} of ${formatScore(1_001)} landings", info.text)
-        assertEquals("Land ${formatScore(1_001)} aircraft on Meadow Field to open Island.", info.condition)
+        assertEquals("${formatScore(412)} of ${formatScore(500)} landings", info.text)
+        assertEquals("Land ${formatScore(500)} aircraft on Meadow Field to open Island.", info.condition)
     }
 
     @Test
@@ -28,6 +28,6 @@ class LevelUnlockCopyTest {
     @Test
     fun progressNeverShowsMoreThanTheTarget() {
         val over = lockedInfo(Levels.islandAirport, island, Levels.meadowField, LevelTotals(landings = 5_000))
-        assertEquals("${formatScore(1_001)} of ${formatScore(1_001)} landings", over.text)
+        assertEquals("${formatScore(500)} of ${formatScore(500)} landings", over.text)
     }
 }

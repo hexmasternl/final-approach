@@ -7,7 +7,7 @@
 
 - [x] 2.1 `LevelUnlocksTest`: Island is locked at 499 and open at 500 landings; open at 300 + 200 summed over runs
 - [x] 2.2 `LevelUnlocksTest`: with 750 stored landings on Meadow field and no unlock flag, Island counts as open
-- [ ] 2.3 `LevelUnlockCopyTest`: the locked card reads "412 of 500 landings" and "Land 500 aircraft on Meadow Field to open Island."; progress never shows more than 500
+- [x] 2.3 `LevelUnlockCopyTest`: the locked card reads "412 of 500 landings" and "Land 500 aircraft on Meadow Field to open Island."; progress never shows more than 500
 - [ ] 2.4 `RunTotalsTest`: settling after 500 Meadow field landings opens Island
 - [ ] 2.5 Check that Savanna dawn tests still pass unchanged, and run `./gradlew :shared:allTests`
 
