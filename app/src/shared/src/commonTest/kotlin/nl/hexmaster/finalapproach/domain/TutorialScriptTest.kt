@@ -52,17 +52,17 @@ class TutorialScriptTest {
     }
 
     @Test
-    fun eachAirplaneEntryLeavesRoomForAnAlignedWestboundApproachToRunway27() {
+    fun eachAirplaneEntryLeavesRoomForAnAlignedEastboundApproachToRunway09() {
         val runway = level.runways.single()
-        val threshold = runway.position + Vec2(runway.length / 2.0, 0.0)
+        val threshold = runway.position - Vec2(runway.length / 2.0, 0.0)
         val depth = level.landing.runwayZoneDepth
         for (entry in listOf(script.lightProp, script.turboprop)) {
             val point = wellInViewPoint(entry)
             assertTrue(viewport.contains(point), "well in view point $point is outside the viewport")
-            // It is east of the threshold, so a path can still line up and fly west into the zone.
-            assertTrue(point.x > threshold.x + depth, "point $point leaves no room before the threshold")
+            // It is west of the threshold, so a path can still line up and fly east into the zone.
+            assertTrue(point.x < threshold.x - depth, "point $point leaves no room before the threshold")
         }
-        assertEquals(PI * 3 / 2, runway.landingHeadings.single() + 2 * PI, 1e-9)
+        assertEquals(PI / 2, runway.landingHeadings.single(), 1e-9)
     }
 
     @Test
@@ -70,7 +70,7 @@ class TutorialScriptTest {
         val pad = level.helipads.single().position
         val point = wellInViewPoint(script.helicopter)
         assertTrue(viewport.contains(point))
-        // Flying east, it passes the pad on its left and within a short drag of it.
-        assertTrue(point.x < pad.x && kotlin.math.abs(pad.y - point.y) < REACH, "helicopter at $point cannot reach the pad")
+        // Flying west from the pad's side of the field, it is well in view within a short drag of the pad.
+        assertTrue(point.x > pad.x && kotlin.math.abs(pad.y - point.y) < REACH, "helicopter at $point cannot reach the pad")
     }
 }

@@ -170,7 +170,7 @@ Icons are the 22 glyphs in the Icons asset group: a 24px grid, 3px round strokes
 
 - `tokens.json` holds every token with its usage note.
 - `bundle.css` holds every component class, prefixed `fa-`. It reads only token variables.
-- `bundle.js` defines `window.FinalApproach` and the elements `fa-aircraft`, `fa-side-aircraft`, `fa-silhouette`, `fa-icon`, `fa-runway`, `fa-helipad`, `fa-cloud`, `fa-windsock`, `fa-burst`, `fa-scenery` (one scenery sprite with its cast shadow) and `fa-scene` (the picture of a whole level). It has no dependencies.
+- `bundle.js` defines `window.FinalApproach` and the elements `fa-aircraft`, `fa-side-aircraft`, `fa-rear-aircraft` and `fa-approach` (the approach view, for illustrations only), `fa-silhouette`, `fa-icon`, `fa-runway`, `fa-helipad`, `fa-cloud`, `fa-windsock`, `fa-burst`, `fa-scenery` (one scenery sprite with its cast shadow) and `fa-scene` (the picture of a whole level). It has no dependencies.
 - Fonts are in `fonts/`: DynaPuff, Nunito and Inconsolata as variable `woff2` files.
 - Component guidelines live in `components/<Name>.md`. Read one before using its component.
 - The tools in `tools/` run with Node from the repository root:

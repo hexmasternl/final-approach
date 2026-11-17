@@ -270,6 +270,10 @@ const secScreens = `<section class="sc-section" id="screens">
   ${comp('LevelSelect', 'Level Select', 'One card per airport on the menu sky.', `<div class="sc-demo sc-demo--screen"><div class="fa-stage fa-stage--sky" style="position:relative;width:960px;height:540px;min-height:0;flex-direction:column;gap:var(--space-6)"><h2 class="display-md" style="margin:0">Choose an airport</h2><div style="display:flex;gap:var(--space-5)">${cards}</div></div></div>`)}
   ${part('MainMenu.html')}
   ${part('SplashScreen.html')}
+  ${comp('ApproachView', 'Approach View', 'An illustration, never a screen of the game: the airfield as an aircraft on final approach sees it. The world rules hold in perspective.', screen(`<fa-approach landscape="meadow" type="jumbo" livery="5" number="27" zone="ok" width="960" height="540" style="position:absolute;inset:0"></fa-approach>`))}
+  ${comp('ApproachCockpit', 'Approach View: cockpit', 'The same picture from the cockpit of the light prop, over the savanna’s one-way runway.', screen(`<fa-approach landscape="savanna" view="cockpit" type="light-prop" livery="1" number="27" one-way width="960" height="540" style="position:absolute;inset:0"></fa-approach>`))}
+  ${comp('ApproachHelipad', 'Approach View: helipad', 'A helicopter over the island’s helipad, with the valid-landing halo.', screen(`<fa-approach landscape="island" target="helipad" type="helicopter" livery="6" zone="ok" width="960" height="540" style="position:absolute;inset:0"></fa-approach>`))}
+  ${comp('RearAircraft', 'Rear-view aircraft', 'The five types from behind with the gear down, for the approach view only.', stage('sky', Object.keys(FA.REAR_AIRCRAFT).map((t, i) => `<div class="fa-item"><fa-rear-aircraft type="${t}" livery="${[1, 2, 3, 5, 6][i]}"></fa-rear-aircraft><span class="fa-note">${FA.AIRCRAFT[t].label}</span></div>`).join('')))}
 </section>`;
 const secNight = `<section class="sc-section" id="night">
   <h2><small>Themes</small>Night</h2>

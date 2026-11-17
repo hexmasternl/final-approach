@@ -30,7 +30,7 @@ Final Approach is a cartoon-style air-traffic game. The player draws paths for i
 
 ## Design system
 
-The design system in `docs/design-system/` defines how everything looks. Open `docs/design-system/showcase.html` before building or changing any UI. The game implements the same values in a Compose theme under `ui/theme`, generated from `tokens.json`; do not edit it by hand. The tools in `docs/design-system/tools/` build the showcase (`build-showcase.cjs`), the app icon (`build-app-icon.cjs`) and the theme (`gen-kotlin.cjs`), and check the tokens (`check-tokens.cjs`). Keep this section the same as the design-system section of `CLAUDE.md`.
+The design system in `docs/design-system/` defines how everything looks. Open `docs/design-system/showcase.html` before building or changing any UI. The game implements the same values in a Compose theme under `ui/theme`, generated from `tokens.json`; do not edit it by hand. The tools in `docs/design-system/tools/` build the showcase (`build-showcase.cjs`), the app icon (`build-app-icon.cjs`), the rear-view aircraft (`build-rear-aircraft.cjs`) and the theme (`gen-kotlin.cjs`), and check the tokens (`check-tokens.cjs`). The social visuals and Play Store feature graphics, including the approach-view (POV) images, are in `docs/design-system/visuals/`, built by `_source/build.cjs`. Keep this section the same as the design-system section of `CLAUDE.md`.
 
 ### Principles
 
