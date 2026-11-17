@@ -13,4 +13,4 @@
 
 ## 3. Docs
 
-- [ ] 3.1 `docs/game-design.md`, Level unlocks: Island opens once the player has landed 500 or more aircraft in total on Meadow Field; update the card copy examples to 500
+- [x] 3.1 `docs/game-design.md`, Level unlocks: Island opens once the player has landed 500 or more aircraft in total on Meadow Field; update the card copy examples to 500
