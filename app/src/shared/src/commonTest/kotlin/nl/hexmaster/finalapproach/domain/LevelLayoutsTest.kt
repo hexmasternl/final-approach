@@ -113,7 +113,7 @@ class LevelLayoutsTest {
         assertEquals(listOf(PI / 2, PI / 4), two.runways.map { it.orientation })
         assertEquals(listOf(PI / 2, PI / 2, 0.0), three.runways.map { it.orientation })
         fun mode(level: LevelConfig, id: String) = level.runways.first { it.id == id }.mode
-        assertEquals(RunwayMode.OneWay(3 * PI / 2), mode(one, "09-27"))
+        assertEquals(RunwayMode.OneWay(PI / 2), mode(one, "09-27"))
         assertEquals(RunwayMode.TwoWay, mode(two, "09-27"))
         assertEquals(RunwayMode.OneWay(5 * PI / 4), mode(two, "04-22"))
         assertEquals("22", two.runways.first { it.id == "04-22" }.let { it.numberFor(it.landingHeadings.single()) })

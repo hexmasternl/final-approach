@@ -52,7 +52,7 @@ internal object TutorialText {
 
         TutorialStep.Runway to TutorialPhase.Explaining -> CoachCopy(
             "This is runway $runwayNumber",
-            "Airplanes land here. Come in from the right, lined up with the runway. " +
+            "Airplanes land here. Come in from the left, lined up with the runway. " +
                 "This runway takes landings from one end only; others take them from both ends.",
         )
 

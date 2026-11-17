@@ -27,8 +27,8 @@ private fun CoachMarkVariants(night: Boolean) {
             FaCoachMark("Step 3 of 6", "Light prop inbound", "It needs to land.", tail = FaCoachTail.Up, icon = FaIcon.Plane)
             FaCoachMark(
                 "Step 2 of 6",
-                "This is runway 27",
-                "Airplanes land here. Come in from the right, lined up with the runway.",
+                "This is runway 09",
+                "Airplanes land here. Come in from the left, lined up with the runway.",
                 gotItLabel = "Got it",
                 onGotIt = {},
             )

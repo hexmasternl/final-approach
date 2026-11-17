@@ -13,6 +13,9 @@ import kotlin.test.assertEquals
  * with a fixed seed and a simple controller, and its spawns, landings and score must equal the
  * values recorded on base commit c289489. The port touches rendering and level decoration only,
  * so these numbers must never change because of it.
+ *
+ * The Meadow Field rows were recorded again when its runway turned round to land eastbound (runway
+ * 09): that is a change of the level's rules, so its runs differ. The other levels are as recorded.
  */
 class SeededRunBaselineTest {
     private val dt = 0.05
@@ -46,9 +49,9 @@ class SeededRunBaselineTest {
     }
 
     private val recorded = mapOf(
-        ("meadow-field" to 3L) to "score=60 landings=3 status=GameOver spawned=[Helicopter=1,LightProp=4,Turboprop=1] landed=[LightProp=3]",
-        ("meadow-field" to 11L) to "score=20 landings=1 status=GameOver spawned=[Helicopter=1,LightProp=3] landed=[LightProp=1]",
-        ("meadow-field" to 42L) to "score=90 landings=5 status=GameOver spawned=[Helicopter=1,LightProp=6,Turboprop=1] landed=[Helicopter=1,LightProp=4]",
+        ("meadow-field" to 3L) to "score=40 landings=2 status=GameOver spawned=[Helicopter=1,LightProp=4] landed=[LightProp=2]",
+        ("meadow-field" to 11L) to "score=100 landings=6 status=GameOver spawned=[Helicopter=2,LightProp=4,Turboprop=3] landed=[Helicopter=2,LightProp=4]",
+        ("meadow-field" to 42L) to "score=130 landings=7 status=GameOver spawned=[Helicopter=1,LightProp=8,Turboprop=1] landed=[Helicopter=1,LightProp=6]",
         ("island-airport" to 3L) to "score=20 landings=1 status=GameOver spawned=[Helicopter=1,LightProp=2,Turboprop=1] landed=[LightProp=1]",
         ("island-airport" to 11L) to "score=130 landings=7 status=GameOver spawned=[Helicopter=3,Jet=1,LightProp=5,Turboprop=1] landed=[Helicopter=2,LightProp=4,Turboprop=1]",
         ("island-airport" to 42L) to "score=30 landings=2 status=GameOver spawned=[Helicopter=1,LightProp=2,Turboprop=1] landed=[Helicopter=1,LightProp=1]",
